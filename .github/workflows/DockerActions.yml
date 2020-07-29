@@ -1,0 +1,29 @@
+name: Build and push Docker images
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build backend
+      uses: docker/build-push-action@v1.1.0
+      with:
+        Username: ${{secrets.DOCKER_LOGIN}}
+        Password: ${{secrets.DOCKER_PASSWORD}}
+        repository: bsa2020builder/builder_backend
+        tags: latest
+        path: /backend    
+        push: true    
+
+    - name: Build frontend
+      uses: docker/build-push-action@v1.1.0
+      with:
+        Username: ${{secrets.DOCKER_LOGIN}}
+        Password: ${{secrets.DOCKER_PASSWORD}}
+        repository: bsa2020builder/builder_frontend
+        tags: latest
+        path: /frontend
+        push: true
