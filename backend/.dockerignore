@@ -1,0 +1,11 @@
+[b|B]in
+[O|o]bj
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+README.md
+LICENSE
+.vscode
+.vs

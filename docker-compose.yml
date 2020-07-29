@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: 'builder_backend'
+    restart: on-failure
+    ports:
+        - "5050:5050"
+    environment:
+        ASPNETCORE_ENVIRONMENT: 'Production'
+        ASPNETCORE_URLS: http://*:5050
+
+  frontend:
+    depends_on:
+        - backend
+    build: ./frontend
+    container_name: 'builder_frontend'
+    restart: on-failure
+    ports:
+        - "80:80"
