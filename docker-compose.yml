@@ -1,18 +1,52 @@
 version: '3.8'
 services:
-  backend:
-    build: ./backend
-    container_name: 'builder_backend'
+  builder_api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - PROJECT_NAME=API
+        - PROJECT_PORT=5050
+    container_name: 'builder_api'
     restart: on-failure
     ports:
         - "5050:5050"
     environment:
-        ASPNETCORE_ENVIRONMENT: 'Production'
-        ASPNETCORE_URLS: http://*:5050
+        ASPNETCORE_ENVIRONMENT: 'Development'
+    
+  builder_processor:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile
+        args:
+          - PROJECT_NAME=Processor
+          - PROJECT_PORT=5060
+      container_name: 'builder_processor'
+      restart: on-failure
+      ports:
+          - "5060:5060"
+      environment:
+          ASPNETCORE_ENVIRONMENT: 'Development'
 
-  frontend:
+  builder_signalr:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile
+        args:
+          - PROJECT_NAME=SignalR
+          - PROJECT_PORT=5070
+      container_name: 'builder_signalr'
+      restart: on-failure
+      ports:
+          - "5070:5070"
+      environment:
+          ASPNETCORE_ENVIRONMENT: 'Development'
+
+  builder_frontend:
     depends_on:
-        - backend
+        - builder_api
+        - builder_processor
+        - builder_signalr
     build: ./frontend
     container_name: 'builder_frontend'
     restart: on-failure
