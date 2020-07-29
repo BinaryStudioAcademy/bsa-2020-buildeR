@@ -4,21 +4,56 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_push:
+  build_api:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build backend
+    - name: Build API
       uses: docker/build-push-action@v1.1.0
       with:
         Username: ${{secrets.DOCKER_LOGIN}}
         Password: ${{secrets.DOCKER_PASSWORD}}
-        repository: bsa2020builder/builder_backend
+        repository: bsa2020builder/builder_api
         tags: latest
         path: ./backend
-        push: true    
+        build_args: PROJECT_NAME=API,PROJECT_PORT=5050
+        push: true
 
-    - name: Build frontend
+  build_processor:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Processor
+      uses: docker/build-push-action@v1.1.0
+      with:
+        Username: ${{secrets.DOCKER_LOGIN}}
+        Password: ${{secrets.DOCKER_PASSWORD}}
+        repository: bsa2020builder/builder_processor
+        tags: latest
+        path: ./backend
+        build_args: PROJECT_NAME=Processor,PROJECT_PORT=5060
+        push: true
+
+  build_signalr:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build SignalR
+      uses: docker/build-push-action@v1.1.0
+      with:
+        Username: ${{secrets.DOCKER_LOGIN}}
+        Password: ${{secrets.DOCKER_PASSWORD}}
+        repository: bsa2020builder/builder_signalr
+        tags: latest
+        path: ./backend
+        build_args: PROJECT_NAME=SignalR,PROJECT_PORT=5070
+        push: true
+
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Frontend
       uses: docker/build-push-action@v1.1.0
       with:
         Username: ${{secrets.DOCKER_LOGIN}}
