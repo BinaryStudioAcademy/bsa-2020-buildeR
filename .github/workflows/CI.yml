@@ -28,5 +28,5 @@ jobs:
         run: |
           cd frontend
           npm ci
-          ng build --prod
+          npx ng build --prod
         
