@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace buildeR
+namespace builder.Processor
 {
     public class Program
     {
@@ -15,7 +15,7 @@ namespace buildeR
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://localhost:5050");
+                    webBuilder.UseUrls("http://localhost:5060");
                 });
     }
 }

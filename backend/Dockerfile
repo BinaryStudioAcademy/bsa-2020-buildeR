@@ -1,18 +1,23 @@
 ARG MS_IMAGE_HUB="mcr.microsoft.com/dotnet/core"
 
 FROM $MS_IMAGE_HUB/sdk:3.1-buster AS build
+ARG PROJECT_NAME
 WORKDIR /src
-COPY ["buildeR.API/buildeR.API.csproj", "buildeR.API/"]
-RUN dotnet restore "buildeR.API/buildeR.API.csproj"
+COPY ["buildeR.$PROJECT_NAME/buildeR.$PROJECT_NAME.csproj", "buildeR.$PROJECT_NAME/"]
+RUN dotnet restore "buildeR.$PROJECT_NAME/buildeR.$PROJECT_NAME.csproj"
 COPY . .
-WORKDIR "/src/buildeR.API"
-RUN dotnet build "buildeR.API.csproj" -c Release -o /app/build
+WORKDIR "/src/buildeR.$PROJECT_NAME"
+RUN dotnet build "buildeR.$PROJECT_NAME.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "buildeR.API.csproj" -c Release -o /app/publish
+ARG PROJECT_NAME
+RUN dotnet publish "buildeR.$PROJECT_NAME.csproj" -c Release -o /app/publish
 
 FROM $MS_IMAGE_HUB/aspnet:3.1-buster-slim AS final
+ARG PROJECT_NAME
+ARG PROJECT_PORT
 WORKDIR /app
 COPY --from=publish /app/publish .
-EXPOSE 5050
-ENTRYPOINT ["dotnet", "buildeR.API.dll"]
+EXPOSE $PROJECT_PORT
+ENV DLL_NAME=$PROJECT_NAME
+ENTRYPOINT dotnet "buildeR.$DLL_NAME.dll"
