@@ -15,7 +15,7 @@ jobs:
         Password: ${{secrets.DOCKER_PASSWORD}}
         repository: bsa2020builder/builder_backend
         tags: latest
-        path: /backend    
+        path: ./backend
         push: true    
 
     - name: Build frontend
@@ -25,5 +25,5 @@ jobs:
         Password: ${{secrets.DOCKER_PASSWORD}}
         repository: bsa2020builder/builder_frontend
         tags: latest
-        path: /frontend
+        path: ./frontend
         push: true
