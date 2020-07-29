@@ -1,0 +1,32 @@
+name: Build SRC
+
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build_backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1
+    - name: Build .NET
+      run: dotnet build backend/buildeR.sln --configuration Release
+
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.1.1
+        with:
+          node-version: 12.x
+      - name: Install packages and build Angular
+        run: |
+          cd frontend
+          npm ci
+          ng build --prod
+        
