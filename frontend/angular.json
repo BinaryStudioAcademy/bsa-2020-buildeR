@@ -28,7 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.sass"
+              "src/styles/index.sass"
             ],
             "scripts": []
           },
@@ -46,7 +46,7 @@
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "budgets": [
                 {
@@ -92,7 +92,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.sass"
+              "src/styles/index.sass"
             ],
             "scripts": []
           }
@@ -124,5 +124,8 @@
         }
       }
     }},
-  "defaultProject": "buildeR"
+  "defaultProject": "buildeR",
+  "cli": {
+    "analytics": false
+  }
 }
