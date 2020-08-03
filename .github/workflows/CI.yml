@@ -17,6 +17,7 @@ jobs:
         dotnet-version: 3.1
     - name: Build .NET
       run: dotnet build backend/buildeR.sln --configuration Release
+
     - name: Slack notification
     - uses: 8398a7/action-slack@v3
       with:
@@ -25,7 +26,7 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       if: failure()
-        
+
   build_frontend:
     runs-on: ubuntu-latest
     steps:
@@ -39,6 +40,7 @@ jobs:
           cd frontend
           npm ci
           npx ng build --prod
+
       - name: Slack notification
       - uses: 8398a7/action-slack@v3
         with:
