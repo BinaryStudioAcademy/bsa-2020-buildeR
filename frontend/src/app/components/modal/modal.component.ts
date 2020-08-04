@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-modal',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ModalComponent implements OnInit {
 
-  constructor() { }
+  title: string;
+  closeBtnName: string;
+  list = [];
+
+  constructor(public bsModalRef: BsModalRef) {}
 
   ngOnInit(): void {
+    this.list.push('PROFIT!!!');
   }
-
 }
