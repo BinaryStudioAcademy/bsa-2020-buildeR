@@ -15,7 +15,7 @@ namespace buildeR.SignalR
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://localhost:5070");
+                    webBuilder.UseUrls("http://*:5070");
                 });
     }
 }

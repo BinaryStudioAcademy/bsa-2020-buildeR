@@ -15,7 +15,7 @@ namespace buildeR
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://localhost:5050");
+                    webBuilder.UseUrls("http://*:5050");
                 });
     }
 }
