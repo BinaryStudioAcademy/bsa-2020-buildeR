@@ -62,3 +62,16 @@ jobs:
         tags: latest
         path: ./frontend
         push: true
+        
+  deploy_images:
+    runs-on: ubuntu-latest
+    needs: [ build_api, build_processor, build_signalr, build_frontend ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update PROD images
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.HOST_USERNAME }}
+        password: ${{ secrets.HOST_PASSWORD }}
+        script: docker-compose stop && docker-compose pull && docker system prune -f && docker-compose up -d
