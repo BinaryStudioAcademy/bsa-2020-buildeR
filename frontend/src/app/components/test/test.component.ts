@@ -12,16 +12,16 @@ export class TestComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  openModalWithComponent(): void {
+  async openModalWithComponent(): Promise<void> {
     const message = 'Are you sure?';
     const text = 'You will not be able to recover this imaginary file';
-    console.log(this.modalService.open(message, text));
-    // if (this.modalService.open(message, text)){
-    //   alert('you confirmed');
-    // }
-    // else{
-    //   alert('you declined');
-    // }
+    const res = await this.modalService.open(message, text);
+    if (res){
+      console.log('confirmed');
+    }
+    else{
+      console.log('declined');
+    }
   }
 
 }

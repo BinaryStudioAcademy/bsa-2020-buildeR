@@ -1,5 +1,6 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-modal',
@@ -8,22 +9,23 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 })
 export class ModalComponent implements OnInit {
 
-  public onClose: EventEmitter<boolean> = new EventEmitter<boolean>();
+  onClose: Subject<boolean>;
   title: string;
-  closeBtnName: string;
-  list = [];
+  message: string;
+  text: string;
 
   constructor(public bsModalRef: BsModalRef) {}
   ngOnInit(): void {
+    this.onClose = new Subject();
   }
 
   confirm(): void{
-    this.onClose.emit(true);
+    this.onClose.next(true);
     this.bsModalRef.hide();
   }
 
   decline(): void{
-    this.onClose.emit(false);
+    this.onClose.next(false);
     this.bsModalRef.hide();
   }
 }
