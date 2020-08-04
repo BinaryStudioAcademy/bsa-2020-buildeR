@@ -7,7 +7,13 @@
   },
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "@env/*": [ "src/environments/*" ],
+      "@core/*": [ "src/app/core/*" ],
+      "@shared/*": [ "src/app/shared/*" ],
+      "@modules/*": [ "src/app/modules/*" ]
+  }
   },
   "files": [
     "src/main.ts",
