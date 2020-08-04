@@ -15,7 +15,7 @@ namespace builder.Processor
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://localhost:5060");
+                    webBuilder.UseUrls("http://*:5060");
                 });
     }
 }
