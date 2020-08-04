@@ -5,10 +5,13 @@
   </button>
 </div>
 <div class="modal-body">
-  <ul *ngIf="list.length">
+  <h3>{{list[0]}}</h3>
+  <!-- <ul *ngIf="list.length">
     <li *ngFor="let item of list">{{item}}</li>
-  </ul>
+  </ul> -->
+  <h5>{{list[1]}}</h5>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">{{closeBtnName}}</button>
+  <button type="button" class="btn btn-default" (click)="confirm()" >Yes</button>
+  <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
 </div>

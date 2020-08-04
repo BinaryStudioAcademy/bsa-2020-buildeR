@@ -13,7 +13,15 @@ export class TestComponent implements OnInit {
   ngOnInit(): void {
   }
   openModalWithComponent(): void {
-    this.modalService.openModalWithComponent();
+    const message = 'Are you sure?';
+    const text = 'You will not be able to recover this imaginary file';
+    console.log(this.modalService.open(message, text));
+    // if (this.modalService.open(message, text)){
+    //   alert('you confirmed');
+    // }
+    // else{
+    //   alert('you declined');
+    // }
   }
 
 }
