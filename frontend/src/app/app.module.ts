@@ -4,15 +4,12 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ErrorInterceptor } from './shared/models/error.interceptor.service';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, NgbModule],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-  ],
+  imports: [BrowserModule, AppRoutingModule, NgbModule, CoreModule],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
