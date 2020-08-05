@@ -6,9 +6,11 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { WorkSpaceModule } from './modules/work-space/work-space.module';
+import { ModalContentComponent } from './components/modal-content/modal-content.component';
+import { TestComponent } from './components/test/test.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ModalContentComponent, TestComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -16,7 +18,6 @@ import { WorkSpaceModule } from './modules/work-space/work-space.module';
     SharedModule,
     WorkSpaceModule,
   ],
-  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
