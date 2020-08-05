@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { WorkSpaceModule } from './modules/work-space/work-space.module';
+import { ShellModule } from './shell/shell.module';
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { TestComponent } from './components/test/test.component';
 
@@ -17,7 +18,9 @@ import { TestComponent } from './components/test/test.component';
     CoreModule,
     SharedModule,
     WorkSpaceModule,
+    ShellModule,
   ],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
