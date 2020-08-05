@@ -9,8 +9,8 @@ export class ModalService {
 
   constructor(private modalService: NgbModal) { }
 
-  open(message: string = 'Confirm your changes',
-       text: string = 'Confirm your changes' ){
+  open(message: string = 'Are you sure?',
+       text: string = 'Changes will not be saved' ){
     const content = {
       title : 'Please Confirm your changes',
       message,
