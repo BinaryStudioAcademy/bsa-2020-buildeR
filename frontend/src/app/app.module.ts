@@ -9,7 +9,7 @@ import { ShellModule } from './shell/shell.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule, ShellModule],
+  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule, ShellModule ],
   providers: [],
   bootstrap: [AppComponent],
 })
