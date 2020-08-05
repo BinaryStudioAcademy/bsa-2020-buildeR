@@ -4,7 +4,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'portal',
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./modules/work-space/work-space.module').then(
