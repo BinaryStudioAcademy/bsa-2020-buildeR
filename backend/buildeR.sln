@@ -11,14 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "buildeR.DAL", "buildeR.DAL\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "buildeR.Common", "buildeR.Common\buildeR.Common.csproj", "{78F77665-79BC-4B80-9FE9-B02939D7E8AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "buildeR.SignalR", "buildeR.SignalR\buildeR.SignalR.csproj", "{F5ABC23C-CF1F-42DC-993C-6D78A4CA30F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "buildeR.SignalR", "buildeR.SignalR\buildeR.SignalR.csproj", "{F5ABC23C-CF1F-42DC-993C-6D78A4CA30F5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{838B4DBB-1410-4A03-AD02-835F48EE0C12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "buildeR.Processor", "buildeR.Processor\buildeR.Processor.csproj", "{8C38CB94-31C6-465E-81C7-419248A052FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{113327D3-407F-45D3-8EB6-603F46F4FD62}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "buildeR.Processor", "buildeR.Processor\buildeR.Processor.csproj", "{8C38CB94-31C6-465E-81C7-419248A052FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
