@@ -1,9 +1,10 @@
-﻿using System;
+﻿using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class Project
+    public class Project: Entity
     {
         public Project()
         {
@@ -13,17 +14,16 @@ namespace buildeR.DAL.Entities
             ProjectTrigger = new HashSet<ProjectTrigger>();
         }
 
-        public long Id { get; set; }
-        public long OwnerId { get; set; }
+        public int OwnerId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
-        public bool? IsPublic { get; set; }
+        public bool IsPublic { get; set; }
         public string RepositoryUrl { get; set; }
         public string CredentialId { get; set; }
-        public bool? IsAutoCancelBranchBuilds { get; set; }
-        public bool? IsAutoCancelPullRequestBuilds { get; set; }
-        public bool? IsCleanUpBeforeBuild { get; set; }
-        public byte[] CancelAfter { get; set; }
+        public bool IsAutoCancelBranchBuilds { get; set; }
+        public bool IsAutoCancelPullRequestBuilds { get; set; }
+        public bool IsCleanUpBeforeBuild { get; set; }
+        public int? CancelAfter { get; set; }
 
         public virtual User Owner { get; set; }
         public virtual ICollection<BuildHistory> BuildHistory { get; set; }

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class Notification
+    public class Notification: Entity
     {
-        public long Id { get; set; }
-        public int EntityType { get; set; }
-        public int? NotificationTrigger { get; set; }
+        public EntityType EntityType { get; set; }
+        public NotificationTrigger NotificationTrigger { get; set; }
         public string NotificationMessage { get; set; }
-        public long EntityId { get; set; }
+        public int EntityId { get; set; }
     }
 }

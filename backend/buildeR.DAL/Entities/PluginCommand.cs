@@ -1,12 +1,12 @@
-﻿using System;
+﻿using buildeR.DAL.Entities.Common;
+using System;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class PluginCommand
+    public class PluginCommand: Entity
     {
-        public long Id { get; set; }
-        public long PluginId { get; set; }
+        public int PluginId { get; set; }
 
         public virtual BuildPlugin Plugin { get; set; }
     }

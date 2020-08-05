@@ -1,9 +1,9 @@
-﻿using System;
+﻿using buildeR.DAL.Entities.Common;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class BuildPlugin
+    public class BuildPlugin: Entity
     {
         public BuildPlugin()
         {
@@ -11,7 +11,6 @@ namespace buildeR.DAL.Entities
             PluginCommand = new HashSet<PluginCommand>();
         }
 
-        public long Id { get; set; }
         public string PluginName { get; set; }
         public string Command { get; set; }
 

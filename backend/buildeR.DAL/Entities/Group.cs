@@ -1,9 +1,9 @@
-﻿using System;
+﻿using buildeR.DAL.Entities.Common;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class Group
+    public class Group: Entity
     {
         public Group()
         {
@@ -11,8 +11,7 @@ namespace buildeR.DAL.Entities
             TeamMember = new HashSet<TeamMember>();
         }
 
-        public long Id { get; set; }
-        public bool? IsPublic { get; set; }
+        public bool IsPublic { get; set; }
         public string GroupName { get; set; }
 
         public virtual ICollection<ProjectGroup> ProjectGroup { get; set; }

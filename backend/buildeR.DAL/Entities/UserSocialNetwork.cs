@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using buildeR.DAL.Entities.Common;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class UserSocialNetwork
-    {
-        public long Id { get; set; }
-        public long UserId { get; set; }
-        public long SocialNetworkId { get; set; }
+    public class UserSocialNetwork: Entity
+    { 
+        public int UserId { get; set; }
+        public int SocialNetworkId { get; set; }
         public string SocialNetworkUrl { get; set; }
 
         public virtual SocialNetwork SocialNetwork { get; set; }

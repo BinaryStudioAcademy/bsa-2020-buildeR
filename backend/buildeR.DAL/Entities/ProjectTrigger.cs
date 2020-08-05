@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class ProjectTrigger
+    public class ProjectTrigger: Entity
     {
-        public long ProjectId { get; set; }
-        public long Id { get; set; }
-        public int TriggerType { get; set; }
+        public int ProjectId { get; set; }
+        public TriggerType TriggerType { get; set; }
         public string BranchHash { get; set; }
 
         public virtual Project Project { get; set; }

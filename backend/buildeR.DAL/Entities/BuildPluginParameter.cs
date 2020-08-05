@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using buildeR.DAL.Entities.Common;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class BuildPluginParameters
+    public class BuildPluginParameter: Entity
     {
-        public long Id { get; set; }
-        public long BuildStepId { get; set; }
+        public int BuildStepId { get; set; }
         public string ParameterValue { get; set; }
         public string ParameterKey { get; set; }
 

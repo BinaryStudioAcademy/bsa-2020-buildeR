@@ -1,9 +1,10 @@
-﻿using System;
+﻿using buildeR.DAL.Entities.Common;
+using System;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class User
+    public class User: Entity
     {
         public User()
         {
@@ -13,7 +14,6 @@ namespace buildeR.DAL.Entities
             UserSocialNetwork = new HashSet<UserSocialNetwork>();
         }
 
-        public long Id { get; set; }
         public string UserRole { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }

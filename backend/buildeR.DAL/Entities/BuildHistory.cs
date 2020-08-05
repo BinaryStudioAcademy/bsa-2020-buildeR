@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
+using System;
 
 namespace buildeR.DAL.Entities
 {
-    public partial class BuildHistory
+    public class BuildHistory: Entity
     {
-        public long Id { get; set; }
-        public long ProjectId { get; set; }
-        public long PerformerId { get; set; }
-        public int BuildStatus { get; set; }
-        public byte[] Duration { get; set; }
+        public int ProjectId { get; set; }
+        public int PerformerId { get; set; }
+        public BuildStatus BuildStatus { get; set; }
+        public int Duration { get; set; }
         public DateTime BuildAt { get; set; }
         public string BranchHash { get; set; }
         public string CommitHash { get; set; }
