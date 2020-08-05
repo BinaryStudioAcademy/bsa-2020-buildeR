@@ -6,5 +6,8 @@ namespace buildeR.DAL.Enums
 {
     public enum EntityType
     {
+        Build,
+        Project,
+        Group
     }
 }

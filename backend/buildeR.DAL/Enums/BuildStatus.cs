@@ -6,5 +6,9 @@ namespace buildeR.DAL.Enums
 {
     public enum BuildStatus
     {
+        Error,
+        Failure,
+        Pending,
+        Success
     }
 }

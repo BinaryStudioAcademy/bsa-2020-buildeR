@@ -6,5 +6,10 @@ namespace buildeR.DAL.Enums
 {
     public enum LoggingVerbosity
     {
+        Error,
+        Warn,
+        Info,
+        Debug,
+        Verbose
     }
 }

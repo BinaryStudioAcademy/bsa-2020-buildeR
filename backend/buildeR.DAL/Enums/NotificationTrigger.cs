@@ -6,5 +6,8 @@ namespace buildeR.DAL.Enums
 {
     public enum NotificationTrigger
     {
+        Create,
+        Update,
+        Delete
     }
 }

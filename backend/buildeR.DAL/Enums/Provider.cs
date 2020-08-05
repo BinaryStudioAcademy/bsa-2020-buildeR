@@ -6,5 +6,7 @@ namespace buildeR.DAL.Enums
 {
     public enum Provider
     {
+        GitHub,
+        Bitbucket
     }
 }

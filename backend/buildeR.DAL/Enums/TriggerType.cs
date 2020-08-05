@@ -6,5 +6,8 @@ namespace buildeR.DAL.Enums
 {
     public enum TriggerType
     {
+        Create, 
+        Update,
+        Delete
     }
 }
