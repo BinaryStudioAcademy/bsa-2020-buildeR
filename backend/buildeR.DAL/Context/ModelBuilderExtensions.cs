@@ -14,7 +14,13 @@ namespace buildeR.DAL.Context
         
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 1,
+                FirstName = "Sasha",
+                LastName = "Pastukh",
+                Email = "random-email@gmail.com"
+            });
         }
     }
 }
