@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\buildeR.Common\buildeR.Common.csproj" />
     <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="automapper" Version="10.0.0" />
   </ItemGroup>
 
 </Project>
