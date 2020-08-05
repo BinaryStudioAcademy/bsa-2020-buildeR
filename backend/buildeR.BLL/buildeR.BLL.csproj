@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="VaultSharp" Version="1.4.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
   </ItemGroup>
 
