@@ -20,11 +20,7 @@ namespace buildeR.BLL.Services
 
         public async Task<Dictionary<string, string>> CreateSecretsAsync(Dictionary<string, string> secrets, string path = null)
         {
-            path = path ?? this.path;
-
-            if (string.IsNullOrEmpty(path))
-                throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
-                                                    "method, or pass 'path' directly to 'CreateSecretsAsync'");
+            path = ValidatePath(path);
 
             var result = await vaultClient.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
 
@@ -33,11 +29,7 @@ namespace buildeR.BLL.Services
 
         public async Task<Dictionary<string, string>> ReadSecretsAsync(string path = null)
         {
-            path = path ?? this.path;
-
-            if (string.IsNullOrEmpty(path))
-                throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
-                                                    "method, or pass 'path' directly to 'ReadSecretsAsync'");
+            path = ValidatePath(path);
 
             Secret<SecretData<Dictionary<string, string>>> result = default;
 
@@ -55,11 +47,7 @@ namespace buildeR.BLL.Services
 
         public async Task<Dictionary<string, string>> UpdateSecretsAsync(Dictionary<string, string> secrets, string path = null)
         {
-            path = path ?? this.path;
-
-            if (string.IsNullOrEmpty(path))
-                throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
-                                                    "method, or pass 'path' directly to 'UpdateSecretsAsync'");
+            path = ValidatePath(path);
 
             var result = await vaultClient.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
 
@@ -68,14 +56,11 @@ namespace buildeR.BLL.Services
 
         public async Task DeleteSecretAsync(string path = null)
         {
-            path = path ?? this.path;
-
-            if (string.IsNullOrEmpty(path))
-                throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
-                                                    "method, or pass 'path' directly to 'DeleteSecretAsync'");
+            path = ValidatePath(path);
 
             await vaultClient.V1.Secrets.KeyValue.V2.DeleteSecretAsync(path, "secret");
         }
+
         public void SetSecretsPath(string path)
         {
             if (String.IsNullOrEmpty(path))
@@ -95,6 +80,17 @@ namespace buildeR.BLL.Services
             var vaultClient = new VaultClient(vaultClientSettings);
 
             return vaultClient;
+        }
+
+        private string ValidatePath(string path)
+        {
+            var result = path ?? this.path;
+
+            if(string.IsNullOrEmpty(result))
+                throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
+                                                    "method, or pass 'path' directly to method.");
+
+            return result;
         }
     }
 }
