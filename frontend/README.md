@@ -1,6 +1,6 @@
 # BuildeR
 
-We are using [ng-bootstrap](https://ng-bootstrap.github.io/#/components/alert/examples) to style our component. There are lots of examples
+We are using ng-bootstrap to style our component. You can find lots of examples [here](https://ng-bootstrap.github.io/#/components/alert/examples)
 
 ## Extensions for development (required):
  - TSLint  (analysis tool that checks TypeScript code for readability, maintainability, and functionality errors)
