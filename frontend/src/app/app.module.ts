@@ -6,9 +6,11 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { ShellModule } from './shell/shell.module';
+import { ModalContentComponent } from './components/modal-content/modal-content.component';
+import { TestComponent } from './components/test/test.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ModalContentComponent, TestComponent],
   imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule, ShellModule ],
   providers: [],
   bootstrap: [AppComponent],
