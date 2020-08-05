@@ -7,10 +7,13 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { TestComponent } from './components/test/test.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [AppComponent, ModalContentComponent, TestComponent],
-  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule],
+  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule,  BrowserAnimationsModule,
+    ToastrModule.forRoot()],
   providers: [],
   bootstrap: [AppComponent],
 })
