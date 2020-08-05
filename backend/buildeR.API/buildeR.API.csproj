@@ -23,9 +23,5 @@
     <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Middleware\" />
-  </ItemGroup>
-
 
 </Project>

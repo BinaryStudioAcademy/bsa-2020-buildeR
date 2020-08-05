@@ -1,4 +1,5 @@
 using buildeR.API.Extensions;
+using buildeR.API.Middleware;
 using buildeR.DAL.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +47,8 @@ namespace buildeR
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
