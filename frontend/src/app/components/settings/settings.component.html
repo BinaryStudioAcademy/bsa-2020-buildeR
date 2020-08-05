@@ -4,8 +4,8 @@
   <div class="bg-light border-right" id="sidebar-wrapper">
     <div class="sidebar-heading"><h2 class="display-4">Settings</h2></div>
     <div class="list-group list-group-flush">
-      <a href="#" class="list-group-item list-group-item-action bg-light">User Settings</a>
-      <a href="#" class="list-group-item list-group-item-action bg-light">Another settings</a>
+      <a routerLink="settings/user" class="list-group-item list-group-item-action bg-light">User Settings</a>
+      <a routerLink="settings/porject" class="list-group-item list-group-item-action bg-light">Project settings</a>
       <a href="#" class="list-group-item list-group-item-action bg-light">New settings</a>
     </div>
   </div>
@@ -13,12 +13,7 @@
 
   <!-- Page Content -->
   <div class="container" id="page-content-wrapper">
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom" id="navbar-horisontal">
-
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -45,7 +40,7 @@
 
     <div class="container-fluid">
     </div>
-    Some content here!
+    <router-outlet></router-outlet>
   </div>
   <!-- /#page-content-wrapper -->
 

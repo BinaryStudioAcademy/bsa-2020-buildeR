@@ -8,9 +8,10 @@ import { SharedModule } from './shared/shared.module';
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { UserSettingsComponent } from './components/settings/user-settings/user-settings.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ProjectSettingsComponent } from './components/settings/project-settings/project-settings.component';
 
 @NgModule({
-  declarations: [AppComponent, ModalContentComponent, UserSettingsComponent, SettingsComponent],
+  declarations: [AppComponent, ModalContentComponent, UserSettingsComponent, SettingsComponent, ProjectSettingsComponent],
   imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule],
   providers: [],
   bootstrap: [AppComponent],
