@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -9,18 +9,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ModalContentComponent implements OnInit {
 
   @Input() public content;
-  @Output() passEntry: EventEmitter<boolean> = new EventEmitter();
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
   confirm(){
-    this.passEntry.emit(true);
     this.activeModal.close();
   }
   decline(){
-    this.passEntry.emit(false);
-    this.activeModal.close();
+    this.activeModal.dismiss();
   }
 }

@@ -12,13 +12,12 @@ export class ModalService {
   open(message: string = 'Are you sure?',
        text: string = 'Changes will not be saved' ){
     const content = {
-      title : 'Please Confirm your changes',
+      title : 'Please confirm your action',
       message,
       text,
     };
     const modalRef = this.modalService.open(ModalContentComponent);
     modalRef.componentInstance.content = content;
-    return new Promise<boolean>((resolve, reject) =>
-      modalRef.componentInstance.passEntry.subscribe((result) => resolve(result) ));
+    return modalRef.result.then(() => true).catch(() => false);
   }
 }
