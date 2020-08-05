@@ -7,13 +7,14 @@
   },
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "@env/*": [ "src/environments/*" ],
+      "@core/*": [ "src/app/core/*" ],
+      "@shared/*": [ "src/app/shared/*" ],
+      "@modules/*": [ "src/app/modules/*" ]
+  }
   },
-  "files": [
-    "src/main.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts"
-  ]
+  "files": ["src/main.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.d.ts"]
 }

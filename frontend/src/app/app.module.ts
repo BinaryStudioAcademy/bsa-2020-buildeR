@@ -3,18 +3,16 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { ShellModule } from './shell/shell.module';
+import { ModalContentComponent } from './components/modal-content/modal-content.component';
+import { TestComponent } from './components/test/test.component';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule
-  ],
+  declarations: [AppComponent, ModalContentComponent, TestComponent],
+  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule, ShellModule ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

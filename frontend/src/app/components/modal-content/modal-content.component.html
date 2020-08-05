@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{content.title}}</h4>
+</div>
+<div class="modal-body">
+ <!-- <img src="#">-->
+  <h3>{{content.message}}</h3>
+  <h5>{{content.text}}</h5>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" (click)="confirm()" >Yes</button>
+  <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
+</div>
