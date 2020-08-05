@@ -5,7 +5,6 @@ import { LandingPageComponent } from './shell/landing-page/landing-page.componen
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
   {
     path: 'portal',
     canActivate: [AuthGuard],
@@ -14,6 +13,7 @@ const routes: Routes = [
         (m) => m.WorkSpaceModule
       ),
   },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
 @NgModule({

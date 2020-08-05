@@ -24,7 +24,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
           },
           {
             path: '**',
-            redirectTo: '/dashboard',
+            redirectTo: 'dashboard',
             pathMatch: 'full',
           },
         ],
