@@ -10,8 +10,7 @@ namespace buildeR.DAL.Context
         {
             // apply configurations from EntityConfigurations folder
            // modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfig).Assembly);
-        }
-    
+        }   
         public static void Seed(this ModelBuilder modelBuilder)
         {
          

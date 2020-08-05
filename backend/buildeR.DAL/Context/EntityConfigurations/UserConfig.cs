@@ -8,10 +8,10 @@ namespace buildeR.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<User> entity)
         {
-            entity.Property(p => p.FirstName).IsRequired().HasMaxLength(20);
-            entity.Property(p => p.LastName).IsRequired().HasMaxLength(20);
-            entity.Property(p => p.Email).IsRequired().HasMaxLength(30);
-            entity.ToTable("User");
+            //entity.Property(p => p.FirstName).IsRequired().HasMaxLength(20);
+            //entity.Property(p => p.LastName).IsRequired().HasMaxLength(20);
+            //entity.Property(p => p.Email).IsRequired().HasMaxLength(30);
+            //entity.ToTable("User");
         }
     }
 }

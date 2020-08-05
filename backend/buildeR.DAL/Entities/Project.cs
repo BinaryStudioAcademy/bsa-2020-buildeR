@@ -8,15 +8,15 @@ namespace buildeR.DAL.Entities
     {
         public Project()
         {
-            BuildHistory = new HashSet<BuildHistory>();
-            BuildStep = new HashSet<BuildStep>();
-            ProjectGroup = new HashSet<ProjectGroup>();
-            ProjectTrigger = new HashSet<ProjectTrigger>();
+            BuildHistories = new HashSet<BuildHistory>();
+            BuildSteps = new HashSet<BuildStep>();
+            ProjectGroups = new HashSet<ProjectGroup>();
+            ProjectTriggers = new HashSet<ProjectTrigger>();
         }
 
         public int OwnerId { get; set; }
-        public string ProjectName { get; set; }
-        public string ProjectDescription { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public bool IsPublic { get; set; }
         public string RepositoryUrl { get; set; }
         public string CredentialId { get; set; }
@@ -26,9 +26,9 @@ namespace buildeR.DAL.Entities
         public int? CancelAfter { get; set; }
 
         public virtual User Owner { get; set; }
-        public virtual ICollection<BuildHistory> BuildHistory { get; set; }
-        public virtual ICollection<BuildStep> BuildStep { get; set; }
-        public virtual ICollection<ProjectGroup> ProjectGroup { get; set; }
-        public virtual ICollection<ProjectTrigger> ProjectTrigger { get; set; }
+        public virtual ICollection<BuildHistory> BuildHistories { get; set; }
+        public virtual ICollection<BuildStep> BuildSteps { get; set; }
+        public virtual ICollection<ProjectGroup> ProjectGroups { get; set; }
+        public virtual ICollection<ProjectTrigger> ProjectTriggers { get; set; }
     }
 }

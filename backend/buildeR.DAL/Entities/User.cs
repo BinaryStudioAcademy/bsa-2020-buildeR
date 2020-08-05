@@ -8,13 +8,13 @@ namespace buildeR.DAL.Entities
     {
         public User()
         {
-            BuildHistory = new HashSet<BuildHistory>();
-            Project = new HashSet<Project>();
-            TeamMember = new HashSet<TeamMember>();
-            UserSocialNetwork = new HashSet<UserSocialNetwork>();
+            BuildHistories = new HashSet<BuildHistory>();
+            Projects = new HashSet<Project>();
+            TeamMembers = new HashSet<TeamMember>();
+            UserSocialNetworks = new HashSet<UserSocialNetwork>();
         }
 
-        public string UserRole { get; set; }
+        public string Role { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string AvatarUrl { get; set; }
@@ -22,9 +22,9 @@ namespace buildeR.DAL.Entities
         public string LastName { get; set; }
         public string Bio { get; set; }
 
-        public virtual ICollection<BuildHistory> BuildHistory { get; set; }
-        public virtual ICollection<Project> Project { get; set; }
-        public virtual ICollection<TeamMember> TeamMember { get; set; }
-        public virtual ICollection<UserSocialNetwork> UserSocialNetwork { get; set; }
+        public virtual ICollection<BuildHistory> BuildHistories { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<TeamMember> TeamMembers { get; set; }
+        public virtual ICollection<UserSocialNetwork> UserSocialNetworks { get; set; }
     }
 }

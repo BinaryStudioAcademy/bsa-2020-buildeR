@@ -5,8 +5,8 @@ namespace buildeR.DAL.Entities
     public class BuildPluginParameter: Entity
     {
         public int BuildStepId { get; set; }
-        public string ParameterValue { get; set; }
-        public string ParameterKey { get; set; }
+        public string Value { get; set; }
+        public string Key { get; set; }
 
         public virtual BuildStep BuildStep { get; set; }
     }

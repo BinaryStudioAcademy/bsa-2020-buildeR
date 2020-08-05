@@ -7,14 +7,14 @@ namespace buildeR.DAL.Entities
     {
         public BuildPlugin()
         {
-            BuildStep = new HashSet<BuildStep>();
-            PluginCommand = new HashSet<PluginCommand>();
+            BuildSteps = new HashSet<BuildStep>();
+            PluginCommands = new HashSet<PluginCommand>();
         }
 
         public string PluginName { get; set; }
         public string Command { get; set; }
 
-        public virtual ICollection<BuildStep> BuildStep { get; set; }
-        public virtual ICollection<PluginCommand> PluginCommand { get; set; }
+        public virtual ICollection<BuildStep> BuildSteps { get; set; }
+        public virtual ICollection<PluginCommand> PluginCommands { get; set; }
     }
 }

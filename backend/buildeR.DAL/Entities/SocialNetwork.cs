@@ -8,11 +8,11 @@ namespace buildeR.DAL.Entities
     {
         public SocialNetwork()
         {
-            UserSocialNetwork = new HashSet<UserSocialNetwork>();
+            UserSocialNetworks = new HashSet<UserSocialNetwork>();
         }
 
         public Provider ProviderId { get; set; }
 
-        public virtual ICollection<UserSocialNetwork> UserSocialNetwork { get; set; }
+        public virtual ICollection<UserSocialNetwork> UserSocialNetworks { get; set; }
     }
 }
