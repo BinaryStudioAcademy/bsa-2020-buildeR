@@ -1,4 +1,5 @@
 ﻿using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
@@ -10,7 +11,7 @@ namespace buildeR.DAL.Entities
             UserSocialNetwork = new HashSet<UserSocialNetwork>();
         }
 
-        public int ProviderId { get; set; }
+        public Provider ProviderId { get; set; }
 
         public virtual ICollection<UserSocialNetwork> UserSocialNetwork { get; set; }
     }
