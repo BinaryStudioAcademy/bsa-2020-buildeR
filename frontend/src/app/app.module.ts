@@ -9,10 +9,11 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { UserSettingsComponent } from './components/settings/user-settings/user-settings.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProjectSettingsComponent } from './components/settings/project-settings/project-settings.component';
+import { ReactiveFormsModule  } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, ModalContentComponent, UserSettingsComponent, SettingsComponent, ProjectSettingsComponent],
-  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule],
+  imports: [BrowserModule, AppRoutingModule, CoreModule, SharedModule, ReactiveFormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

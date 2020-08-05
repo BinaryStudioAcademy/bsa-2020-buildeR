@@ -1,1 +1,27 @@
-Content of User Settings
+<div class="container">
+  <form [formGroup]="settingsForm">
+      <h1>User</h1>
+      <div class="group">
+              <div class="form-group col-md-4">
+                  Name
+                  <input type="text" class="form-control" formControlName="name" placeholder="Name">
+          </div>
+               <div class="form-group col-md-4">
+                  Email
+                  <input type="email" class="form-control" formControlName="email" placeholder="example@mail.com">
+              </div>
+              <div class="col-md-4">
+                <label>Location</label>
+                <input type="text" class="form-control" formControlName="location" placeholder="Kharkiv, Ukraine">
+            </div>
+              <div class="col-md-4">
+                  <label>Website</label>
+                  <input type="text" class="form-control" formControlName="website" placeholder="www.example.com">
+              </div>
+              <div class="col-md-4">
+                <label>Bio</label>
+                <input type="text" class="form-control" formControlName="bio" placeholder="Tell us something about yourself">
+            </div>
+      </div>
+  </form>
+</div>
