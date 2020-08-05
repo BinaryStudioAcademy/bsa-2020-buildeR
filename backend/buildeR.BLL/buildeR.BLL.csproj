@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
