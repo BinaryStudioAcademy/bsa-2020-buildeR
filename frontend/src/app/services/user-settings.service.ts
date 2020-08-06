@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from "../core/services/http.service";
+import { HttpService } from '../core/services/http.service';
 import { UserSettings } from '../shared/models/UserSettings';
 @Injectable({
   providedIn: 'root'

@@ -23,8 +23,7 @@ import { UserModule } from '../app/modules/settings/settings.module';
     WorkSpaceModule,
     ShellModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot(),
-    UserModule
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent],

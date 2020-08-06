@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { UserSettings } from '../../../shared/models/UserSettings';
+import { UserSettings } from '../../../shared/models/userSettings';
 import { UserSettingsService } from '../../../services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
