@@ -1,5 +1,6 @@
 ﻿using buildeR.Common.DTO.Project;
 using buildeR.Common.DTO.TeamMember;
+using buildeR.Common.DTO.User.Enums;
 using buildeR.Common.DTO.UserSocialNetwork;
 
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace buildeR.Common.DTO.User
     public sealed class UserDTO
     {
         public int Id { get; set; }
-        public int Role { get; set; }
+        public RoleUserDto Role { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string AvatarUrl { get; set; }

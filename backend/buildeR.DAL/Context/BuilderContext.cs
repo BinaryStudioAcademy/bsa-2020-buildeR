@@ -17,7 +17,7 @@ namespace buildeR.DAL.Context
         public DbSet<ProjectTrigger> ProjectTriggers { get; }
         public DbSet<SocialNetwork> SocialNetworks { get; }
         public DbSet<TeamMember> TeamMembers { get; }
-        public DbSet<User> Users { get; }
+        public DbSet<User> Users { get; set; }
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; }
         public BuilderContext(DbContextOptions options) : base(options) {}
 
