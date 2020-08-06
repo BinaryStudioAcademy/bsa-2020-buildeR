@@ -11,6 +11,7 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { TestComponent } from './components/test/test.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { UserModule } from '../app/modules/settings/settings.module';
 
 @NgModule({
   declarations: [AppComponent, ModalContentComponent, TestComponent],
@@ -22,7 +23,9 @@ import { ToastrModule } from 'ngx-toastr';
     WorkSpaceModule,
     ShellModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()],
+    ToastrModule.forRoot(),
+    UserModule
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
