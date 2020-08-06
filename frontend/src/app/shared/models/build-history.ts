@@ -1,4 +1,5 @@
 import { User } from './user';
+import { BuildStatus } from './build-status';
 
 export interface BuildHistory {
   id: number;
@@ -8,4 +9,5 @@ export interface BuildHistory {
   buildAt: Date;
   branchHash: string;
   commitHash: string;
+  buildStatus: BuildStatus;
 }
