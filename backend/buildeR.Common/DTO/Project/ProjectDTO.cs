@@ -16,6 +16,8 @@ namespace buildeR.Common.DTO.Project
         public bool IsPublic { get; set; }
         public string RepositoryUrl { get; set; }
 
+        public BuildHistoryDTO LastBuildHistory { get; set; }
+
         public string CredentialsId { get; set; }
         public bool IsAutoCancelBranchBuilds { get; set; }
         public bool IsAutoCancelPullRequestBuilds { get; set; }
