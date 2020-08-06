@@ -1,3 +1,5 @@
+using buildeR.API.Extensions;
+using buildeR.API.Middleware;
 using buildeR.DAL.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,14 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.Extensions.Hosting.IHostEnvironment;
 
 namespace buildeR
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true,
+                    optional: true)
+                .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -23,6 +33,7 @@ namespace buildeR
         {
             services.AddControllers();
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["BuilderDbConnection"]));
+            services.RegisterCustomServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +43,8 @@ namespace buildeR
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

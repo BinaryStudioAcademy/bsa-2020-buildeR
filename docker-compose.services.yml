@@ -1,0 +1,12 @@
+version: '3.8'
+services: 
+    vault:
+        image: vault:1.5.0
+        container_name: vault
+        restart: on-failure
+        ports:
+            - 8200:8200
+        environment: 
+            - VAULT_DEV_ROOT_TOKEN_ID='buildeR_DEV_TOKEN'
+        cap_add:
+            - IPC_LOCK

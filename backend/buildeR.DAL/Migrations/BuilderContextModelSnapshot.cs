@@ -316,13 +316,6 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-            modelBuilder.Entity("buildeR.DAL.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
