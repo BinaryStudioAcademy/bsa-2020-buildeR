@@ -3,6 +3,6 @@ export interface UserSettings {
   avatarUrl: string;
   email: string;
   location: string;
-  website: string;
+  username: string;
   bio: string;
 }

@@ -24,7 +24,7 @@ export class UserSettingsComponent implements OnInit {
           Validators.required
         ]),
         'location': new FormControl(this.details.location),
-        'website': new FormControl(this.details.website),
+        'username': new FormControl(this.details.username),
         'bio' : new FormControl(this.details.bio,
           [
             Validators.maxLength(200)
