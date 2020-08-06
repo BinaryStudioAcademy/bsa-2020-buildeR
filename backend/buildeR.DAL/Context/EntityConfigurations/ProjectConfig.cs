@@ -13,6 +13,21 @@ namespace buildeR.DAL.Context.EntityConfigurations
                 .WithMany(o => o.Projects)
                 .HasForeignKey(e => e.OwnerId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            //entity.HasMany(e => e.BuildHistories)
+            //    .WithOne(bh => bh.Project)
+            //    .HasForeignKey(bh => bh.ProjectId)
+            //    .OnDelete(DeleteBehavior.NoAction);
+
+            //entity.HasMany(e => e.BuildSteps)
+            //    .WithOne(bs => bs.Project)
+            //    .HasForeignKey(bs => bs.ProjectId)
+            //    .OnDelete(DeleteBehavior.NoAction);
+
+            //entity.HasMany(e => e.ProjectGroups)
+            //    .WithOne(pg => pg.Project)
+            //    .HasForeignKey(pg => pg.ProjectId)
+            //    .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

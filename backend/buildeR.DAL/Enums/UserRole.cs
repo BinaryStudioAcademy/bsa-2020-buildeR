@@ -4,10 +4,10 @@ using System.Text;
 
 namespace buildeR.DAL.Enums
 {
-    public enum TriggerType
+    public enum UserRole
     {
-        Create,
-        Update,
-        Delete
+        Admin,
+        Creator,
+        Viever
     }
 }

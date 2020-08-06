@@ -20,6 +20,11 @@ namespace buildeR.DAL.Context.EntityConfigurations
                 .WithMany(p => p.BuildSteps)
                 .HasForeignKey(e => e.BuildPluginId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            //entity.HasMany(e => e.BuildPluginParameters)
+            //    .WithOne(bpp => bpp.BuildStep)
+            //    .HasForeignKey(bpp => bpp.BuildStepId)
+            //    .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

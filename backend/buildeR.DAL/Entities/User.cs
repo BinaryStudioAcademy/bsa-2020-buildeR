@@ -1,4 +1,5 @@
 ﻿using buildeR.DAL.Entities.Common;
+using buildeR.DAL.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +15,7 @@ namespace buildeR.DAL.Entities
             UserSocialNetworks = new HashSet<UserSocialNetwork>();
         }
 
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string AvatarUrl { get; set; }

@@ -11,7 +11,7 @@ namespace buildeR.DAL.Entities
             UserSocialNetworks = new HashSet<UserSocialNetwork>();
         }
 
-        public Provider ProviderId { get; set; }
+        public Provider ProviderName { get; set; }
 
         public virtual ICollection<UserSocialNetwork> UserSocialNetworks { get; set; }
     }
