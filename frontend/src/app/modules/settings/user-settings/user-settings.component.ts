@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { UserSettings } from '../../../shared/models/UserSettings';
+import { UserSettings } from '../../../models/user-settings';
 import { UserSettingsService } from '../../../services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
@@ -15,9 +15,13 @@ export class UserSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
-      name: new FormControl(this.details.name,
+      firstName: new FormControl(this.details.firstName,
         [
           Validators.required
+        ]),
+      lastName: new FormControl(this.details.lastName,
+         [
+           Validators.required
         ]),
       email: new FormControl(this.details.email,
         [
