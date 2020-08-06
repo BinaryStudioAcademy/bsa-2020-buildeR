@@ -35,12 +35,16 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+<<<<<<< HEAD
 
             string connectionString = Configuration["ConnectionStrings:BuilderContextConnection"];
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(connectionString, b => b.MigrationsAssembly("buildeR.DAL")));
             
 
+=======
+            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["BuilderDbConnection"]));
+>>>>>>> dev
             services.RegisterCustomServices();
         }
 

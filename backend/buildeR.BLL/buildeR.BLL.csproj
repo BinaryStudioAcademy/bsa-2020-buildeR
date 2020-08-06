@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="VaultSharp" Version="1.4.0.5" />
+    <ProjectReference Include="..\buildeR.Common\buildeR.Common.csproj" />
+    <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
+    <PackageReference Include="automapper" Version="10.0.0" />
+    <PackageReference Include="VaultSharp" Version="1.4.0.5" />
   </ItemGroup>
 
 </Project>
