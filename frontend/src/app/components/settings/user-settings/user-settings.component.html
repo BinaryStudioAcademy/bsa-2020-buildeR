@@ -1,27 +1,44 @@
 <div class="container">
   <form [formGroup]="settingsForm">
-      <h1>User</h1>
-      <div class="group">
-              <div class="form-group col-md-4">
-                  Name
-                  <input type="text" class="form-control" formControlName="name" placeholder="Name">
-          </div>
-               <div class="form-group col-md-4">
-                  Email
-                  <input type="email" class="form-control" formControlName="email" placeholder="example@mail.com">
-              </div>
-              <div class="col-md-4">
-                <label>Location</label>
-                <input type="text" class="form-control" formControlName="location" placeholder="Kharkiv, Ukraine">
-            </div>
-              <div class="col-md-4">
-                  <label>Website</label>
-                  <input type="text" class="form-control" formControlName="website" placeholder="www.example.com">
-              </div>
-              <div class="col-md-4">
-                <label>Bio</label>
-                <input type="text" class="form-control" formControlName="bio" placeholder="Tell us something about yourself">
-            </div>
+
+    <div class="group">
+      <div class="col-md-4">
+        <div class="field-1">
+          <span>First Name</span>
+          <input type="text" class="form-control" formControlName="name" placeholder="Name">
+        </div>
+        <small>Use your real name so people can recognize you</small>
       </div>
+      <div class="col-md-4">
+
+          <span>Last Name</span>
+          <input type="text" class="form-control" formControlName="name" placeholder="Name">
+      </div>
+      <div class="col-md-4">
+        <div class="field">
+          <span>Email</span>
+          <input type="email" class="form-control" formControlName="email" placeholder="example@mail.com">
+        </div>
+
+      </div>
+      <div class="col-md-4">
+        <div class="field">
+          Location
+          <input type="text" class="form-control" formControlName="location" placeholder="Kharkiv, Ukraine">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="field">
+          Website
+          <input type="text" class="form-control" formControlName="website" placeholder="www.example.com">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="field">
+          Bio
+          <input type="text" class="form-control" formControlName="bio" placeholder="Tell us something about yourself">
+        </div>
+      </div>
+    </div>
   </form>
 </div>
