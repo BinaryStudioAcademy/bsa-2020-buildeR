@@ -1,4 +1,5 @@
-﻿using System;
+﻿using buildeR.BLL.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VaultSharp;
@@ -8,7 +9,7 @@ using VaultSharp.V1.Commons;
 
 namespace buildeR.BLL.Services
 {
-    public class SecretService
+    public class SecretService: ISecretService
     {
         private readonly IVaultClient vaultClient;
         private string path;
@@ -54,7 +55,7 @@ namespace buildeR.BLL.Services
             return result.Data;
         }
 
-        public async Task DeleteSecretAsync(string path = null)
+        public async Task DeleteSecretsAsync(string path = null)
         {
             path = ValidatePath(path);
 
