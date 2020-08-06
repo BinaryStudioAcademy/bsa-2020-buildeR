@@ -53,7 +53,7 @@ namespace buildeR
             {
                 AutoRegisterTemplate = true,
                 IndexFormat = $"api.logs"
-            }; ;
+            };
         }
     }
 }

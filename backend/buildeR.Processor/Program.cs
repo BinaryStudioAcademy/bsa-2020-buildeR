@@ -53,7 +53,7 @@ namespace builder.Processor
             {
                 AutoRegisterTemplate = true,
                 IndexFormat = $"processor.logs"
-            }; ;
+            };
         }
     }
 }
