@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UserSettings } from '../../../models/user-settings';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UserSettingsService } from '../../../services/user-settings.service';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -9,7 +10,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class UserSettingsComponent implements OnInit {
   @Input() details: UserSettings = {} as UserSettings;
   public settingsForm: FormGroup;
-  constructor() { }
+  constructor(settingsService: UserSettingsService) { }
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
@@ -30,5 +31,7 @@ export class UserSettingsComponent implements OnInit {
           ])
     });
   }
+
+
 
 }
