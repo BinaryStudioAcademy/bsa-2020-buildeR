@@ -1,8 +1,11 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
+using buildeR.BLL.Interfaces.Uploads;
+using buildeR.BLL.Services.Uploads;
 using buildeR.DAL.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,8 +35,17 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["BuilderDbConnection"]));
+            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BuilderDbConnection")));
             services.RegisterCustomServices();
+            services.AddScoped<IImageUpload, ImageUpload>();
+            services.AddCors();
+
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +55,7 @@ namespace buildeR
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions

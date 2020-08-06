@@ -11,9 +11,10 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { TestComponent } from './components/test/test.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { ImgComponent } from './components/img/img.component';
 
 @NgModule({
-  declarations: [AppComponent, ModalContentComponent, TestComponent],
+  declarations: [AppComponent, ModalContentComponent, TestComponent, ImgComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
