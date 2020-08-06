@@ -29,7 +29,7 @@
 
         <div *ngIf="project.lastBuildHistory; then existBuildBlock else notExistBuildBlock"></div>
         <ng-template #existBuildBlock>
-            <div class="d-inline m-auto">
+            <div class="d-inline my-auto mx-5">
                 <p class="text-muted small">
                     Default branch
                 </p>
@@ -37,18 +37,17 @@
                     {{project.lastBuildHistory.branchHash}}
                 </p>
             </div>
-            <div class="d-inline m-auto">
+            <div class="d-inline my-auto mx-5">
                 <p class="text-muted small">
                     Last build
                 </p>
-                <p class="small font-weight-bold">
-
+                <p class="small font-weight-bold build-status">
                     <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
             <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span> {{project.lastBuildHistory.buildStatus | buildStatus}}
                     </span>
                 </p>
             </div>
-            <div class="d-inline m-auto">
+            <div class="d-inline my-auto ml-5 mr-2">
                 <p class="text-muted small">
                     Commit
                 </p>
@@ -56,13 +55,12 @@
                     {{project.lastBuildHistory.commitHash}}
                 </p>
             </div>
-            <div class="d-inline m-auto">
+            <div class="d-inline my-auto ml-5">
                 <p class="text-muted small">
                     Finished
                 </p>
                 <p class="small">
-                    {{project.lastBuildHistory.buildAt.toLocaleString()}}
-                    <!-- TODO use https://momentjs.com/ -->
+                    {{project.lastBuildHistory.buildAt | dateAgo}}
                 </p>
             </div>
 
