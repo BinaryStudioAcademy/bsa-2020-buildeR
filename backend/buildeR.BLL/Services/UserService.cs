@@ -63,16 +63,13 @@ namespace buildeR.BLL.Services
         {
             var user = _mapper.Map<User>(userDTO);
             var existing = await _context.Users.FirstOrDefaultAsync(x => x.Id == userDTO.Id);
-            if (existing != null)
+            if (existing == null)
             {
-                _context.Entry(existing).CurrentValues.SetValues(user);
-                await _context.SaveChangesAsync();
-                return _mapper.Map<UserDTO>(existing);
+                throw new NotFoundException("user", userDTO.Id);
             }
-            else
-            {
-                throw new NullReferenceException();
-            }
+            _context.Entry(existing).CurrentValues.SetValues(user);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<UserDTO>(existing);
         }
         
 
