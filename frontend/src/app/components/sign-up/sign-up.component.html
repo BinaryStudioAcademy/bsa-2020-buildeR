@@ -5,27 +5,29 @@
         <div class="inner">
           <div class="sign-up-card">
             <div class="content">
-              <h6>Sign in</h6>
+              <h6>Sign up for buildeR</h6>
               <div class="intro">
-                <p>Welcome back!</p>
+                <p>Set up your first project in just one minute.</p>
+                <p>Your first 100 builds are free! No credit card required.</p>
               </div>
-              <button class="btn">
+              <button class="btn" (click)="gitHubSignUp()">
                 <div class="icon">
                   <i class="fa fa-github" aria-hidden="true"></i>
                 </div>
                 <div class="button-text">
-                  <p>sign in with github</p>
+                  <p>sign up with github</p>
                 </div>
               </button>
-              <button class="btn">
+              <button class="btn"  (click)="bitbucketSignUp()">
                 <div class="icon">
                   <i class="fa fa-bitbucket" aria-hidden="true"></i>  
                 </div>
                 <div class="button-text">
-                  <p>sign in with bitbucket</p>
+                  <p>sign up with bitbucket</p>
                 </div>
               </button>
-              <p>Don't have an account? <a routerLink="/registration/signup">Sign up</a></p>
+              <p>Return to main page <a routerLink="/">Back</a></p>
+              <p>Already have an account ? <a routerLink="/signin">Sign in</a></p>
             
             
             </div>

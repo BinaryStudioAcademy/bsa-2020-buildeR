@@ -15,10 +15,10 @@ export class LandingPageComponent implements OnInit {
   }
 
   signUpRedirect() {
-    this.router.navigate(['/registration/signup']);
+    this.router.navigate(['signup']);
   }
 
   signInRedirect() {
-    this.router.navigate(['/registration/signin']);
+    this.router.navigate(['signin']);
   }
 }
