@@ -26,7 +26,8 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
     WorkSpaceModule,
     ShellModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()],
+    ToastrModule.forRoot()
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

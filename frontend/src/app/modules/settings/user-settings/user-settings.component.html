@@ -1,0 +1,54 @@
+<div class="container">
+  <form [formGroup]="settingsForm">
+    <div class="group">
+      <div class="input-area">
+      <div class="avatar-container" (click)="file.click()">
+      <input hidden class="file-hide" #file accept="image/*" type="file">
+      <img class="avatar avatar-style" src="{{details.avatarUrl}}"
+      onerror="this.src='../../../../assets/images/Avatar-default.png'">
+      <div class="img-text">
+        Upload
+      </div>
+    </div>
+    </div>
+    <div class="field">
+      <span>First Name</span>
+    </div>
+      <div class="input-area">
+          <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="Name">
+          <small>Use your real name so people can recognize you</small>
+      </div>
+      <div class="field">
+        <span>Last Name</span>
+      </div>
+      <div class="input-area">
+          <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Name">
+      </div>
+      <div class="field">
+        Username
+      </div>
+      <div class="input-area">
+          <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="Your username">
+      </div>
+      <div class="field">
+        <span>Email</span>
+      </div>
+      <div class="input-area">
+          <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="example@mail.com">
+      </div>
+      <div class="field">
+        Location
+      </div>
+      <div class="input-area">
+          <input type="text" class="form-control form-control-sm" formControlName="location" placeholder="Kharkiv, Ukraine">
+      </div>
+      <div class="field">
+        Bio
+      </div>
+      <div class="input-area">
+          <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio" placeholder="Tell us something about yourself">
+      </textarea>
+      </div>
+    </div>
+  </form>
+</div>
