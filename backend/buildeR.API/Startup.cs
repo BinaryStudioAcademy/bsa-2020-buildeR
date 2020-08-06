@@ -1,9 +1,12 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
+using buildeR.Common.FluentValidatiors;
 using buildeR.DAL.Context;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,12 +34,8 @@ namespace buildeR
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            string connectionString = Configuration["ConnectionStrings:BuilderContextConnection"];
-            services.AddDbContext<BuilderContext>(options =>
-                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("buildeR.DAL")));
-
+            services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
+            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
             services.RegisterCustomServices();
         }
 
