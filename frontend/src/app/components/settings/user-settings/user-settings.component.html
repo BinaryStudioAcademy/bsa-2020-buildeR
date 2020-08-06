@@ -1,43 +1,52 @@
 <div class="container">
   <form [formGroup]="settingsForm">
-
     <div class="group">
       <div class="col-md-4">
-        <div class="field-1">
-          <span>First Name</span>
-          <input type="text" class="form-control" formControlName="name" placeholder="Name">
-        </div>
+      <div class="avatar-container" (click)="file.click()">
+      <input hidden class="file-hide" #file accept="image/*" type="file">
+      <img class="avatar avatar-style" src="{{details.avatarUrl}}"
+      onerror="this.src='../../../../assets/images/Avatar-default.png'">
+      <div class="img-text">
+        Upload
+      </div>
+    </div>
+    </div>
+    <div class="field">
+      <span>First Name</span>
+    </div>
+      <div class="col-md-4">
+          <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Name">
         <small>Use your real name so people can recognize you</small>
       </div>
-      <div class="col-md-4">
-
-          <span>Last Name</span>
-          <input type="text" class="form-control" formControlName="name" placeholder="Name">
+      <div class="field">
+        <span>Last Name</span>
       </div>
       <div class="col-md-4">
-        <div class="field">
-          <span>Email</span>
-          <input type="email" class="form-control" formControlName="email" placeholder="example@mail.com">
-        </div>
-
+          <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Name">
+      </div>
+      <div class="field">
+        <span>Email</span>
       </div>
       <div class="col-md-4">
-        <div class="field">
-          Location
-          <input type="text" class="form-control" formControlName="location" placeholder="Kharkiv, Ukraine">
-        </div>
+          <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="example@mail.com">
+      </div>
+      <div class="field">
+        Location
       </div>
       <div class="col-md-4">
-        <div class="field">
-          Website
-          <input type="text" class="form-control" formControlName="website" placeholder="www.example.com">
-        </div>
+          <input type="text" class="form-control form-control-sm" formControlName="location" placeholder="Kharkiv, Ukraine">
+      </div>
+      <div class="field">
+        Website
       </div>
       <div class="col-md-4">
-        <div class="field">
-          Bio
-          <input type="text" class="form-control" formControlName="bio" placeholder="Tell us something about yourself">
-        </div>
+          <input type="text" class="form-control form-control-sm" formControlName="website" placeholder="www.example.com">
+      </div>
+      <div class="field">
+        Bio
+      </div>
+      <div class="col-md-4">
+          <input type="text" class="form-control form-control-sm" formControlName="bio" placeholder="Tell us something about yourself">
       </div>
     </div>
   </form>
