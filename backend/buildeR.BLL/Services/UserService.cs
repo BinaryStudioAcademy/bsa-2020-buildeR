@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.DAL.Context;
@@ -24,10 +25,10 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> GetUserById(int id)
         {
-            var user = await _context.Users.FirstAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
-                throw new NullReferenceException();
+                throw new NotFoundException("user", id);
             }
             return _mapper.Map<UserDTO>(user);
         }
@@ -52,7 +53,7 @@ namespace buildeR.BLL.Services
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (user == null)
             {
-                throw new NullReferenceException();
+                throw new NotFoundException("user", id);
             }
             _context.Remove(user);
             await _context.SaveChangesAsync();
