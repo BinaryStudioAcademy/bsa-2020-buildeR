@@ -316,7 +316,9 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-                    b.Property<string>("AvatarUrl")
+            modelBuilder.Entity("buildeR.DAL.Entities.User", b =>
+            {
+                b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bio")
