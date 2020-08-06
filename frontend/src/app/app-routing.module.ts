@@ -5,12 +5,22 @@ import { LandingPageComponent } from './shell/landing-page/landing-page.componen
 import {ImgComponent} from './components/img/img.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { SettingsComponent } from '@modules/settings/settings.component';
+import { UserSettingsComponent } from '@modules/settings/user-settings/user-settings.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
   {path: 'signin', component: SignInComponent},
   {path: 'signup', component: SignUpComponent},
   {path: 'image', component: ImgComponent},
+  {
+    path: 'user',
+    component: SettingsComponent,
+    children: [{
+      path: 'settings',
+      component: UserSettingsComponent
+    }]
+  },
   {
     path: 'portal',
     canActivate: [AuthGuard],

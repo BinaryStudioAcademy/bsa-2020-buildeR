@@ -7,6 +7,7 @@ import { User } from '../models/user';
 export class UserSettingsService {
 
   url = 'api/settings/user';
+  imageStorageUrl = '/api/ImageUpload';
   constructor(private httpService: HttpService) { }
 
   getSettings(id: number){
@@ -23,5 +24,13 @@ export class UserSettingsService {
 
   deleteSettings(id: number){
     return this.httpService.deleteFullRequest(this.url, id);
+  }
+
+  uploadImage(formData: FormData) {
+    return this.httpService.postRequest<string>(this.imageStorageUrl, formData);
+  }
+
+  getLastUploadedPhoto() {
+    return this.httpService.getRequest<string>(this.imageStorageUrl);
   }
 }
