@@ -1,11 +1,8 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
-<<<<<<< HEAD
 using buildeR.BLL.Interfaces.Uploads;
 using buildeR.BLL.Services.Uploads;
-=======
 using buildeR.Common.FluentValidatiors;
->>>>>>> dev
 using buildeR.DAL.Context;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
