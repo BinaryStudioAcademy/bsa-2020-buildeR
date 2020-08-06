@@ -31,35 +31,35 @@ namespace buildeR.DAL.Context
         }
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            //var buildPlugins = GenerateRandomBuildPlugins();
-            //var groups = GenerateRandomGroups();
-            //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
-            //var socialNetworks = GenerateSocialNetworks();
-            //var users = GenerateRandomUsers();
-            //var userSocialNetworks = GenerateRandomUserSocialNetworks(users, socialNetworks);
-            //var projects = GenerateRandomProjects(users);
-            //var buildHistories = GenerateRandomBuildHistories(users, projects);
-            //var buildSteps = GenerateRandomBuildSteps(buildPlugins, projects);
-            //var buildPluginParameters = GenerateRandomBuildPluginParameters(buildSteps);
-            //var projectGroups = GenerateRandomProjectGroups(projects, groups);
-            //var projectTriggers = GenerateRandomProjectTriggers(projects);
-            //var teamMembers = GenerateRandomTeamMembers(groups, users);
-            //var notifications = GenerateRandomNotifications();
+            var buildPlugins = GenerateRandomBuildPlugins();
+            var groups = GenerateRandomGroups();
+            var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
+            var socialNetworks = GenerateSocialNetworks();
+            var users = GenerateRandomUsers();
+            var userSocialNetworks = GenerateRandomUserSocialNetworks(users, socialNetworks);
+            var projects = GenerateRandomProjects(users);
+            var buildHistories = GenerateRandomBuildHistories(users, projects);
+            var buildSteps = GenerateRandomBuildSteps(buildPlugins, projects);
+            var buildPluginParameters = GenerateRandomBuildPluginParameters(buildSteps);
+            var projectGroups = GenerateRandomProjectGroups(projects, groups);
+            var projectTriggers = GenerateRandomProjectTriggers(projects);
+            var teamMembers = GenerateRandomTeamMembers(groups, users);
+            var notifications = GenerateRandomNotifications();
 
-            //modelBuilder.Entity<BuildPlugin>().HasData(buildPlugins);
-            //modelBuilder.Entity<Group>().HasData(groups);
-            //modelBuilder.Entity<PluginCommand>().HasData(pluginCommands);
-            //modelBuilder.Entity<SocialNetwork>().HasData(socialNetworks);
-            //modelBuilder.Entity<User>().HasData(users);
-            //modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
-            //modelBuilder.Entity<Project>().HasData(projects);
-            //modelBuilder.Entity<BuildHistory>().HasData(buildHistories);
-            //modelBuilder.Entity<BuildStep>().HasData(buildSteps);
-            //modelBuilder.Entity<BuildPluginParameter>().HasData(buildPluginParameters);
-            //modelBuilder.Entity<ProjectGroup>().HasData(projectGroups);
-            //modelBuilder.Entity<ProjectTrigger>().HasData(projectTriggers);
-            //modelBuilder.Entity<TeamMember>().HasData(teamMembers);
-            //modelBuilder.Entity<Notification>().HasData(notifications);
+            modelBuilder.Entity<BuildPlugin>().HasData(buildPlugins);
+            modelBuilder.Entity<Group>().HasData(groups);
+            modelBuilder.Entity<PluginCommand>().HasData(pluginCommands);
+            modelBuilder.Entity<SocialNetwork>().HasData(socialNetworks);
+            modelBuilder.Entity<User>().HasData(users);
+            modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
+            modelBuilder.Entity<Project>().HasData(projects);
+            modelBuilder.Entity<BuildHistory>().HasData(buildHistories);
+            modelBuilder.Entity<BuildStep>().HasData(buildSteps);
+            modelBuilder.Entity<BuildPluginParameter>().HasData(buildPluginParameters);
+            modelBuilder.Entity<ProjectGroup>().HasData(projectGroups);
+            modelBuilder.Entity<ProjectTrigger>().HasData(projectTriggers);
+            modelBuilder.Entity<TeamMember>().HasData(teamMembers);
+            modelBuilder.Entity<Notification>().HasData(notifications);
         }
 
         public static ICollection<BuildPlugin> GenerateRandomBuildPlugins()
@@ -152,7 +152,7 @@ namespace buildeR.DAL.Context
                 .RuleFor(p => p.IsAutoCancelBranchBuilds, true)
                 .RuleFor(p => p.IsAutoCancelPullRequestBuilds, true)
                 .RuleFor(p => p.IsCleanUpBeforeBuild, true)
-                .RuleFor(p => p.CancelAfter, 3000);        
+                .RuleFor(p => p.CancelAfter, 3000);
             return projectFake.Generate(PROJECT_COUNT);
         }
 

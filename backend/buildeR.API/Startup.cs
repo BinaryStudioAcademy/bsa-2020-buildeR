@@ -32,7 +32,7 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["BuilderDbConnection"]));
+            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
             services.RegisterCustomServices();
         }
 
