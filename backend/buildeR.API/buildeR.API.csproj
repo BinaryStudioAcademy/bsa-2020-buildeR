@@ -15,20 +15,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-<<<<<<< HEAD
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
-    <PackageReference Include="RabbitMQ.Client" Version="6.1.0" />
-=======
->>>>>>> dev
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\buildeR.BLL\buildeR.BLL.csproj" />
-<<<<<<< HEAD
-    <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
-    <ProjectReference Include="..\buildeR.RabbitMQ\buildeR.RabbitMq.csproj" />
-=======
->>>>>>> dev
   </ItemGroup>
 
 
