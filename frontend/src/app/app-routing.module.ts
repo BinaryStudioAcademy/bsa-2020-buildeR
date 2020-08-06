@@ -17,6 +17,7 @@ const routes: Routes = [
         (m) => m.WorkSpaceModule
       ),
   },
+
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 

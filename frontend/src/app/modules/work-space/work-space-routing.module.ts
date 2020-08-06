@@ -22,11 +22,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
             path: 'dashboard',
             component: DashboardComponent,
           },
+          { path: 'user',
+          loadChildren: () => import('../../modules/settings/settings.module')
+          .then(m => m.UserModule) },
           {
             path: '**',
             redirectTo: 'dashboard',
             pathMatch: 'full',
           },
+
         ],
       },
     ]),
