@@ -1,9 +1,11 @@
-  <!-- Navbar -->
+<!-- Navbar -->
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <a class="navbar-brand" href="#">buildeR</a>
-    <button (click)="isMenuCollapsed = !isMenuCollapsed" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button (click)="isMenuCollapsed = !isMenuCollapsed" class="navbar-toggler" type="button" data-toggle="collapse"
+      data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+      aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -31,30 +33,25 @@
   </div>
 </nav>
 
-  <!-- Main content container -->
+<!-- Main content container -->
 
 <div class="container mt-5 mb-5">
 
   <!-- Top block -->
 
-  <h1 class="text-center">buildeR</h1>
-  <h4 class="text-center">Push
-    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
-    <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
-    </svg>
-    Test
-    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
-    <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
-    </svg>
-    Build
-    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
-      <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
-      </svg>
-    Deploy
-    </h4>
+  <div class="main-title">
+    <span>buildeR -</span>
+    <div class="rotating-header">
+      <div class="rotating-word-spacer">Deploy</div>
+      <div class="rotating-words">
+        <strong>Push</strong>
+        <strong>Test</strong>
+        <strong>Build</strong>
+        <strong>Deploy</strong>
+      </div>
+    </div>
+  </div>
+
   <img src="../../../assets/000.png" class="img-fluid mt-5">
 
   <!-- Features block -->
@@ -62,54 +59,72 @@
 
   <div id="features" class="text-white row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1">
 
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Dashboard</h5>
-            <p class="card-text">Dashboard where you can see all your projects, last build status and instantly run any project</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">OAuth</h5>
-            <p class="card-text">Quick and easy registartion with your Github, Bitbucket of Gmail accounts</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build steps</h5>
-            <p class="card-text">You define build steps for each of your projects by yourselft</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build logs</h5>
-            <p class="card-text">You'll get your build logs in realtime</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Dashboard</h5>
-            <p class="card-text">Dashboard where you can see all your projects, last build status and instantly run any project</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">OAuth</h5>
-            <p class="card-text">Quick and easy registartion with your Github, Bitbucket of Gmail accounts</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build steps</h5>
-            <p class="card-text">You define build steps for each of your projects by yourselft</p>
-          </div>
-        </div></div>
-        <div class="col mb-4"><div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build logs</h5>
-            <p class="card-text">You'll get your build logs in realtime</p>
-          </div>
-        </div></div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Dashboard</h5>
+          <p class="card-text">Dashboard where you can see all your projects, last build status and instantly run any
+            project</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">OAuth</h5>
+          <p class="card-text">Quick and easy registartion with your Github, Bitbucket of Gmail accounts</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Build steps</h5>
+          <p class="card-text">You define build steps for each of your projects by yourselft</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Build logs</h5>
+          <p class="card-text">You'll get your build logs in realtime</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Dashboard</h5>
+          <p class="card-text">Dashboard where you can see all your projects, last build status and instantly run any
+            project</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">OAuth</h5>
+          <p class="card-text">Quick and easy registartion with your Github, Bitbucket of Gmail accounts</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Build steps</h5>
+          <p class="card-text">You define build steps for each of your projects by yourselft</p>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card bg-dark h-100">
+        <div class="card-body">
+          <h5 class="card-title">Build logs</h5>
+          <p class="card-text">You'll get your build logs in realtime</p>
+        </div>
+      </div>
+    </div>
 
   </div>
 
@@ -119,11 +134,11 @@
 
   <div id="flow">
     <ul class="progressbar">
-        <li>Push</li>
-        <li>Build</li>
-        <li>Test</li>
-        <li>Deploy</li>
-        <li>Done</li>
+      <li>Push</li>
+      <li>Build</li>
+      <li>Test</li>
+      <li>Deploy</li>
+      <li>Done</li>
     </ul>
   </div>
   <div>&nbsp;</div>
