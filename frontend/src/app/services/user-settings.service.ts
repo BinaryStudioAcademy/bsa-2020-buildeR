@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../core/services/http.service';
-import { UserSettings } from '../models/user-settings';
+import { User } from '../models/user';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,11 +13,11 @@ export class UserSettingsService {
     return this.httpService.getFullRequest(this.url);
   }
 
-  createSettings(settings: UserSettings){
+  createSettings(settings: User){
     return this.httpService.postFullRequest(this.url, settings);
   }
 
-  updateSettings(settings: UserSettings){
+  updateSettings(settings: User){
     return this.httpService.putFullRequest(this.url, settings);
   }
 
