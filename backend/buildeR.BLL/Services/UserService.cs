@@ -35,7 +35,6 @@ namespace buildeR.BLL.Services
 
         public async Task<ICollection<UserDTO>> GetAll()
         {
-
             var users = await _context.Users.ToListAsync();
             return _mapper.Map<ICollection<UserDTO>>(users);
         }

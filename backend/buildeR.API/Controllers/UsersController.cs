@@ -22,33 +22,32 @@ namespace buildeR.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<UserDTO>>> Get()
+        public async Task<ICollection<UserDTO>> Get()
         {
-            return Ok(await _userService.GetAll());
+            return await _userService.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ICollection<UserDTO>>> Get(int id)
+        public async Task<UserDTO> Get(int id)
         {
-            return Ok(await _userService.GetUserById(id));
+            return await _userService.GetUserById(id);
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDTO>> Create([FromBody] UserDTO user)
+        public async Task<UserDTO> Create([FromBody] UserDTO user)
         {
-            return Created("", await _userService.Create(user));
+            return await _userService.Create(user);
         }
 
         [HttpPut]
-        public async Task<ActionResult<UserDTO>> Update([FromBody] UserDTO user)
+        public async Task<UserDTO> Update([FromBody] UserDTO user)
         {
-            return Ok(await _userService.Update(user));
+            return await _userService.Update(user);
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult>Delete(int id)
+        public async Task Delete(int id)
         {
             await _userService.Delete(id);
-            return Ok();
         }
     }
 }

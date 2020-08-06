@@ -1,5 +1,4 @@
 ﻿using buildeR.DAL.Entities.Common;
-using buildeR.DAL.Enums;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities

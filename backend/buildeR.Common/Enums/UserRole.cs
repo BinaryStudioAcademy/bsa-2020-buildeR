@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace buildeR.Common.DTO.User.Enums
+namespace buildeR.Common.Enums
 {
-    public enum RoleUserDto
+    public enum UserRole
     {
         Admin,
         Creator,
