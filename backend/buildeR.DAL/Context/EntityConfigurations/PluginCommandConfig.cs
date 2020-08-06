@@ -11,7 +11,6 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Plugin)
                 .WithMany(p => p.PluginCommands)
-                .HasForeignKey(e => e.PluginId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

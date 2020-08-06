@@ -13,7 +13,6 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Project)
                 .WithMany(g => g.ProjectTriggers)
-                .HasForeignKey(e => e.ProjectId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

@@ -11,7 +11,6 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Owner)
                 .WithMany(o => o.Projects)
-                .HasForeignKey(e => e.OwnerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             //entity.HasMany(e => e.BuildHistories)

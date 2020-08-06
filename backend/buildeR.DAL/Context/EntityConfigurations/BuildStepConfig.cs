@@ -13,12 +13,10 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Project)
                 .WithMany(p => p.BuildSteps)
-                .HasForeignKey(e => e.ProjectId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(e => e.BuildPlugin)
                 .WithMany(p => p.BuildSteps)
-                .HasForeignKey(e => e.BuildPluginId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             //entity.HasMany(e => e.BuildPluginParameters)

@@ -13,12 +13,10 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.SocialNetwork)
                 .WithMany(sn => sn.UserSocialNetworks)
-                .HasForeignKey(e => e.SocialNetworkId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(e => e.User)
                 .WithMany(sn => sn.UserSocialNetworks)
-                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
