@@ -1,8 +1,6 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
 using buildeR.DAL.Context;
-using buildeR.RabbitMq.Interfaces;
-using buildeR.RabbitMq.Realization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -10,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RabbitMQ.Client;
 using IHostingEnvironment = Microsoft.Extensions.Hosting.IHostEnvironment;
 
 namespace buildeR
@@ -35,7 +32,7 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["BuilderDbConnection"]));
+            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BuilderDBConnection")));
             services.RegisterCustomServices();
         }
 
