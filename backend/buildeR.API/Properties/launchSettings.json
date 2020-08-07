@@ -14,8 +14,6 @@
       "launchBrowser": true,
       "environmentVariables": {
         "Key": "Value",
-        "SENDGRID_API_KEY": "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",
-        "SENDGRID_EMAIL": "builderlp2020@gmail.com",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SENDGRID_Name": "Admin"
       }
