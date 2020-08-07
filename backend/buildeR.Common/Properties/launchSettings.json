@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "buildeR.Common": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Key": "Value"
+      }
+    }
+  }
+}
