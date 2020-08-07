@@ -15,6 +15,7 @@ namespace buildeR.BLL.Services.Uploads
         { }
         public async System.Threading.Tasks.Task<string> UploadAsync(IFormFile data)
         {
+            RemoveFiles(GetPath()); 
             string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString();
 
             var path = GetPath();
@@ -45,17 +46,18 @@ namespace buildeR.BLL.Services.Uploads
             return home + "\\buildeR";
         }
 
-        private async Task<string> GetBase64(IFormFile file)
+        public void RemoveFiles(string root)
         {
-            string base64;
-            using (var ms = new MemoryStream())
+            
+            if (!Directory.Exists(root))
             {
-                await file.CopyToAsync(ms);
-                var fileBytes = ms.ToArray();
-                base64 = Convert.ToBase64String(fileBytes);
+                return;
             }
-
-            return base64;
+            var files = Directory.GetFiles(root, "*.png", SearchOption.AllDirectories).ToList();
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
         }
 
         public async Task<string> GetLastPhotoAsync()
@@ -74,5 +76,19 @@ namespace buildeR.BLL.Services.Uploads
 
             return base64ImageRepresentation;
         }
+
+        private async Task<string> GetBase64(IFormFile file)
+        {
+            string base64;
+            using (var ms = new MemoryStream())
+            {
+                await file.CopyToAsync(ms);
+                var fileBytes = ms.ToArray();
+                base64 = Convert.ToBase64String(fileBytes);
+            }
+
+            return base64;
+        }
+
     }
 }
