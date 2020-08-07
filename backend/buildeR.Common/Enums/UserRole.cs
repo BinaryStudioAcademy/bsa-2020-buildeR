@@ -8,6 +8,6 @@ namespace buildeR.Common.Enums
     {
         Admin,
         Creator,
-        Viever
+        Viewer
     }
 }
