@@ -1,11 +1,10 @@
 ﻿using Bogus;
+using buildeR.Common.Enums;
 using buildeR.DAL.Context.EntityConfigurations;
 using buildeR.DAL.Entities;
-using buildeR.DAL.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace buildeR.DAL.Context
 {
