@@ -12,13 +12,12 @@ import { TestComponent } from './components/test/test.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { ImgComponent } from './components/img/img.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { UserModule } from '@modules/settings/settings.module';
 
 @NgModule({
-  declarations: [AppComponent, ModalContentComponent, TestComponent, SignInComponent, SignUpComponent, ImgComponent],
+  declarations: [AppComponent, ModalContentComponent, TestComponent, SignInComponent, SignUpComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
