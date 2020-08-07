@@ -1,6 +1,6 @@
 ﻿
+using buildeR.Common.Enums;
 using buildeR.DAL.Entities.Common;
-using buildeR.DAL.Enums;
 
 namespace buildeR.DAL.Entities
 {
