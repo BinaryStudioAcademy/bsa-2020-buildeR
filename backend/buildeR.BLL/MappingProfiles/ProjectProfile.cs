@@ -3,6 +3,8 @@
 using buildeR.Common.DTO.Project;
 using buildeR.DAL.Entities;
 
+using System.Linq;
+
 namespace buildeR.BLL.MappingProfiles
 {
     public sealed class ProjectProfile : Profile
@@ -10,6 +12,13 @@ namespace buildeR.BLL.MappingProfiles
         public ProjectProfile()
         {
             CreateMap<Project, ProjectDTO>();
+            CreateMap<Project, ProjectInfoDTO>()
+                .ForMember(dest => dest.LastBuildHistory,
+                    src => src
+                        .MapFrom(project => project
+                            .BuildHistories
+                            .OrderByDescending(prj => prj.BuildAt)
+                            .FirstOrDefault()));
 
             CreateMap<ProjectDTO, Project>();
             CreateMap<NewProjectDTO, Project>();
