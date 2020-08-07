@@ -3,35 +3,40 @@ import { ProjectInfo } from '../../../shared/models/project-info';
 import { ToastrNotificationsService } from 'src/app/services/toastr-notifications.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { User } from '@shared/models/user';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '../base/base.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent extends BaseComponent
+  implements OnInit, OnDestroy {
   userProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
-  loading = false;
   loadingProjects = false;
-
-  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService
-  ) {}
-
-  ngOnInit(): void {
-    this.getUserProjects(this.currentUser.id);
+  ) {
+    super();
   }
 
-  public ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+  ngOnInit(): void {
+    super.ngOnInit();
+
+    if (this.currentUser) {
+      this.getUserProjects(this.currentUser.id);
+    } else {
+      this.toastrService.showError('Undefined user');
+    }
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 
   getUserProjects(userId: number) {
