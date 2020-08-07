@@ -20,8 +20,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     {}
 
 
-    public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      return this.checkForActivation(state);
+  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return this.checkForActivation(state);
   }
 
   public canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -29,12 +29,11 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   }
 
   private checkForActivation(state: RouterStateSnapshot) {
-      if (this.authService.getUser() !== null || this.authService.getUser() !== undefined) {
-          return true;
+      if (this.authService.getUser() === '' || this.authService.getUser() === undefined) { 
+        this.router.navigate(['/']);
+
+        return false;
       }
-
-      this.router.navigate(['/']);
-
-      return false;
+      return true;
   }
 }

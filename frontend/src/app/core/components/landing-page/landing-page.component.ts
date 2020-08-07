@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
 export class LandingPageComponent implements OnInit {
   isMenuCollapsed = true;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthenticationService) { }
 
   ngOnInit(): void {
   }
@@ -20,5 +21,9 @@ export class LandingPageComponent implements OnInit {
 
   signInRedirect() {
     this.router.navigate(['signin']);
+  }
+
+  fakeLogin(){
+    this.authService.login('fake_token');
   }
 }
