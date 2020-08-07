@@ -10,15 +10,15 @@ import { ShellModule } from './shell/shell.module';
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { TestComponent } from './components/test/test.component';
 import { ProjectModule } from './modules/project/project.module';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { SignInComponent } from './components/sign-in/sign-in.component';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 @NgModule({
-  declarations: [AppComponent, ModalContentComponent, TestComponent, SignInComponent, SignUpComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     CoreModule,
     SharedModule,

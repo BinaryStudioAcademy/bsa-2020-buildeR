@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from '../../../models/user';
-import { UserSettingsService } from '../../../services/user-settings.service';
+import { User } from '@shared/models/user';
+import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'app-user-settings',

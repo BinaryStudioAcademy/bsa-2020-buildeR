@@ -1,0 +1,149 @@
+/* Cards block */
+
+.card-body
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.3)
+  transition: box-shadow 0.3s
+
+.card-body:hover
+  box-shadow: 0 .5rem 2.5rem rgba(0,0,0,.6)
+
+.card-title
+  text-align: center
+
+/* Flow block */
+
+.progressbar
+
+  li
+    list-style-type: none
+    width: 20%
+    float: left
+    font-size: 2em
+    position: relative
+    text-align: center
+    color: #000000
+
+    &:hover
+      &:before
+        border: solid
+        line-height: 3.25em
+
+    /* Styling of icons inside circles */
+
+    &:before
+      width: 3em
+      height: 3em
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.5em' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M0 1l1-1 3.081 2.2a1 1 0 0 1 .419.815v.07a1 1 0 0 0 .293.708L10.5 9.5l.914-.305a1 1 0 0 1 1.023.242l3.356 3.356a1 1 0 0 1 0 1.414l-1.586 1.586a1 1 0 0 1-1.414 0l-3.356-3.356a1 1 0 0 1-.242-1.023L9.5 10.5 3.793 4.793a1 1 0 0 0-.707-.293h-.071a1 1 0 0 1-.814-.419L0 1zm11.354 9.646a.5.5 0 0 0-.708.708l3 3a.5.5 0 0 0 .708-.708l-3-3z'/></svg>")
+      counter-increment: step
+      line-height: 3.2em
+      border: 0.1em dashed #000000
+      display: block
+      text-align: center
+      margin: 0 auto 10px auto
+      border-radius: 50%
+      background-color: white
+
+    /* Icons */
+
+    &:first-child:before
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.7rem' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1.5 13A1.5 1.5 0 0 0 3 14.5h8a1.5 1.5 0 0 0 1.5-1.5V9a.5.5 0 0 0-1 0v4a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 5v8zm7-11a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.5H9a.5.5 0 0 1-.5-.5z'/><path fill-rule='evenodd' d='M14.354 1.646a.5.5 0 0 1 0 .708l-8 8a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708 0z'/></svg>")
+
+    &:nth-child(2):before
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.7em' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M0 1l1-1 3.081 2.2a1 1 0 0 1 .419.815v.07a1 1 0 0 0 .293.708L10.5 9.5l.914-.305a1 1 0 0 1 1.023.242l3.356 3.356a1 1 0 0 1 0 1.414l-1.586 1.586a1 1 0 0 1-1.414 0l-3.356-3.356a1 1 0 0 1-.242-1.023L9.5 10.5 3.793 4.793a1 1 0 0 0-.707-.293h-.071a1 1 0 0 1-.814-.419L0 1zm11.354 9.646a.5.5 0 0 0-.708.708l3 3a.5.5 0 0 0 .708-.708l-3-3z'/><path fill-rule='evenodd' d='M15.898 2.223a3.003 3.003 0 0 1-3.679 3.674L5.878 12.15a3 3 0 1 1-2.027-2.027l6.252-6.341A3 3 0 0 1 13.778.1l-2.142 2.142L12 4l1.757.364 2.141-2.141zm-13.37 9.019L3.001 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026z'/></svg>")
+
+    &:nth-child(3):before
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.7em' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z'/><path fill-rule='evenodd' d='M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3zm4.354 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z'/></svg>")
+
+    &:nth-child(4):before
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.7em' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z'/><path fill-rule='evenodd' d='M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3z'/></svg>")
+
+    &:nth-child(5):before
+      content: url("data:image/svg+xml,<svg viewBox='0 0 16 16' height='2.7em' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z'/></svg>")
+
+    /* Styling lines between circles */
+
+    &:after
+      width: 100%
+      height: 3px
+      content: ''
+      position: absolute
+      background-color: #000000
+      top: 30%
+      left: -50%
+      z-index: -1
+
+    &:first-child:after
+      content: none
+
+// Navbar
+
+nav.navbar
+  position: sticky
+  top: 0
+  z-index: 99
+
+// title
+
+.main-title
+  text-align: center
+  font-size: 3rem
+
+  span
+    margin-right: 0.5rem
+
+  .rotating-header
+    position: relative
+    display: inline-block
+
+    .rotating-word-spacer
+      display: inline
+      visibility: hidden
+
+    .rotating-words
+      display: inline
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+
+      strong
+        opacity: 0
+        overflow: hidden
+        position: absolute
+        top: 0
+        left: 0
+        transition: all
+        animation: rollDown 10s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s infinite
+
+        &:nth-child(2)
+          animation-delay: 2.5s
+
+        &:nth-child(3)
+          animation-delay: 5s
+
+        &:nth-child(4)
+          animation-delay: 7.5s
+
+@keyframes rollDown
+  0%
+    opacity: 0
+
+  5%
+    opacity: 0
+    transform: translateY(-75px)
+
+  10%
+    opacity: 1
+    transform: translateY(0)
+
+  30%
+    opacity: 1
+    transform: translateY(0)
+
+  40%
+    opacity: 0
+    transform: translateY(75px)
+
+  100%
+    opacity: 0
+

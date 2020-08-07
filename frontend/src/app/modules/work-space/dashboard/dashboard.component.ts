@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ProjectInfo } from '../../../shared/models/project-info';
-import { ToastrNotificationsService } from 'src/app/services/toastr-notifications.service';
-import { ProjectService } from '../../../core/services/project.service';
+import { ProjectInfo } from '@shared/models/project-info';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { ProjectService } from '@core/services/project.service';
 import { User } from '@shared/models/user';
 import { takeUntil } from 'rxjs/operators';
-import { BaseComponent } from '../base/base.component';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,17 +26,11 @@ export class DashboardComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
-
     if (this.currentUser) {
       this.getUserProjects(this.currentUser.id);
     } else {
       this.toastrService.showError('Undefined user');
     }
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
   getUserProjects(userId: number) {
