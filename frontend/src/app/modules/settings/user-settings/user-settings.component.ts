@@ -3,6 +3,7 @@ import { User } from '../../../models/user';
 import { UserSettingsService } from '../../../services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from 'src/app/services/toastr-notifications.service';
+import { environment } from '@env/environment';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -11,6 +12,7 @@ import { ToastrNotificationsService } from 'src/app/services/toastr-notification
 export class UserSettingsComponent implements OnInit {
 
   @Input() details: User = {} as User;
+  public serverUrl: string;
   public settingsForm: FormGroup;
   public formData: FormData;
   @ViewChild('file', {static : false}) imageInput: ElementRef;
@@ -40,6 +42,8 @@ export class UserSettingsComponent implements OnInit {
             Validators.maxLength(200)
           ])
     });
+
+    this.serverUrl = environment.apiUrl + '/api/FileUpload/download/?filePath=' + this.details.avatarUrl;
   }
 
   public upload(event: any): void {
@@ -57,7 +61,9 @@ export class UserSettingsComponent implements OnInit {
 
   public changeAvatar(filePath: string){
     this.details.avatarUrl = filePath;
-    this.settingsService.updateSettings(this.details)
+    this.serverUrl = environment.apiUrl + '/api/FileUpload/download/?filePath=' + filePath;
+
+    this.settingsService.updateSettings(this.details)// update user relative path in database
     .subscribe(x => {
       this.toastrNotification.showSuccess('User image updated');
     });
