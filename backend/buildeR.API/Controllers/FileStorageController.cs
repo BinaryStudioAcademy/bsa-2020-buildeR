@@ -13,10 +13,10 @@ namespace buildeR.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FileUploadController : ControllerBase
+    public class FileStorageController : ControllerBase
     {
         private readonly IFileStorage _fileStorage;
-        public FileUploadController(IFileStorage fileStorage , IWebHostEnvironment envn)
+        public FileStorageController(IFileStorage fileStorage , IWebHostEnvironment envn)
         {
             _fileStorage = fileStorage;
         }

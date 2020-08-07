@@ -43,7 +43,7 @@ export class UserSettingsComponent implements OnInit {
           ])
     });
 
-    this.serverUrl = environment.apiUrl + '/api/FileUpload/download/?filePath=' + this.details.avatarUrl;
+    this.serverUrl = environment.apiUrl + '/api/FileStorage/download/?filePath=' + this.details.avatarUrl;
   }
 
   public upload(event: any): void {
@@ -61,7 +61,7 @@ export class UserSettingsComponent implements OnInit {
 
   public changeAvatar(filePath: string){
     this.details.avatarUrl = filePath;
-    this.serverUrl = environment.apiUrl + '/api/FileUpload/download/?filePath=' + filePath;
+    this.serverUrl = environment.apiUrl + '/api/FileStorage/download/?filePath=' + filePath;
 
     this.settingsService.updateSettings(this.details)// update user relative path in database
     .subscribe(x => {

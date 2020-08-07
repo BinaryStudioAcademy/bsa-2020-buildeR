@@ -7,7 +7,7 @@ import { User } from '../models/user';
 export class UserSettingsService {
 
   url = 'api/settings/user';
-  imageStorageUrl = '/api/FileUpload/';
+  imageStorageUrl = '/api/FileStorage/';
   constructor(private httpService: HttpService) { }
 
   getSettings(id: number){
