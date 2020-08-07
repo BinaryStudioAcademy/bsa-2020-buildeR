@@ -2,7 +2,7 @@
   <a class="navbar-brand" href="#">Builder</a>
   <ul class="navbar-nav mr-auto">
     <li class="nav-item active">
-      <a class="nav-link" [routerLink]="['portal/dashboard']">
+      <a class="nav-link" [routerLink]="['dashboard']">
         Dashboard <span class="sr-only">(current)</span>
       </a>
     </li>
@@ -27,7 +27,7 @@
         aria-labelledby="navbarDropdown2"
         class="dropdown-menu dropdown-menu-right"
       >
-        <a ngbDropdownItem routerLink="/portal/user">Settings</a>
+        <a ngbDropdownItem [routerLink]="'user'">Settings</a>
         <a ngbDropdownItem href="#">Logout</a>
       </div>
     </div>

@@ -19,6 +19,7 @@ import { BuildStatusIconDirective } from './directives/build-status-icon.directi
   ],
   imports: [CommonModule, NgbModule, NgbCollapseModule, ReactiveFormsModule],
   exports: [
+    CommonModule,
     NgbModule,
     NgbCollapseModule,
     ReactiveFormsModule,
