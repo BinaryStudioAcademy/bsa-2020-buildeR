@@ -16,10 +16,10 @@ namespace buildeR.BLL.Services.Uploads
         { }
         public async System.Threading.Tasks.Task<string> UploadAsync(IFormFile data)
         {
-            RemoveFiles(GetPath()); 
+            RemoveFiles(GetPath() + relativePath); 
             string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString();
 
-            var path = GetPath();
+            var path = GetPath() + relativePath;
             Directory.CreateDirectory(path);
 
             var filePath = Path.Combine(path, newFileName + ".png");
@@ -29,14 +29,14 @@ namespace buildeR.BLL.Services.Uploads
                 await data.CopyToAsync(stream);
             }
 
-            return filePath;
+            return relativePath + newFileName + ".png";
         }
         public string GetPath()
         {
             var home = Environment.OSVersion.Platform == PlatformID.Unix ?
                 Environment.GetEnvironmentVariable("HOME") :
                 Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
-            return home + relativePath;
+            return home;
         }
 
         public void RemoveFiles(string root)
@@ -54,16 +54,16 @@ namespace buildeR.BLL.Services.Uploads
 
         public string GetLastPhoto()
         {
-            string root = GetPath();
+            string root = GetPath() + relativePath;
             if (!Directory.Exists(root))
             {
                 throw new InvalidOperationException("You do not have any pics.\n Use default or upload your.");
             }
             var lastFile = Directory.GetFiles(root, "*.png", SearchOption.AllDirectories).ToList().LastOrDefault();
             if (lastFile == null)
-                throw new InvalidOperationException("You do not have any pics.\n Use default or upload your.");
-
-            return lastFile;
+                return null;
+            var index = lastFile.LastIndexOf("\\");
+            return lastFile.Substring(index + 1, lastFile.Length - index - 1);
         }
     }
 }

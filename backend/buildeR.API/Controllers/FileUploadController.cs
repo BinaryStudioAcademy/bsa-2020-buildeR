@@ -1,6 +1,7 @@
 ﻿
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces.Uploads;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -9,25 +10,31 @@ namespace buildeR.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ImageUploadController : ControllerBase
+    public class FileUploadController : ControllerBase
     {
-        private readonly IImageStorage _imageStorage;
-        public ImageUploadController(IImageStorage imageStorage)
+        private readonly IFileStorage _fileStorage;
+        public FileUploadController(IFileStorage fileStorage , IWebHostEnvironment envn)
         {
-            _imageStorage = imageStorage;
+            _fileStorage = fileStorage;
         }
 
         [HttpPost]
         public async Task<ActionResult<string>> ImgUpload(IFormFile file)
         {
-            var base64Img = await _imageStorage.UploadAsync(file);
-            return Ok(JsonConvert.SerializeObject(base64Img));
+            var path = await _fileStorage.UploadAsync(file);
+            return Ok(JsonConvert.SerializeObject(path));
+        }
+
+        [HttpGet("rootpath")]
+        public ActionResult<string> GetRothPath()
+        {
+            return Ok(JsonConvert.SerializeObject(_fileStorage.GetPath()));
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetLastPhoto()
+        public ActionResult<string> GetLastPhoto()
         {
-            return Ok(JsonConvert.SerializeObject(await _imageStorage.GetLastPhotoAsync()));
+            return Ok(JsonConvert.SerializeObject(_fileStorage.GetLastPhoto()));
         }
     }
 }
