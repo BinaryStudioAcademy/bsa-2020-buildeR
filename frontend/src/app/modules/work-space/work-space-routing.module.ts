@@ -23,11 +23,15 @@ import { AuthGuard } from '@core/guards/auth.guard';
             path: 'dashboard',
             component: DashboardComponent,
           },
+          { path: 'user',
+          loadChildren: () => import('../../modules/settings/settings.module')
+          .then(m => m.UserModule) },
           {
             path: '**',
             redirectTo: 'dashboard',
             pathMatch: 'full',
           },
+
         ],
       },
     ]),
