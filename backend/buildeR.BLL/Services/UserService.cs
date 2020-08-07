@@ -70,7 +70,7 @@ namespace buildeR.BLL.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(existing);
         }
-        
+
 
     }
 }

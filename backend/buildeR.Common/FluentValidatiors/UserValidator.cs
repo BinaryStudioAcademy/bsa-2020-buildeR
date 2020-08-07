@@ -1,9 +1,9 @@
-using buildeR.DAL.Entities;
+using buildeR.Common.DTO.User;
 using FluentValidation;
 
 namespace buildeR.Common.FluentValidatiors
 {
-    public class UserValidator : AbstractValidator<User>
+    public class UserValidator : AbstractValidator<UserDTO>
     {
         public UserValidator()
         {
