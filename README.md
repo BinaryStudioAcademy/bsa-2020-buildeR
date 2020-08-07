@@ -37,3 +37,6 @@ VAULT_TOKEN_ID is an authentication token, given by vault server. VAULT_ADDRESS 
 
 #### RabbitMQ:
 1. **RABBIT_MQ_HOST_NAME** - for hostname, **RABBIT_MQ_USERNAME** - for username, **RABBIT_MQ_PASSWORD** - for user password
+
+## SendGrid
+1. Environment variables: SENDGRID_API_KEY, SENDGRID_EMAIL, SENDGRID_Name
