@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WorkSpaceComponent } from './work-space/work-space.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from '@core/guards/auth.guard';
 
 @NgModule({
   declarations: [],
