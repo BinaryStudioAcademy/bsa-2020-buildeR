@@ -12,5 +12,6 @@ namespace buildeR.BLL.Interfaces.Uploads
         Task<string> UploadAsync(IFormFile data);
         string GetLastPhoto();
         string GetPath();
+        Task<byte[]> GetFileBytes(string fileDirectory); 
     }
 }

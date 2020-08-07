@@ -65,5 +65,11 @@ namespace buildeR.BLL.Services.Uploads
             var index = lastFile.LastIndexOf("\\");
             return lastFile.Substring(index + 1, lastFile.Length - index - 1);
         }
+
+        public async Task<byte[]> GetFileBytes(string filePath)
+        {
+            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(GetPath() + filePath);
+            return fileBytes;
+        }
     }
 }

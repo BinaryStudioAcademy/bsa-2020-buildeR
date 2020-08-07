@@ -29,12 +29,4 @@ export class UserSettingsService {
   uploadImage(formData: FormData) {
     return this.httpService.postRequest<string>(this.imageStorageUrl, formData);
   }
-
-  getLastUploadedPhoto() {
-    return this.httpService.getRequest<string>(this.imageStorageUrl);
-  }
-
-  getRootPath() {
-    return this.httpService.getRequest<string>(this.imageStorageUrl + 'rootpath');
-  }
 }

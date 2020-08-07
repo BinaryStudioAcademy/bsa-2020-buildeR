@@ -1,10 +1,13 @@
 ﻿
+using System.IO;
+using System;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces.Uploads;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace buildeR.API.Controllers
 {
@@ -25,16 +28,12 @@ namespace buildeR.API.Controllers
             return Ok(JsonConvert.SerializeObject(path));
         }
 
-        [HttpGet("rootpath")]
-        public ActionResult<string> GetRothPath()
+        [HttpGet("download")]
+        public async Task<IActionResult> Download([FromQuery] string filePath)
         {
-            return Ok(JsonConvert.SerializeObject(_fileStorage.GetPath()));
-        }
-
-        [HttpGet]
-        public ActionResult<string> GetLastPhoto()
-        {
-            return Ok(JsonConvert.SerializeObject(_fileStorage.GetLastPhoto()));
+            var fileBytes = await _fileStorage.GetFileBytes(filePath);
+            FileContentResult  image = File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, "userlogo.png");
+            return image;
         }
     }
 }

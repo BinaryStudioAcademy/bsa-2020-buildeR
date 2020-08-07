@@ -3,7 +3,6 @@ import { User } from '../../../models/user';
 import { UserSettingsService } from '../../../services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from 'src/app/services/toastr-notifications.service';
-import { switchMap } from 'rxjs/operators';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -14,7 +13,6 @@ export class UserSettingsComponent implements OnInit {
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
   public formData: FormData;
-  public rootPath: string;
   @ViewChild('file', {static : false}) imageInput: ElementRef;
   constructor(
     private settingsService: UserSettingsService,
@@ -42,20 +40,6 @@ export class UserSettingsComponent implements OnInit {
             Validators.maxLength(200)
           ])
     });
-
-    /*const rootPath$ = this.settingsService.getRootPath();
-
-    const httpResult$ = rootPath$.pipe(switchMap(result => {
-        this.rootPath = result;
-        return this.settingsService.getLastUploadedPhoto();
-    }))
-    .subscribe(url =>
-    {
-      this.details.avatarUrl = this.rootPath + url;
-    }, error =>
-    {
-      this.toastrNotification.showWarning(error.value);
-    });*/
   }
 
   public upload(event: any): void {
@@ -65,15 +49,18 @@ export class UserSettingsComponent implements OnInit {
     this.settingsService.uploadImage(this.formData)
     .subscribe(response =>
     {
-      console.log(response);
       this.toastrNotification.showSuccess('Img uploaded to server');
       this.changeAvatar(response);
     },
-    error => this.toastrNotification.showError('Something went wrong'));
+    error => this.toastrNotification.showError('Something went wrong. Please try later'));
   }
 
-  public changeAvatar(file: string){
-    this.details.avatarUrl = this.rootPath + file;
+  public changeAvatar(filePath: string){
+    this.details.avatarUrl = filePath;
+    this.settingsService.updateSettings(this.details)
+    .subscribe(x => {
+      this.toastrNotification.showSuccess('User image updated');
+    });
     this.imageInput.nativeElement.value = '';
   }
 }
