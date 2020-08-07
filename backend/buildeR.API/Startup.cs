@@ -38,6 +38,7 @@ namespace buildeR
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
 
             services.RegisterCustomServices();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
