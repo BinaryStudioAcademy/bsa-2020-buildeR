@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace buildeR.BLL.Interfaces.Uploads
 {
-    public interface IImageStorage
+    public interface IFileStorage
     {
         Task<string> UploadAsync(IFormFile data);
-        Task<string> GetLastPhotoAsync();
+        string GetLastPhoto();
+        string GetPath();
     }
 }

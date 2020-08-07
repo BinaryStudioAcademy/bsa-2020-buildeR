@@ -40,7 +40,7 @@ namespace buildeR
             services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
             services.RegisterCustomServices();
-            services.AddScoped<IImageStorage, ImageStorage>();
+            services.AddScoped<IFileStorage, FileStorage>();
             services.AddCors();
 
             services.Configure<FormOptions>(o =>

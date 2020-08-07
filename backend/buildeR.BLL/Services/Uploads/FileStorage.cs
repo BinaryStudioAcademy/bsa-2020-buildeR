@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services.Uploads
 {
-    public class ImageStorage : IImageStorage
+    public class FileStorage : IFileStorage
     {
-        public ImageStorage()
+        private string relativePath = @"\buildeR\";
+        public FileStorage()
         { }
         public async System.Threading.Tasks.Task<string> UploadAsync(IFormFile data)
         {
@@ -28,27 +29,18 @@ namespace buildeR.BLL.Services.Uploads
                 await data.CopyToAsync(stream);
             }
 
-            return await GetBase64(data);
+            return filePath;
         }
-
-        private string GetPath()
+        public string GetPath()
         {
-            string home;
-            if(Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-                home = Environment.GetEnvironmentVariable("HOME");
-            }
-            else
-            {
-                home = Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
-            }
-            
-            return home + "\\buildeR";
+            var home = Environment.OSVersion.Platform == PlatformID.Unix ?
+                Environment.GetEnvironmentVariable("HOME") :
+                Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
+            return home + relativePath;
         }
 
         public void RemoveFiles(string root)
         {
-            
             if (!Directory.Exists(root))
             {
                 return;
@@ -60,35 +52,18 @@ namespace buildeR.BLL.Services.Uploads
             }
         }
 
-        public async Task<string> GetLastPhotoAsync()
+        public string GetLastPhoto()
         {
-            string root = GetPath();  
+            string root = GetPath();
             if (!Directory.Exists(root))
             {
-                throw new InvalidOperationException("Users do not have any pics");
+                throw new InvalidOperationException("You do not have any pics.\n Use default or upload your.");
             }
             var lastFile = Directory.GetFiles(root, "*.png", SearchOption.AllDirectories).ToList().LastOrDefault();
-            if(lastFile == null)
-                throw new InvalidOperationException("There are no pics");
+            if (lastFile == null)
+                throw new InvalidOperationException("You do not have any pics.\n Use default or upload your.");
 
-            byte[] imageArray = await System.IO.File.ReadAllBytesAsync(lastFile);
-            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
-
-            return base64ImageRepresentation;
+            return lastFile;
         }
-
-        private async Task<string> GetBase64(IFormFile file)
-        {
-            string base64;
-            using (var ms = new MemoryStream())
-            {
-                await file.CopyToAsync(ms);
-                var fileBytes = ms.ToArray();
-                base64 = Convert.ToBase64String(fileBytes);
-            }
-
-            return base64;
-        }
-
     }
 }
