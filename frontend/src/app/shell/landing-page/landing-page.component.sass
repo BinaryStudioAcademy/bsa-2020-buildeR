@@ -81,3 +81,69 @@ nav.navbar
   position: sticky
   top: 0
   z-index: 99
+
+// title
+
+.main-title
+  text-align: center
+  font-size: 3rem
+
+  span
+    margin-right: 0.5rem
+
+  .rotating-header
+    position: relative
+    display: inline-block
+
+    .rotating-word-spacer
+      display: inline
+      visibility: hidden
+
+    .rotating-words
+      display: inline
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+
+      strong
+        opacity: 0
+        overflow: hidden
+        position: absolute
+        top: 0
+        left: 0
+        transition: all
+        animation: rollDown 10s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s infinite
+
+        &:nth-child(2)
+          animation-delay: 2.5s
+
+        &:nth-child(3)
+          animation-delay: 5s
+
+        &:nth-child(4)
+          animation-delay: 7.5s
+
+@keyframes rollDown
+  0%
+    opacity: 0
+
+  5%
+    opacity: 0
+    transform: translateY(-75px)
+
+  10%
+    opacity: 1
+    transform: translateY(0)
+
+  30%
+    opacity: 1
+    transform: translateY(0)
+
+  40%
+    opacity: 0
+    transform: translateY(75px)
+
+  100%
+    opacity: 0
+

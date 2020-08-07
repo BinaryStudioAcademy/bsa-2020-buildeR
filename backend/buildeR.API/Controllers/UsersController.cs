@@ -14,11 +14,9 @@ namespace buildeR.API.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UsersController(IUserService userService)
+        public UsersController()
         {
-            _userService = userService;
+            
         }
 
         [HttpGet]
