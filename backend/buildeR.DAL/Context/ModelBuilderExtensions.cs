@@ -152,7 +152,7 @@ namespace buildeR.DAL.Context
                 .RuleFor(p => p.IsAutoCancelBranchBuilds, true)
                 .RuleFor(p => p.IsAutoCancelPullRequestBuilds, true)
                 .RuleFor(p => p.IsCleanUpBeforeBuild, true)
-                .RuleFor(p => p.CancelAfter, 3000);        
+                .RuleFor(p => p.CancelAfter, 3000);
             return projectFake.Generate(PROJECT_COUNT);
         }
 

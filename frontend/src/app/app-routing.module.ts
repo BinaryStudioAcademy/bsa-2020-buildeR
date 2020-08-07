@@ -2,9 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LandingPageComponent } from './shell/landing-page/landing-page.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
+  {path: 'signin', component: SignInComponent},
+  {path: 'signup', component: SignUpComponent},
   {
     path: 'portal',
     canActivate: [AuthGuard],
@@ -13,6 +17,7 @@ const routes: Routes = [
         (m) => m.WorkSpaceModule
       ),
   },
+
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 

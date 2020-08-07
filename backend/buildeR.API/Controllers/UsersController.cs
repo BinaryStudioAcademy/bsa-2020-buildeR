@@ -12,17 +12,15 @@ namespace buildeR.API.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UsersController(IUserService userService)
+        public UsersController()
         {
-            _userService = userService;
+            
         }
 
-        [HttpGet]
-        public async Task<User> Get()
+        [HttpPost]
+        public IActionResult Post(User user)
         {
-            return await _userService.GetUserById(1);
+            return Ok($"{user.Email}");
         }
     }
 }

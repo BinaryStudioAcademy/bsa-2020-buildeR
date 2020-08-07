@@ -22,7 +22,60 @@ services:
         - IPC_LOCK
     command: server
 
+  sql_server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql_server
+    ports:
+        - 1433:1433
+    networks:
+        - back
+    environment:
+        SA_PASSWORD: ${SA_PASSWORD}
+        ACCEPT_EULA: "Y"
+
+  rabbitmq:
+    image: rabbitmq:3.8.6-alpine
+    container_name: rabbitmq
+    restart: on-failure
+    ports:
+        - 5672:5672
+    networks:
+        - back
+    environment:
+        - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
+        - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
+
+  elasticsearch:
+    image: elasticsearch:7.8.1
+    container_name: elasticsearch
+    ports:
+        - 9200:9200
+    volumes:
+        - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+        - xpack.monitoring.enabled=true
+        - xpack.watcher.enabled=false
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - discovery.type=single-node
+    networks:
+        - back
+
+  kibana:
+    depends_on:
+        - elasticsearch
+    image: kibana:7.8.1
+    container_name: kibana
+    ports:
+        - 5601:5601
+    environment:
+        - ELASTICSEARCH_URL=http://elasticsearch:9200
+        - SERVER_BASEPATH=/kibana
+    networks:
+        - back
+
   builder_api:
+    depends_on:
+        - sql_server
     image: bsa2020builder/builder_api:latest
     container_name: 'builder_api'
     restart: on-failure
@@ -36,34 +89,37 @@ services:
         VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
 
   builder_processor:
-      image: bsa2020builder/builder_processor:latest
-      container_name: 'builder_processor'
-      restart: on-failure
-      networks:
+    depends_on:
+        - vault
+    image: bsa2020builder/builder_processor:latest
+    container_name: 'builder_processor'
+    restart: on-failure
+    networks:
         - back
-      ports:
-          - "5060:5060"
-      environment:
-          ASPNETCORE_ENVIRONMENT: 'Production'
-          VAULT_ADDRESS: 'http://vault:8200'
-          VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
+    ports:
+        - "5060:5060"
+    environment:
+        ASPNETCORE_ENVIRONMENT: 'Production'
+        VAULT_ADDRESS: 'http://vault:8200'
+        VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
 
   builder_signalr:
-      image: bsa2020builder/builder_signalr:latest
-      container_name: 'builder_signalr'
-      restart: on-failure
-      networks:
+    image: bsa2020builder/builder_signalr:latest
+    container_name: 'builder_signalr'
+    restart: on-failure
+    networks:
         - back
-      ports:
-          - "5070:5070"
-      environment:
-          ASPNETCORE_ENVIRONMENT: 'Production'
+    ports:
+        - "5070:5070"
+    environment:
+        ASPNETCORE_ENVIRONMENT: 'Production'
 
   builder_frontend:
     depends_on:
         - builder_api
         - builder_processor
         - builder_signalr
+        - kibana
     image: bsa2020builder/builder_frontend:latest
     container_name: 'builder_frontend'
     restart: on-failure
@@ -87,3 +143,6 @@ networks:
         driver: bridge
     front:
         driver: bridge
+
+volumes:
+    elasticsearch-data:
