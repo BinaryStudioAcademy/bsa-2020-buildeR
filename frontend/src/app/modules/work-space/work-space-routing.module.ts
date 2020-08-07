@@ -22,7 +22,6 @@ import { AuthGuard } from '@core/guards/auth.guard';
           {
             path: 'dashboard',
             component: DashboardComponent,
-            canActivate: [AuthGuard],
           },
           {
             path: '**',
