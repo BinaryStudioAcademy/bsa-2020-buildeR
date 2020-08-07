@@ -6,6 +6,7 @@ import { SettingsComponent } from './settings.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { SharedModule } from '@shared/shared.module';
 import { RouterModule } from '@angular/router';
+import { SafePipePipe } from '@shared/pipes/SafePipe.pipe';
 
 
 @NgModule({
