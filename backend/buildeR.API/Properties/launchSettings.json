@@ -1,29 +1,32 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5050"
+      "applicationUrl": "http://localhost:5050",
+      "sslPort": 0
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "Key": "Value",
+        "SENDGRID_API_KEY": "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",
+        "SENDGRID_EMAIL": "builderlp2020@gmail.com",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SENDGRID_Name": "Admin"
       }
     },
     "buildeR": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "",
-      "applicationUrl": "http://localhost:5050",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:5050"
     }
   }
 }

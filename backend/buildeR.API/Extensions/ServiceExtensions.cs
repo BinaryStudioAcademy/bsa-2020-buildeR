@@ -1,6 +1,7 @@
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services;
-using buildeR.Common.EmailService;
+using buildeR.Common.Interfaces;
+using buildeR.Common.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace buildeR.API.Extensions
