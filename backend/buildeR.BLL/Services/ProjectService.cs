@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using buildeR.BLL.Services.Abstract;
-using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.Project;
-using buildeR.Common.DTO.User;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
@@ -31,20 +30,9 @@ namespace buildeR.BLL.Services
             return await Context.Projects//TODO do need to check user existence?
                 .AsNoTracking()
                 .Include(project => project.Owner)
+                .Include(project => project.BuildHistories)
                 .Where(project => project.OwnerId.Equals(userId))
-                .Select(project => new ProjectInfoDTO()
-                {
-                    Id = project.Id,
-                    Name = project.Name,
-                    Owner = Mapper.Map<UserDTO>(project.Owner),
-                    LastBuildHistory = Mapper.Map<BuildHistoryDTO>(
-                          Context.BuildHistories
-                            .AsNoTracking()
-                            .Where(buildHistory => buildHistory.ProjectId.Equals(project.Id))
-                            .Distinct()
-                            .Max(buildHistory => buildHistory.BuildAt))
-
-                })
+                .ProjectTo<ProjectInfoDTO>(Mapper.ConfigurationProvider)
                 .ToArrayAsync();
         }
     }
