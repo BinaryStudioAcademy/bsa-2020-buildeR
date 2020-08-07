@@ -1,6 +1,5 @@
-﻿using buildeR.DAL.Entities.Common;
-using buildeR.DAL.Enums;
-using System;
+﻿using buildeR.Common.Enums;
+using buildeR.DAL.Entities.Common;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities

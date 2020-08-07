@@ -1,5 +1,5 @@
-﻿using buildeR.DAL.Entities.Common;
-using buildeR.DAL.Enums;
+﻿using buildeR.Common.Enums;
+using buildeR.DAL.Entities.Common;
 using System;
 
 namespace buildeR.DAL.Entities
