@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
-using buildeR.Common.DTO;
-using buildeR.Common.Interfaces;
+using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,16 +14,39 @@ namespace buildeR.API.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
-        
+        private IUserService _userService;
         public UsersController(IUserService userService)
         {
             _userService = userService;
         }
+
         [HttpGet]
-        public async Task<User> Get()
+        public async Task<ICollection<UserDTO>> Get()
         {
-            return await _userService.GetUserById(1);
+            return await _userService.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<UserDTO> Get(int id)
+        {
+            return await _userService.GetUserById(id);
+        }
+
+        [HttpPost]
+        public async Task<UserDTO> Create([FromBody] UserDTO user)
+        {
+            return await _userService.Create(user);
+        }
+
+        [HttpPut]
+        public async Task<UserDTO> Update([FromBody] UserDTO user)
+        {
+            return await _userService.Update(user);
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await _userService.Delete(id);
         }
     }
 }
