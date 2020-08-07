@@ -31,3 +31,6 @@ This is a list of the required environment variables:
 1. KV Secrets Engine **v2** is used.
 2. Class SecretService use two environment variables: **VAULT_TOKEN_ID** and **VAULT_ADDRESS**. 
 VAULT_TOKEN_ID is an authentication token, given by vault server. VAULT_ADDRESS is an address of vault server (example: http://localhost:8200).
+
+## SendGrid
+1. Environment variables: SENDGRID_API_KEY, SENDGRID_EMAIL, SENDGRID_Name
