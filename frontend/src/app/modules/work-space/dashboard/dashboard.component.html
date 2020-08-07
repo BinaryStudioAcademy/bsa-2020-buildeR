@@ -1,4 +1,4 @@
-<div *ngIf="userProjects; then existActiveProjects else emptyActiveProjects"></div>
+<div *ngIf="userProjects?.length; then existActiveProjects else emptyActiveProjects"></div>
 <ng-template #existActiveProjects>
     <div class="container d-flex flex-row my-3">
         <span class="my-auto">
