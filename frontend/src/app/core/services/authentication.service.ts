@@ -14,14 +14,6 @@ export class AuthenticationService {
 
   constructor(private router: Router, private userService: UserService) {}
 
-  public getUserName(): string {
-    if (localStorage[`username`] === '')
-    {
-      return null;
-    }
-    return localStorage[`username`];
-  }
-
   getUser(): User {
     return JSON.parse(localStorage.getItem(`user`));
   }
