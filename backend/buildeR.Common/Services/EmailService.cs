@@ -11,22 +11,27 @@ namespace buildeR.Common.Services
     
     public class EmailService : IEmailService
     {
-        public Task SendEmailAsync(List<string> emails, string subject, string message)
+        private readonly string _senderEmail;
+        private readonly string _senderName;
+        private readonly string _apiKey;
+        private readonly IEmailBuilder _builder;
+        private readonly SendGridClient _client;
+        public EmailService(IEmailBuilder builder)
         {
-
-            return Execute(Environment.GetEnvironmentVariable("SENDGRID_API_KEY"), subject, message, emails);
+            _apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+            _senderEmail = Environment.GetEnvironmentVariable("SENDGRID_EMAIL");
+            _senderName = Environment.GetEnvironmentVariable("SENDGRID_Name");
+            _builder = builder;
+            _client = new SendGridClient(_apiKey);
         }
-
-        private async Task Execute(string apiKey, string subject, string message, List<string> emails)
+        public async Task SendEmailAsync(List<string> emails, string subject, string title, string body)
         {
-            var client = new SendGridClient(apiKey);
-            string adminEmail = Environment.GetEnvironmentVariable("SENDGRID_EMAIL");
-            string adminName = Environment.GetEnvironmentVariable("SENDGRID_Name");
-            var msg = new SendGridMessage()
+
+            SendGridMessage msg = new SendGridMessage()
             {
-                From = new EmailAddress(adminEmail, adminName),
+                From = new EmailAddress(_senderEmail, _senderName),
                 Subject = subject,
-                PlainTextContent = message
+                HtmlContent = _builder.CreateTemplate(title, body)
             };
 
             foreach (var email in emails)
@@ -34,7 +39,7 @@ namespace buildeR.Common.Services
                 msg.AddTo(new EmailAddress(email));
             }
 
-            await client.SendEmailAsync(msg);
+            await _client.SendEmailAsync(msg);
         }
     }
 }
