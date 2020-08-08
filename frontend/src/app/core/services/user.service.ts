@@ -14,7 +14,6 @@ getUser() {
   return this.httpService.getFullRequest<User>('template');
 }
 getCurrentUser() {
-  //this.httpService.setHeader('token', accessToken);
   return this.httpService.getRequest<User>(environment.apiUrl + '/api/auth/');
 }
 

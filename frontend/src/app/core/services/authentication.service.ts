@@ -25,7 +25,7 @@ export class AuthenticationService {
     localStorage.setItem(`user`, JSON.stringify(user));
   }
 
-  public login(accessToken: string) {
+  public login() {
     return this.userService.getCurrentUser().subscribe((response) => {
       this.user = response;
       this.setUser(this.user);

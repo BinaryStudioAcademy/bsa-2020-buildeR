@@ -14,11 +14,11 @@ export class SignInComponent implements OnInit {
   }
 
   signInWithGithub() {
-    this.authService.login('fake_token');
+    this.authService.login();
   }
 
   signInwithBitbucket() {
-    this.authService.login('fake_token');
+    this.authService.login();
   }
 
 }
