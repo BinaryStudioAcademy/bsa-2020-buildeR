@@ -29,9 +29,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   }
 
   private checkForActivation(state: RouterStateSnapshot) {
-      if (this.authService.getUser() === '' || this.authService.getUser() === undefined) { 
-        this.router.navigate(['/']);
+      if (this.authService.getUser() === null || this.authService.getUser() === undefined) { 
 
+        this.router.navigate(['/']);
         return false;
       }
       return true;

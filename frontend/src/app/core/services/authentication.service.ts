@@ -14,23 +14,26 @@ export class AuthenticationService {
 
   constructor(private router: Router, private userService: UserService) {}
 
-  public getUser(): string {
-    if(localStorage[`username`] === '')
+  public getUserName(): string {
+    if (localStorage[`username`] === '')
     {
       return null;
     }
     return localStorage[`username`];
   }
 
+  getUser(): User {
+    return JSON.parse(localStorage.getItem(`user`));
+  }
+
   public setUser(user: User) {
-    localStorage.setItem(`username`, user.username);
+    localStorage.setItem(`user`, JSON.stringify(user));
   }
 
   public login(accessToken: string) {
     return this.userService.getUserByToken(accessToken).subscribe((response) => {
       this.user = response;
       this.setUser(this.user);
-      console.log(localStorage[`username`]);
       this.router.navigate(['/portal']);
     });
   }
@@ -41,6 +44,6 @@ export class AuthenticationService {
   }
 
   public removeUserFromStorage() {
-    localStorage.removeItem('username');
+    localStorage.clear();
   }
 }
