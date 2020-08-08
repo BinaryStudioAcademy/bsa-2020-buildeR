@@ -13,8 +13,9 @@ constructor(private httpService: HttpService) { }
 getUser() {
   return this.httpService.getFullRequest<User>('template');
 }
-getUserByToken(accessToken: string) {
-  return this.httpService.getRequest<User>(environment.apiUrl + '/api/auth/', {token: accessToken});
+getCurrentUser() {
+  //this.httpService.setHeader('token', accessToken);
+  return this.httpService.getRequest<User>(environment.apiUrl + '/api/auth/');
 }
 
 }

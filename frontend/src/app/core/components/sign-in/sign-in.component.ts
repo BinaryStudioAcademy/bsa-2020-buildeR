@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignInComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthenticationService) { }
 
   ngOnInit() {
+  }
+
+  signInWithGithub() {
+    this.authService.login('fake_token');
+  }
+
+  signInwithBitbucket() {
+    this.authService.login('fake_token');
   }
 
 }

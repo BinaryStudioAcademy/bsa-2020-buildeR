@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { WorkSpaceComponent } from './work-space/work-space.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserSettingsComponent } from '@modules/user/user-settings/user-settings.component';
 
 const routes = [{
     path: '',

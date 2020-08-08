@@ -10,7 +10,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class LandingPageComponent implements OnInit {
   isMenuCollapsed = true;
 
-  constructor(private router: Router, private authService: AuthenticationService) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -21,9 +21,5 @@ export class LandingPageComponent implements OnInit {
 
   signInRedirect() {
     this.router.navigate(['signin']);
-  }
-
-  fakeLogin(){
-    this.authService.login('fake_token');
   }
 }

@@ -21,19 +21,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.checkForActivation(state);
+    return this.authService.isAuthorized();
   }
 
   public canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      return this.checkForActivation(state);
-  }
-
-  private checkForActivation(state: RouterStateSnapshot) {
-      if (this.authService.getUser() === null || this.authService.getUser() === undefined) { 
-
-        this.router.navigate(['/']);
-        return false;
-      }
-      return true;
+    return this.authService.isAuthorized();
   }
 }

@@ -15,6 +15,9 @@ export class AuthenticationService {
   constructor(private router: Router, private userService: UserService) {}
 
   getUser(): User {
+    if (this.user) {
+      return this.user;
+    }
     return JSON.parse(localStorage.getItem(`user`));
   }
 
@@ -23,7 +26,7 @@ export class AuthenticationService {
   }
 
   public login(accessToken: string) {
-    return this.userService.getUserByToken(accessToken).subscribe((response) => {
+    return this.userService.getCurrentUser().subscribe((response) => {
       this.user = response;
       this.setUser(this.user);
       this.router.navigate(['/portal']);
@@ -33,9 +36,19 @@ export class AuthenticationService {
   public logout() {
     this.user = undefined;
     this.removeUserFromStorage();
+    this.router.navigate(['/']);
   }
 
   public removeUserFromStorage() {
     localStorage.clear();
+  }
+
+  public isAuthorized() {
+    if (!this.getUser()) {
+
+      this.router.navigate(['/']);
+      return false;
+    }
+    return true;
   }
 }

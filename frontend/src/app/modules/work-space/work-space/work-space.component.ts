@@ -16,7 +16,6 @@ export class WorkSpaceComponent implements OnInit {
 
   logOut() {
     this.authService.logout();
-    this.router.navigate(['/']);
   }
 
 }

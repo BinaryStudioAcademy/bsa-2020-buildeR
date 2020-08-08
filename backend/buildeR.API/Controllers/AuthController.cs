@@ -14,7 +14,7 @@ namespace buildeR.API.Controllers
     public class AuthController : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetUserFromToken(string token)
+        public ActionResult<UserDTO> GetUserFromToken()
         {
             return Ok(new UserDTO()
             {
