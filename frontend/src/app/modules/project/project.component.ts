@@ -1,11 +1,8 @@
-import { Component, OnInit } from '@angular/core';
 import { Project } from 'src/app/shared/models/project/project';
+import { Component, OnInit } from '@angular/core';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { ProjectService } from '@core/services/project.service';
 
-export interface P {
-  username: string;
-  projectName: string;
-  descriptios: string;
-}
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
@@ -13,12 +10,31 @@ export interface P {
 })
 export class ProjectComponent implements OnInit {
 
-  project2: Project = {} as Project;
-  project: P = { username: 'Username', projectName: 'ProjectName', descriptios: 'some description'} ;
-  projectTemp: P = { username: this.project.username, projectName: this.project.projectName, descriptios: this.project.descriptios} ;
-  constructor() { }
+  project: Project = {} as Project;
+  isLoading = false;
+  constructor(
+    private projectService: ProjectService,
+    private toastrService: ToastrNotificationsService
+    )
+  {  }
 
   ngOnInit(): void {
+
+  }
+  getProject(projectId: number) {
+      this.isLoading = true;
+      this.projectService
+      .getProjectById(projectId)
+        .subscribe(
+          (resp) => {
+            this.isLoading = false;
+            this.project = resp.body;
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.showError(error);
+          }
+        );
   }
 
 }
