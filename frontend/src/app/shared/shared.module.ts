@@ -33,6 +33,7 @@ import { CronBuilderComponent } from './components/cron-builder/cron-builder.com
     NgbModule,
     NgbCollapseModule,
     ReactiveFormsModule,
+    FormsModule,
     BuildStatusPipe,
     DateAgoPipe,
     BuildStatusColorDirective,
