@@ -26,7 +26,9 @@ export class DashboardComponent extends BaseComponent
   }
 
   ngOnInit(): void {
+    this.currentUser = JSON.parse(localStorage.getItem(`user`));
     if (this.currentUser) {
+      console.log(this.currentUser);
       this.getUserProjects(this.currentUser.id);
     } else {
       this.toastrService.showError('Undefined user');
