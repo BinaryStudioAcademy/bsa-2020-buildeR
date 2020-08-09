@@ -12,7 +12,9 @@ namespace buildeR.SignalR
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddSignalR();
+            services.AddCors(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -22,9 +24,16 @@ namespace buildeR.SignalR
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseRouting();
-
+            app.UseCors(builder =>
+            {
+                builder
+                .WithOrigins("http://localhost:4200/")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
             app.UseEndpoints(endpoints => endpoints.MapHub<TestHub>("/testhub"));
         }
     }
