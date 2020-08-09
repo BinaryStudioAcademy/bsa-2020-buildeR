@@ -22,7 +22,7 @@ export class ProjectComponent implements OnInit {
   {
     this.route.paramMap.pipe(
     switchMap(params => params.getAll('projectId')))
-    .subscribe(data => this.id = +data);
+    .subscribe(data => this.id = Number(data));
   }
 
   ngOnInit(): void {
