@@ -17,9 +17,9 @@ export class ProjectService {
     return this.httpService.getRequest<Project>(`${this.routePrefix}/${projectId}/settings`);
   }
   public createProject(newProject: NewProject) {
-    return this.httpService.postFullRequest<Project>(`${this.routePrefix}`, newProject);
+    return this.httpService.postRequest<Project>(`${this.routePrefix}`, newProject);
   }
   public updateProject(project: Project){
-    return this.httpService.putFullRequest<Project>(`${this.routePrefix}`, project);
+    return this.httpService.putRequest<Project>(`${this.routePrefix}`, project);
   }
 }

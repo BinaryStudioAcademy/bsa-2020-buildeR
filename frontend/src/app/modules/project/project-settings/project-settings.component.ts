@@ -59,7 +59,7 @@ export class ProjectSettingsComponent implements OnInit {
         this.toastrService.showSuccess('settings updated');
       },
       (error) => {
-        this.toastrService.showError(error.error);
+        this.toastrService.showError(error.message, error.name);
       }
     );
   }
