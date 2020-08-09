@@ -53,8 +53,4 @@ export class DashboardComponent extends BaseComponent
   triggerBuild(projectId: number) {
     throw new Error('Method not implemented.');
   }
-
-  addProject() {
-    throw new Error('Method not implemented.');
-  }
 }

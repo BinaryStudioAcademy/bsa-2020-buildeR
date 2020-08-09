@@ -27,6 +27,7 @@ namespace buildeR.API.Extensions
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<UserProfile>();
+                cfg.AddProfile<ProjectProfile>();
             },
             Assembly.GetExecutingAssembly());
         }

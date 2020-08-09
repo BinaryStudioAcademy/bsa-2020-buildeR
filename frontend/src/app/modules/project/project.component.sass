@@ -1,0 +1,108 @@
+.project-container
+  color: #666
+  font-family: "Source Sans Pro",Helvetica,sans-serif
+  font-size: 14px
+  line-height: 1.45
+  padding: 1.2em
+
+.project-header
+  display: flex
+  flex-flow: row wrap
+  justify-content: flex-start
+  align-items: center
+
+.project-title
+  margin-right: 1.2em
+  display: inline-block
+
+.project-icon
+  width: 26px
+  height: 26px
+  margin-right: 10px
+  display: inline-block
+
+.user-project-names
+  display: inline-block
+  vertical-align: middle
+  margin: 0
+  font-size: 36px
+  font-weight: 400
+
+  a
+    color: #666
+
+    &:hover
+      color: #666
+      border-bottom: 2px solid #ce383800
+
+.repo-icon
+  margin-right: 1.2em
+  display: inline-block
+  vertical-align: middle
+  width: 30px
+  height: 30px
+
+  a path
+    fill: rgba(0, 0, 0, 0.2)
+    stroke: none
+
+.repo-badge
+  display: inline-block
+  vertical-align: middle
+
+.project-main
+  display: flex
+  flex-direction: column
+  align-content: center
+
+.project-navigation
+  flex-flow: row wrap
+  justify-content: space-between
+  border-bottom: 2px #f1f1f1 solid
+  margin: 1.9em 0 1.2em
+  display: flex
+
+.project-nav
+  ul
+    padding: 0
+    margin: 0
+    list-style: none
+
+  li
+    display: inline-block
+    vertical-align: bottom
+
+    &:not(:last-of-type)
+      margin-right: 1.5em
+
+  a
+    position: relative
+    display: block
+    padding: .5em 0
+    color: #666
+    text-decoration: none
+
+    &.active
+      color: #3eaaaf
+
+  li.active a
+    color: #3eaaaf
+
+  a
+    position: relative
+    display: block
+    padding: .5em 0
+
+    &:hover
+      color: #3eaaaf
+
+    &.active::after, &:hover::after
+      content: ""
+      position: absolute
+      bottom: -2px
+      display: block
+      width: 100%
+      height: 2px
+      background-color: #3eaaaf
+
+
