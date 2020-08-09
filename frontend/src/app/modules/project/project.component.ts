@@ -34,9 +34,9 @@ export class ProjectComponent implements OnInit {
       this.projectService
       .getProjectById(projectId)
         .subscribe(
-          (resp) => {
+          (data) => {
             this.isLoading = false;
-            this.project = resp.body;
+            this.project = data;
           },
           (error) => {
             this.isLoading = false;

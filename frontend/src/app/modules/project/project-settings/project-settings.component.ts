@@ -34,11 +34,11 @@ export class ProjectSettingsComponent implements OnInit {
       this.projectService
       .getProjectById(projectId)
         .subscribe(
-          (resp) => {
+          (data) => {
             this.isLoading = false;
-            this.tempProjectName = resp.body.name;
-            this.tempProjectDescription = resp.body.description;
-            this.project = resp.body;
+            this.tempProjectName = data.name;
+            this.tempProjectDescription = data.description;
+            this.project = data;
           },
           (error) => {
             this.isLoading = false;
@@ -57,7 +57,6 @@ export class ProjectSettingsComponent implements OnInit {
     this.projectService.updateProject(this.project).subscribe(
       (resp) => {
         this.toastrService.showSuccess('settings updated');
-        this.toastrService.showInfo(resp.body.name);
       },
       (error) => {
         this.toastrService.showError(error.error);
