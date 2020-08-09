@@ -1,47 +1,67 @@
 import { Project } from 'src/app/shared/models/project/project';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { Component, OnInit} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
-import { takeUntil } from 'rxjs/operators';
-import { BaseComponent } from '@core/components/base/base.component';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-project-settings',
   templateUrl: './project-settings.component.html',
   styleUrls: ['./project-settings.component.sass']
 })
-export class ProjectSettingsComponent extends BaseComponent
-implements OnInit, OnDestroy {
-
+export class ProjectSettingsComponent implements OnInit {
+  projectId: number;
   project: Project = {} as Project;
-  cachedSettingsProject: Project = {} as Project;
+  tempProjectName: string;
+  tempProjectDescription: string;
   isLoading = false;
+
   constructor(
     private projectService: ProjectService,
-    private toastrService: ToastrNotificationsService
-    )
+    private toastrService: ToastrNotificationsService,
+    private route: ActivatedRoute
+  )
   {
-    super();
+    route.parent.params.subscribe(
+      (params) => this.projectId = params.projectId);
   }
 
   ngOnInit(): void {
-
+    this.getProject(this.projectId);
   }
   getProject(projectId: number) {
       this.isLoading = true;
       this.projectService
       .getProjectById(projectId)
-        .pipe(takeUntil(this.unsubscribe$))
         .subscribe(
           (resp) => {
             this.isLoading = false;
-            this.cachedSettingsProject = this.project = resp.body;
+            this.tempProjectName = resp.body.name;
+            this.tempProjectDescription = resp.body.description;
+            this.project = resp.body;
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.message, error.name);
           }
         );
   }
-  save() {}
+  reset() {
+    this.tempProjectName = this.project.name;
+    this.tempProjectDescription = this.project.description;
+  }
+  save() {
+    this.project.name = this.tempProjectName;
+    this.project.description = this.tempProjectDescription;
+
+    this.projectService.updateProject(this.project).subscribe(
+      (resp) => {
+        this.toastrService.showSuccess('settings updated');
+        this.toastrService.showInfo(resp.body.name);
+      },
+      (error) => {
+        this.toastrService.showError(error.error);
+      }
+    );
+  }
 }

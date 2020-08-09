@@ -5,32 +5,28 @@ import { ProjectSettingsComponent } from './project-settings/project-settings.co
 import { ProjectCreateComponent } from './project-create/project-create.component';
 import { ProjectComponent } from './project.component';
 
+const routes: Routes = [
+{
+  path: 'create',
+  component: ProjectCreateComponent
+},
+{
+  path: ':projectId',
+  component: ProjectComponent,
+  children: [
+    {
+      path: 'settings',
+      component: ProjectSettingsComponent
+    }
+  ]
+},
+];
 
-const routes: Routes = [];
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(
-  [
-    {
-      path: 'create',
-      component: ProjectCreateComponent
-    },
-    {
-      path: ':id',
-      component: ProjectComponent,
-      children: [
-      {
-        path: '',
-        component: ProjectSettingsComponent
-      },
-      {
-        path: 'settings',
-        component: ProjectSettingsComponent
-      },
-      ]
-    },
-  ])],
-
+  imports: [CommonModule,
+    RouterModule.forChild(routes),
+  ],
   exports: [RouterModule]
 })
 export class ProjectRoutingModule { }

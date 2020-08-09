@@ -1,1 +1,48 @@
-<p>project-create works!</p>
+<form (ngSubmit)="save()" #projectSettingForm="ngForm">
+  <h2 class="small-title">
+    Create Project
+  </h2>
+  <div class="form-croup-project">
+    <label for="name-input">
+      <span class="form-control-project">Project name</span>
+      <input type="text" [(ngModel)]="newProject.name" name="name" required autocomplete="off" #name="ngModel"
+        id="name-input" class="form-control" placeholder="My first project">
+    </label>
+    <div class="error" [hidden]="name.errors?.required == null || name.untouched">
+      Name is required
+    </div>
+  </div>
+
+  <div class="form-croup-project">
+    <label for="description-input">
+      <span class="form-control-project">Description </span>
+      <textarea rows="3" name="text" [(ngModel)]="newProject.description" name="description" required autocomplete="off"
+        #description="ngModel" id="description-input" class="form-control" placeholder="Some description for project">
+      </textarea>
+    </label>
+  </div>
+
+  <div class="form-croup-project">
+    <label for="isPublic-checkbox">
+      <span class="form-control-project">Public repository
+      </span>
+      <input type="checkbox" [(ngModel)]="newProject.isPublic" (change)="onToggle(newProject.isPublic)" name="isPublic"
+      #isPublic="ngModel" id="isPublic-checkbox" class="form-control">
+    </label>
+  </div>
+
+  <div class="form-croup-project">
+    <label for="repository-input">
+      <span class="form-control-project">Repository Url</span>
+      <input type="text" [(ngModel)]="newProject.repositoryUrl" name="repositoryUrl" required autocomplete="off"
+        #repositoryUrl="ngModel" id="repository-input" class="form-control" placeholder="https://github.com/user-name/project-name">
+    </label>
+    <div class="error" [hidden]="repositoryUrl.errors?.required == null || repositoryUrl.untouched">
+      Repository Url is required
+    </div>
+  </div>
+  <div class="btn-wp">
+    <button type="submit" class="btn btn-success" [disabled]="projectSettingForm.invalid">Create</button>
+    <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+  </div>
+</form>

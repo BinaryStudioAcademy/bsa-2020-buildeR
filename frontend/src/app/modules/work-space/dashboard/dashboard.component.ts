@@ -45,16 +45,12 @@ export class DashboardComponent extends BaseComponent
         },
         (error) => {
           this.loadingProjects = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error);
         }
       );
   }
 
   triggerBuild(projectId: number) {
-    throw new Error('Method not implemented.');
-  }
-
-  addProject() {
     throw new Error('Method not implemented.');
   }
 }

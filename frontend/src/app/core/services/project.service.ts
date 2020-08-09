@@ -20,6 +20,6 @@ export class ProjectService {
     return this.httpService.postFullRequest<Project>(`${this.routePrefix}`, newProject);
   }
   public updateProject(project: Project){
-    return this.httpService.putFullRequest(`${this.routePrefix}`, project);
+    return this.httpService.putFullRequest<Project>(`${this.routePrefix}`, project);
   }
 }
