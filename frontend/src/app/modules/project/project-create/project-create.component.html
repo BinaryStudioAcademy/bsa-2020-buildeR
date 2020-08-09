@@ -8,7 +8,7 @@
       <input type="text" [(ngModel)]="newProject.name" name="name" required autocomplete="off" #name="ngModel"
         id="name-input" class="form-control" placeholder="My first project">
     </label>
-    <div class="error" [hidden]="name.errors?.required == null || name.untouched">
+    <div class="error" [hidden]="!name.errors?.required || name.untouched">
       Name is required
     </div>
   </div>
@@ -37,7 +37,7 @@
       <input type="text" [(ngModel)]="newProject.repositoryUrl" name="repositoryUrl" required autocomplete="off"
         #repositoryUrl="ngModel" id="repository-input" class="form-control" placeholder="https://github.com/user-name/project-name">
     </label>
-    <div class="error" [hidden]="repositoryUrl.errors?.required == null || repositoryUrl.untouched">
+    <div class="error" [hidden]="!repositoryUrl.errors?.required || repositoryUrl.untouched">
       Repository Url is required
     </div>
   </div>

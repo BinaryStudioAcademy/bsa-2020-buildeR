@@ -10,7 +10,7 @@
           <input type="text" [(ngModel)]="tempProjectName" name="name" required autocomplete="off"
             #name="ngModel" id="name-input" class="form-control">
         </label>
-        <div class="error" [hidden]="name.errors?.required == null || name.untouched">
+        <div class="error" [hidden]="!name.errors?.required || name.untouched">
           Name is required
         </div>
       </div>
