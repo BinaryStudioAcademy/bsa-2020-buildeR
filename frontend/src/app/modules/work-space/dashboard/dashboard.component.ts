@@ -45,7 +45,7 @@ export class DashboardComponent extends BaseComponent
         },
         (error) => {
           this.loadingProjects = false;
-          this.toastrService.showError(error.error);
+          this.toastrService.showError(error);
         }
       );
   }
