@@ -19,23 +19,26 @@ namespace buildeR.API.Controllers
             _projectService = projectService;
         }
 
-        [HttpGet("{userId:int}")]
+        [HttpGet("getProjectsByUserId/{userId:int}")]
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUserId(int userId)
         {
             return await _projectService.GetProjectsByUser(userId);
         }
+
         [HttpGet("{projectId}/settings")]
         public async Task<ProjectDTO> GetProjectById(int projectId)
         {
             int userId = 1; // here will be userId from token or somthing else
             return await _projectService.GetProjectByUserId(userId, projectId);
         }
+
         [HttpPost]
         public async Task<ActionResult<ProjectDTO>> CreateProject([FromBody] NewProjectDTO dto)
         {
             dto.OwnerId = 1; // here will be userId from token or somthing else
             return Ok(await _projectService.CreateProject(dto));
         }
+
         [HttpPut]
         public async Task<ActionResult<ProjectDTO>> UpdateProject([FromBody] ProjectDTO dto)
         {
