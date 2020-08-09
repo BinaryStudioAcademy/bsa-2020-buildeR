@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import * as signalR from '@aspnet/signalr';
+import * as signalR from '@microsoft/signalr';
+import { environment } from '@env/../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,21 +13,15 @@ export class SignalRService {
     this.startConnection();
   }
 
-  public buildConnection() {
+  public buildConnection(hubUrl: string = '/testhub') {
     this.hubConnetction =  new signalR.HubConnectionBuilder()
-    .withUrl('http://localhost:5070/testhub',
-    {
-      skipNegotiation: true,
-      transport: signalR.HttpTransportType.WebSockets
-  })
+    .withUrl(this.buildUrl(hubUrl))
     .build();
-    console.log('built');
   }
 
   public startConnection(){
     this.hubConnetction.start()
     .then(() => {
-      console.log('connection started');
       this.registerSignalREvents();
   })
     .catch((err) => {
@@ -34,10 +29,14 @@ export class SignalRService {
     });
   }
 
-  private registerSignalREvents(){
-    this.hubConnetction.on('Send', (result) => {
+  private registerSignalREvents(method: string = 'Send'){
+    this.hubConnetction.on(method, (result) => {
       console.log(result);
       this.signalRecieved.emit();
     });
+  }
+
+  private buildUrl(hubUrl: string): string{
+    return environment.signalRUrl + hubUrl;
   }
 }
