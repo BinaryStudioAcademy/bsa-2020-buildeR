@@ -6,7 +6,7 @@
         <div class="avatar-container" (click)="file.click()">
           <input hidden type="file" #file class="file-hide" aria-describedby="fileHelp" accept="image/*" (change)="upload($event)">
           <img class="avatar avatar-style"  
-          src="{{this.serverUrl}}"
+          src={{serverUrl}}
           onerror="this.src='../../../../assets/images/Avatar-default.png'" #logo>
           <div class="img-text">
             Upload

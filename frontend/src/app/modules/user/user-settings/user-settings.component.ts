@@ -60,13 +60,12 @@ export class UserSettingsComponent implements OnInit {
   }
 
   public changeAvatar(filePath: string){
-    this.details.avatarUrl = filePath;
     this.serverUrl = environment.apiUrl + '/api/FileStorage/download/?filePath=' + filePath;
-
-    this.settingsService.updateSettings(this.details)// update user relative path in database
+    this.details.avatarUrl = filePath;
+    /*this.settingsService.updateSettings(this.details)// update user relative path in database
     .subscribe(x => {
       this.toastrNotification.showSuccess('User image updated');
-    });
+    });*/
     this.imageInput.nativeElement.value = '';
   }
 }
