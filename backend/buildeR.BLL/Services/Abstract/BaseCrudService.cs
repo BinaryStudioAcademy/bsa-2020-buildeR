@@ -35,10 +35,11 @@ namespace buildeR.BLL.Services.Abstract
 
             var entity = Mapper.Map<TEntity>(dto);
 
-            var additionResult = await Context.Set<TEntity>().AddAsync(entity);
-            var createdEntity = await Context.Set<TEntity>().FindAsync(additionResult.Entity.Id);
+            var additionResult = await Context.Set<TEntity>().AddAsync(entity);          
 
             await Context.SaveChangesAsync();
+
+            var createdEntity = await Context.Set<TEntity>().FindAsync(additionResult.Entity.Id);
 
             return Mapper.Map<TEntityDTO>(createdEntity);
         }

@@ -59,7 +59,7 @@ namespace buildeR
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions

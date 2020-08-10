@@ -22,6 +22,11 @@ const routes = [{
           .then(m => m.UserModule)
       },
       {
+        path: 'projects',
+        loadChildren: () => import('../../modules/project/project.module')
+          .then(m => m.ProjectModule)
+      },
+      {
         path: '**',
         redirectTo: 'dashboard',
         pathMatch: 'full',

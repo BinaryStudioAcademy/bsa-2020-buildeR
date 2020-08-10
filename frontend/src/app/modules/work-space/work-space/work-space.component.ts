@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-work-space',
@@ -7,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkSpaceComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthenticationService, private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  logOut() {
+    this.authService.logout();
   }
 
 }

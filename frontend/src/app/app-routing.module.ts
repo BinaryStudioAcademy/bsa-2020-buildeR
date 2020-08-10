@@ -12,6 +12,7 @@ const routes: Routes = [
   {
     path: 'portal',
     canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     loadChildren: () =>
       import('./modules/work-space/work-space.module').then(
         (m) => m.WorkSpaceModule

@@ -1,0 +1,60 @@
+<div class="project-container">
+  <div class="project-header">
+    <div class="project-title">
+      <span class="project-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="icon public" alt="Public repository">
+          <g fill="none" stroke="#9ea3a8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10">
+            <path d="M7.089 13.343h6.434L13.524 1H2.176v12.343H4.46M2.176 10.543h11.348"></path>
+            <path
+              d="M4.46 12.239v2.756l1.394-1.285 1.235 1.236v-2.707zM4.199 1v9.543M5.635 8.737h.63M5.635 6.782h.63M5.635 4.828h.63M5.635 2.873h.63">
+            </path>
+          </g>
+        </svg>
+      </span>
+      <h1 class="user-project-names">
+        <a href="#">{{project.owner?.username}} </a>/
+        <a href="#">{{project.name}} </a>
+      </h1>
+    </div>
+    <div class="repo-icon">
+      <a title="{{project.name}} on GitHub" href="{{project.repositoryUrl}}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+          <path
+            d="M14 0C6.27 0 0 6.43 0 14.36c0 6.34 4.01 11.72 9.57 13.62.7.13.96-.31.96-.69 0-.34-.01-1.24-.02-2.44-3.89.87-4.72-1.92-4.72-1.92-.64-1.66-1.55-2.1-1.55-2.1-1.27-.89.1-.87.1-.87 1.4.1 2.14 1.48 2.14 1.48 1.25 2.19 3.28 1.56 4.07 1.19.13-.93.49-1.56.89-1.92-3.11-.36-6.38-1.59-6.38-7.09 0-1.57.55-2.85 1.44-3.85-.14-.36-.62-1.82.14-3.8 0 0 1.18-.39 3.85 1.47a12.8 12.8 0 013.5-.48c1.19.01 2.39.16 3.5.48 2.67-1.86 3.85-1.47 3.85-1.47.76 1.98.28 3.44.14 3.8.9 1 1.44 2.28 1.44 3.85 0 5.51-3.27 6.73-6.39 7.08.5.44.95 1.32.95 2.66 0 1.92-.02 3.47-.02 3.94 0 .38.25.83.96.69C23.99 26.07 28 20.7 28 14.36 28 6.43 21.73 0 14 0z"
+            fill-rule="evenodd" clip-rule="evenodd"></path>
+        </svg>
+      </a>
+    </div>
+    <div class="repo-badge">
+      <a title="Latest push build on default branch: ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="98" height="20"><linearGradient id="a" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><rect rx="3" width="98" height="20" fill="#555"/><rect rx="3" x="37" width="61" height="20" fill="#9f9f9f"/><path fill="#9f9f9f" d="M37 0h4v20h-4z"/><rect rx="3" width="98" height="20" fill="url(#a)"/><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="19.5" y="15" fill="#010101" fill-opacity=".3">build</text><text x="19.5" y="14">build</text><text x="66.5" y="15" fill="#010101" fill-opacity=".3">unknown</text><text x="66.5" y="14">unknown</text></g></svg>
+      </a>
+    </div>
+  </div>
+  <div class="project-main">
+    <div class="project-navigation">
+      <nav class="project-nav">
+        <ul>
+          <li>
+            <a href="#">
+              Current
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              Build History
+            </a>
+          </li>
+          <li class="active">
+            <a href="{{project.id}}/settings" class="active">
+              Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="project-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
