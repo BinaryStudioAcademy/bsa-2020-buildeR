@@ -1,7 +1,11 @@
 ﻿using buildeR.Common.DTO.BuildHistory;
-using buildeR.Common.DTO.BuildPluginParameter;
-using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
+
+using Docker.DotNet;
+using Docker.DotNet.Models;
+
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Tar;
 
 using LibGit2Sharp;
 
@@ -10,10 +14,8 @@ using Newtonsoft.Json;
 using Serilog;
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +26,11 @@ namespace buildeR.Processor.Services
     {
         #region Properties\fields
         private readonly IConsumer _consumer;
+        private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
         private string _pathToFile;
 
-        private string FileExtension => IsCurrentOsLinux ? "sh" : "cmd";
+        private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         private string PathToWorkDirectory => Path.Combine(_pathToFile, "ClonedRepository");
         #endregion
@@ -35,6 +38,7 @@ namespace buildeR.Processor.Services
         public ProcessorService(IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
+            _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
@@ -54,134 +58,115 @@ namespace buildeR.Processor.Services
             _consumer.Consume();
         }
 
-        public void Deregister()
+        public void Unregister()
         {
             Log.Information(" >>>> Deregister");
         }
-
 
         public async Task BuildProjectAsync(ExecutiveBuildDTO build)
         {
             _pathToFile = Path.Combine(_pathToProjects, build.ProjectId.ToString());
 
-            EnsureExistDirectory(_pathToFile);
-
-            var fileNames = new string[build.BuildSteps.Count()];
-
-            for (var i = 0; i < build.BuildSteps.Count(); i++)
-            {
-                fileNames[i] = GenerateBuildStepFileName(build.BuildSteps.ElementAt(i));
-
-                await using (var buildStepFile = new StreamWriter(Path.Combine(_pathToFile, fileNames[i])))
-                {
-                    await buildStepFile.WriteLineAsync(GenerateStepBuildFileContent(build.BuildSteps.ElementAt(i)));
-                }
-            }
-
-            CloneRepository(build.RepositoryUrl);
-
-            await LaunchBuildAsync(build.BuildSteps, fileNames);
-
-            DeleteClonedRepository(PathToWorkDirectory);
+            await CreateImageAsync(build.RepositoryUrl);
         }
 
-        private async Task LaunchBuildAsync(IEnumerable<ExecutiveBuildStepDTO> steps, IReadOnlyList<string> fileNames)
+        #region Docker
+        private async Task CreateImageAsync(string repositoryUrl)
         {
-            using (var process = new Process())
+            CloneRepository(repositoryUrl);
+
+            var targetFolder = Directory.GetParent(PathToWorkDirectory).FullName;
+            CreateTarGzFileFromFolder(PathToWorkDirectory, "ArchToBuild", targetFolder);
+
+            await using (var stream = File.OpenRead(Path.Combine(targetFolder, "ArchToBuild.tar.gz")))
             {
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.CreateNoWindow = false;
-
-                for (var i = 0; i < steps.Count(); i++)
+                try
                 {
-                    try
-                    {
-                        process.StartInfo.FileName = Path.Combine(_pathToFile, fileNames[i]);
-                        process.StartInfo.CreateNoWindow = true;
-                        process.Start();
+                    var imageStream = await _dockerClient
+                        .Images
+                        .BuildImageFromDockerfileAsync(
+                            stream,
+                            new ImageBuildParameters()
+                            {
+                                Dockerfile = "Dockerfile"
+                            });
 
-                        var stepOutput = await process.StandardOutput.ReadToEndAsync();
-                        var errorOutput = await process.StandardError.ReadToEndAsync();
+                    await _dockerClient
+                        .Images
+                        .CreateImageAsync(
+                            new ImagesCreateParameters() { Tag = "latest" },
+                            imageStream,
+                            new AuthConfig(),
+                            new Progress<JSONMessage>());
 
-                        var info = new StringBuilder()
-                            .AppendLine()
-                            .Append("Result of run #").Append(steps.ElementAt(i).Index).AppendLine(" command")
-                            .Append("Duration: ").Append((process.ExitTime - process.StartTime).TotalSeconds.ToString("F")).AppendLine(" seconds")
-                            .AppendLine("Output:")
-                            .AppendLine(stepOutput)
-                            .ToString();
-
-                        Log.Information(info);
-
-                        if (!string.IsNullOrWhiteSpace(errorOutput))
-                        {
-                            Log.Error(errorOutput);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e.Message);
-                    }
+                    var availableImages = await _dockerClient.Images.ListImagesAsync(new ImagesListParameters() { All = true });
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
                 }
             }
         }
+        #endregion
 
-        #region Work with files
-        private string GenerateBuildStepFileName(ExecutiveBuildStepDTO buildStep)
+        #region Tar.gz
+        private string CreateTarGzFileFromFolder(string sourceDirectory, string tgzFileName, string targetDirectory, bool deleteSourceDirectoryUponCompletion = false)
         {
-            return $"{buildStep.Index}.{FileExtension}";
-        }
-
-        private string GenerateStepBuildFileContent(ExecutiveBuildStepDTO step)
-        {
-            return IsCurrentOsLinux ? GenerateContentForLinux(step) : GenerateContentForWindows(step);
-        }
-
-        private string GenerateContentForWindows(ExecutiveBuildStepDTO step)
-        {
-            var stringBuilder = new StringBuilder();
-
-            //TODO Is need to set env variables and which?
-            stringBuilder
-                .AppendLine("@echo off")
-                .AppendLine("SETLOCAL ENABLEEXTENSIONS")
-                .AppendLine("SET me=%~n0")
-                .Append("cd ").AppendLine(Path.Combine(_pathToFile, "ClonedRepository"))
-                .Append(step.BuildPluginCommand).Append(" ")
-                .Append(step.PluginCommand).Append(" ");
-
-            foreach (var buildPluginParameter in step.Parameters ?? Enumerable.Empty<BuildPluginParameterDTO>())
+            if (!tgzFileName.EndsWith(".tar.gz"))
             {
-                stringBuilder
-                    .Append(buildPluginParameter.Key).Append(" ")
-                    .Append(buildPluginParameter.Value).Append(" ");
+                tgzFileName = $"{tgzFileName}.tar.gz";
             }
 
-            Log.Information($"~~~ Generated text:\n{stringBuilder}");
-            return stringBuilder.ToString();
+            using var outStream = File.Create(Path.Combine(targetDirectory, tgzFileName));
+            using (var gzoStream = new GZipOutputStream(outStream))
+            {
+                var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream);
+
+                tarArchive.RootPath = sourceDirectory.Replace('\\', '/');
+                if (tarArchive.RootPath.EndsWith("/"))
+                {
+                    tarArchive.RootPath = tarArchive.RootPath.Remove(tarArchive.RootPath.Length - 1);
+                }
+
+                AddDirectoryFilesToTarGz(tarArchive, sourceDirectory);
+
+                if (deleteSourceDirectoryUponCompletion)
+                {
+                    File.Delete(sourceDirectory);
+                }
+
+                var tgzPath = (tarArchive.RootPath + ".tar.gz").Replace('/', '\\');
+
+                tarArchive.Close();
+                return tgzPath;
+            }
         }
 
-        private string GenerateContentForLinux(ExecutiveBuildStepDTO step)
+        private void AddDirectoryFilesToTarGz(TarArchive tarArchive, string sourceDirectory)
         {
-            var stringBuilder = new StringBuilder();
-            //TODO Is need to set env variables and which?
-            stringBuilder
-                .AppendLine("#!/bin/bash")
-                .Append("cd ").AppendLine(Path.Combine(_pathToFile, "ClonedRepository"))
-                .Append(step.BuildPluginCommand).Append(" ")
-                .Append(step.PluginCommand).Append(" ");
+            AddDirectoryFilesToTarGz(tarArchive, sourceDirectory, string.Empty);
+        }
 
-            foreach (var buildPluginParameter in step.Parameters ?? Enumerable.Empty<BuildPluginParameterDTO>())
+        private void AddDirectoryFilesToTarGz(TarArchive tarArchive, string sourceDirectory, string currentDirectory)
+        {
+            var pathToCurrentDirectory = Path.Combine(sourceDirectory, currentDirectory);
+            foreach (var filePath in Directory.GetFiles(pathToCurrentDirectory))
             {
-                stringBuilder
-                    .Append(buildPluginParameter.Key).Append(" ")
-                    .Append(buildPluginParameter.Value).Append(" ");
+                var tarEntry = TarEntry.CreateEntryFromFile(filePath);
+
+                tarEntry.Name = filePath.Replace(sourceDirectory, "");
+
+                if (tarEntry.Name.StartsWith('\\'))
+                {
+                    tarEntry.Name = tarEntry.Name.Substring(1);
+                }
+                tarArchive.WriteEntry(tarEntry, true);
             }
 
-            Log.Information($"~~~ Generated text:\n{stringBuilder}");
-            return stringBuilder.ToString();
+            foreach (var directory in Directory.GetDirectories(pathToCurrentDirectory))
+            {
+                AddDirectoryFilesToTarGz(tarArchive, sourceDirectory, directory);
+            }
         }
         #endregion
 
