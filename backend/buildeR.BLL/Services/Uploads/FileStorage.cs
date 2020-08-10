@@ -13,6 +13,9 @@ namespace buildeR.BLL.Services.Uploads
     public class FileStorage : IFileStorage
     {
         private string relativePath = @"\buildeR\";
+        private string imageFolder = "images\\";
+        private string filesFolder = "files\\";
+
         public FileStorage()
         { }
         public string GetPath()
@@ -26,14 +29,15 @@ namespace buildeR.BLL.Services.Uploads
         {
             var uploadedExtension = MimeTypeMap.GetExtension(data.ContentType);
             if (IsImage(uploadedExtension))
-                return await UploadImage(data);
-            else return await UploadFile(data);
+                return await UploadFile(data, imageFolder);
+            else return await UploadFile(data, filesFolder);
         }
 
-        public async System.Threading.Tasks.Task<string> UploadImage(IFormFile image)
+        public async System.Threading.Tasks.Task<string> UploadFile(IFormFile image, string folderName)
         {
-            relativePath += "images\\";
-            RemoveImages(GetPath() + relativePath); //to hold only one user logo
+            relativePath += folderName;
+            if(folderName == imageFolder)
+                RemoveImages(GetPath() + relativePath); //to hold only one user logo
 
             string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString() + MimeTypeMap.GetExtension(image.ContentType);
 
@@ -51,7 +55,7 @@ namespace buildeR.BLL.Services.Uploads
             return relativePath + newFileName;
         }
 
-        public async System.Threading.Tasks.Task<string> UploadFile(IFormFile file)
+        /*public async System.Threading.Tasks.Task<string> UploadFile(IFormFile file)
         {
             relativePath += "files\\";
             string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString() + MimeTypeMap.GetExtension(file.ContentType);
@@ -67,7 +71,7 @@ namespace buildeR.BLL.Services.Uploads
             }
 
             return relativePath + newFileName ;
-        }
+        }*/
 
         private bool IsImage(string extension)
         {
