@@ -55,24 +55,6 @@ namespace buildeR.BLL.Services.Uploads
             return relativePath + newFileName;
         }
 
-        /*public async System.Threading.Tasks.Task<string> UploadFile(IFormFile file)
-        {
-            relativePath += "files\\";
-            string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString() + MimeTypeMap.GetExtension(file.ContentType);
-
-            var path = GetPath() + relativePath;
-            Directory.CreateDirectory(path);
-
-            var filePath = Path.Combine(path, newFileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return relativePath + newFileName ;
-        }*/
-
         private bool IsImage(string extension)
         {
             var extensions = new List<string> { ".jpg", ".gif", ".png", ".jpeg" }; 
