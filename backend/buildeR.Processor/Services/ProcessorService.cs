@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,8 +86,9 @@ namespace buildeR.Processor.Services
                 .GetContainerLogsAsync(_containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
             using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
             {
-                var logs = await streamReader.ReadToEndAsync();
-                Debug.WriteLine(logs);
+                var logContent = await streamReader.ReadToEndAsync();
+                var logsWithoutControlChars = new string(logContent.Where(c => char.IsSeparator(c) || char.IsPunctuation(c) || !char.IsControl(c)).ToArray());
+                Debug.WriteLine(logsWithoutControlChars);
             }
         }
 
