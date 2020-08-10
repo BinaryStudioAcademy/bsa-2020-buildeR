@@ -11,5 +11,7 @@ namespace buildeR.BLL.Services.Abstract
         Task<ProjectDTO> GetProjectByUserId(int userId, int projectId);
         Task<ProjectDTO> CreateProject(NewProjectDTO dto);
         Task UpdateProject(ProjectDTO dto, int userId);
+
+        Task DeleteProject(int id);
     }
 }

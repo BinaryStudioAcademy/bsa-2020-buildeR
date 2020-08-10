@@ -58,5 +58,10 @@ namespace buildeR.BLL.Services
             }
             throw new ForbiddenExeption("Update", project.Name, project.Id);
         }
+
+        public async Task DeleteProject(int id)
+        {
+             await base.RemoveAsync(id);            
+        }
     }
 }

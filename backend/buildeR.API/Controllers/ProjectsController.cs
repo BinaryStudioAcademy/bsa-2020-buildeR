@@ -33,18 +33,24 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProjectDTO>> CreateProject([FromBody] NewProjectDTO dto)
+        public async Task<ProjectDTO> CreateProject([FromBody] NewProjectDTO dto)
         {
             dto.OwnerId = 1; // here will be userId from token or somthing else
-            return Ok(await _projectService.CreateProject(dto));
+            return await _projectService.CreateProject(dto);
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProjectDTO>> UpdateProject([FromBody] ProjectDTO dto)
+        public async Task<ProjectDTO> UpdateProject([FromBody] ProjectDTO dto)
         {
             dto.OwnerId = 1; // here will be userId from token or somthing else
             await _projectService.UpdateAsync(dto);
-            return Ok(await _projectService.GetAsync(dto.Id));
+            return await _projectService.GetAsync(dto.Id);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteProject(int id)
+        {
+            await _projectService.DeleteProject(id);
         }
     }
 }
