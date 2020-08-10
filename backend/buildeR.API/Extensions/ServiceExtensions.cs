@@ -28,6 +28,8 @@ namespace buildeR.API.Extensions
             {
                 cfg.AddProfile<UserProfile>();
                 cfg.AddProfile<ProjectProfile>();
+                cfg.AddProfile<BuildPluginParameterProfile>();
+                cfg.AddProfile<BuildStepProfile>();
             },
             Assembly.GetExecutingAssembly());
         }

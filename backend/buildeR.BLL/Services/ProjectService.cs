@@ -63,7 +63,8 @@ namespace buildeR.BLL.Services
         }
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
-            var project = await Context.Projects.Include(p => p.BuildSteps)
+            var project = await Context.Projects
+                                                .Include(p => p.BuildSteps)
                                                     .ThenInclude(s => s.PluginCommand)
                                                         .ThenInclude(c => c.Plugin)
                                                 .Include(p => p.BuildSteps)
@@ -75,23 +76,8 @@ namespace buildeR.BLL.Services
             executiveBuild.ProjectId = project.Id;
             executiveBuild.RepositoryUrl = project.RepositoryUrl;
             executiveBuild.BuildSteps = project.BuildSteps
-                .Select(buildStep => new ExecutiveBuildStepDTO
-                { 
-                    BuildStepId = buildStep.Id,
-                    Name = buildStep.BuildStepName,
-                    Index = buildStep.Index,
-                    PluginCommand = buildStep.PluginCommand.Name,
-                    BuildPluginCommand = buildStep.PluginCommand.Plugin.PluginName,
-                    LoggingVerbosity = buildStep.LoggingVerbosity,
-                    Parameters = buildStep.BuildPluginParameters
-                                          .Select(parameter => new BuildPluginParameterDTO 
-                                          {
-                                              Id = parameter.Id,
-                                              BuildStepId = parameter.BuildStepId,
-                                              Key = parameter.Key,
-                                              Value = parameter.Value
-                                          })
-                });
+                .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
+                .OrderBy(buildstep => buildstep.Index);
 
             return executiveBuild;
         }
