@@ -1,48 +1,50 @@
-<form (ngSubmit)="save()" #projectSettingForm="ngForm">
+<form (ngSubmit)="save()" #projectCreatingForm="ngForm">
   <h2 class="small-title">
     Create Project
   </h2>
-  <div class="form-croup-project">
-    <label for="name-input">
-      <span class="form-control-project">Project name</span>
-      <input type="text" [(ngModel)]="newProject.name" name="name" required autocomplete="off" #name="ngModel"
-        id="name-input" class="form-control" placeholder="My first project">
-    </label>
-    <div class="error" [hidden]="!name.errors?.required || name.untouched">
-      Name is required
+  <div class="group">
+    <div class="field">
+      <span>Project name</span>
     </div>
-  </div>
-
-  <div class="form-croup-project">
-    <label for="description-input">
-      <span class="form-control-project">Description </span>
-      <textarea rows="3" name="text" [(ngModel)]="newProject.description" name="description" required autocomplete="off"
-        #description="ngModel" id="description-input" class="form-control" placeholder="Some description for project">
+    <div class="input-area">
+      <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.name" name="name" required
+        autocomplete="off" #name="ngModel" placeholder="My first project">
+      <div class="error" [hidden]="!name.errors?.required || name.untouched">
+        Name is required
+      </div>
+    </div>
+    <div class="field">
+      <span>Description</span>
+    </div>
+    <div class="input-area">
+      <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="newProject.description"
+        name="description" required autocomplete="off" #description="ngModel"
+        placeholder="Some description for project">
       </textarea>
-    </label>
-  </div>
-
-  <div class="form-croup-project">
-    <label for="isPublic-checkbox">
-      <span class="form-control-project">Public repository
-      </span>
-      <input type="checkbox" [(ngModel)]="newProject.isPublic" (change)="onToggle(newProject.isPublic)" name="isPublic"
-      #isPublic="ngModel" id="isPublic-checkbox" class="form-control">
-    </label>
-  </div>
-
-  <div class="form-croup-project">
-    <label for="repository-input">
-      <span class="form-control-project">Repository Url</span>
-      <input type="text" [(ngModel)]="newProject.repositoryUrl" name="repositoryUrl" required autocomplete="off"
-        #repositoryUrl="ngModel" id="repository-input" class="form-control" placeholder="https://github.com/user-name/project-name">
-    </label>
-    <div class="error" [hidden]="!repositoryUrl.errors?.required || repositoryUrl.untouched">
-      Repository Url is required
     </div>
+    <div class="field">
+      <span>Public repository</span>
+    </div>
+    <div class="input-area">
+      <input type="checkbox" class="form-control form-control-sm" [(ngModel)]="newProject.isPublic"
+        (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel" id="isPublic-checkbox">
+
+    </div>
+    <div class="field">
+      <span>Repository Url</span>
+    </div>
+    <div class="input-area">
+      <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.repositoryUrl"
+        name="repositoryUrl" required autocomplete="off" #repositoryUrl="ngModel">
+      <div class="error" [hidden]="!repositoryUrl.errors?.required || repositoryUrl.untouched">
+        Repository Url is required
+      </div>
+    </div>
+
   </div>
+
   <div class="btn-wp">
-    <button type="submit" class="btn btn-success" [disabled]="projectSettingForm.invalid">Create</button>
+    <button type="submit" class="btn btn-success" [disabled]="projectCreatingForm.invalid">Create</button>
     <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
   </div>
 </form>
