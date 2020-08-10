@@ -9,9 +9,11 @@ import { WorkSpaceModule } from './modules/work-space/work-space.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { SignUpComponent } from '@core/components/sign-up/sign-up.component';
+import { SignInComponent } from '@core/components/sign-in/sign-in.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, SignUpComponent, SignInComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -6,24 +6,18 @@ import { ErrorInterceptor } from './interceptors/error.interceptor.service';
 
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
-import { SignInComponent } from './components/sign-in/sign-in.component';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
     ModalContentComponent,
-    LandingPageComponent,
-    SignInComponent,
-    SignUpComponent
+    LandingPageComponent
   ],
   imports: [HttpClientModule, SharedModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
   ],
   exports: [
-    LandingPageComponent,
-    SignInComponent,
-    SignUpComponent
+    LandingPageComponent
   ]
 })
 export class CoreModule { }
