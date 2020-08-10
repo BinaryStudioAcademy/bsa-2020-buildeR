@@ -71,6 +71,9 @@ namespace buildeR.BLL.Services
                                                     .ThenInclude(s => s.BuildPluginParameters)
                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
 
+            if (project == null)
+                throw new NotFoundException("Project", projectId);
+
             var executiveBuild = new ExecutiveBuildDTO();
 
             executiveBuild.ProjectId = project.Id;
