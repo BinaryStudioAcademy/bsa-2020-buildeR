@@ -11,7 +11,10 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBIT_MQ_PASSWORD": "guest",
+        "RABBIT_MQ_HOST_NAME": "localhost",
+        "RABBIT_MQ_USERNAME": "guest"
       }
     },
     "builder.Processor": {
@@ -19,7 +22,10 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5060",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBIT_MQ_PASSWORD": "guest",
+        "RABBIT_MQ_HOST_NAME": "localhost",
+        "RABBIT_MQ_USERNAME": "guest"
       }
     }
   }
