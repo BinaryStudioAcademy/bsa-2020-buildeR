@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.Common.Enums;
 using Microsoft.AspNetCore.Http;
@@ -13,21 +14,15 @@ namespace buildeR.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<UserDTO> GetUserFromToken()
+        private readonly IUserService _userService;
+        public AuthController(IUserService userService)
         {
-            return Ok(new UserDTO()
-            {
-                Id = 1,
-                Role = UserRole.Creator,
-                Email = "buildeR@gmail.com",
-                Username = "buildeR",
-                AvatarUrl = null,
-                FirstName = "Build",
-                LastName = "R",
-                Bio = ""
-            });
-
+            _userService = userService;
+        }
+        [HttpGet]
+        public async Task<ActionResult<UserDTO>> GetUserFromToken()
+        {
+            return await _userService.GetUserById(1);//just for testing purpose
         }
     }
 }

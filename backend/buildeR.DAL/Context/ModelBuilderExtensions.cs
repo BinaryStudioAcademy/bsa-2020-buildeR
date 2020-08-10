@@ -30,6 +30,17 @@ namespace buildeR.DAL.Context
         }
         public static void Seed(this ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().HasData(new User() //just for testing
+            {
+                Id = 1,
+                Role = UserRole.Creator,
+                Email = "buildeR@gmail.com",
+                Username = "buildeR",
+                AvatarUrl = null,
+                FirstName = "Build",
+                LastName = "R",
+                Bio = ""
+            });
             //var buildPlugins = GenerateRandomBuildPlugins();
             //var groups = GenerateRandomGroups();
             //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);

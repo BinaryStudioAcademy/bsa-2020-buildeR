@@ -347,6 +347,18 @@ namespace buildeR.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Bio = "",
+                            Email = "buildeR@gmail.com",
+                            FirstName = "Build",
+                            LastName = "R",
+                            Role = 1,
+                            Username = "buildeR"
+                        });
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.UserSocialNetwork", b =>

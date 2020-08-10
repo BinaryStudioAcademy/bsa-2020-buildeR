@@ -4,6 +4,7 @@ import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from '../../../core/services/toastr-notifications.service';
 import { environment } from '@env/environment';
+import { AuthenticationService } from '@core/services/authentication.service';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -11,14 +12,15 @@ import { environment } from '@env/environment';
 })
 export class UserSettingsComponent implements OnInit {
 
-  @Input() details: User = {} as User;
+  details: User = {} as User;
   public serverUrl: string;
   public settingsForm: FormGroup;
   public formData: FormData;
   @ViewChild('file', {static : false}) imageInput: ElementRef;
   constructor(
     private settingsService: UserSettingsService,
-    private toastrNotification: ToastrNotificationsService) { }
+    private toastrNotification: ToastrNotificationsService,
+    private authService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
@@ -42,7 +44,7 @@ export class UserSettingsComponent implements OnInit {
             Validators.maxLength(200)
           ])
     });
-
+    this.details = this.authService.getUser();
     this.serverUrl = environment.apiUrl + '/api/FileStorage/download/?filePath=' + this.details.avatarUrl;
   }
 
@@ -56,16 +58,17 @@ export class UserSettingsComponent implements OnInit {
       this.toastrNotification.showSuccess('Img uploaded to server');
       this.changeAvatar(response);
     },
-    error => this.toastrNotification.showError('Something went wrong. Please try later'));
+    (error) => this.toastrNotification.showError('Something went wrong. Please try later'));
   }
 
   public changeAvatar(filePath: string){
     this.serverUrl = environment.apiUrl + '/api/FileStorage/download/?filePath=' + filePath;
     this.details.avatarUrl = filePath;
-    /*this.settingsService.updateSettings(this.details)// update user relative path in database
-    .subscribe(x => {
+    this.settingsService.updateSettings(this.details)// update user relative path in database
+    .subscribe(user => {
       this.toastrNotification.showSuccess('User image updated');
-    });*/
+      this.authService.setUser(user);
+    });
     this.imageInput.nativeElement.value = '';
   }
 }

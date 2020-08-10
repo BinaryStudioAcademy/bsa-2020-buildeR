@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '@core/services/http.service';
 import { User } from '@shared/models/user';
+import { environment } from '@env/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class UserSettingsService {
 
-  url = 'api/settings/user';
+  url = '/users/';
   imageStorageUrl = '/api/FileStorage/';
   constructor(private httpService: HttpService) { }
 
@@ -15,11 +16,11 @@ export class UserSettingsService {
   }
 
   createSettings(settings: User){
-    return this.httpService.postFullRequest(this.url, settings);
+    return this.httpService.postRequest(this.url, settings);
   }
 
   updateSettings(settings: User){
-    return this.httpService.putFullRequest(this.url, settings);
+    return this.httpService.putRequest<User>(this.url , settings);
   }
 
   deleteSettings(id: number){
