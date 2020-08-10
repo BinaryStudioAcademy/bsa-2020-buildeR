@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Serilog;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -29,6 +30,8 @@ namespace buildeR.Processor.Services
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
         private string _pathToFile;
+
+        private string _containerId;
 
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
@@ -67,8 +70,79 @@ namespace buildeR.Processor.Services
         {
             _pathToFile = Path.Combine(_pathToProjects, build.ProjectId.ToString());
 
-            await CreateImageAsync(build.RepositoryUrl);
+            await RunTestContainerAsync();
+            //await CreateImageAsync(build.RepositoryUrl);
         }
+
+        #region Docker Test
+        private async Task RunTestContainerAsync()
+        {
+            const string imageName = "hello-world";
+            await PullImageByNameAsync(imageName);
+            await CreateAndRunContainerAsync(imageName, 8002);
+            var logStream = await _dockerClient
+                .Containers
+                .GetContainerLogsAsync(_containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
+            using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
+            {
+                var logs = await streamReader.ReadToEndAsync();
+                Debug.WriteLine(logs);
+            }
+        }
+
+        private async Task PullImageByNameAsync(string imageName)
+        {
+            try
+            {
+                await _dockerClient
+                    .Images
+                    .CreateImageAsync(new ImagesCreateParameters
+                    {
+                        FromImage = imageName,
+                        Tag = "latest"
+                    },
+                        new AuthConfig(),
+                        new Progress<JSONMessage>());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+        }
+
+        private async Task CreateAndRunContainerAsync(string imageName, int port)
+        {
+            try
+            {
+                var response = await _dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+                {
+                    Image = imageName,
+                    ExposedPorts = new Dictionary<string, EmptyStruct>
+                    {
+                        {
+                            port.ToString(), default
+                        }
+                    },
+                    HostConfig = new HostConfig
+                    {
+                        PortBindings = new Dictionary<string, IList<PortBinding>>
+                        {
+                            {port.ToString(), new List<PortBinding> {new PortBinding {HostPort = port.ToString()}}}
+                        },
+                        PublishAllPorts = true
+                    }
+                });
+
+                _containerId = response.ID;
+
+                await _dockerClient.Containers.StartContainerAsync(_containerId, null);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+        #endregion
 
         #region Docker
         private async Task CreateImageAsync(string repositoryUrl)
