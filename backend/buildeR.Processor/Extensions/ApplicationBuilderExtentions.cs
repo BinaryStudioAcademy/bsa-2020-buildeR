@@ -29,7 +29,7 @@ namespace buildeR.Processor.Extensions
 
         private static void OnStopping()
         {
-            _service.Deregister();
+            _service.Unregister();
         }
     }
 }
