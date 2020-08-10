@@ -2,6 +2,9 @@
 using AutoMapper.QueryableExtensions;
 using buildeR.BLL.Exceptions;
 using buildeR.BLL.Services.Abstract;
+using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.BuildPluginParameter;
+using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.Project;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
@@ -57,6 +60,26 @@ namespace buildeR.BLL.Services
                 await base.UpdateAsync(dto);
             }
             throw new ForbiddenExeption("Update", project.Name, project.Id);
+        }
+        public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
+        {
+            var project = await Context.Projects
+                                                .Include(p => p.BuildSteps)
+                                                    .ThenInclude(s => s.PluginCommand)
+                                                        .ThenInclude(c => c.Plugin)
+                                                .Include(p => p.BuildSteps)
+                                                    .ThenInclude(s => s.BuildPluginParameters)
+                                                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            var executiveBuild = new ExecutiveBuildDTO();
+
+            executiveBuild.ProjectId = project.Id;
+            executiveBuild.RepositoryUrl = project.RepositoryUrl;
+            executiveBuild.BuildSteps = project.BuildSteps
+                .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
+                .OrderBy(buildstep => buildstep.Index);
+
+            return executiveBuild;
         }
     }
 }

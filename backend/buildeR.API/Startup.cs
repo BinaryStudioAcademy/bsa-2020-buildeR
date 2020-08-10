@@ -38,6 +38,7 @@ namespace buildeR
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
 
             services.RegisterCustomServices();
+            services.RegisterRabbitMQ(Configuration);
             services.AddCors();
         }
 
