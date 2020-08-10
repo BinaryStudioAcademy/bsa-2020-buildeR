@@ -30,10 +30,10 @@ const routes = [{
     {
       path: '**',
       loadChildren: () => import('@modules/not-found/not-found.module')
-        .then(m => m.NotFoundModule)
+        .then(m => m.NotFoundModule),
+      pathMatch: 'full',
+      skipLocationChange: true
     },
-
-
   ],
 },
 ];

@@ -28,8 +28,8 @@ export class DashboardComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-  //  this.currentUser = this.authService.getUser();
-  //  this.getUserProjects(this.currentUser.id);
+   this.currentUser = this.authService.getUser();
+   this.getUserProjects(this.currentUser.id);
   }
 
   getUserProjects(userId: number) {

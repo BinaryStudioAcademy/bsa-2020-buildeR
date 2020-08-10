@@ -17,7 +17,6 @@ export class ProjectResolverComponent implements Resolve<Project>{
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any{
     const id = parseInt(route.paramMap.get('projectId'));
-
     console.log('resolving for ' + id);
 
     return this.projectService.getProjectById(id).subscribe((proj) => {
@@ -26,7 +25,7 @@ export class ProjectResolverComponent implements Resolve<Project>{
     }, (err) => {
       console.log(err);
       const path = this.router.url;
-      this.router.navigate(['portal/ '], {queryParams: {path}});
+      this.router.navigateByUrl('/portal/**', { skipLocationChange: true });
     });
   }
 }
