@@ -1,13 +1,14 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '@env/../environments/environment';
+import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
 
   public hubConnetction: signalR.HubConnection;
-  signalRecieved: EventEmitter<string> = new EventEmitter<string>();
+  signalRecieved: Subject<string> = new Subject<string>();
   constructor() {
     this.buildConnection();
     this.startConnection();
@@ -32,7 +33,7 @@ export class SignalRService {
   private registerSignalREvents(method: string = 'Send'){
     this.hubConnetction.on(method, (result) => {
       console.log(result);
-      this.signalRecieved.emit();
+      this.signalRecieved.next();
     });
   }
 
