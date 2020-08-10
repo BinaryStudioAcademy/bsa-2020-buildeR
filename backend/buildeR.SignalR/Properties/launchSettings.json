@@ -1,15 +1,19 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/buildeR.SignalR",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:5070"
+      "applicationUrl": "http://localhost:5070",
+      "sslPort": 0
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -17,10 +21,10 @@
     "buildeR.SignalR": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5070",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:5070"
     }
   }
 }
