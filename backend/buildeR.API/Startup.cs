@@ -1,7 +1,5 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
-using buildeR.BLL.Interfaces.Uploads;
-using buildeR.BLL.Services.Uploads;
 using buildeR.Common.FluentValidatiors;
 using buildeR.DAL.Context;
 using FluentValidation.AspNetCore;
@@ -41,7 +39,6 @@ namespace buildeR
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
 
             services.RegisterCustomServices();
-            services.AddScoped<IFileStorage, FileStorage>();
             services.AddCors();
 
             services.Configure<FormOptions>(o =>

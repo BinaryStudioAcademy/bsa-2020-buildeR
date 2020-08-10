@@ -1,9 +1,10 @@
 using AutoMapper;
 using buildeR.BLL.Interfaces;
+using buildeR.BLL.Interfaces.Uploads;
 using buildeR.BLL.MappingProfiles;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
-
+using buildeR.BLL.Services.Uploads;
 using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
 
@@ -18,6 +19,7 @@ namespace buildeR.API.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IFileStorage, FileStorage>();
 
             services.RegisterAutoMapper();
 
