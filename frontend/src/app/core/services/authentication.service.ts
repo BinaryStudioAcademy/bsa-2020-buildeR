@@ -1,54 +1,77 @@
 import { Injectable } from '@angular/core';
-import {HttpService} from './http.service';
-import { UserService } from './user.service';
-import { User } from '../../shared/models/user';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { CurrentUser } from '@shared/models/current-user';
+import { AngularFireAuth } from '@angular/fire/auth';
+import * as firebase from 'firebase';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private user: User = null;
 
-  constructor(private router: Router, private userService: UserService) {}
+  user$: BehaviorSubject<CurrentUser> = new BehaviorSubject<CurrentUser>(new CurrentUser());
 
-  getUser(): User {
-    if (this.user) {
-      return this.user;
-    }
-    return JSON.parse(localStorage.getItem(`user`));
-  }
-
-  public setUser(user: User) {
-    localStorage.setItem(`user`, JSON.stringify(user));
-  }
-
-  public login() {
-    return this.userService.getCurrentUser().subscribe((response) => {
-      this.user = response;
-      this.setUser(this.user);
-      this.router.navigate(['/portal']);
+  constructor(private angularAuth: AngularFireAuth,
+              private router: Router,
+              private httpClient: HttpClient) {
+    this.angularAuth.authState.subscribe((firebaseUser) => {
+      this.configureAuthState(firebaseUser);
     });
   }
 
-  public logout() {
-    this.user = undefined;
-    this.removeUserFromStorage();
-    this.router.navigate(['/']);
-  }
-
-  public removeUserFromStorage() {
-    localStorage.clear();
-  }
-
-  public isAuthorized() {
-    if (!this.getUser()) {
-
-      this.router.navigate(['/']);
-      return false;
+  configureAuthState(firebaseUser: firebase.User): void {
+    if (firebaseUser) {
+      firebaseUser.getIdToken().then((theToken) => {
+        const theUser = new CurrentUser();
+        theUser.displayName = firebaseUser.displayName;
+        theUser.email = firebaseUser.email;
+        theUser.isSignedIn = true;
+        localStorage.setItem('jwt', theToken);
+        this.user$.next(theUser);
+      }, () => {
+        this.doSignedOutUser();
+      });
+    } else {
+      this.doSignedOutUser();
     }
-    return true;
+  }
+
+  doGoogleSignIn(): Promise<void> {
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    googleProvider.addScope('email');
+    googleProvider.addScope('profile');
+    return this.angularAuth.signInWithPopup(googleProvider).then(() => { });
+  }
+
+  doGithubSignIn(): Promise<void> {
+    const githubProvider = new firebase.auth.GithubAuthProvider();
+    return this.angularAuth.signInWithPopup(githubProvider).then((auth) => {
+      // username only for github
+      // console.log(auth.additionalUserInfo.username);
+    });
+  }
+
+  private doSignedOutUser() {
+    const theUser = new CurrentUser();
+    theUser.displayName = null;
+    theUser.email = null;
+    theUser.isSignedIn = false;
+    localStorage.removeItem('jwt');
+    this.user$.next(theUser);
+  }
+
+  logout(): Promise<void> {
+    return this.angularAuth.signOut();
+  }
+
+  getUserObservable(): Observable<CurrentUser> {
+    return this.user$.asObservable();
+  }
+
+  getToken(): string {
+    return localStorage.getItem('jwt');
   }
 }

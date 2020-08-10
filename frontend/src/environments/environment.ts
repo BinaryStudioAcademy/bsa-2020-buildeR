@@ -5,7 +5,16 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:5050',
-  signalRUrl: 'http://localhost:5070'
+  signalRUrl: 'http://localhost:5070',
+  firebaseConfig: {
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: ''
+  }
 };
 
 /*

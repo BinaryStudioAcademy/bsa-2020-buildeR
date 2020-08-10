@@ -9,22 +9,29 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import {AuthenticationService} from '../services/authentication.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
-  constructor(
-    private router: Router,
-    private authService: AuthenticationService)
-    {}
+  constructor(private authservice: AuthenticationService, private router: Router) {
 
-
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.authService.isAuthorized();
   }
 
-  public canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.authService.isAuthorized();
+  canActivate(
+      next: ActivatedRouteSnapshot,
+      state: RouterStateSnapshot): Observable<boolean> {
+      return this.authservice
+          .getUserObservable()
+          .pipe(map(u => u != null && u.isSignedIn));
+  }
+
+  canActivateChild(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean> {
+    return this.authservice
+        .getUserObservable()
+        .pipe(map(u => u != null && u.isSignedIn));
   }
 }
