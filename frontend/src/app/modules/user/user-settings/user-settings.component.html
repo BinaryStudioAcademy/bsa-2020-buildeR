@@ -4,7 +4,7 @@
     <div class="group">
       <div class="input-area">
         <div class="avatar-container" (click)="file.click()">
-          <input hidden type="file" #file class="file-hide" aria-describedby="fileHelp" accept="image/*" (change)="upload($event)">
+          <input hidden type="file" #file class="file-hide" aria-describedby="fileHelp" accept="image/*"  (change)="upload($event)">
           <img class="avatar avatar-style"  
           src={{serverUrl}}
           onerror="this.src='../../../../assets/images/Avatar-default.png'" #logo>

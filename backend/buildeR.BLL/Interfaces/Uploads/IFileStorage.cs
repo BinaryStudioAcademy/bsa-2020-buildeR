@@ -10,8 +10,6 @@ namespace buildeR.BLL.Interfaces.Uploads
     public interface IFileStorage
     {
         Task<string> UploadAsync(IFormFile data);
-        string GetLastPhoto();
-        string GetPath();
         Task<byte[]> GetFileBytes(string fileDirectory); 
     }
 }

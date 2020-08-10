@@ -1,5 +1,6 @@
 ﻿using buildeR.BLL.Interfaces.Uploads;
 using Microsoft.AspNetCore.Http;
+using MimeTypes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,23 +15,6 @@ namespace buildeR.BLL.Services.Uploads
         private string relativePath = @"\buildeR\";
         public FileStorage()
         { }
-        public async System.Threading.Tasks.Task<string> UploadAsync(IFormFile data)
-        {
-            RemoveFiles(GetPath() + relativePath); 
-            string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString();
-
-            var path = GetPath() + relativePath;
-            Directory.CreateDirectory(path);
-
-            var filePath = Path.Combine(path, newFileName + ".png");
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await data.CopyToAsync(stream);
-            }
-
-            return relativePath + newFileName + ".png";
-        }
         public string GetPath()
         {
             var home = Environment.OSVersion.Platform == PlatformID.Unix ?
@@ -38,32 +22,75 @@ namespace buildeR.BLL.Services.Uploads
                 Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
             return home;
         }
+        public async System.Threading.Tasks.Task<string> UploadAsync(IFormFile data)
+        {
+            var uploadedExtension = MimeTypeMap.GetExtension(data.ContentType);
+            if (IsImage(uploadedExtension))
+                return await UploadImage(data);
+            else return await UploadFile(data);
+        }
 
-        public void RemoveFiles(string root)
+        public async System.Threading.Tasks.Task<string> UploadImage(IFormFile image)
+        {
+            relativePath += "images\\";
+            RemoveImages(GetPath() + relativePath); //to hold only one user logo
+
+            string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString() + MimeTypeMap.GetExtension(image.ContentType);
+
+            var path = GetPath() + relativePath;
+            Directory.CreateDirectory(path);
+
+
+            var filePath = Path.Combine(path, newFileName);
+
+            using (var stream = new FileStream(filePath , FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return relativePath + newFileName;
+        }
+
+        public async System.Threading.Tasks.Task<string> UploadFile(IFormFile file)
+        {
+            relativePath += "files\\";
+            string newFileName = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString() + MimeTypeMap.GetExtension(file.ContentType);
+
+            var path = GetPath() + relativePath;
+            Directory.CreateDirectory(path);
+
+            var filePath = Path.Combine(path, newFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return relativePath + newFileName ;
+        }
+
+        private bool IsImage(string extension)
+        {
+            var extensions = new List<string> { ".jpg", ".gif", ".png", ".jpeg" }; 
+            return extensions.Contains(extension);
+           
+        }
+
+        public void RemoveImages(string root)
         {
             if (!Directory.Exists(root))
             {
                 return;
             }
-            var files = Directory.GetFiles(root, "*.png", SearchOption.AllDirectories).ToList();
+
+            var ext = new List<string> { ".jpg", ".gif", ".png", ".jpeg"}; 
+            var files = Directory
+                .GetFiles(root, "*.*", SearchOption.AllDirectories)
+                .Where(s => ext.Contains(Path.GetExtension(s).ToLowerInvariant()));
             foreach (var file in files)
             {
                 File.Delete(file);
             }
-        }
-
-        public string GetLastPhoto()
-        {
-            string root = GetPath() + relativePath;
-            if (!Directory.Exists(root))
-            {
-                throw new InvalidOperationException("You do not have any pics.\n Use default or upload your.");
-            }
-            var lastFile = Directory.GetFiles(root, "*.png", SearchOption.AllDirectories).ToList().LastOrDefault();
-            if (lastFile == null)
-                return null;
-            var index = lastFile.LastIndexOf("\\");
-            return lastFile.Substring(index + 1, lastFile.Length - index - 1);
         }
 
         public async Task<byte[]> GetFileBytes(string filePath)

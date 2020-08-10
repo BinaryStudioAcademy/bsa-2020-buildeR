@@ -16,7 +16,7 @@ namespace buildeR.API.Controllers
     public class FileStorageController : ControllerBase
     {
         private readonly IFileStorage _fileStorage;
-        public FileStorageController(IFileStorage fileStorage , IWebHostEnvironment envn)
+        public FileStorageController(IFileStorage fileStorage)
         {
             _fileStorage = fileStorage;
         }
@@ -32,8 +32,9 @@ namespace buildeR.API.Controllers
         public async Task<IActionResult> Download([FromQuery] string filePath)
         {
             var fileBytes = await _fileStorage.GetFileBytes(filePath);
-            FileContentResult  image = File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, "userlogo.png");
-            return image;
+            var filename = filePath.Substring(filePath.LastIndexOf("/") + 1, (filePath.Length - filePath.LastIndexOf("/")) - 1);
+            FileContentResult  file = File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+            return file;
         }
     }
 }
