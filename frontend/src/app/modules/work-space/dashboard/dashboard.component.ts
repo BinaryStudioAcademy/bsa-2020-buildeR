@@ -5,6 +5,7 @@ import { ProjectService } from '@core/services/project.service';
 import { User } from '@shared/models/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,17 +21,15 @@ export class DashboardComponent extends BaseComponent
 
   constructor(
     private projectService: ProjectService,
-    private toastrService: ToastrNotificationsService
+    private toastrService: ToastrNotificationsService,
+    private authService: AuthenticationService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    if (this.currentUser) {
-      this.getUserProjects(this.currentUser.id);
-    } else {
-      this.toastrService.showError('Undefined user');
-    }
+    this.currentUser = this.authService.getUser();
+    this.getUserProjects(this.currentUser.id);
   }
 
   getUserProjects(userId: number) {
