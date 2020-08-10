@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectSettingsComponent } from './project-settings/project-settings.component';
 import { ProjectCreateComponent } from './project-create/project-create.component';
 import { ProjectComponent } from './project.component';
+import { ProjectResolverComponent } from './project-resolver/project-resolver.component';
 
 const routes: Routes = [
 {
@@ -13,6 +14,9 @@ const routes: Routes = [
 {
   path: ':projectId',
   component: ProjectComponent,
+  resolve: {
+    project: ProjectResolverComponent
+  },
   children: [
     {
       path: 'settings',
@@ -21,7 +25,6 @@ const routes: Routes = [
   ]
 },
 ];
-
 
 @NgModule({
   imports: [CommonModule,
