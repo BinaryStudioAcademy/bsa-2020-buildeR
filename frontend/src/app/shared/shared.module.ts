@@ -10,6 +10,7 @@ import { BuildStatusIconDirective } from './directives/build-status-icon.directi
 import { RouterModule } from '@angular/router';
 import { CronJobsModule } from 'ngx-cron-jobs';
 import { CronBuilderComponent } from './components/cron-builder/cron-builder.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -19,6 +20,7 @@ import { CronBuilderComponent } from './components/cron-builder/cron-builder.com
     BuildStatusColorDirective,
     BuildStatusIconDirective,
     CronBuilderComponent,
+    NotFoundComponent,
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,7 @@ import { CronBuilderComponent } from './components/cron-builder/cron-builder.com
     DateAgoPipe,
     BuildStatusColorDirective,
     BuildStatusIconDirective,
+    NotFoundComponent
   ],
 })
 export class SharedModule {}
