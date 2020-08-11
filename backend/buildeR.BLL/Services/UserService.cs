@@ -42,7 +42,8 @@ namespace buildeR.BLL.Services
         public async Task<UserDTO> Create(UserDTO creatingUser)
         {
             var user = _mapper.Map<User>(creatingUser);
-            _context.Users.Add(user);
+            user.CreatedAt = DateTime.Now;
+            _context.Add(user);
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(user);
         }
