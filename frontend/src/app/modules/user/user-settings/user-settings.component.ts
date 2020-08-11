@@ -31,10 +31,15 @@ export class UserSettingsComponent implements OnInit {
         ]),
       email: new FormControl(this.details.email,
         [
-          Validators.email,
-          Validators.required
+           Validators.email,
+           Validators.required
         ]),
-        location: new FormControl(this.details.location),
+        location: new FormControl(this.details.location,
+          [
+            Validators.minLength(2),
+            Validators.maxLength(30),
+            Validators.pattern("^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$")
+        ]),
         username: new FormControl(this.details.username),
         bio : new FormControl(this.details.bio,
           [
