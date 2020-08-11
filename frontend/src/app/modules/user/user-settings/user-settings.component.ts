@@ -9,7 +9,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class UserSettingsComponent implements OnInit {
 // hardcoded date for test
-  @Input() details: User = {creationDate : new Date(Date.now())} as User;
+  @Input() details: User = {} as User;
   public settingsForm: FormGroup;
   constructor(settingsService: UserSettingsService) { }
 
