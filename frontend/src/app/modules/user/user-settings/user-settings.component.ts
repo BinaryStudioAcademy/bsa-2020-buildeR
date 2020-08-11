@@ -17,7 +17,10 @@ export class UserSettingsComponent implements OnInit {
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
-          Validators.required
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(30),
+          Validators.pattern("[A-Za-z-']+$")
         ]),
       lastName: new FormControl(this.details.lastName,
          [
