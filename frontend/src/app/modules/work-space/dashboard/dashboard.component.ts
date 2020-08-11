@@ -50,6 +50,10 @@ export class DashboardComponent extends BaseComponent
   }
 
   triggerBuild(projectId: number) {
-    throw new Error('Method not implemented.');
+    this.projectService.startProjectBuild(projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => projectId,
+        (error) => this.toastrService.showError(error));
   }
 }
