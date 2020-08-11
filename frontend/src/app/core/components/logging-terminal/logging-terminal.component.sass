@@ -30,29 +30,38 @@
     font-family: Cousine,monospace
     border-left: 3.5rem solid rgba(192,192,192,0.3)
 
-    > div
+    div.build-step
       position: relative
 
-      &::before
-        content: ""
-        display: inline-block
-        position: absolute
-        width: 0
-        height: 0
-        border-style: solid
-        border-width: 5px 0 5px 10px
-        left: -2.7rem
-        top: 0.3rem
-        border-color: transparent transparent transparent #222
+      &.expandable
 
-      input
-        cursor: pointer
-        display: inline-block
-        position: absolute
-        opacity: 0
-        z-index: 5
-        left: -2.7rem
-        top: 0.3rem
+        div:nth-child(2)
+          background-color: #333
+
+        div:nth-child(n+3)
+          display: none
+          padding-left: 2rem
+
+        &::before
+          content: "+"
+          display: inline-block
+          position: absolute
+          width: 1rem
+          height: 1rem
+          left: -2.5rem
+
+        input
+          cursor: pointer
+          display: inline-block
+          position: absolute
+          opacity: 0
+          z-index: 5
+          left: -2.7rem
+          top: 0.3rem
+
+          &:checked
+            ~ div
+              display: inherit
 
       p
         padding-left: 0.5rem
@@ -68,6 +77,7 @@
         left: -3.2rem
         text-align: right
         color: gray
+        user-select: none
 
       span.timestamp
         color: gray

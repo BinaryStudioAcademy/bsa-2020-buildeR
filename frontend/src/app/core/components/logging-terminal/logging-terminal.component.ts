@@ -1,15 +1,11 @@
-import {
-  Component,
-  AfterViewInit,
-  OnInit,
-} from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { BuildLogService } from '../../services/build-log.service';
+import { startWith, delay } from 'rxjs/operators';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
 type Action = {
-  buildStep: number;
   level: LogLevel;
   date: Date;
   body?: string;
@@ -22,7 +18,7 @@ type Action = {
   styleUrls: ['./logging-terminal.component.sass'],
 })
 export class LoggingTerminalComponent extends BaseComponent
-  implements AfterViewInit {
+  implements OnInit {
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
 
   private lineNumber: number = 1;
@@ -30,45 +26,45 @@ export class LoggingTerminalComponent extends BaseComponent
   showLevels: boolean = false;
   showTimeStamps: boolean = false;
 
-  actions: Action[] = [];
+  buildSteps: Map<number, Action[]> = new Map<number, Action[]>();
 
   constructor(private buildService: BuildLogService) {
     super();
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.buildService
-      .getTestBuildLog()
-      .subscribe((line) => this.buildLog(line));
+    .getTestBuildLog()
+    .pipe(delay(0))
+    .subscribe((line) => this.buildLog(line));
   }
 
   clear() {
-    this.actions = [];
+    this.buildSteps.clear();
     this.lineNumber = 1;
   }
 
   private buildLog(line: string) {
-    this.appendBuildStep(this.parseLine(line));
+    this.parseLine(line);
   }
 
-  private parseLine(line: string): Action {
+  private parseLine(line: string) {
     const a: Action = {} as Action;
 
     a.number = this.lineNumber++;
 
     const logMatchArray = line.match(this.logRegExr);
 
-    a.buildStep = parseInt(logMatchArray[1]);
     a.date = new Date(logMatchArray[2]);
     a.level = logMatchArray[3] as LogLevel;
     a.body = logMatchArray[4];
 
-    a.expanded = true;
+    const step = parseInt(logMatchArray[1]);
 
-    return a;
-  }
+    if (!this.buildSteps.has(step)) {
+      this.buildSteps.set(step, []);
+    }
 
-  private appendBuildStep(a: Action) {
-    this.actions.push(a);
+    this.buildSteps.get(step).push(a);
   }
 }
