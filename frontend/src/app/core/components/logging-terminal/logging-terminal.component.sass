@@ -42,26 +42,26 @@
           display: none
           padding-left: 2rem
 
-        &::before
-          content: "+"
-          display: inline-block
-          position: absolute
-          width: 1rem
-          height: 1rem
-          left: -2.5rem
+        &.expanded div:nth-child(n+3)
+          display: inherit
+          padding-left: 2rem
 
-        input
-          cursor: pointer
+        &.expanded
+          span.expand-button
+            border-width: 0.8rem 0.4rem 0 0.4rem
+            border-color: whitesmoke transparent transparent transparent
+
+        span.expand-button
           display: inline-block
           position: absolute
-          opacity: 0
           z-index: 5
-          left: -2.7rem
+          width: 0
+          height: 0
+          left: -3rem
           top: 0.3rem
-
-          &:checked
-            ~ div
-              display: inherit
+          border-style: solid
+          border-width: 0.4rem 0 0.4rem 0.8rem
+          border-color: transparent transparent transparent whitesmoke
 
       p
         padding-left: 0.5rem

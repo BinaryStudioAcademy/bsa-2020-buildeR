@@ -26,7 +26,7 @@ export class LoggingTerminalComponent extends BaseComponent
   showLevels: boolean = false;
   showTimeStamps: boolean = false;
 
-  buildSteps: Map<number, Action[]> = new Map<number, Action[]>();
+  buildSteps: Map<number, [boolean, Action[]]> = new Map<number, [boolean, Action[]]>();
 
   constructor(private buildService: BuildLogService) {
     super();
@@ -42,6 +42,10 @@ export class LoggingTerminalComponent extends BaseComponent
   clear() {
     this.buildSteps.clear();
     this.lineNumber = 1;
+  }
+
+  setExpand(key: number) {
+    this.buildSteps.get(key)[0] = !this.buildSteps.get(key)[0];
   }
 
   private buildLog(line: string) {
@@ -62,9 +66,9 @@ export class LoggingTerminalComponent extends BaseComponent
     const step = parseInt(logMatchArray[1]);
 
     if (!this.buildSteps.has(step)) {
-      this.buildSteps.set(step, []);
+      this.buildSteps.set(step, [false, []]);
     }
 
-    this.buildSteps.get(step).push(a);
+    this.buildSteps.get(step)[1].push(a);
   }
 }
