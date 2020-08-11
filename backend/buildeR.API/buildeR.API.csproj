@@ -29,5 +29,9 @@
     <ProjectReference Include="..\buildeR.BLL\buildeR.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 
 </Project>
