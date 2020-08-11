@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200811073829_UserInheritAuditEntity")]
+    partial class UserInheritAuditEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,16 +106,13 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("BuildPluginId")
+                        .HasColumnType("int");
+
                     b.Property<string>("BuildStepName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
                     b.Property<int>("LoggingVerbosity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PluginCommandId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -121,7 +120,7 @@ namespace buildeR.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PluginCommandId");
+                    b.HasIndex("BuildPluginId");
 
                     b.HasIndex("ProjectId");
 
@@ -406,9 +405,9 @@ namespace buildeR.DAL.Migrations
 
             modelBuilder.Entity("buildeR.DAL.Entities.BuildStep", b =>
                 {
-                    b.HasOne("buildeR.DAL.Entities.PluginCommand", "PluginCommand")
+                    b.HasOne("buildeR.DAL.Entities.BuildPlugin", "BuildPlugin")
                         .WithMany("BuildSteps")
-                        .HasForeignKey("PluginCommandId")
+                        .HasForeignKey("BuildPluginId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

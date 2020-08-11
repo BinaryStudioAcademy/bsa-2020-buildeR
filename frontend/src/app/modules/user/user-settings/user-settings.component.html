@@ -7,6 +7,7 @@
       <input hidden class="file-hide" #file accept="image/*" type="file">
       <img class="avatar avatar-style" src="{{details.avatarUrl}}"
       onerror="this.src='../../../../assets/images/Avatar-default.png'">
+      <small class ="nickname"> @{{details.username}}</small><small class="date-since"> Member since {{details.creationDate | date:'mediumDate'}} </small>
       <div class="img-text">
         Upload
       </div>
