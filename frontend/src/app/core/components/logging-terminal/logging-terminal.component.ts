@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { BuildLogService } from '../../services/build-log.service';
-import { startWith, delay } from 'rxjs/operators';
+import { delay } from 'rxjs/operators';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -17,8 +17,7 @@ type Action = {
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent extends BaseComponent
-  implements OnInit {
+export class LoggingTerminalComponent extends BaseComponent implements OnInit {
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
 
   private lineNumber: number = 1;
@@ -26,7 +25,10 @@ export class LoggingTerminalComponent extends BaseComponent
   showLevels: boolean = false;
   showTimeStamps: boolean = false;
 
-  buildSteps: Map<number, [boolean, Action[]]> = new Map<number, [boolean, Action[]]>();
+  buildSteps: Map<number, [boolean, Action[]]> = new Map<
+    number,
+    [boolean, Action[]]
+  >();
 
   constructor(private buildService: BuildLogService) {
     super();
@@ -34,14 +36,14 @@ export class LoggingTerminalComponent extends BaseComponent
 
   ngOnInit(): void {
     this.buildService
-    .getTestBuildLog()
-    .pipe(delay(0))
-    .subscribe((line) => this.buildLog(line));
+      .getTestBuildLog()
+      .pipe(delay(0))
+      .subscribe((line) => this.buildLog(line));
   }
 
   clear() {
     this.buildSteps.clear();
-    this.lineNumber = 1;
+    this.lineNumber = 0;
   }
 
   setExpand(key: number) {
@@ -49,10 +51,11 @@ export class LoggingTerminalComponent extends BaseComponent
   }
 
   private buildLog(line: string) {
-    this.parseLine(line);
+    const [step, action] = this.parseLine(line);
+    this.appendLog(step, action);
   }
 
-  private parseLine(line: string) {
+  private parseLine(line: string): [number, Action] {
     const a: Action = {} as Action;
 
     a.number = this.lineNumber++;
@@ -65,6 +68,10 @@ export class LoggingTerminalComponent extends BaseComponent
 
     const step = parseInt(logMatchArray[1]);
 
+    return [step, a];
+  }
+
+  private appendLog(step: number, a: Action) {
     if (!this.buildSteps.has(step)) {
       this.buildSteps.set(step, [false, []]);
     }
