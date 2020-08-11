@@ -8,13 +8,15 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { LoggingTerminalComponent } from './components/logging-terminal/logging-terminal.component';
 
 @NgModule({
   declarations: [
     ModalContentComponent,
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
+    LoggingTerminalComponent,
   ],
   imports: [HttpClientModule, SharedModule],
   providers: [
@@ -23,7 +25,8 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
   exports: [
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
+    LoggingTerminalComponent,
   ]
 })
 export class CoreModule { }
