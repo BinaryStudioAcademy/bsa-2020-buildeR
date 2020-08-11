@@ -14,7 +14,7 @@ getUser() {
   return this.httpService.getFullRequest<User>('template');
 }
 getCurrentUser() {
-  return this.httpService.getRequest<User>(environment.apiUrl + '/api/auth/');
+  return this.httpService.getRequest<User>(environment.apiUrl + '/auth/');
 }
 
 }

@@ -17,6 +17,8 @@
     <Compile Remove="Migrations\20200805183317_AddSeeding.Designer.cs" />
     <Compile Remove="Migrations\20200805183921_AddSeeding.cs" />
     <Compile Remove="Migrations\20200805183921_AddSeeding.Designer.cs" />
+    <Compile Remove="Migrations\20200810082859_AddIndexToStepAndUsePluginCommandInsteadOfPluginInStep.cs" />
+    <Compile Remove="Migrations\20200810082859_AddIndexToStepAndUsePluginCommandInsteadOfPluginInStep.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

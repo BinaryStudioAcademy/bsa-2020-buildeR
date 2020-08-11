@@ -6,7 +6,7 @@ import { User } from '@shared/models/user';
 })
 export class UserSettingsService {
 
-  url = 'api/settings/user';
+  url = '/settings/user';
   constructor(private httpService: HttpService) { }
 
   getSettings(id: number){
