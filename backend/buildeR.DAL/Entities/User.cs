@@ -1,10 +1,11 @@
 ﻿using buildeR.Common.Enums;
 using buildeR.DAL.Entities.Common;
+using System;
 using System.Collections.Generic;
 
 namespace buildeR.DAL.Entities
 {
-    public class User: Entity
+    public class User: AuditEntity
     {
         public User()
         {

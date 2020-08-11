@@ -8,7 +8,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./user-settings.component.sass']
 })
 export class UserSettingsComponent implements OnInit {
-
+// hardcoded date for test
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
   constructor(settingsService: UserSettingsService) { }

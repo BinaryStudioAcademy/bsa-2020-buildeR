@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\buildeR.Common\buildeR.Common.csproj" />
     <ProjectReference Include="..\buildeR.DAL\buildeR.DAL.csproj" />
+    <ProjectReference Include="..\buildeR.RabbitMQ\buildeR.RabbitMq.csproj" />
   </ItemGroup>
 
   <ItemGroup>
