@@ -48,9 +48,9 @@ export class UserSettingsComponent implements OnInit {
           ]),
         bio : new FormControl(this.details.bio,
           [
-            Validators.maxLength(200)
+            Validators.maxLength(300),
+            Validators.pattern("[^А-яа-я]*")
           ])
     });
   }
-
 }
