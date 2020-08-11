@@ -16,13 +16,13 @@ export class SignInComponent implements OnInit {
 
   signInWithGithub() {
     this.authService.doGithubSignIn().then(() => {
-      this.router.navigate(['/portal']);
+
     });
   }
 
-  signInwithBitbucket() {
-    this.authService.logout().then(() => {
-      this.router.navigate(['/']);
+  signInWithGoogle() {
+    this.authService.doGoogleSignIn().then(() => {
+
     });
   }
 

@@ -15,23 +15,19 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
-  constructor(private authservice: AuthenticationService, private router: Router) {
+  constructor(private authService: AuthenticationService, private router: Router) {
 
   }
 
   canActivate(
       next: ActivatedRouteSnapshot,
-      state: RouterStateSnapshot): Observable<boolean> {
-      return this.authservice
-          .getUserObservable()
-          .pipe(map(u => u != null && u.isSignedIn));
+      state: RouterStateSnapshot): boolean {
+        return this.authService.isAuthorized();
   }
 
   canActivateChild(
     next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> {
-    return this.authservice
-        .getUserObservable()
-        .pipe(map(u => u != null && u.isSignedIn));
+    state: RouterStateSnapshot): boolean {
+      return this.authService.isAuthorized();
   }
 }

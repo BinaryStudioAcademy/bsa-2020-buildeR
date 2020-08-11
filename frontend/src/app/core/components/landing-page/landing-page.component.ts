@@ -14,10 +14,7 @@ export class LandingPageComponent implements OnInit {
   currentUser: CurrentUser = new CurrentUser();
   $authSubscription: Subscription;
 
-  constructor(private authService: AuthenticationService, private router: Router) {
-    this.$authSubscription = this.authService.user$.subscribe(u => {
-      this.currentUser = u;
-    });
+  constructor(private router: Router) {
   }
 
   ngOnInit(): void {

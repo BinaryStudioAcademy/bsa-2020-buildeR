@@ -1,77 +1,107 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Router } from '@angular/router';
-import { CurrentUser } from '@shared/models/current-user';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { User } from '@shared/models/user';
 import * as firebase from 'firebase';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  user$: BehaviorSubject<CurrentUser> = new BehaviorSubject<CurrentUser>(new CurrentUser());
-
-  constructor(private angularAuth: AngularFireAuth,
-              private router: Router,
-              private httpClient: HttpClient) {
-    this.angularAuth.authState.subscribe((firebaseUser) => {
-      this.configureAuthState(firebaseUser);
+  user: firebase.User;
+  currentUser = {} as User;
+  constructor(private angularAuth: AngularFireAuth, private userService: UserService, private router: Router) {
+    this.angularAuth.authState.subscribe(user => {
+      this.configureAuthState(user);
     });
   }
 
-  configureAuthState(firebaseUser: firebase.User): void {
-    if (firebaseUser) {
-      firebaseUser.getIdToken().then((theToken) => {
-        const theUser = new CurrentUser();
-        theUser.displayName = firebaseUser.displayName;
-        theUser.email = firebaseUser.email;
-        theUser.isSignedIn = true;
+  configureAuthState(user: firebase.User): void {
+    if (user) {
+      user.getIdToken().then((theToken) => {
+        this.user = user;
+        localStorage.setItem('user', JSON.stringify(this.user));
         localStorage.setItem('jwt', theToken);
-        this.user$.next(theUser);
-      }, () => {
-        this.doSignedOutUser();
       });
-    } else {
-      this.doSignedOutUser();
+    }
+    else {
+      this.user = null;
     }
   }
 
   doGoogleSignIn(): Promise<void> {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
-    googleProvider.addScope('email');
-    googleProvider.addScope('profile');
-    return this.angularAuth.signInWithPopup(googleProvider).then(() => { });
+    return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
+      this.doGoogleSignUp(auth);
+      this.router.navigate(['/portal']);
+    });
   }
 
   doGithubSignIn(): Promise<void> {
     const githubProvider = new firebase.auth.GithubAuthProvider();
     return this.angularAuth.signInWithPopup(githubProvider).then((auth) => {
-      // username only for github
-      // console.log(auth.additionalUserInfo.username);
+      this.doGithubSignUp(auth);
+      this.router.navigate(['/portal']);
     });
   }
 
-  private doSignedOutUser() {
-    const theUser = new CurrentUser();
-    theUser.displayName = null;
-    theUser.email = null;
-    theUser.isSignedIn = false;
-    localStorage.removeItem('jwt');
-    this.user$.next(theUser);
+  doGoogleSignUp(credential: firebase.auth.UserCredential) {
+    const user = {} as User;
+    user.email = credential.user.email;
+    user.username = credential.user.displayName;
+    user.avatarUrl = credential.user.photoURL;
+    user.firstName = credential.additionalUserInfo.profile[`given_name`];
+    user.lastName = credential.additionalUserInfo.profile[`family_name`];
+    this.userService.createUser(user)
+      .subscribe(
+        (resp) => {
+          this.currentUser = resp.body;
+        },
+        (error) => console.log(error));
+  }
+
+  doGithubSignUp(credential: firebase.auth.UserCredential) {
+    const user = {} as User;
+    user.email = credential.user.email;
+    user.username = credential.additionalUserInfo.username;
+    user.avatarUrl = credential.user.photoURL;
+    const name: string = credential.additionalUserInfo.profile[`name`];
+    if (name !== null)
+    {
+      const names: string[] = name.split(' ');
+      user.firstName = names[0];
+      user.lastName = names[1];
+    }
+    this.userService.createUser(user).subscribe(
+      (resp) => {
+        this.currentUser = resp.body;
+      },
+      (error) => console.log(error));
   }
 
   logout(): Promise<void> {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    this.router.navigate(['/']);
     return this.angularAuth.signOut();
-  }
-
-  getUserObservable(): Observable<CurrentUser> {
-    return this.user$.asObservable();
   }
 
   getToken(): string {
     return localStorage.getItem('jwt');
+  }
+
+  getUser(): User {
+    return this.currentUser;
+  }
+
+  public isAuthorized() {
+    if (!this.currentUser) {
+
+      this.router.navigate(['/']);
+      return false;
+    }
+    return true;
   }
 }

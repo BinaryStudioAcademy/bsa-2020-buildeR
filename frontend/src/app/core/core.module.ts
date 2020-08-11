@@ -6,7 +6,7 @@ import { ErrorInterceptor } from './interceptors/error.interceptor.service';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { environment } from '../../environments/environment';
+import { firebase } from '../../environments/firebase.config';
 
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
@@ -26,7 +26,7 @@ import { AuthGuard } from './guards/auth.guard';
   imports: [
     HttpClientModule,
     SharedModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireModule.initializeApp(firebase.firebaseConfig),
     AngularFireAuthModule
   ],
   providers: [
