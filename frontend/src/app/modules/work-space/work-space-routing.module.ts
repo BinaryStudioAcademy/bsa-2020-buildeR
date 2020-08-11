@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { WorkSpaceComponent } from './work-space/work-space.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProjectResolverComponent } from '@modules/project/project-resolver/project-resolver.component';
+import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 
 const routes = [{
   path: '',
@@ -29,8 +29,7 @@ const routes = [{
     },
     {
       path: '**',
-      loadChildren: () => import('@modules/not-found/not-found.module')
-        .then(m => m.NotFoundModule),
+      component: NotFoundComponent,
       pathMatch: 'full',
       skipLocationChange: true
     },
@@ -44,6 +43,6 @@ const routes = [{
     RouterModule.forChild(routes),
   ],
   exports: [RouterModule],
-  providers: [ProjectResolverComponent]
+  providers: []
 })
 export class WorkSpaceRoutingModule { }

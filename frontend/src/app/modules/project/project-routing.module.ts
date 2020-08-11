@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectSettingsComponent } from './project-settings/project-settings.component';
 import { ProjectCreateComponent } from './project-create/project-create.component';
 import { ProjectComponent } from './project.component';
-import { ProjectResolverComponent } from './project-resolver/project-resolver.component';
-
+import { ProjectResolverService } from '@core/resolvers/project-resolver.service';
 const routes: Routes = [
 {
   path: 'create',
@@ -15,7 +14,7 @@ const routes: Routes = [
   path: ':projectId',
   component: ProjectComponent,
   resolve: {
-    project: ProjectResolverComponent
+    project: ProjectResolverService
   },
   children: [
     {
