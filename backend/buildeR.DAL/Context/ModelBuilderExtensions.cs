@@ -1,8 +1,11 @@
 ﻿using Bogus;
+
 using buildeR.Common.Enums;
 using buildeR.DAL.Context.EntityConfigurations;
 using buildeR.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 
@@ -172,14 +175,14 @@ namespace buildeR.DAL.Context
             return buildHistoryFake.Generate(BUILD_HISTORY_COUNT);
         }
 
-        public static ICollection<BuildStep> GenerateRandomBuildSteps(this ICollection<BuildPlugin> buildPlugins, ICollection<Project> projects)
+        public static ICollection<BuildStep> GenerateRandomBuildSteps(this ICollection<PluginCommand> pluginCommands, ICollection<Project> projects)
         {
             int buildStepId = 1;
 
             var buildStepFake = new Faker<BuildStep>()
                 .RuleFor(bs => bs.Id, _ => buildStepId++)
                 .RuleFor(bs => bs.BuildStepName, f => f.Lorem.Word())
-                .RuleFor(bs => bs.BuildPluginId, f => f.PickRandom(buildPlugins).Id)
+                .RuleFor(bs => bs.PluginCommandId, f => f.PickRandom(pluginCommands).Id)
                 .RuleFor(bs => bs.ProjectId, f => f.PickRandom(projects).Id)
                 .RuleFor(usn => usn.LoggingVerbosity, f => f.PickRandom<LoggingVerbosity>());
 

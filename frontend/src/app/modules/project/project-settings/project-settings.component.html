@@ -4,26 +4,25 @@
       General
     </h2>
     <form (ngSubmit)="save()" #projectSettingForm="ngForm">
-      <div class="form-croup-project">
-        <label for="name-input">
-          <span class="form-control-project">Project name</span>
-          <input type="text" [(ngModel)]="tempProjectName" name="name" required autocomplete="off"
-            #name="ngModel" id="name-input" class="form-control">
-        </label>
-        <div class="error" [hidden]="!name.errors?.required || name.untouched">
-          Name is required
+      <div class="group">
+        <div class="field">
+          <span>Project name</span>
+        </div>
+        <div class="input-area">
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="tempProjectName" name="name" required
+            autocomplete="off" #name="ngModel">
+            <div class="error" [hidden]="!name.errors?.required || name.untouched">
+              Name is required
+            </div>
+        </div>
+        <div class="field">
+          <span>Description</span>
+        </div>
+        <div class="input-area">
+          <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="tempProjectDescription" #description="ngModel">
+          </textarea>
         </div>
       </div>
-
-      <div class="form-croup-project">
-        <label for="description-input">
-          <span class="form-control-project">Description </span>
-          <textarea rows="5" name="text" [(ngModel)]="tempProjectDescription" name="description"
-            autocomplete="off" #description="ngModel" id="description-input" class="form-control">
-                </textarea>
-        </label>
-      </div>
-
       <div class="btn-wp">
         <button type="submit" class="btn btn-success" [disabled]="projectSettingForm.invalid">Save</button>
         <button type="button" class="btn btn-info" (click)="reset()">Reset</button>

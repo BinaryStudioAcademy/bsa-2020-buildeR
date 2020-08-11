@@ -5,20 +5,20 @@ namespace buildeR.DAL.Context
 {
     public class BuilderContext : DbContext
     {
-        public DbSet<BuildHistory> BuildHistories { get; }
-        public DbSet<BuildPlugin> BuildPlugins { get; }
-        public DbSet<BuildPluginParameter> BuildPluginParamemeters { get; }
-        public DbSet<BuildStep> BuildSteps { get; }
-        public DbSet<Group> Groups { get; }
-        public DbSet<Notification> Notifications { get; }
-        public DbSet<PluginCommand> PluginCommands { get; }
-        public DbSet<Project> Projects { get; }
-        public DbSet<ProjectGroup> ProjectGroups { get; }
-        public DbSet<ProjectTrigger> ProjectTriggers { get; }
-        public DbSet<SocialNetwork> SocialNetworks { get; }
-        public DbSet<TeamMember> TeamMembers { get; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserSocialNetwork> UserSocialNetworks { get; }
+        public DbSet<BuildHistory> BuildHistories { get; private set; }
+        public DbSet<BuildPlugin> BuildPlugins { get; private set; }
+        public DbSet<BuildPluginParameter> BuildPluginParamemeters { get; private set; }
+        public DbSet<BuildStep> BuildSteps { get; private set; }
+        public DbSet<Group> Groups { get; private set; }
+        public DbSet<Notification> Notifications { get; private set; }
+        public DbSet<PluginCommand> PluginCommands { get; private set; }
+        public DbSet<Project> Projects { get; private set; }
+        public DbSet<ProjectGroup> ProjectGroups { get; private set; }
+        public DbSet<ProjectTrigger> ProjectTriggers { get; private set; }
+        public DbSet<SocialNetwork> SocialNetworks { get; private set; }
+        public DbSet<TeamMember> TeamMembers { get; private set; }
+        public DbSet<User> Users { get; private set; }
+        public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }
         public BuilderContext(DbContextOptions options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
