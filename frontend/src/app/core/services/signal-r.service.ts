@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import * as signalR from '@microsoft/signalr';
-import { environment } from '@env/../environments/environment';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { environment } from '@env/environment';
 import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
 
-  public hubConnetction: signalR.HubConnection;
+  public hubConnetction: HubConnection;
   signalRecieved: Subject<string> = new Subject<string>();
   constructor() {
     this.buildConnection();
@@ -15,7 +15,7 @@ export class SignalRService {
   }
 
   public buildConnection(hubUrl: string = '/testhub') {
-    this.hubConnetction =  new signalR.HubConnectionBuilder()
+    this.hubConnetction =  new HubConnectionBuilder()
     .withUrl(this.buildUrl(hubUrl))
     .build();
   }

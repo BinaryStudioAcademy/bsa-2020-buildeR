@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class WorkSpaceComponent implements OnInit {
   isMenuCollapsed = true;
-  url = environment.signalRUrl + '/api';
+  url = environment.signalRUrl + '/test';
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
