@@ -104,13 +104,16 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BuildPluginId")
-                        .HasColumnType("int");
-
                     b.Property<string>("BuildStepName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<int>("LoggingVerbosity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PluginCommandId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -118,7 +121,7 @@ namespace buildeR.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuildPluginId");
+                    b.HasIndex("PluginCommandId");
 
                     b.HasIndex("ProjectId");
 
@@ -329,6 +332,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -400,9 +406,9 @@ namespace buildeR.DAL.Migrations
 
             modelBuilder.Entity("buildeR.DAL.Entities.BuildStep", b =>
                 {
-                    b.HasOne("buildeR.DAL.Entities.BuildPlugin", "BuildPlugin")
+                    b.HasOne("buildeR.DAL.Entities.PluginCommand", "PluginCommand")
                         .WithMany("BuildSteps")
-                        .HasForeignKey("BuildPluginId")
+                        .HasForeignKey("PluginCommandId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

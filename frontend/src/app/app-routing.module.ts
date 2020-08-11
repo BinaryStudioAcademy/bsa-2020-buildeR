@@ -11,14 +11,13 @@ const routes: Routes = [
   { path: 'signup', component: SignUpComponent },
   {
     path: 'portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    /*canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],*/
     loadChildren: () =>
       import('./modules/work-space/work-space.module').then(
         (m) => m.WorkSpaceModule
       ),
   },
-
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
