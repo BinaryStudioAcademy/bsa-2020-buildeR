@@ -15,6 +15,7 @@ namespace buildeR.DAL.Entities
         public int Index { get; set; }
         public string BuildStepName { get; set; }
         public int PluginCommandId { get; set; }
+        public string WorkDirectory { get; set; }
         public LoggingVerbosity LoggingVerbosity { get; set; }
         public int ProjectId { get; set; }
 
