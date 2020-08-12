@@ -17,6 +17,6 @@
   <img [src]="croppedImage" />
 </div>
 <div *ngIf="canSave">
-  <button class="btn btn-success">Save</button>
+  <button class="btn btn-success" (click)="save()">Save</button>
 </div>
 </div>

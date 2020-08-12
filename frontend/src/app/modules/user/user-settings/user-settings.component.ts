@@ -39,8 +39,15 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  open(){
-    this.cropper.open();
+  async open(){
+    const file = await this.cropper.open();
+    if (file){
+      console.log('we have cropped ' + typeof(file));
+      // now we can use it for saving image logic
+    }
+    else{
+      console.log('Image didn`t change');
+    }
   }
 
 }

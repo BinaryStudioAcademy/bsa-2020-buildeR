@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-photo-cropper-content',
@@ -7,16 +8,16 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
   styleUrls: ['./photo-cropper-content.component.sass']
 })
 export class PhotoCropperContentComponent implements OnInit {
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-  canSave: boolean = false;
-  constructor() { }
+  imageChangedEvent;
+  croppedImage;
+  canSave = false;
+  constructor(private activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
 
-  fileChangeEvent(event: any): void {
+  fileChangeEvent(event): void {
     this.imageChangedEvent = event;
 }
 imageCropped(event: ImageCroppedEvent) {
@@ -34,6 +35,8 @@ loadImageFailed() {
 }
 
 save(){
-  console.log(this.croppedImage);
+  console.log(typeof(this.croppedImage));
+  const file = new File([this.croppedImage], 'image.png');
+  this.activeModal.close(file);
 }
 }

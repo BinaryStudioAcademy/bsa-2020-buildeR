@@ -9,8 +9,8 @@ export class ModalCropperService {
 
   constructor(private modalService: NgbModal) { }
 
-  open(){
+  open(): Promise<File>{
     const modalRef = this.modalService.open(PhotoCropperContentComponent);
-    return modalRef.result.then(() => true).catch(() => false);
+    return modalRef.result.then((res) => res).catch(() => alert('Image not loaded'));
   }
 }
