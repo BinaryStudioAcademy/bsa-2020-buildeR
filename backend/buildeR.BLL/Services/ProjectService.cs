@@ -61,6 +61,11 @@ namespace buildeR.BLL.Services
             }
             throw new ForbiddenExeption("Update", project.Name, project.Id);
         }
+
+        public async Task DeleteProject(int id)
+        {
+             await base.RemoveAsync(id);     
+        }       
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
             var project = await Context.Projects
@@ -70,6 +75,9 @@ namespace buildeR.BLL.Services
                                                 .Include(p => p.BuildSteps)
                                                     .ThenInclude(s => s.BuildPluginParameters)
                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            if (project == null)
+                throw new NotFoundException("Project", projectId);
 
             var executiveBuild = new ExecutiveBuildDTO();
 
@@ -81,5 +89,6 @@ namespace buildeR.BLL.Services
 
             return executiveBuild;
         }
+    
     }
 }

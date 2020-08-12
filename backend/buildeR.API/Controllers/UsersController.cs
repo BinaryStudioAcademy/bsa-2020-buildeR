@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
+using FirebaseAdmin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace buildeR.API.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
@@ -32,8 +34,14 @@ namespace buildeR.API.Controllers
             return await _userService.GetUserById(id);
         }
 
+        [HttpGet("getbyuid/{UId}")]
+        public async Task<UserDTO> GetByUId(string UId)
+        {
+            return await _userService.GetUserByUId(UId);
+        }
+
         [HttpPost]
-        public async Task<UserDTO> Create([FromBody] UserDTO user)
+        public async Task<UserDTO> Create([FromBody] NewUserDTO user)
         {
             return await _userService.Create(user);
         }

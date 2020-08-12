@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
@@ -8,7 +8,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./user-settings.component.sass']
 })
 export class UserSettingsComponent implements OnInit {
-
+// hardcoded date for test
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
   constructor(settingsService: UserSettingsService) { }

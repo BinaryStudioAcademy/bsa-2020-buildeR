@@ -8,7 +8,7 @@ import { HttpResponse } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  public routePrefix = '/api/projects';
+  public routePrefix = '/projects';
 
   constructor(private httpService: HttpService) { }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -8,17 +9,21 @@ import { AuthenticationService } from '@core/services/authentication.service';
 })
 export class SignInComponent implements OnInit {
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService, private router: Router) { }
 
   ngOnInit() {
   }
 
   signInWithGithub() {
-    this.authService.login();
+    this.authService.doGithubSignIn().then(() => {
+
+    });
   }
 
-  signInwithBitbucket() {
-    this.authService.login();
+  signInWithGoogle() {
+    this.authService.doGoogleSignIn().then(() => {
+
+    });
   }
 
 }
