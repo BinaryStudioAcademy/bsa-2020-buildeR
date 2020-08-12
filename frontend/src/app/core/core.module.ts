@@ -8,8 +8,6 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
-import { LoggingTerminalComponent } from './components/logging-terminal/logging-terminal.component';
-import { LogLevelDirective } from './components/logging-terminal/directives/log-level.directive';
 
 @NgModule({
   declarations: [
@@ -17,8 +15,6 @@ import { LogLevelDirective } from './components/logging-terminal/directives/log-
     LandingPageComponent,
     SignInComponent,
     SignUpComponent,
-    LoggingTerminalComponent,
-    LogLevelDirective,
   ],
   imports: [HttpClientModule, SharedModule],
   providers: [
@@ -28,8 +24,6 @@ import { LogLevelDirective } from './components/logging-terminal/directives/log-
     LandingPageComponent,
     SignInComponent,
     SignUpComponent,
-    LoggingTerminalComponent,
-    LogLevelDirective,
   ]
 })
 export class CoreModule { }
