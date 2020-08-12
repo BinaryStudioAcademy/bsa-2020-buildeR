@@ -5,7 +5,7 @@ import {
   Renderer2,
   AfterViewInit,
 } from '@angular/core';
-import { LogLevel } from '../../core/components/logging-terminal/logging-terminal.component';
+import { LogLevel } from '../../modules/project/logging-terminal/logging-terminal.component';
 
 @Directive({
   selector: '[appLogLevel]',
