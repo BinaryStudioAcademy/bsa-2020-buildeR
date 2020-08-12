@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import * as firebase from 'firebase';
 import { UserService } from './user.service';
+import { NewUser } from '@shared/models/user/new-user';
+import { Providers } from '@shared/models/providers';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,10 @@ export class AuthenticationService {
 
   user: firebase.User;
   currentUser = {} as User;
-  constructor(private angularAuth: AngularFireAuth, private userService: UserService, private router: Router) {
+  constructor(
+    private angularAuth: AngularFireAuth,
+    private userService: UserService,
+    private router: Router) {
     this.angularAuth.authState.subscribe(user => {
       this.configureAuthState(user);
     });
@@ -34,51 +39,91 @@ export class AuthenticationService {
   doGoogleSignIn(): Promise<void> {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
-      this.doGoogleSignUp(auth);
-      this.router.navigate(['/portal']);
+      this.isUidExist(auth);
     });
   }
 
   doGithubSignIn(): Promise<void> {
     const githubProvider = new firebase.auth.GithubAuthProvider();
     return this.angularAuth.signInWithPopup(githubProvider).then((auth) => {
-      this.doGithubSignUp(auth);
-      this.router.navigate(['/portal']);
+      this.isUidExist(auth);
     });
   }
 
+  isUidExist(auth: firebase.auth.UserCredential): void {
+    this.userService.getUserByUId(auth.user.uid)
+      .subscribe((resp) => {
+        if (resp.body !== null) {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        }
+        else {
+          if (auth.credential.providerId === 'google.com') {
+            this.doGoogleSignUp(auth);
+          } else {
+            this.doGithubSignUp(auth);
+          }
+        }
+      });
+  }
+
   doGoogleSignUp(credential: firebase.auth.UserCredential) {
-    const user = {} as User;
-    user.email = credential.user.email;
-    user.username = credential.user.displayName;
-    user.avatarUrl = credential.user.photoURL;
-    user.firstName = credential.additionalUserInfo.profile[`given_name`];
-    user.lastName = credential.additionalUserInfo.profile[`family_name`];
-    this.userService.createUser(user)
-      .subscribe(
+    const user = {
+      email: credential.user.email,
+      username: credential.user.displayName,
+      avatarUrl: credential.user.photoURL,
+      firstName: credential.additionalUserInfo.profile[`given_name`],
+      lastName: credential.additionalUserInfo.profile[`family_name`],
+      providerId: Providers.Google,
+      uId: credential.user.uid,
+      providerUrl: credential.credential.providerId
+    } as NewUser;
+
+    // need to change
+    if (user.email !== null && user.username !== null && user.avatarUrl !== null &&
+      user.firstName !== null && user.lastName !== null) {
+      this.userService.createUser(user).subscribe(
         (resp) => {
           this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
         },
         (error) => console.log(error));
+    } else {
+      console.log('Need to fill out all user data!');
+      // redirect to registration form
+      this.router.navigate(['/']);
+    }
   }
 
   doGithubSignUp(credential: firebase.auth.UserCredential) {
-    const user = {} as User;
-    user.email = credential.user.email;
-    user.username = credential.additionalUserInfo.username;
-    user.avatarUrl = credential.user.photoURL;
+    const user = {
+      email: credential.user.email,
+      username: credential.additionalUserInfo.username,
+      avatarUrl: credential.user.photoURL,
+      providerId: Providers.Github,
+      uId: credential.user.uid,
+      providerUrl: credential.credential.providerId
+    } as NewUser;
+
     const name: string = credential.additionalUserInfo.profile[`name`];
-    if (name !== null)
-    {
-      const names: string[] = name.split(' ');
-      user.firstName = names[0];
-      user.lastName = names[1];
+    if (name != null) {
+      [user.firstName, user.lastName = ''] = name.split(' ');
     }
-    this.userService.createUser(user).subscribe(
-      (resp) => {
-        this.currentUser = resp.body;
-      },
-      (error) => console.log(error));
+
+    // need to change
+    if (user.email !== null && user.username !== null && user.avatarUrl !== null &&
+      user.firstName !== null && user.lastName !== null && name !== null) {
+      this.userService.createUser(user).subscribe(
+        (resp) => {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        },
+        (error) => console.log(error));
+    } else {
+      console.log('Need to fill out all user data!');
+      // redirect to registration form
+      this.router.navigate(['/']);
+    }
   }
 
   logout(): Promise<void> {
