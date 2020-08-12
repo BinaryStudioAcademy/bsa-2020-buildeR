@@ -38,6 +38,7 @@ namespace buildeR
             IdentityModelEventSource.ShowPII = true;
             services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
+            services.AddHealthChecks();
 
             services.RegisterCustomServices();
             services.RegisterRabbitMQ(Configuration);
@@ -81,7 +82,11 @@ namespace buildeR
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
+            });
         }
     }
 }

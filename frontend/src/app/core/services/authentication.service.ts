@@ -6,6 +6,8 @@ import * as firebase from 'firebase';
 import { UserService } from './user.service';
 import { NewUser } from '@shared/models/user/new-user';
 import { Providers } from '@shared/models/providers';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RegistrationDialogComponent } from '@core/components/registration-dialog/registration-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +15,11 @@ import { Providers } from '@shared/models/providers';
 export class AuthenticationService {
 
   user: firebase.User;
-  currentUser = {} as User;
+  currentUser: User = undefined;
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
+    private modalService: NgbModal,
     private router: Router) {
     this.angularAuth.authState.subscribe(user => {
       this.configureAuthState(user);
@@ -35,6 +38,7 @@ export class AuthenticationService {
       this.user = null;
     }
   }
+
 
   doGoogleSignIn(): Promise<void> {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
@@ -79,20 +83,17 @@ export class AuthenticationService {
       providerUrl: credential.credential.providerId
     } as NewUser;
 
-    // need to change
-    if (user.email !== null && user.username !== null && user.avatarUrl !== null &&
-      user.firstName !== null && user.lastName !== null) {
-      this.userService.createUser(user).subscribe(
-        (resp) => {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        },
-        (error) => console.log(error));
-    } else {
-      console.log('Need to fill out all user data!');
-      // redirect to registration form
-      this.router.navigate(['/']);
-    }
+    const modalRef = this.modalService.open(RegistrationDialogComponent/*, {backdrop: 'static', keyboard: false}*/);
+    modalRef.componentInstance.details = user;
+  }
+
+  registerUser(user: NewUser) {
+    this.userService.createUser(user).subscribe(
+      (resp) => {
+        this.currentUser = resp.body;
+        this.router.navigate(['/portal']);
+      },
+      (error) => console.log(error));
   }
 
   doGithubSignUp(credential: firebase.auth.UserCredential) {
@@ -110,20 +111,8 @@ export class AuthenticationService {
       [user.firstName, user.lastName = ''] = name.split(' ');
     }
 
-    // need to change
-    if (user.email !== null && user.username !== null && user.avatarUrl !== null &&
-      user.firstName !== null && user.lastName !== null && name !== null) {
-      this.userService.createUser(user).subscribe(
-        (resp) => {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        },
-        (error) => console.log(error));
-    } else {
-      console.log('Need to fill out all user data!');
-      // redirect to registration form
-      this.router.navigate(['/']);
-    }
+    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
+    modalRef.componentInstance.details = user;
   }
 
   logout(): Promise<void> {
@@ -142,7 +131,7 @@ export class AuthenticationService {
   }
 
   public isAuthorized() {
-    if (!this.currentUser) {
+    if (this.currentUser === undefined) {
 
       this.router.navigate(['/']);
       return false;
