@@ -50,6 +50,22 @@
       </div>
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="Your username">
+        <div *ngIf="settingsForm.controls['username'].errors">
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['username'].errors.minlength && settingsForm.controls['username'].touched">
+            The minimum length is 3 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['username'].errors.maxlength && settingsForm.controls['username'].touched">
+            The maximum length is 30 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['username'].errors.pattern && settingsForm.controls['username'].touched">
+            Username must have only latin letters<br>
+            and can't start or finish with these<br>
+            characters ' - ', ' . ' <br>
+          </div>
+        </div>
       </div>
       <div class="field">
         <span>Email</span>
