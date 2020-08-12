@@ -18,6 +18,26 @@
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="Name">
           <small>Use your real name so people can recognize you</small>
+        <div *ngIf="settingsForm.controls['firstName'].errors">
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['firstName'].errors.required && settingsForm.controls['firstName'].touched">
+            First name is required
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['firstName'].errors.minlength && settingsForm.controls['firstName'].touched">
+            The minimum length is 2 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['firstName'].errors.maxlength && settingsForm.controls['firstName'].touched">
+            The maximum length is 30 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['firstName'].errors.pattern && settingsForm.controls['firstName'].touched">
+            First name must have only latin letters<br>
+            and can't start or finish with these<br>
+            characters ' - ', ' . ' <br>
+          </div>
+        </div>
       </div>
       <div class="field">
         <span>Last Name</span>
