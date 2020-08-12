@@ -21,6 +21,7 @@ namespace buildeR.API.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IGroupService, GroupService>();
 
             services.RegisterAutoMapper();
 
@@ -31,6 +32,7 @@ namespace buildeR.API.Extensions
             {
                 cfg.AddProfile<UserProfile>();
                 cfg.AddProfile<ProjectProfile>();
+                cfg.AddProfile<GroupProfile>();
                 cfg.AddProfile<BuildPluginParameterProfile>();
                 cfg.AddProfile<BuildStepProfile>();
             },
