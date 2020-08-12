@@ -37,6 +37,7 @@ namespace buildeR.SignalR
 
             services.AddSignalR();
             services.AddControllers();
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +55,7 @@ namespace buildeR.SignalR
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<TestHub>("/testhub");
+                endpoints.MapHealthChecks("/health");
             });
         }
 

@@ -7,6 +7,6 @@ namespace buildeR.Common.Enums
     public enum Provider
     {
         GitHub,
-        Bitbucket
+        Google
     }
 }

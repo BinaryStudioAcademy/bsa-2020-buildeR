@@ -1,0 +1,31 @@
+<div class="log-view" id="log-view">
+  <div class="log-header">
+    <label class="btn-outline-light" ngbButtonLabel>
+      <input type="checkbox" ngbButton [(ngModel)]="showLevels"> Levels
+    </label>
+    <label class="btn-outline-light" ngbButtonLabel>
+      <input type="checkbox" ngbButton [(ngModel)]="showTimeStamps"> Timestamps
+    </label>
+    <button class="btn btn-outline-light float-right" (click)="clear()">Clear log</button>
+    <button class="btn btn-outline-light float-right">Raw Log</button>
+  </div>
+  <div class="log-container">
+    <div class="build-step" [class]="{'expandable': buildStep.value[1].length > 1, 'expanded': buildStep.value[0]}"
+      *ngFor="let buildStep of buildSteps | keyvalue">
+      <span class="expand-button" *ngIf="buildStep.value[1].length > 1" (click)="setExpand(buildStep.key)"></span>
+      <div *ngFor="let action of buildStep.value[1]">
+        <div *ngIf="action.body">
+          <span class="line-number">{{action.number}}</span>
+          <p>
+            <span class='level' *ngIf="showLevels" [appLogLevel]="action.level">[{{action.level}}]</span>
+            <span class="timestamp" *ngIf="showTimeStamps"> {{action.date | date:"medium"}}</span>
+            {{action.body}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="log-footer">
+    <a class="go-top btn-outline-light" href="#log-view">Top</a>
+  </div>
+</div>

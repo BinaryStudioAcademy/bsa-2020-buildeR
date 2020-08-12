@@ -19,6 +19,10 @@ namespace buildeR.API.Extensions
     {
         public static void RegisterCustomServices(this IServiceCollection services)
         {
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IGroupService, GroupService>();
