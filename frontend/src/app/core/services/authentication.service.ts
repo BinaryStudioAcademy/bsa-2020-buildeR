@@ -83,7 +83,7 @@ export class AuthenticationService {
       providerUrl: credential.credential.providerId
     } as NewUser;
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent/*, {backdrop: 'static', keyboard: false}*/);
+    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
     modalRef.componentInstance.details = user;
   }
 
