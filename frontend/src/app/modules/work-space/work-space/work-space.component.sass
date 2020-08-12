@@ -31,9 +31,24 @@ button
   height: 45px
   display: block
 
+.nav-right .nav-item:first-child
+  margin: auto
+
+  .nav-link svg:hover
+    fill: rgba(255, 211, 55, 0.8)
+
+.nav-link:nth-child(2)
+  margin: 0
+  padding: 0
+
+.notifications-icon
+  width: 1.4em
+  height: 1.4em
+
 .navbar-nav .nav-link
     color: rgba(0,0,0,.5)
 
+// hover for menu items under logo
 
-.navbar-nav .nav-link:hover
+.navbar-nav .nav-link:nth-child(2):hover
     color: rgba(0,0,0,.7)

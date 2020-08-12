@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./work-space.component.sass']
 })
 export class WorkSpaceComponent implements OnInit {
+  isShowNotifications = false;
   url = environment.signalRUrl + '/api';
   constructor(private signalR: SignalRService, private httpService: HttpService,
               private authService: AuthenticationService, private router: Router) { }
@@ -27,6 +28,14 @@ export class WorkSpaceComponent implements OnInit {
   }
   logOut() {
     this.authService.logout();
+  }
+
+  showNotifications() {
+    if (this.isShowNotifications) {
+      this.isShowNotifications = false;
+    } else {
+      this.isShowNotifications = true;
+    }
   }
 
 }
