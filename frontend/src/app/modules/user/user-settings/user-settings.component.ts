@@ -38,7 +38,7 @@ export class UserSettingsComponent implements OnInit {
           [
             Validators.minLength(2),
             Validators.maxLength(30),
-            Validators.pattern("^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$")
+            Validators.pattern("^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-'\\s,]+(?<![-'])$")
         ]),
         username: new FormControl(this.details.username,
           [
