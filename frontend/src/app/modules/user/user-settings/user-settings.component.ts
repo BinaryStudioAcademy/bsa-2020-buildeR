@@ -9,7 +9,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class UserSettingsComponent implements OnInit {
 
-  @Input() details: User = {} as User;
+  isChanged: boolean = false;
+
+  changedUser: User = {} as User;
+  @Input() details: User = JSON.parse(localStorage.getItem(`user`));
   public settingsForm: FormGroup;
   constructor(settingsService: UserSettingsService) { }
 
@@ -25,7 +28,7 @@ export class UserSettingsComponent implements OnInit {
       lastName: new FormControl(this.details.lastName,
          [
            Validators.required,
-           Validators.minLength(2),
+           Validators.minLength(1),
            Validators.maxLength(30),
            Validators.pattern("^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$")
         ]),
@@ -52,5 +55,31 @@ export class UserSettingsComponent implements OnInit {
             Validators.pattern("[^А-яа-я]*")
           ])
     });
+
+    this.settingsForm.valueChanges.subscribe(changesSettigsForm => {
+      this.isChanged = false;
+      this.changedUser = <User>changesSettigsForm;
+      if(this.details.lastName === this.changedUser.lastName &&
+        this.details.firstName === this.changedUser.firstName &&
+        this.details.email === this.changedUser.email &&
+        this.details.bio === this.changedUser.bio &&
+        this.details.username === this.changedUser.username) {
+        this.isChanged = true;
+      }
+      console.log(this.isChanged)
+      console.log(this.details)
+      console.log(this.changedUser)
+    })
   }
+
+  onSubmit(user: User) {
+
+    alert("userName: " + user.firstName + "\n" +
+          "lastName: " + user.lastName + "\n" +
+          "user Name: " + user.username + "\n" +
+          "email: " + user.email + "\n" +
+          "location: " + user.location);
+    this.details = user;
+  }
+
 }
