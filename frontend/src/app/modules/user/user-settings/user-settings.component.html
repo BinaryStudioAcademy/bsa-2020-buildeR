@@ -24,6 +24,26 @@
       </div>
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Name">
+        <div *ngIf="settingsForm.controls['lastName'].errors">
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['lastName'].errors.required && settingsForm.controls['lastName'].touched">
+            Last name is required
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['lastName'].errors.minlength && settingsForm.controls['lastName'].touched">
+            The minimum length is 2 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['lastName'].errors.maxlength && settingsForm.controls['lastName'].touched">
+            The maximum length is 30 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['lastName'].errors.pattern && settingsForm.controls['lastName'].touched">
+            Last name must have only latin letters<br>
+            and can't start or finish with these<br>
+            characters ' - ', ' . ' <br>
+          </div>
+        </div>
       </div>
       <div class="field">
         Username
