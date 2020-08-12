@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Diagnostics;
 
 namespace buildeR
 {
@@ -44,6 +46,7 @@ namespace buildeR
                 .AddFluentValidation(fv =>
                     fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
 
+            Trace.WriteLine(Configuration["ConnectionStrings:BuilderDBConnection"]);
             var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
