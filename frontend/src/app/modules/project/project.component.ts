@@ -2,7 +2,7 @@ import { Project } from 'src/app/shared/models/project/project';
 import { Component, OnInit } from '@angular/core';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -17,7 +17,7 @@ export class ProjectComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
     )
   {
     this.route.paramMap.pipe(
@@ -26,7 +26,6 @@ export class ProjectComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.id);
     this.getProject(this.id);
   }
   getProject(projectId: number) {
@@ -44,5 +43,6 @@ export class ProjectComponent implements OnInit {
           }
         );
   }
+
 
 }

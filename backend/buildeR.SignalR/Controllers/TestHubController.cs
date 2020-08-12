@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace buildeR.SignalR.Controllers
 {
-    [Route("api/")]
+    [Route("test/")]
     [ApiController]
     public class TestHubController : ControllerBase
     {

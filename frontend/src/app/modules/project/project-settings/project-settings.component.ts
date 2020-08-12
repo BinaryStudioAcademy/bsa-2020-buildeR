@@ -27,7 +27,7 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getProject(this.projectId);
+    this.project = this.route.snapshot.data.project as Project;
   }
   getProject(projectId: number) {
       this.isLoading = true;

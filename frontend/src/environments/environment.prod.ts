@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl: '/api',
-  signalRUrl: '/signalR'
+  signalRUrl: '/signalr'
 };

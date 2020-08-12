@@ -21,7 +21,7 @@ import { AuthGuard } from './guards/auth.guard';
     ModalContentComponent,
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
   ],
   imports: [
     HttpClientModule,
@@ -37,7 +37,7 @@ import { AuthGuard } from './guards/auth.guard';
   exports: [
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
   ]
 })
 export class CoreModule { }
