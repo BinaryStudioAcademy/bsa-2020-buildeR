@@ -14,7 +14,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
     ModalContentComponent,
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
   ],
   imports: [HttpClientModule, SharedModule],
   providers: [
@@ -23,7 +23,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
   exports: [
     LandingPageComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
   ]
 })
 export class CoreModule { }
