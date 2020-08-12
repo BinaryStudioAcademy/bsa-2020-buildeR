@@ -9,8 +9,8 @@ namespace buildeR.Common.DTO.UserSocialNetwork
         public int UserId { get; set; }
         public int SocialNetworkId { get; set; }
         public string SocialNetworkUrl { get; set; }
+        public string UId { get; set; }
 
         public SocialNetworkDTO SocialNetwork { get; set; }
-        public UserDTO User { get; set; }
     }
 }

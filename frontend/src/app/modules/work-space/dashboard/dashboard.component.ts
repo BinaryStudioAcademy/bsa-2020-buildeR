@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProjectInfo } from '@shared/models/project-info';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';

@@ -36,7 +36,7 @@ namespace buildeR.DAL.Context
             //var buildPlugins = GenerateRandomBuildPlugins();
             //var groups = GenerateRandomGroups();
             //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
-            //var socialNetworks = GenerateSocialNetworks();
+            var socialNetworks = GenerateSocialNetworks();
             //var users = GenerateRandomUsers();
             //var userSocialNetworks = GenerateRandomUserSocialNetworks(users, socialNetworks);
             //var projects = GenerateRandomProjects(users);
@@ -51,7 +51,7 @@ namespace buildeR.DAL.Context
             //modelBuilder.Entity<BuildPlugin>().HasData(buildPlugins);
             //modelBuilder.Entity<Group>().HasData(groups);
             //modelBuilder.Entity<PluginCommand>().HasData(pluginCommands);
-            //modelBuilder.Entity<SocialNetwork>().HasData(socialNetworks);
+            modelBuilder.Entity<SocialNetwork>().HasData(socialNetworks);
             //modelBuilder.Entity<User>().HasData(users);
             //modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
             //modelBuilder.Entity<Project>().HasData(projects);
@@ -105,7 +105,7 @@ namespace buildeR.DAL.Context
             return new List<SocialNetwork>()
             {
                 new SocialNetwork { Id = 1, ProviderName = Provider.GitHub },
-                new SocialNetwork { Id = 2, ProviderName = Provider.Bitbucket }
+                new SocialNetwork { Id = 2, ProviderName = Provider.Google }
             };
         }
 
