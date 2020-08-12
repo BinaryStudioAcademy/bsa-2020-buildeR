@@ -6,9 +6,10 @@ namespace buildeR.BLL.Interfaces
 {
     public interface IQuartzService
     {
-        public Task<List<QuartzInfo>> GetAll();
-        public Task AddScheduleJob(JobMetadata jobMetadata);
-        public Task UpdateScheduleJob(string triggerKey, JobMetadata jobMetadata);
-        public Task DeletScheduleJob(string triggerKey);
+        public Task<List<QuartzInfoDTO>> GetAll();
+        public Task<QuartzInfoDTO> GetById(string id);
+        public Task AddScheduleJob(QuartzDTO quartzDTO);
+        public Task UpdateScheduleJob(string id, string group, QuartzDTO quartzDTO);
+        public Task DeletScheduleJob(string id, string group);
     }
 }

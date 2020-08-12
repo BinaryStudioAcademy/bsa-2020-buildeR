@@ -1,86 +1,131 @@
-﻿using buildeR.BLL.Interfaces;
+﻿using buildeR.BLL.Exceptions;
+using buildeR.BLL.Interfaces;
+using buildeR.BLL.QuartzJobs;
 using buildeR.Common.DTO.Quartz;
 using Quartz;
 using Quartz.Impl.Matchers;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
 {
-    public class QuartzService: IQuartzService
+    public class QuartzService : IQuartzService
     {
         private readonly IScheduler _scheduler;
         public QuartzService(IScheduler scheduler)
         {
             _scheduler = scheduler;
         }
-        public async Task<List<QuartzInfo>> GetAll()
+
+        public async Task<List<QuartzInfoDTO>> GetAll()
         {
-            List<QuartzInfo> infos = new List<QuartzInfo>();
-            IReadOnlyCollection<string> jobGroups = await _scheduler.GetJobGroupNames();
-            foreach (string group in jobGroups)
+            List<QuartzInfoDTO> infos = new List<QuartzInfoDTO>();
+            List<JobKey> jobKeys = await JobKeys();
+            foreach (var jobKey in jobKeys)
             {
-                var groupMatcher = GroupMatcher<JobKey>.GroupContains(group);
-                var jobKeys = await _scheduler.GetJobKeys(groupMatcher);
-                foreach (var jobKey in jobKeys)
-                {
-                    var detail = await _scheduler.GetJobDetail(jobKey);
-                    var triggers = await _scheduler.GetTriggersOfJob(jobKey);
-                    foreach (ITrigger trigger in triggers)
+                var triggers = await _scheduler.GetTriggersOfJob(jobKey);
+                foreach (var trigger in triggers)
+                {                     
+                    string cron = "";
+                    if (trigger is ICronTrigger cronTrigger)
                     {
-                        var state = await _scheduler.GetTriggerState(trigger.Key);
-                        QuartzInfo info = new QuartzInfo()
-                        {
-                            Group = group,
-                            JobKeyName = jobKey.Name,
-                            DetailDescription = detail.Description,
-                            TriggerKeyName = trigger.Key.Name,
-                            TriggerKeyGroup = trigger.Key.Group,
-                            TriggerType = trigger.GetType().Name,
-                            TriggerState = state.ToString(),
-                            NextFireTime = trigger.GetNextFireTimeUtc(),
-                            PreviousFireTime = trigger.GetPreviousFireTimeUtc()
-                        };
-                        infos.Add(info);
+                        cron = cronTrigger.CronExpressionString;
                     }
+                    QuartzInfoDTO info = new QuartzInfoDTO()
+                    {
+                        Id = jobKey.Name,
+                        Group = jobKey.Group,
+                        Description = trigger.Description,
+                        TriggerType = trigger.GetType().Name,
+                        CronExpression = cron,
+                        NextFireTime = trigger.GetNextFireTimeUtc(),
+                        PreviousFireTime = trigger.GetPreviousFireTimeUtc(),
+                    };
+                    infos.Add(info); 
                 }
             }
             return infos;
         }
-        public async Task AddScheduleJob(JobMetadata jobMetadata)
+        public async Task<QuartzInfoDTO> GetById(string id)
         {
-            var job = CreateJob(jobMetadata);
-            var trigger = CreateTrigger(jobMetadata);
+            List<JobKey> jobKeys = await JobKeys();
+
+            var jobKey = jobKeys.FirstOrDefault(x => x.Name == id);
+            if (jobKey != null)
+            {
+                var triggers = await _scheduler.GetTriggersOfJob(jobKey);
+                var trigger = triggers.FirstOrDefault(x => x.Key.ToString() == jobKey.ToString());
+                if (trigger != null)
+                {
+                    string cron = "";
+                    if (trigger is ICronTrigger cronTrigger)
+                    {
+                        cron = cronTrigger.CronExpressionString;
+                    }
+                    var info = new QuartzInfoDTO()
+                    {
+                        Id = jobKey.Name,
+                        Group = jobKey.Group,
+                        Description = trigger.Description,
+                        TriggerType = trigger.GetType().Name,
+                        CronExpression = cron,
+                        NextFireTime = trigger.GetNextFireTimeUtc(),
+                        PreviousFireTime = trigger.GetPreviousFireTimeUtc(),
+                    };
+                    return info;
+                }
+                throw new NotFoundException($"triger with id - {id}");
+            }
+            throw new NotFoundException($"jod with id - {id}");
+        }
+        public async Task AddScheduleJob(QuartzDTO quartzDTO)
+        {
+            var job = CreateJob(quartzDTO);
+            var trigger = CreateTrigger(quartzDTO);
             await _scheduler.ScheduleJob(job, trigger);
         }
-        public async Task UpdateScheduleJob(string triggerKey, JobMetadata jobMetadata)
+        public async Task UpdateScheduleJob(string id, string group, QuartzDTO quartzDTO)
         {
-            TriggerKey oldTriggerKey1 = new TriggerKey(triggerKey);
-            var trigger = CreateTrigger(jobMetadata);
-            await _scheduler.RescheduleJob(oldTriggerKey1, trigger);
+            TriggerKey oldTriggerKey = new TriggerKey(id, group);
+            quartzDTO.Id = id;
+            var trigger = CreateTrigger(quartzDTO);
+            await _scheduler.RescheduleJob(oldTriggerKey, trigger);
         }
-        public async Task DeletScheduleJob(string triggerKey)
+        public async Task DeletScheduleJob(string id, string group)
         {
-            TriggerKey triggerKey1 = new TriggerKey(triggerKey);
-            await _scheduler.UnscheduleJob(triggerKey1);
+            TriggerKey triggerKey = new TriggerKey(id, group);         
+            await _scheduler.UnscheduleJob(triggerKey);
         }
-        private ITrigger CreateTrigger(JobMetadata jobMetadata)
-        {
-            return TriggerBuilder.Create()
-            .WithIdentity(jobMetadata.JobId)
-            .WithCronSchedule(jobMetadata.CronExpression)
-            .WithDescription($"{jobMetadata.JobName}")
-            .Build();
-        }
-        private IJobDetail CreateJob(JobMetadata jobMetadata)
+        private IJobDetail CreateJob(QuartzDTO quartzDTO)
         {
             return JobBuilder
-            .Create(jobMetadata.JobType)
-            .WithIdentity(jobMetadata.JobId)
-            .WithDescription($"{jobMetadata.JobName}")
+            .Create<PrintToConsoleJob>()
+            .WithIdentity(quartzDTO.Id, quartzDTO.Group)
+            .WithDescription(quartzDTO.Description)
             .Build();
         }
+        private ITrigger CreateTrigger(QuartzDTO quartzDTO)
+        {
+            return TriggerBuilder.Create()
+            .WithIdentity(quartzDTO.Id, quartzDTO.Group)
+            .WithCronSchedule(quartzDTO.CronExpression)
+            .WithDescription(quartzDTO.Description)
+            .Build();
+        }
+        private async Task<List<JobKey>> JobKeys()
+        {
+            List<JobKey> jobKeys = new List<JobKey>();
+            IReadOnlyCollection<string> jobGroups = await _scheduler.GetJobGroupNames();
+            foreach (string group in jobGroups)
+            {
+                var groupMatcher = GroupMatcher<JobKey>.GroupContains(group);
+                var jobKeysFromGroup = await _scheduler.GetJobKeys(groupMatcher);
+                jobKeys.AddRange(jobKeysFromGroup);
+            }
+            return jobKeys;
+        }
+
     }
 
 }
