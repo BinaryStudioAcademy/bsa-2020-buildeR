@@ -36,7 +36,7 @@ namespace buildeR
         {
             services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
             services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
-
+            services.AddDbContext<QuartzDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"]));
             services.RegisterCustomServices();
             services.RegisterRabbitMQ(Configuration);
             services.AddCors();
