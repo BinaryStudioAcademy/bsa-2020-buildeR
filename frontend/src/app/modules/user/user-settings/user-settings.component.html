@@ -72,6 +72,10 @@
           <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="Your username">
             <div *ngIf="settingsForm.controls['username'].errors">
               <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['username'].errors.required">
+                User name is required
+              </div>
+              <div class="alert alert-danger"
                    *ngIf="settingsForm.controls['username'].errors.minlength">
                 The minimum length is 3 characters
               </div>
