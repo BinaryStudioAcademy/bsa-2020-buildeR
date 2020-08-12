@@ -13,9 +13,8 @@ namespace buildeR.BLL.Services
 {
     public class GroupService : BaseCrudService<Group, GroupDTO, NewGroupDTO>, IGroupService
     {
-        public GroupService(BuilderContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
+        public GroupService(BuilderContext context, IMapper mapper) : base(context, mapper) {}
+
         public async Task<GroupDTO> GetGroupById(int id)
         {
             var group = await base.GetAsync(id);

@@ -13,9 +13,8 @@ namespace buildeR.BLL.Services
 {
     public class BuildService : BaseCrudService<BuildHistory, BuildHistoryDTO, NewBuildHistoryDTO>, IBuildService
     {
-        public BuildService(BuilderContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
+        public BuildService(BuilderContext context, IMapper mapper) : base(context, mapper) {}
+
         public async Task<BuildHistoryDTO> GetBuildById(int id)
         {
             var build = await base.GetAsync(id);

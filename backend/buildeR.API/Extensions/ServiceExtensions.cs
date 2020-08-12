@@ -34,16 +34,7 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<UserProfile>();
-                cfg.AddProfile<ProjectProfile>();
-                cfg.AddProfile<GroupProfile>();
-                cfg.AddProfile<BuildHistoryProfile>();
-                cfg.AddProfile<BuildPluginParameterProfile>();
-                cfg.AddProfile<BuildStepProfile>();
-            },
-            Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
