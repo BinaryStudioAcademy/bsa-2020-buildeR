@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace buildeR.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
