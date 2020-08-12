@@ -92,6 +92,18 @@
       </div>
       <div class="input-area">
           <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="example@mail.com">
+            <div *ngIf="settingsForm.controls['email'].errors">
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['email'].errors.required && settingsForm.controls['email'].touched">
+                Email is required
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['email'].errors.pattern && settingsForm.controls['email'].touched">
+                Email must be like 'example@gmail.com' <br>
+                Email can't start or finish with these <br>
+                characters ' - ', ' . '
+              </div>
+            </div>
       </div>
       <div class="field">
         Location
