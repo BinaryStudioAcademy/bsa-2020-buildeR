@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { BuildLogService } from '../../services/build-log.service';
+import { BaseComponent } from '../../../core/components/base/base.component';
+import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
