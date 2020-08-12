@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {ToastrNotificationsService} from "../../../core/services/toastr-notifications.service";
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -14,7 +15,8 @@ export class UserSettingsComponent implements OnInit {
   changedUser: User = {} as User;
   @Input() details: User = JSON.parse(localStorage.getItem(`user`));
   public settingsForm: FormGroup;
-  constructor(settingsService: UserSettingsService) { }
+
+  constructor(private settingsService: UserSettingsService,private toastrService: ToastrNotificationsService) { }
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
@@ -66,19 +68,12 @@ export class UserSettingsComponent implements OnInit {
         this.details.username === this.changedUser.username) {
         this.isChanged = true;
       }
-      console.log(this.isChanged)
-      console.log(this.details)
-      console.log(this.changedUser)
-    })
+    });
   }
 
   onSubmit(user: User) {
-
-    alert("userName: " + user.firstName + "\n" +
-          "lastName: " + user.lastName + "\n" +
-          "user Name: " + user.username + "\n" +
-          "email: " + user.email + "\n" +
-          "location: " + user.location);
+    this.isChanged = true;
+    this.toastrService.showSuccess('Your profile was updated!');
     this.details = user;
   }
 
