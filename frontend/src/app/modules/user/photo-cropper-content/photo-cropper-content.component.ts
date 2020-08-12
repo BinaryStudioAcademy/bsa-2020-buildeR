@@ -35,7 +35,6 @@ loadImageFailed() {
 }
 
 save(){
-  console.log(typeof(this.croppedImage));
   const file = new File([this.croppedImage], 'image.png');
   this.activeModal.close(file);
 }
