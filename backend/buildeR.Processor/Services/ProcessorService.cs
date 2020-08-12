@@ -1,10 +1,10 @@
 ﻿using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
 
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
-using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 
 using LibGit2Sharp;
@@ -29,11 +29,9 @@ namespace buildeR.Processor.Services
         private readonly IConsumer _consumer;
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
-        private string _pathToFile;
 
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-        private string PathToWorkDirectory => Path.Combine(_pathToFile, "ClonedRepository");
         #endregion
 
         public ProcessorService(IConsumer consumer)
@@ -49,6 +47,10 @@ namespace buildeR.Processor.Services
         private void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var key = e.RoutingKey;
+            /* TODO: remove
+             * Example of sent message via RabbitMq:
+             {"ProjectId":111,"RepositoryUrl":"https://bitbucket.org/rusgumeniuk/doc-an","BuildSteps":[{"BuildStepId":0,"Name":null,"Index":1,"PluginCommand":{"Id":0,"PluginId":0,"Name":"build","TemplateForDocker":"FROM {BUILD_PLUGIN_IMAGE}{BUILD_PLUGIN_VERSION} AS build\r\nWORKDIR /src\r\nCOPY [\"{WORK_DIR_NAME}/{WORK_DIR_NAME}.csproj\", \"{WORK_DIR_NAME}/\"]\r\nRUN {BUILD_PLUGIN_COMMAND} restore \"{WORK_DIR_NAME}/{WORK_DIR_NAME}.csproj\"\r\n\r\nCOPY . .\r\nWORKDIR \"/src/{WORK_DIR_NAME}\"\r\nCMD {BUILD_PLUGIN_COMMAND} {PLUGIN_COMMAND_NAME}","Plugin":null},"BuildPlugin":{"Id":0,"PluginName":".NET Core","Command":"dotnet","DockerImageName":"mcr.microsoft.com/dotnet/core/sdk","PluginCommands":null},"WorkDirectory":"Doc-AN","LoggingVerbosity":0,"Parameters":null}]}
+             */
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
             BuildProjectAsync(executeBuild);
@@ -62,42 +64,48 @@ namespace buildeR.Processor.Services
 
         public void Unregister()
         {
-            Log.Information(" >>>> Deregister");
+            Log.Information(" >>>> Unregistered");
         }
 
         public async Task BuildProjectAsync(ExecutiveBuildDTO build)
         {
-            _pathToFile = Path.Combine(_pathToProjects, build.ProjectId.ToString());
+            var pathToClonedRepository = Path.Combine(_pathToProjects, build.ProjectId.ToString(), "ClonedRepository");
 
             try
             {
                 //await RunTestHelloWorldContainerAsync();
 
-                var imageName = await CreateImageFromRepositoryWithDockerfileAsync(build.RepositoryUrl);
-                const int port = 8111;//TODO use different port
+                CloneRepository(build.RepositoryUrl, pathToClonedRepository);
 
-                var containerId = await CreateContainerAsync(imageName, port);
+                foreach (var buildStep in build.BuildSteps.OrderBy(step => step.Index))
+                {
+                    var dockerFileContent = GenerateDockerFileContent(buildStep, build.RepositoryUrl);
+                    await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
-                if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
-                    throw new InvalidOperationException($"Image name {imageName}, container ID {containerId}");
+                    var imageName = await CreateImageFromRepositoryWithDockerfileAsync(pathToClonedRepository);
 
-                Log.Information($" ================= Image with name '{imageName}' and container with ID [{containerId}] were created");
+                    const int port = 8111;//TODO: need to detect free port and use it
+                    var containerId = await CreateContainerAsync(imageName, port);
 
-                await RunContainerAsync(containerId);
+                    if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
+                        throw new InvalidOperationException($"Image name {imageName}, container ID {containerId}");
 
-                // Need to wait until build will be finished because at the moment Container stops before all commands from Dockerfile are executed
-                await Task.Delay(2000);// TODO: fix it. 
+                    Log.Information($" ================= Image with name '{imageName}' and container with ID [{containerId}] were created");
 
-                //await _dockerClient.Containers.WaitContainerAsync(containerId);
-                await StopContainerAsync(containerId);
+                    await RunContainerAsync(containerId);
 
-                var logs = await GetLogFromContainer(containerId);
-                Log.Information($" ================= Logs from container:\n{logs}");
+                    // Need to wait until build will be finished because at the moment Container stops before all commands from Dockerfile are executed
+                    await Task.Delay(5000);// TODO: fix it. 
 
+                    await StopContainerAsync(containerId);
 
-                await RemoveImageAndContainerAsync(imageName, containerId);
+                    var logs = await GetLogFromContainer(containerId);//TODO: sent via SignalR
+                    Log.Information($" ================= Logs from container:\n{logs}");
 
-                //DeleteClonedRepository(PathToWorkDirectory);
+                    await RemoveImageAndContainerAsync(imageName, containerId);
+
+                    DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf("\\", StringComparison.Ordinal)));
+                }
             }
             catch (Exception e)
             {
@@ -105,14 +113,45 @@ namespace buildeR.Processor.Services
             }
         }
 
+
+
         #region Docker
-        private async Task RunTestHelloWorldContainerAsync()
+        private async Task RunTestHelloWorldContainerAsync(ushort port = 7999)
         {
             const string imageName = "hello-world";
             await PullImageByNameAsync(imageName);
-            var containerId = await CreateContainerAsync(imageName, 7999);
+            var containerId = await CreateContainerAsync(imageName, port);
             var logs = await GetLogFromContainer(containerId);
+            Log.Information(logs);
         }
+
+        #region Dockerfile
+        private string GenerateDockerFileContent(ExecutiveBuildStepDTO buildStep, string repositoryUrl)
+        {
+            var repositoryName = new string(repositoryUrl.TakeLast(repositoryUrl.Length - repositoryUrl.LastIndexOf('/') - 1).ToArray());
+            var workDir = buildStep.WorkDirectory;
+            var buildPluginImage = buildStep.BuildPlugin.DockerImageName;//for example "mcr.microsoft.com/dotnet/core/sdk"
+            var buildPluginCommand = buildStep.BuildPlugin.Command; //e.g. "dotnet"
+
+            return buildStep
+                .PluginCommand
+                .TemplateForDocker
+                    .Replace("{BUILD_PLUGIN_IMAGE}", buildPluginImage)
+                    .Replace("{BUILD_PLUGIN_VERSION}", ":latest")//TODO: from where we take version? for now will be used last version of image
+                    .Replace("{BUILD_PLUGIN_COMMAND}", buildPluginCommand)
+                    .Replace("{REPOS_NAME}", repositoryName)
+                    .Replace("{WORK_DIR_NAME}", workDir)
+                    .Replace("{PLUGIN_COMMAND_NAME}", buildStep.PluginCommand.Name);//like "build"
+        }
+
+        private async Task CreateDockerFileAsync(string content, string path)
+        {
+            await using (var outputFile = new StreamWriter(Path.Combine(path, "Dockerfile")))
+            {
+                await outputFile.WriteAsync(content);
+            }
+        }
+        #endregion
 
         #region Image
         private async Task PullImageByNameAsync(string imageName)
@@ -138,13 +177,11 @@ namespace buildeR.Processor.Services
         }
 
         /// <summary />
-        /// <param name="repositoryUrl">Repository to clone and to dockerize</param>
+        /// <param name="path">Path to directory with Dockerfile</param>
         /// <returns>Name of created image or empty</returns>
-        private async Task<string> CreateImageFromRepositoryWithDockerfileAsync(string repositoryUrl)
+        private async Task<string> CreateImageFromRepositoryWithDockerfileAsync(string path)
         {
-            CloneRepository(repositoryUrl);
-
-            await using (var stream = CreateTarballForDockerfileDirectory(PathToWorkDirectory))
+            await using (var stream = CreateTarballForDockerfileDirectory(path))
             {
                 try
                 {
@@ -174,7 +211,7 @@ namespace buildeR.Processor.Services
         /// <param name="imageName">Name of image that will be used to create container</param>
         /// <param name="port">Expose port</param>
         /// <returns>ID of created container or empty</returns>
-        private async Task<string> CreateContainerAsync(string imageName, int port)
+        private async Task<string> CreateContainerAsync(string imageName, ushort port)
         {
             return await TryCreateContainerAsync(imageName, port, 0, 100);
         }
@@ -185,7 +222,7 @@ namespace buildeR.Processor.Services
         /// <param name="retryCount">Current count of retry to create Docker container</param>
         /// <param name="maxRetryCount"></param>
         /// <returns>ID of created container or empty</returns>
-        private async Task<string> TryCreateContainerAsync(string imageName, int port, int retryCount = 0, int maxRetryCount = 100)
+        private async Task<string> TryCreateContainerAsync(string imageName, ushort port, uint retryCount = 0, uint maxRetryCount = 100)
         {
             try
             {
@@ -211,6 +248,8 @@ namespace buildeR.Processor.Services
             }
             catch (DockerContainerNotFoundException)
             {
+                //DockerContainerNotFoundException can be caused by some Docker client error, so sometimes should retry the operation
+                //But DockerContainerNotFoundException can be caused by incorrect Dockerfile also
                 return ++retryCount < maxRetryCount ? await TryCreateContainerAsync(imageName, port, retryCount, maxRetryCount) : string.Empty;
             }
             catch (Exception ex)
@@ -235,19 +274,17 @@ namespace buildeR.Processor.Services
             await _dockerClient.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters());
             await _dockerClient.Images.DeleteImageAsync(imageName, new ImageDeleteParameters());
         }
-
         #endregion
 
         private async Task<string> GetLogFromContainer(string containerId)
         {
-
             var logStream = await _dockerClient
                 .Containers
                 .GetContainerLogsAsync(containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
             using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
             {
                 var logContent = await streamReader.ReadToEndAsync();
-                return new string(logContent.Where(c => !char.IsControl(c)).ToArray());
+                return new string(logContent.Where(c => !char.IsControl(c)).ToArray());//TODO: some control chars should not be removed, so need to change filter
             }
         }
         #endregion
@@ -297,74 +334,13 @@ namespace buildeR.Processor.Services
         }
         #endregion
 
-        #region Tar.gz
-        private string CreateTarGzFileFromFolder(string sourceDirectory, string tgzFileName, string targetDirectory, bool deleteSourceDirectoryUponCompletion = false)
-        {
-            if (!tgzFileName.EndsWith(".tar"))
-            {
-                tgzFileName = $"{tgzFileName}.tar";
-            }
-
-            using var outStream = File.Create(Path.Combine(targetDirectory, tgzFileName));
-            using (var gzoStream = new GZipOutputStream(outStream))
-            {
-                var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream);
-
-                tarArchive.RootPath = sourceDirectory.Replace('\\', '/');
-                if (tarArchive.RootPath.EndsWith("/"))
-                {
-                    tarArchive.RootPath = tarArchive.RootPath.Remove(tarArchive.RootPath.Length - 1);
-                }
-
-                AddDirectoryFilesToTarGz(tarArchive, sourceDirectory);
-
-                if (deleteSourceDirectoryUponCompletion)
-                {
-                    File.Delete(sourceDirectory);
-                }
-
-                var tgzPath = (tarArchive.RootPath + ".tar").Replace('/', '\\');
-
-                tarArchive.Close();
-                return tgzPath;
-            }
-        }
-
-        private void AddDirectoryFilesToTarGz(TarArchive tarArchive, string sourceDirectory)
-        {
-            AddDirectoryFilesToTarGz(tarArchive, sourceDirectory, string.Empty);
-        }
-
-        private void AddDirectoryFilesToTarGz(TarArchive tarArchive, string sourceDirectory, string currentDirectory)
-        {
-            var pathToCurrentDirectory = Path.Combine(sourceDirectory, currentDirectory);
-            foreach (var filePath in Directory.GetFiles(pathToCurrentDirectory))
-            {
-                var tarEntry = TarEntry.CreateEntryFromFile(filePath);
-
-                tarEntry.Name = filePath.Replace(sourceDirectory, "");
-
-                if (tarEntry.Name.StartsWith('\\'))
-                {
-                    tarEntry.Name = tarEntry.Name.Substring(1);
-                }
-                tarArchive.WriteEntry(tarEntry, true);
-            }
-
-            foreach (var directory in Directory.GetDirectories(pathToCurrentDirectory))
-            {
-                AddDirectoryFilesToTarGz(tarArchive, sourceDirectory, directory);
-            }
-        }
-        #endregion
-
         #region Directory
-        private void CloneRepository(string repositoryUrl)
+        private void CloneRepository(string repositoryUrl, string path)
         {
             try
             {
-                EnsureExistDirectory(PathToWorkDirectory);
-                Repository.Clone(repositoryUrl, PathToWorkDirectory);
+                EnsureExistDirectory(path);
+                Repository.Clone(repositoryUrl, path);
             }
             catch (Exception e)
             {
@@ -377,11 +353,11 @@ namespace buildeR.Processor.Services
             Directory.CreateDirectory(path);
         }
 
-        private void DeleteClonedRepository(string path)
+        private void DeleteFolderWithSubfolders(string path)
         {
             foreach (var sub in Directory.EnumerateDirectories(path))
             {
-                DeleteClonedRepository(sub);
+                DeleteFolderWithSubfolders(sub);
             }
             foreach (var file in Directory.EnumerateFiles(path))
             {
