@@ -47,6 +47,7 @@ export class RegistrationDialogComponent implements OnInit {
   }
 
   save() {
+    this.details = this.registerForm.value;
     this.authService.registerUser(this.details);
     this.activeModal.close();
   }

@@ -3,7 +3,7 @@
     <form [formGroup]="registerForm" (ngSubmit)="save()">
         <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="firstName"
-                placeholder="Your First Name" [(ngModel)]="details.firstName">
+                placeholder="Your First Name">
             <div *ngIf="registerForm.controls['firstName'].errors">
                 <div class="error "
                     [hidden]="registerForm.controls['firstName'].valid && registerForm.controls['firstName'].untouched || !registerForm.controls['firstName'].errors?.required">
@@ -14,7 +14,7 @@
                     The minimum length is 2 characters
                 </div>
                 <div class="error "
-                    *ngIf="registerForm.controls['firstName'].errors.maxlengt">
+                    *ngIf="registerForm.controls['firstName'].errors.maxlength">
                     The maximum length is 30 characters
                 </div>
                 <div class="error "
@@ -27,7 +27,7 @@
         </div>
         <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="lastName"
-                placeholder="Your Last Name" [(ngModel)]="details.lastName">
+                placeholder="Your Last Name">
             <div *ngIf="registerForm.controls['lastName'].errors">
                 <div class="error "
                     [hidden]="registerForm.controls['lastName'].valid && registerForm.controls['lastName'].untouched || !registerForm.controls['lastName'].errors?.required">
@@ -51,7 +51,7 @@
         </div>
         <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="username"
-                placeholder="Your username" [(ngModel)]="details.username">
+                placeholder="Your username">
             <div *ngIf="registerForm.controls['username'].errors">
                 <div class="error "
                     [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
@@ -75,7 +75,7 @@
         </div>
         <div class="input-area">
             <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="Your email: example@mail.com">
-              <div *ngIf="registerForm.controls['email'].errors" [(ngModel)]="details.email">
+              <div *ngIf="registerForm.controls['email'].errors">
                 <div class="error "
                 [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
                   Email is required
