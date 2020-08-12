@@ -111,7 +111,10 @@ namespace buildeR
                 endpoints.MapHealthChecks("/health");
             });
 
-            InitializeDatabase(app);
+            if (env.IsDevelopment())
+            {
+                InitializeDatabase(app);
+            }
         }
 
         private void InitializeDatabase(IApplicationBuilder app)

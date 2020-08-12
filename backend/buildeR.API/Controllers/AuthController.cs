@@ -25,8 +25,8 @@ namespace buildeR.API.Controllers
                 AvatarUrl = null,
                 FirstName = "Build",
                 LastName = "R",
-                Bio = ""
-            });
+                Bio = Environment.GetEnvironmentVariable("ConnectionStrings:BuilderDBConnection")
+            }); ;
 
         }
     }
