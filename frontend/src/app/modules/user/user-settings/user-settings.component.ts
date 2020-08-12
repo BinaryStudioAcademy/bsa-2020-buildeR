@@ -31,8 +31,8 @@ export class UserSettingsComponent implements OnInit {
         ]),
       email: new FormControl(this.details.email,
         [
-           Validators.email,
-           Validators.required
+           Validators.required,
+           Validators.pattern("^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$")
         ]),
         location: new FormControl(this.details.location,
           [
