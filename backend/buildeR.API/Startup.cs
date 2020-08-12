@@ -38,15 +38,16 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
-
             
             services
                 .AddControllers()
                 .AddFluentValidation(fv =>
                     fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
-            
+
+            var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
-                options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
+                options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
+
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
@@ -76,7 +77,7 @@ namespace buildeR
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BuilderContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -107,7 +108,16 @@ namespace buildeR
                 endpoints.MapHealthChecks("/health");
             });
 
-            context.Database.Migrate();
+            InitializeDatabase(app);
+
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<BuilderContext>().Database.Migrate();
+            }
         }
     }
 }
