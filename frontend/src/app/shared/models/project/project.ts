@@ -1,5 +1,5 @@
 import { BuildHistory } from '../build-history';
-import { User } from '../user';
+import { User } from '../user/user';
 
 export interface Project {
   id: number;

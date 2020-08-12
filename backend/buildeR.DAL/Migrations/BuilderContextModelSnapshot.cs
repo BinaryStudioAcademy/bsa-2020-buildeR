@@ -292,6 +292,18 @@ namespace buildeR.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SocialNetworks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ProviderName = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ProviderName = 1
+                        });
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.TeamMember", b =>
@@ -366,6 +378,9 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SocialNetworkUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")

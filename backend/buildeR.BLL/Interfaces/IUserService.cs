@@ -7,8 +7,9 @@ namespace buildeR.BLL.Interfaces
     public interface IUserService
     {
         public Task<UserDTO> GetUserById(int id);
+        public Task<UserDTO> GetUserByUId(string UId);
         Task<ICollection<UserDTO>> GetAll();
-        Task<UserDTO> Create(UserDTO creatingUser);
+        Task<UserDTO> Create(NewUserDTO creatingUser);
         Task<UserDTO> Update(UserDTO userDTO);
         Task Delete(int id);
     }

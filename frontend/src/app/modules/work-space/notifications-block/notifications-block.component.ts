@@ -9,7 +9,7 @@ import { NotificationType } from '../../../shared/models/notification-type';
 })
 export class NotificationsBlockComponent implements OnInit {
   public notifications: Notification[];
-  public readNotifications: Notification[];
+  public readNotifications: Notification[] = [];
   public NotificationType = NotificationType;
 
   constructor() {
@@ -28,7 +28,6 @@ export class NotificationsBlockComponent implements OnInit {
 
   // Change type of all notifications to read, push them inro  array of read notifications and delete from general array
   clearAll() {
-    this.readNotifications = [];
     this.notifications.forEach(notification => {
       notification.isRead = true;
       this.readNotifications.push(notification);
