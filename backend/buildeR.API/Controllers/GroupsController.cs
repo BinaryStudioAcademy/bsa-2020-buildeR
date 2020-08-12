@@ -15,14 +15,15 @@ namespace buildeR.API.Controllers
         {
             _groupService = groupService;
         }
+
         [HttpGet]
-        public async Task<IEnumerable<GroupDTO>> Get()
+        public async Task<IEnumerable<GroupDTO>> GetAll()
         {
             return await _groupService.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<GroupDTO> Get(int id)
+        public async Task<GroupDTO> GetById(int id)
         {
             return await _groupService.GetGroupById(id);
         }
@@ -38,6 +39,7 @@ namespace buildeR.API.Controllers
         {
             await _groupService.Update(group);
         }
+
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
