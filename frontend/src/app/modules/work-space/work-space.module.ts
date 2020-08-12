@@ -3,9 +3,10 @@ import { SharedModule } from '@shared/shared.module';
 import { WorkSpaceRoutingModule } from './work-space-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { WorkSpaceComponent } from './work-space/work-space.component';
+import { NotificationsBlockComponent } from './notifications-block/notifications-block.component';
 
 @NgModule({
-  declarations: [DashboardComponent, WorkSpaceComponent],
+  declarations: [DashboardComponent, WorkSpaceComponent, NotificationsBlockComponent],
   imports: [SharedModule, WorkSpaceRoutingModule],
 })
 export class WorkSpaceModule {}

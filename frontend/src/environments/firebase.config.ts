@@ -1,11 +1,12 @@
 export const firebase = {
-    firebaseConfig: {
-      apiKey: "AIzaSyD61-h3w3bXR6yVt5i4Xocu-KRMFh0cmmI",
-      authDomain: "builder-2e3fa.firebaseapp.com",
-      databaseURL: "https://builder-2e3fa.firebaseio.com",
-      projectId: "builder-2e3fa",
-      storageBucket: "builder-2e3fa.appspot.com",
-      messagingSenderId: "545122404933",
-      appId: "1:545122404933:web:8a0dd0bf8544dea838b12c",
-    }
-  };
+  firebaseConfig: {
+    apiKey: 'AIzaSyAyXWRkJghpMevx67ZbrOX-Ji-dnEn2wUk',
+    authDomain: 'builder-c5cfc.firebaseapp.com',
+    databaseURL: 'https://builder-c5cfc.firebaseio.com',
+    projectId: 'builder-c5cfc',
+    storageBucket: 'builder-c5cfc.appspot.com',
+    messagingSenderId: '81812404922',
+    appId: '1:81812404922:web:879935203ba9edda92e083',
+    measurementId: 'G-7D823LXZLV'
+  }
+};
