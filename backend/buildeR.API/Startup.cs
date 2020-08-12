@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace buildeR
 {
@@ -36,8 +38,15 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
-            services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
-            services.AddDbContext<BuilderContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
+
+            
+            services
+                .AddControllers()
+                .AddFluentValidation(fv =>
+                    fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
+            
+            services.AddDbContext<BuilderContext>(options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"]));
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
@@ -58,6 +67,12 @@ namespace buildeR
                         ValidateLifetime = true
                     };
                 });
+    
+            services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo {Title = "builder API", Version = "v1"});
+                swagger.AddFluentValidationRules();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +82,10 @@ namespace buildeR
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "buildeR API"); });
+            
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
