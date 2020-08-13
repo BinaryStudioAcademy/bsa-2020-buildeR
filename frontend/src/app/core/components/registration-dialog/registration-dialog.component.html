@@ -81,10 +81,11 @@
                   Email is required
                 </div>
                 <div class="error "
-                     *ngIf="registerForm.controls['email'].errors.pattern">
+                     *ngIf="registerForm.controls['email'].errors.email
+                         || registerForm.controls['email'].errors.pattern">
                   Email must be like 'example@gmail.com'
                   Email can't start or finish with these
-                  characters ' - ', ' . '
+                characters ' - ', ' . '
                 </div>
               </div>
         </div>

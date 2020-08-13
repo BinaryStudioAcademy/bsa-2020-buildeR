@@ -27,14 +27,15 @@ export class RegistrationDialogComponent implements OnInit {
       lastName: new FormControl(this.details.lastName,
         [
           Validators.required,
-          Validators.minLength(2),
+          Validators.minLength(1),
           Validators.maxLength(30),
           Validators.pattern(`^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$`)
         ]),
       email: new FormControl(this.details.email,
         [
           Validators.required,
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$`)
+          Validators.email,
+          Validators.pattern(`^[a-zA-Z].*`)
         ]),
       username: new FormControl(this.details.username,
         [
