@@ -39,7 +39,7 @@ export class RegistrationDialogComponent implements OnInit {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(30),
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)(?!.*-\\.)(?!.*\\.-)[[A-Za-z0-9-\\._]+(?<![-\\.])$`)
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$`)
         ]),
     });
   }
