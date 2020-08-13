@@ -75,10 +75,10 @@ namespace buildeR.Processor.Services
             {
                 //await RunTestHelloWorldContainerAsync();
 
-                CloneRepository(build.RepositoryUrl, pathToClonedRepository);
-
                 foreach (var buildStep in build.BuildSteps.OrderBy(step => step.Index))
                 {
+                    CloneRepository(build.RepositoryUrl, pathToClonedRepository);
+
                     var dockerFileContent = GenerateDockerFileContent(buildStep, build.RepositoryUrl);
                     await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
