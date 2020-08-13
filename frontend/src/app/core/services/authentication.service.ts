@@ -39,6 +39,15 @@ export class AuthenticationService {
     }
   }
 
+  signInWithUid(uid: string) {
+    this.userService.getUserByUId(uid)
+      .subscribe((resp) => {
+        if (resp.body !== null) {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        }
+      });
+  }
 
   doGoogleSignIn(): Promise<void> {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
@@ -118,6 +127,7 @@ export class AuthenticationService {
   logout(): Promise<void> {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
+    this.currentUser = undefined;
     this.router.navigate(['/']);
     return this.angularAuth.signOut();
   }
@@ -128,6 +138,15 @@ export class AuthenticationService {
 
   getUser(): User {
     return this.currentUser;
+  }
+
+  getUIdLocalStorage(): string {
+    const user: firebase.User = JSON.parse(localStorage.getItem('user'));
+    if (user != null) {
+      return user.uid;
+    } else {
+      return '';
+    }
   }
 
   public isAuthorized() {
