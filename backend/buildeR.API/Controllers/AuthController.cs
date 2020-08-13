@@ -26,9 +26,7 @@ namespace buildeR.API.Controllers
                 FirstName = "Build",
                 LastName = "Rrr",
                 Bio = "",
-                Location = "Kiev, Ukraine"
             });
-
         }
     }
 }
