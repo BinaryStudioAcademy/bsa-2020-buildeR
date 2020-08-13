@@ -20,6 +20,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace buildeR.Processor.Services
 {
@@ -276,16 +277,45 @@ namespace buildeR.Processor.Services
             await _dockerClient.Images.DeleteImageAsync(imageName, new ImageDeleteParameters());
         }
         #endregion
-
+        
+        public string finalLine = "";
+        
         private async Task<string> GetLogFromContainer(string containerId)
         {
-            var logStream = await _dockerClient
-                .Containers
-                .GetContainerLogsAsync(containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
-            using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
+            // var logStream = await _dockerClient
+            //     .Containers
+            //     .GetContainerLogsAsync(containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
+            // using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
+            // {
+            //     var logContent = await streamReader.ReadToEndAsync();
+            //     return new string(logContent.Where(c => !char.IsControl(c)).ToArray());//TODO: some control chars should not be removed, so need to change filter
+            //}
+
+            var logStream = await _dockerClient.Containers.GetContainerLogsAsync(containerId,
+                new ContainerLogsParameters
+                {
+                    Follow = true,
+                    ShowStderr = true,
+                    ShowStdout = true,
+                    Timestamps = true
+                }, default);
+            using (var reader = new StreamReader(logStream))
             {
-                var logContent = await streamReader.ReadToEndAsync();
-                return new string(logContent.Where(c => !char.IsControl(c)).ToArray());//TODO: some control chars should not be removed, so need to change filter
+                string line = null;
+                while ((line = await reader.ReadLineAsync()) != null)
+                {
+                    var firstSpaceIndex = line.IndexOf("Z ");
+                    var gettingDate = line.Substring(0, firstSpaceIndex+1);
+                    var firstTwoNumber = gettingDate.IndexOf("2");
+                    var finalDate = gettingDate.Substring(firstTwoNumber);
+                    var time = DateTime.Parse(finalDate);
+                    var message = line.Substring(firstSpaceIndex + 2).TrimStart();
+                    var lineToAdd = "[" + time.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU")) + "]" + " " + message;
+                    finalLine += lineToAdd;
+                    finalLine += Environment.NewLine;
+                }
+            
+                return finalLine;
             }
         }
         #endregion
