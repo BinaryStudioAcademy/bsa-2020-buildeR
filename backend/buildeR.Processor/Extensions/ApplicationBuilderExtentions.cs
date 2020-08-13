@@ -8,11 +8,11 @@ namespace buildeR.Processor.Extensions
 {
     public static class ApplicationBuilderExtentions
     {
-        private static ProcessorService _service { get; set; }
+        private static ProcessorService Service { get; set; }
 
         public static IApplicationBuilder UseProcessorService(this IApplicationBuilder app)
         {
-            _service = app.ApplicationServices.GetService<ProcessorService>();
+            Service = app.ApplicationServices.GetService<ProcessorService>();
 
             var lifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
 
@@ -24,12 +24,12 @@ namespace buildeR.Processor.Extensions
 
         private static void OnStarted()
         {
-            _service.Register();
+            Service.Register();
         }
 
         private static void OnStopping()
         {
-            _service.Deregister();
+            Service.Unregister();
         }
     }
 }
