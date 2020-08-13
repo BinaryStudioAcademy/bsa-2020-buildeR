@@ -25,6 +25,9 @@ namespace buildeR.API.Extensions
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IBuildStepService, BuildStepService>();
+            services.AddScoped<IBuildService, BuildService>();
 
             services.RegisterAutoMapper();
 
