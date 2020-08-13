@@ -47,7 +47,10 @@ namespace buildeR
             var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
-            services.AddDbContext<QuartzDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"]));
+
+            var migrationAssemblyForQuartzDB = typeof(QuartzDBContext).Assembly.GetName().Name;
+            services.AddDbContext<QuartzDBContext>(options => 
+                options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"], opt => opt.MigrationsAssembly(migrationAssemblyForQuartzDB)));
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
@@ -117,6 +120,7 @@ namespace buildeR
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<BuilderContext>().Database.Migrate();
+                scope.ServiceProvider.GetRequiredService<QuartzDBContext>().Database.Migrate();
             }
         }
     }
