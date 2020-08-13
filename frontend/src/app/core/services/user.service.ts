@@ -33,4 +33,9 @@ export class UserService {
     return this.httpService.getFullRequest<User>(`${this.routePrefix}/login/${uniqueId}`);
   }
 
+  updateUser(user: User): Observable<User> {
+    console.log(user);
+    return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
+  }
+
 }

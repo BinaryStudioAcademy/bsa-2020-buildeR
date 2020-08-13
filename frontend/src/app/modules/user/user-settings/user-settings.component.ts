@@ -42,7 +42,7 @@ export class UserSettingsComponent implements OnInit {
       lastName: new FormControl(this.details.lastName,
          [
            Validators.required,
-           Validators.minLength(1),
+           Validators.minLength(2),
            Validators.maxLength(30),
            Validators.pattern("^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$")
         ]),
@@ -86,9 +86,17 @@ export class UserSettingsComponent implements OnInit {
   }
 
   onSubmit(user: User) {
-    this.isChanged = true;
-    this.toastrService.showSuccess('Your profile was updated!');
-    this.details = user;
+    user.id = this.details.id;
+    this.userService.updateUser(user).subscribe( updateUser =>
+    {
+      this.details = updateUser;
+      this.isChanged = true;
+      this.toastrService.showSuccess('Your profile was updated!');
+    }, error =>
+    {
+      console.error(error);
+      this.toastrService.showError('Your profile wasn\'t updated')
+    });
   }
   async open(){
     const file = await this.cropper.open();
