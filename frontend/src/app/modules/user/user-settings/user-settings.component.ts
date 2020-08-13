@@ -47,7 +47,7 @@ export class UserSettingsComponent implements OnInit {
            Validators.pattern("^(?![-'\\s])(?!.*--)(?!.*'')[[A-Za-z-'\\s]+(?<![-'\\s])$")
         ]),
         avatarUrl: new FormControl(this.details.avatarUrl),
-      email: new FormControl(this.details.email,
+        email: new FormControl(this.details.email,
         [
            Validators.required,
            Validators.pattern("^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$")
