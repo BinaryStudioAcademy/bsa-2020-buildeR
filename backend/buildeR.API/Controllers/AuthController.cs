@@ -24,8 +24,7 @@ namespace buildeR.API.Controllers
                 Username = "buildeR",
                 AvatarUrl = null,
                 FirstName = "Build",
-                LastName = "R",
-                Keys = Environment.GetEnvironmentVariables()
+                LastName = "R"
             }); ;
 
         }

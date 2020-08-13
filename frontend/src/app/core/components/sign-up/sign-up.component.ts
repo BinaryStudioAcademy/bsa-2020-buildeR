@@ -14,10 +14,19 @@ export class SignUpComponent implements OnInit {
   ngOnInit() {
   }
 
-  gitHubSignUp() {
-
+  signInWithGithub() {
+    this.authService.doGithubSignIn();
   }
 
-  googleSignUp() {
+  signInWithGoogle() {
+    this.authService.doGoogleSignIn();
+  }
+
+  back() {
+    this.router.navigate(['/']);
+  }
+
+  goSignIn() {
+    this.router.navigate(['/signin']);
   }
 }

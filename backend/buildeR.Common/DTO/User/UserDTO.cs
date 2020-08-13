@@ -19,7 +19,6 @@ namespace buildeR.Common.DTO.User
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Bio { get; set; }
-        public IDictionary Keys { get; set; }
 
         public ICollection<ProjectDTO> Projects { get; set; }
         public ICollection<TeamMemberDTO> TeamMembers { get; set; }

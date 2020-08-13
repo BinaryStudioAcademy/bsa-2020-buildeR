@@ -15,15 +15,19 @@ export class SignInComponent implements OnInit {
   }
 
   signInWithGithub() {
-    this.authService.doGithubSignIn().then(() => {
-
-    });
+    this.authService.doGithubSignIn();
   }
 
   signInWithGoogle() {
-    this.authService.doGoogleSignIn().then(() => {
+    this.authService.doGoogleSignIn();
+  }
 
-    });
+  back() {
+    this.router.navigate(['/']);
+  }
+
+  goSignUp() {
+    this.router.navigate(['/signup']);
   }
 
 }
