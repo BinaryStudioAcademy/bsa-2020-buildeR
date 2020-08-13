@@ -3,6 +3,12 @@ import { User } from '@shared/models/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {ToastrNotificationsService} from "../../../core/services/toastr-notifications.service";
+import {UserService} from "../../../core/services/user.service";
+import {takeUntil} from "rxjs/operators";
+import {ActivatedRoute} from "@angular/router";
+
+
+
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -11,14 +17,19 @@ import {ToastrNotificationsService} from "../../../core/services/toastr-notifica
 export class UserSettingsComponent implements OnInit {
 
   isChanged: boolean = false;
-
   changedUser: User = {} as User;
-  @Input() details: User = JSON.parse(localStorage.getItem(`user`));
+  @Input() details: User = {} as User;
+
   public settingsForm: FormGroup;
 
-  constructor(private settingsService: UserSettingsService,private toastrService: ToastrNotificationsService) { }
+  constructor(private settingsService: UserSettingsService,
+              private toastrService: ToastrNotificationsService,
+              private userService: UserService,
+              private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+
+    this.route.data.subscribe( data => this.details = data.user);
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
