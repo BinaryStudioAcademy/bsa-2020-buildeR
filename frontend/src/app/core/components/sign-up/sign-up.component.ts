@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -7,16 +9,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignUpComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthenticationService, private router: Router) { }
 
   ngOnInit() {
   }
 
-  gitHubSignUp() {
-
+  signInWithGithub() {
+    this.authService.doGithubSignIn();
   }
 
-  bitbucketSignUp() {
+  signInWithGoogle() {
+    this.authService.doGoogleSignIn();
+  }
 
+  back() {
+    this.router.navigate(['/']);
+  }
+
+  goSignIn() {
+    this.router.navigate(['/signin']);
   }
 }

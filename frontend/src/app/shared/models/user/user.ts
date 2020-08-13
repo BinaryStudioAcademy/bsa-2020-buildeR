@@ -1,3 +1,4 @@
+
 export interface User {
   id: number;
   role: string;
@@ -8,4 +9,5 @@ export interface User {
   bio: string;
   location: string;
   avatarUrl: string;
+  creationDate: Date;
 }

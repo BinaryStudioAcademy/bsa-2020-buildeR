@@ -9,7 +9,7 @@
               <div class="intro">
                 <p>Welcome back!</p>
               </div>
-              <button class="btn">
+              <button class="btn" (click)="signInWithGithub()">
                 <div class="icon">
                   <i class="fa fa-github" aria-hidden="true"></i>
                 </div>
@@ -17,18 +17,16 @@
                   <p>sign in with github</p>
                 </div>
               </button>
-              <button class="btn">
+              <button class="btn" (click)="signInWithGoogle()">
                 <div class="icon">
-                  <i class="fa fa-bitbucket" aria-hidden="true"></i>  
+                  <i class="fa fa-google" aria-hidden="true"></i>  
                 </div>
                 <div class="button-text">
-                  <p>sign in with bitbucket</p>
+                  <p>sign in with google</p>
                 </div>
               </button>
-              <p>Return to main page <a routerLink="/">Back</a></p>
-              <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
-            
-            
+              <p>Return to main page <a (click)="back()">Back</a></p>
+              <p>Don't have an account? <a (click)="goSignUp()">Sign up</a></p>
             </div>
             <div class="ember-view block h-64 absolute top-0 left-0 -mt-12 -ml-32">
               <svg version="1.1" id="blue-blob_svg__Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 234.002 124.021" xml:space="preserve" height="224"><style></style><linearGradient id="blue-blob_svg__blue-blob-blue-monday-taako" gradientUnits="userSpaceOnUse" x1="4.523" y1="62.136" x2="231.944" y2="62.136"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset=".015" stop-color="#f7f7ff" stop-opacity=".015"></stop><stop offset=".215" stop-color="#bac2ff" stop-opacity=".215"></stop><stop offset=".406" stop-color="#7d9cff" stop-opacity=".406"></stop><stop offset=".586" stop-color="#6684ff" stop-opacity=".586"></stop><stop offset=".75" stop-color="#4775ff" stop-opacity=".75"></stop><stop offset=".893" stop-color="#276dff" stop-opacity=".893"></stop><stop offset="1" stop-color="#0068ff"></stop></linearGradient><path d="M80.958 57.596s19.455-53.826 83.009-42.802c0 0 28.069 4.282 57.069-8.431 29.326-12.855-9.772 29.734-9.772 29.734s-25.392 24.741-54.503 27.335c-29.111 2.594-37.542 47.341-40.784 50.584-3.243 3.243-16.861 16.213-73.93-8.431s-34.983-42.4-23.995-44.249c10.988-1.849 46.752 20.301 62.906-3.74z" fill="url(#blue-blob_svg__blue-blob-blue-monday-taako)"></path></svg>

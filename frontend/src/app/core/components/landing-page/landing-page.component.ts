@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { CurrentUser } from '@shared/models/current-user';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-landing-page',
@@ -8,8 +11,11 @@ import { Router } from '@angular/router';
 })
 export class LandingPageComponent implements OnInit {
   isMenuCollapsed = true;
+  currentUser: CurrentUser = new CurrentUser();
+  $authSubscription: Subscription;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+  }
 
   ngOnInit(): void {
   }

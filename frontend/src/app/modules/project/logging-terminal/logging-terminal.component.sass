@@ -1,0 +1,104 @@
+.log-view
+  width: 100%
+  height: 100%
+  margin-top: 1rem
+
+
+  .log-header
+    background-color: #444
+    height: 3rem
+
+    button, label
+      margin-top: 0.3rem
+      margin-right: 0.5rem
+      margin-left: 0.5rem
+
+  .log-footer
+    background-color: #444
+    height: 1.5rem
+
+    a
+      display: inline-block
+      float: right
+      margin-right: 0.5rem
+      text-decoration: none
+
+  .log-container
+    min-height: 60vh
+    background-color: #222
+    color: #f1f1f1
+    font-family: Cousine,monospace
+    border-left: 3.5rem solid rgba(192,192,192,0.3)
+
+    div.build-step
+      position: relative
+
+      &.expandable
+
+        div:nth-child(2)
+          background-color: #333
+
+        div:nth-child(n+3)
+          display: none
+          padding-left: 2rem
+
+        &.expanded div:nth-child(n+3)
+          display: inherit
+          padding-left: 2rem
+
+        &.expanded
+          span.expand-button
+            border-width: 0.8rem 0.4rem 0 0.4rem
+            border-color: whitesmoke transparent transparent transparent
+
+        span.expand-button
+          display: inline-block
+          position: absolute
+          z-index: 5
+          width: 0
+          height: 0
+          left: -3rem
+          top: 0.3rem
+          border-style: solid
+          border-width: 0.4rem 0 0.4rem 0.8rem
+          border-color: transparent transparent transparent whitesmoke
+
+      p
+        padding-left: 0.5rem
+        margin: 0
+
+        &:hover
+          background-color: #444
+
+      span.line-number
+        width: 3rem
+        display: inline-block
+        position: absolute
+        left: -3.2rem
+        text-align: right
+        color: gray
+        user-select: none
+
+      span.timestamp
+        color: gray
+
+      span.level
+
+        &.CMD
+          color: #73e3ff
+
+        &.ERR
+          color: red
+
+        &.DBG
+          color: grey
+
+        &.FTL
+          background-color: rgba(255, 0, 0, 0.6)
+
+        &.WRN
+          color: orange
+
+
+
+

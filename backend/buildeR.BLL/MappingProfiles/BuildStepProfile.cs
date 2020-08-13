@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using buildeR.Common.DTO.BuildStep;
 using buildeR.DAL.Entities;

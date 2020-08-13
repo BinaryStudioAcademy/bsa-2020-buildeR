@@ -1,24 +1,48 @@
+.logo
+   height: 40px
+
 .avatar
   vertical-align: middle
-  width: 50px
   height: 50px
   border-radius: 50%
+
+.nav-link
+  padding: 0px
 
 button
   background-color: #f8f9fa
   border: none
 
-
-.navbar-nav
-  margin-right: 10%
-
-.navbar-brand
-  margin-left: 10%
-  font-size: 30px
-
-.nav-link
-  margin-left: 10%
-  font-size: 25px
-
 :focus
   outline:0 !important
+
+.logo
+  height: 45px
+  display: block
+
+// Styles for notifications icon and block
+
+.nav-item:first-child
+  margin: auto
+  margin-right: 10px
+
+  .nav-link svg
+    fill: rgba(0, 0, 0, 0.5)
+  .nav-link svg:hover
+    fill: rgba(255, 211, 55, 0.8)
+
+.nav-link:nth-child(2)
+  margin: 0
+  padding: 0
+
+.notifications-icon
+  width: 1.4em
+  height: 1.4em
+
+.navbar-nav .nav-link
+    color: rgba(0,0,0,.5)
+
+// hover for menu items under logo
+
+.navbar-nav .nav-link:nth-child(2):hover
+    color: rgba(0,0,0,.7)

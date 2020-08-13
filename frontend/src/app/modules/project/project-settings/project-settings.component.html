@@ -1,0 +1,32 @@
+<div class="settings">
+  <div class="settings-section">
+    <h2 class="small-title">
+      General
+    </h2>
+    <form (ngSubmit)="save()" #projectSettingForm="ngForm">
+      <div class="group">
+        <div class="field">
+          <span>Project name</span>
+        </div>
+        <div class="input-area">
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="tempProjectName" name="name" required
+            autocomplete="off" #name="ngModel">
+            <div class="error" [hidden]="!name.errors?.required || name.untouched">
+              Name is required
+            </div>
+        </div>
+        <div class="field">
+          <span>Description</span>
+        </div>
+        <div class="input-area">
+          <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="tempProjectDescription" #description="ngModel">
+          </textarea>
+        </div>
+      </div>
+      <div class="btn-wp">
+        <button type="submit" class="btn btn-success" [disabled]="projectSettingForm.invalid">Save</button>
+        <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>

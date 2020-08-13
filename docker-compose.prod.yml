@@ -32,6 +32,9 @@ services:
     environment:
         SA_PASSWORD: ${SA_PASSWORD}
         ACCEPT_EULA: "Y"
+    volumes:
+        - ./mssql/mssqluser:/var/opt/sqlserver
+        - ./mssql/mssqlsystem:/var/opt/mssql
 
   rabbitmq:
     image: rabbitmq:3.8.6-alpine
@@ -87,6 +90,8 @@ services:
         ASPNETCORE_ENVIRONMENT: 'Production'
         VAULT_ADDRESS: 'http://vault:8200'
         VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
+    env_file:
+        - /etc/environment
 
   builder_processor:
     depends_on:
@@ -102,6 +107,8 @@ services:
         ASPNETCORE_ENVIRONMENT: 'Production'
         VAULT_ADDRESS: 'http://vault:8200'
         VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
+    env_file:
+        - /etc/environment
 
   builder_signalr:
     image: bsa2020builder/builder_signalr:latest

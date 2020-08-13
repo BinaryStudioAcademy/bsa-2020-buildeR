@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProjectInfo } from '@shared/models/project-info';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,17 +21,15 @@ export class DashboardComponent extends BaseComponent
 
   constructor(
     private projectService: ProjectService,
-    private toastrService: ToastrNotificationsService
+    private toastrService: ToastrNotificationsService,
+    private authService: AuthenticationService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    if (this.currentUser) {
-      this.getUserProjects(this.currentUser.id);
-    } else {
-      this.toastrService.showError('Undefined user');
-    }
+  //  this.currentUser = this.authService.getUser();
+  //  this.getUserProjects(this.currentUser.id);
   }
 
   getUserProjects(userId: number) {
@@ -51,10 +50,10 @@ export class DashboardComponent extends BaseComponent
   }
 
   triggerBuild(projectId: number) {
-    throw new Error('Method not implemented.');
-  }
-
-  addProject() {
-    throw new Error('Method not implemented.');
+    this.projectService.startProjectBuild(projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => projectId,
+        (error) => this.toastrService.showError(error));
   }
 }

@@ -1,0 +1,50 @@
+<form (ngSubmit)="save()" #projectCreatingForm="ngForm">
+  <h2 class="small-title">
+    Create Project
+  </h2>
+  <div class="group">
+    <div class="field">
+      <span>Project name</span>
+    </div>
+    <div class="input-area">
+      <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.name" name="name" required
+        autocomplete="off" #name="ngModel" placeholder="My first project">
+      <div class="error" [hidden]="!name.errors?.required || name.untouched">
+        Name is required
+      </div>
+    </div>
+    <div class="field">
+      <span>Description</span>
+    </div>
+    <div class="input-area">
+      <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="newProject.description"
+        name="description" required autocomplete="off" #description="ngModel"
+        placeholder="Some description for project">
+      </textarea>
+    </div>
+    <div class="field">
+      <span>Public repository</span>
+    </div>
+    <div class="input-area">
+      <input type="checkbox" class="form-control form-control-sm" [(ngModel)]="newProject.isPublic"
+        (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel" id="isPublic-checkbox">
+
+    </div>
+    <div class="field">
+      <span>Repository Url</span>
+    </div>
+    <div class="input-area">
+      <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.repositoryUrl"
+        name="repositoryUrl" required autocomplete="off" #repositoryUrl="ngModel">
+      <div class="error" [hidden]="!repositoryUrl.errors?.required || repositoryUrl.untouched">
+        Repository Url is required
+      </div>
+    </div>
+
+  </div>
+
+  <div class="btn-wp">
+    <button type="submit" class="btn btn-success" [disabled]="projectCreatingForm.invalid">Create</button>
+    <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+  </div>
+</form>
