@@ -15,6 +15,7 @@ export class UserResolverService implements Resolve<User>{
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
 
     return this.userService.getCurrentUser().pipe(tap((user) => {
+      const id = route.paramMap.get('userId');
       if (user){
         return user;
       }
