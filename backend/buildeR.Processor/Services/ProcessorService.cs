@@ -89,7 +89,7 @@ namespace buildeR.Processor.Services
 
                     if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
                     {
-                        DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf("\\", StringComparison.Ordinal)));
+                        DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf(IsCurrentOsLinux ? "/" : "\\", StringComparison.Ordinal)));
                         throw new InvalidOperationException($"Image name {imageName}, container ID {containerId}");
                     }
 
@@ -105,7 +105,7 @@ namespace buildeR.Processor.Services
 
                     await RemoveImageAndContainerAsync(imageName, containerId);
 
-                    DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf("\\", StringComparison.Ordinal)));
+                    DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf(IsCurrentOsLinux ? "/" : "\\", StringComparison.Ordinal)));
                 }
             }
             catch (Exception e)

@@ -1,32 +1,32 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5060"
+      "applicationUrl": "http://localhost:5060",
+      "sslPort": 0
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "RABBIT_MQ_PASSWORD": "guest",
         "RABBIT_MQ_HOST_NAME": "localhost",
+        "ASPNETCORE_ENVIRONMENT": "Development",
         "RABBIT_MQ_USERNAME": "guest"
       }
     },
     "builder.Processor": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5060",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "RABBIT_MQ_PASSWORD": "guest",
         "RABBIT_MQ_HOST_NAME": "localhost",
+        "ASPNETCORE_ENVIRONMENT": "Development",
         "RABBIT_MQ_USERNAME": "guest"
-      }
+      },
+      "applicationUrl": "http://localhost:5060"
     }
   }
 }
