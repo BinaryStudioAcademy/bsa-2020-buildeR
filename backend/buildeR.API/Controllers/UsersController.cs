@@ -34,14 +34,14 @@ namespace buildeR.API.Controllers
             return await _userService.GetUserById(id);
         }
 
-        [HttpGet("getbyuid/{UId}")]
-        public async Task<UserDTO> GetByUId(string UId)
+        [HttpGet("login/{UId}")]
+        public async Task<UserDTO> Login(string UId)
         {
             return await _userService.GetUserByUId(UId);
         }
 
         [HttpPost]
-        public async Task<UserDTO> Create([FromBody] NewUserDTO user)
+        public async Task<UserDTO> Register([FromBody] NewUserDTO user)
         {
             return await _userService.Create(user);
         }
