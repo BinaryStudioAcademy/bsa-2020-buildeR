@@ -19,17 +19,15 @@ export class RegistrationDialogComponent implements OnInit {
     this.registerForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
-          Validators.required,
           Validators.minLength(2),
           Validators.maxLength(30),
-          Validators.pattern(`^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$`)
+          Validators.pattern(`^(?![-'\\s])(?!.*'')[[A-Za-z\\s-']+(?<![-'\\s])$`)
         ]),
       lastName: new FormControl(this.details.lastName,
         [
-          Validators.required,
-          Validators.minLength(1),
+          Validators.minLength(2),
           Validators.maxLength(30),
-          Validators.pattern(`^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$`)
+          Validators.pattern(`^(?![-'\\s])(?!.*'')[[A-Za-z\\s-']+(?<![-'\\s])$`)
         ]),
       email: new FormControl(this.details.email,
         [
@@ -47,7 +45,10 @@ export class RegistrationDialogComponent implements OnInit {
   }
 
   save() {
-    this.details = this.registerForm.value;
+    this.details.firstName = this.registerForm.value[`firstName`];
+    this.details.lastName = this.registerForm.value[`lastName`];
+    this.details.username = this.registerForm.value[`username`];
+    this.details.email = this.registerForm.value[`email`];
     this.authService.registerUser(this.details);
     this.activeModal.close();
   }
