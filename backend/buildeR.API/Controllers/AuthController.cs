@@ -24,8 +24,9 @@ namespace buildeR.API.Controllers
                 Username = "buildeR",
                 AvatarUrl = null,
                 FirstName = "Build",
-                LastName = "R",
-                Bio = ""
+                LastName = "Rrr",
+                Bio = "",
+                Location = "Kiev, Ukraine"
             });
 
         }

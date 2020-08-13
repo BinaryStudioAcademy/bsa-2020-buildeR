@@ -17,6 +17,8 @@ namespace buildeR.Common.DTO.User
         public string LastName { get; set; }
         public string Bio { get; set; }
 
+        public string Location { get; set; }
+
         public ICollection<ProjectDTO> Projects { get; set; }
         public ICollection<TeamMemberDTO> TeamMembers { get; set; }
         public ICollection<UserSocialNetworkDTO> UserSocialNetworks { get; set; }

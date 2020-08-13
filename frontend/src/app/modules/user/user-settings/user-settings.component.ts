@@ -77,7 +77,8 @@ export class UserSettingsComponent implements OnInit {
         this.details.firstName === this.changedUser.firstName &&
         this.details.email === this.changedUser.email &&
         this.details.bio === this.changedUser.bio &&
-        this.details.username === this.changedUser.username) {
+        this.details.username === this.changedUser.username &&
+        this.details.location === this.changedUser.location) {
         this.isChanged = true;
       }
     });
