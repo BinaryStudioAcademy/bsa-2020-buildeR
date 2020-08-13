@@ -37,6 +37,11 @@ namespace buildeR.API.Middleware
                         context.Response.StatusCode = 404;
                         break;
                     }
+                case ArgumentNullException _:
+                    {
+                        context.Response.StatusCode = 400;
+                        break;
+                    }
                 default:
                     {
                         context.Response.StatusCode = 500;
