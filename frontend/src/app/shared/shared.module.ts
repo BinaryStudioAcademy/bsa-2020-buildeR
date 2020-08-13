@@ -43,7 +43,8 @@ import { LogLevelDirective } from './directives/log-level.directive'
     BuildStatusColorDirective,
     BuildStatusIconDirective,
     LogLevelDirective,
-    NotFoundComponent
+    NotFoundComponent,
+    CronBuilderComponent,
   ],
 })
 export class SharedModule {}
