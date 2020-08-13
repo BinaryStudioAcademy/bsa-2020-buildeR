@@ -71,7 +71,7 @@
       </div>
       <div class="input-area with-btn">
         <input type="url" class="form-control form-control-sm" formControlName="avatarUrl" placeholder="http://avatar.link">
-        <button class="btn btn-info btn-sm upload" (click)="upload()">Upload</button>
+        <button type="button" class="btn btn-info btn-sm upload" (click)="upload()">Upload</button>
     </div>
       <div class="field">
         Username
@@ -158,7 +158,7 @@
         </div>
       </div>
       <div class="save-button-container">
-        <button class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
+        <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
       </div>
     </div>
   </form>

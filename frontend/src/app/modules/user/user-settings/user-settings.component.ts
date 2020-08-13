@@ -110,13 +110,16 @@ export class UserSettingsComponent implements OnInit {
   }
   upload(){
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
-    alert('Invalaid URL');
+    this.toastrService.showError('Invalaid URL');
     this.settingsForm.controls.avatarUrl.setValue('');
     return;
     }
     this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
     this.settingsService.updateSettings(this.details).subscribe((res) =>
-    console.log('success'),
+    {
+      console.log('avatar url was updated');
+      this.toastrService.showSuccess('Your avatar was updated');
+    },
     (err) => console.log(err));
   }
 
