@@ -35,6 +35,7 @@ namespace buildeR.API.Controllers
             return await _userService.GetUserById(id);
         }
 
+        [AllowAnonymous]
         [HttpGet("login/{UId}")]
         public async Task<UserDTO> Login(string UId)
         {

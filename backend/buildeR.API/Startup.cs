@@ -74,7 +74,7 @@ namespace buildeR
 
             services.AddSwaggerGen(swagger =>
             {
-                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "2.0" });
+                swagger.SwaggerDoc("v2", new OpenApiInfo { Title = "builder API", Version = "2.0" });
                 swagger.AddFluentValidationRules();
                 swagger.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
                 {
@@ -105,7 +105,7 @@ namespace buildeR
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "buildeR API"); });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("api/swagger/v2/swagger.json", "buildeR API"));
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
@@ -116,6 +116,8 @@ namespace buildeR
             });
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
