@@ -3,4 +3,5 @@ export interface NewProject {
   description: string;
   isPublic: boolean;
   repositoryUrl: string;
+  ownerId: number;
 }
