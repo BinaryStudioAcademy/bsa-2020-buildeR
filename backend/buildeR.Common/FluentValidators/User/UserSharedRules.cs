@@ -2,8 +2,6 @@ using System;
 using System.Net.Mail;
 using buildeR.Common.FluentValidators.Shared;
 using FluentValidation;
-using SendGrid.Helpers.Mail;
-using static buildeR.Common.FluentValidators.Shared.SpecialCharactersRules;
 
 namespace buildeR.Common.FluentValidators.User
 {
@@ -43,7 +41,7 @@ namespace buildeR.Common.FluentValidators.User
             {
                 try
                 {
-                    var m = new EmailAddress(input);
+                    var m = new MailAddress(input);
 
                     return true;
                 }
