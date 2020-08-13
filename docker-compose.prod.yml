@@ -32,6 +32,9 @@ services:
     environment:
         SA_PASSWORD: ${SA_PASSWORD}
         ACCEPT_EULA: "Y"
+    volumes:
+        - ./mssql/mssqluser:/var/opt/sqlserver
+        - ./mssql/mssqlsystem:/var/opt/mssql
 
   rabbitmq:
     image: rabbitmq:3.8.6-alpine
