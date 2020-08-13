@@ -27,7 +27,7 @@ export class RegistrationDialogComponent implements OnInit {
       lastName: new FormControl(this.details.lastName,
         [
           Validators.required,
-          Validators.minLength(1),
+          Validators.minLength(2),
           Validators.maxLength(30),
           Validators.pattern(`^(?![-'])(?!.*--)(?!.*'')[[A-Za-z-']+(?<![-'])$`)
         ]),
