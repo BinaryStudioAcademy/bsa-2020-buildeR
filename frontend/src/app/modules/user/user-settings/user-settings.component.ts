@@ -13,7 +13,7 @@ export class UserSettingsComponent implements OnInit {
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
 
-  constructor(settingsService: UserSettingsService, private cropper: ModalCropperService) { }
+  constructor(private settingsService: UserSettingsService, private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
@@ -25,6 +25,7 @@ export class UserSettingsComponent implements OnInit {
          [
            Validators.required
         ]),
+        avatarUrl: new FormControl(this.details.avatarUrl),
       email: new FormControl(this.details.email,
         [
           Validators.email,
@@ -38,7 +39,6 @@ export class UserSettingsComponent implements OnInit {
           ])
     });
   }
-
   async open(){
     const file = await this.cropper.open();
     if (file){
@@ -49,5 +49,24 @@ export class UserSettingsComponent implements OnInit {
       console.log('Image didn`t change');
     }
   }
+  upload(){
+    if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
+    alert('Invalaid URL');
+    this.settingsForm.controls.avatarUrl.setValue('');
+    return;
+    }
+    this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
+    this.settingsService.updateSettings(this.details).subscribe((res) =>
+    console.log('success'),
+    (err) => console.log(err));
+  }
 
+  private isValidUrl(url: string) {
+    try {
+      new URL(url);
+    } catch (_) {
+      return false;
+    }
+    return true;
+  }
 }

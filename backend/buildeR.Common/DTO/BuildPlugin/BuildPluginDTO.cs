@@ -9,6 +9,7 @@ namespace buildeR.Common.DTO.BuildPlugin
         public int Id { get; set; }
         public string PluginName { get; set; }
         public string Command { get; set; }
+        public string DockerImageName { get; set; }
 
         public ICollection<PluginCommandDTO> PluginCommands { get; set; } //is needed?
     }
