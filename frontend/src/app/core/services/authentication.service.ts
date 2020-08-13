@@ -40,7 +40,7 @@ export class AuthenticationService {
   }
 
   signInWithUid(uid: string) {
-    this.userService.getUserByUId(uid)
+    this.userService.login(uid)
       .subscribe((resp) => {
         if (resp.body !== null) {
           this.currentUser = resp.body;
@@ -64,7 +64,7 @@ export class AuthenticationService {
   }
 
   isUidExist(auth: firebase.auth.UserCredential): void {
-    this.userService.getUserByUId(auth.user.uid)
+    this.userService.login(auth.user.uid)
       .subscribe((resp) => {
         if (resp.body !== null) {
           this.currentUser = resp.body;
@@ -97,7 +97,7 @@ export class AuthenticationService {
   }
 
   registerUser(user: NewUser) {
-    this.userService.createUser(user).subscribe(
+    this.userService.register(user).subscribe(
       (resp) => {
         this.currentUser = resp.body;
         this.router.navigate(['/portal']);
