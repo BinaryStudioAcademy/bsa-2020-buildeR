@@ -15,6 +15,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
+import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { AuthGuard } from './guards/auth.guard';
     LandingPageComponent,
     SignInComponent,
     SignUpComponent,
+    RegistrationDialogComponent,
   ],
   imports: [
     HttpClientModule,

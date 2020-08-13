@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Diagnostics;
 
 namespace buildeR
 {
@@ -22,14 +24,12 @@ namespace buildeR
     {
         public Startup(IConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
-            var builder = new ConfigurationBuilder()
+            Configuration = new ConfigurationBuilder()
                 .SetBasePath(hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true,
-                    optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+                .AddEnvironmentVariables()
+                .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -48,6 +48,9 @@ namespace buildeR
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
 
+            var migrationAssemblyForQuartzDB = typeof(QuartzDBContext).Assembly.GetName().Name;
+            services.AddDbContext<QuartzDBContext>(options => 
+                options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"], opt => opt.MigrationsAssembly(migrationAssemblyForQuartzDB)));
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
@@ -109,15 +112,18 @@ namespace buildeR
             });
 
             InitializeDatabase(app);
-
         }
 
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<BuilderContext>().Database.Migrate();
-            }
+                using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
+                context.Database.Migrate();
+
+                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
+                contextQuartz.Database.Migrate();
+            };
         }
     }
 }

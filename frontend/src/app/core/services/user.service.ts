@@ -21,7 +21,7 @@ export class UserService {
     return this.httpService.getRequest<User>(environment.apiUrl + '/auth/');
   }
 
-  createUser(user: NewUser): Observable<HttpResponse<User>> {
+  register(user: NewUser): Observable<HttpResponse<User>> {
     return this.httpService.postFullRequest<User>(`${this.routePrefix}`, user);
   }
 
@@ -29,8 +29,8 @@ export class UserService {
     return this.httpService.getFullRequest<User>(`${this.routePrefix}/${userId}`);
   }
 
-  getUserByUId(uniqueId: string): Observable<HttpResponse<User>> {
-    return this.httpService.getFullRequest<User>(`${this.routePrefix}/getbyuid/${uniqueId}`);
+  login(uniqueId: string): Observable<HttpResponse<User>> {
+    return this.httpService.getFullRequest<User>(`${this.routePrefix}/login/${uniqueId}`);
   }
 
 }

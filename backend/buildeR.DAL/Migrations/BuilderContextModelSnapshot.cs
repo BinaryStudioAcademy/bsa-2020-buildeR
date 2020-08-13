@@ -66,6 +66,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("Command")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DockerImageName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PluginName")
                         .HasColumnType("nvarchar(max)");
 
@@ -118,6 +121,9 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
+
+                    b.Property<string>("WorkDirectory")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -182,6 +188,9 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("PluginId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TemplateForDocker")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
