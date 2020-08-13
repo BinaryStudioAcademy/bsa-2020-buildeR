@@ -74,7 +74,7 @@ namespace buildeR
 
             services.AddSwaggerGen(swagger =>
             {
-                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "v1" });
+                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "2.0" });
                 swagger.AddFluentValidationRules();
                 swagger.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
                 {
