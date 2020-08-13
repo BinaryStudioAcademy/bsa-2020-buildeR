@@ -30,6 +30,10 @@ namespace buildeR.API.Extensions
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddSingleton(provider => GetScheduler());
+            services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IBuildStepService, BuildStepService>();
+            services.AddScoped<IBuildService, BuildService>();
+
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)

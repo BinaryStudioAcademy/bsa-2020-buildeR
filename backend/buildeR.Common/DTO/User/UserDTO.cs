@@ -3,6 +3,7 @@ using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.Common.Enums;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace buildeR.Common.DTO.User

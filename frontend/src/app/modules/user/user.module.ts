@@ -4,13 +4,16 @@ import { UserRoutingModule } from './user-routing.module';
 import { UserComponent } from './user.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { SharedModule } from '@shared/shared.module';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { PhotoCropperContentComponent } from './photo-cropper-content/photo-cropper-content.component';
 
 
 @NgModule({
-  declarations: [UserComponent, UserSettingsComponent],
+  declarations: [UserComponent, UserSettingsComponent, PhotoCropperContentComponent],
   imports: [
     UserRoutingModule,
-    SharedModule
+    SharedModule,
+    ImageCropperModule
   ]
 })
 export class UserModule { }
