@@ -62,6 +62,7 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit {
 
     const logMatchArray = line.match(this.logRegExr);
 
+    // @ts-ignore
     a.date = new Date(logMatchArray[2]);
     a.level = logMatchArray[3] as LogLevel;
     a.body = logMatchArray[4];

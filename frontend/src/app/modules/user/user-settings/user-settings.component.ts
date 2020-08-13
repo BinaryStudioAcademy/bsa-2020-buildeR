@@ -2,15 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-
 import { ModalCropperService } from '@core/services/modal-cropper.service';
-
 import {ToastrNotificationsService} from "../../../core/services/toastr-notifications.service";
 import {UserService} from "../../../core/services/user.service";
 import {takeUntil} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
-
-
 
 @Component({
   selector: 'app-user-settings',
@@ -34,7 +30,7 @@ export class UserSettingsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.route.data.subscribe( data => this.details = data.user);
+    this.route.data.subscribe( data => this.details = <User>data.user.body);
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
