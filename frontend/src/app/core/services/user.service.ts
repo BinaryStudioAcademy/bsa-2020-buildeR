@@ -34,7 +34,6 @@ export class UserService {
   }
 
   updateUser(user: User): Observable<User> {
-    console.log(user);
     return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
   }
 

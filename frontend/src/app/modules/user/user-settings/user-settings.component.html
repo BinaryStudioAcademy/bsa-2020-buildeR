@@ -158,8 +158,7 @@
         </div>
       </div>
       <div class="save-button-container">
-        <button [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged"><i class="fa fa-save"></i></button>
-     <!--   <button class="" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>-->
+        <button class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
       </div>
     </div>
   </form>
