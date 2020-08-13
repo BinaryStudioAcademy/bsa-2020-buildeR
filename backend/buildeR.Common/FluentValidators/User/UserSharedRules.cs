@@ -1,5 +1,3 @@
-using System;
-using System.Net.Mail;
 using buildeR.Common.FluentValidators.Shared;
 using FluentValidation;
 
@@ -35,27 +33,6 @@ namespace buildeR.Common.FluentValidators.User
                 .FirstName();
         }
 
-        public static IRuleBuilderOptions<T, string> CustomEmail<T>(this IRuleBuilder<T, string> rule)
-        {
-            static bool ValidEmail(string input)
-            {
-                try
-                {
-                    var m = new MailAddress(input);
-
-                    return true;
-                }
-                catch (FormatException)
-                {
-                    return false;
-                }
-            }
-
-            return rule
-                .Must(ValidEmail)
-                .NoNonLatinLetters();
-        }
-        
         public static IRuleBuilderOptions<T, string> Bio<T>(this IRuleBuilder<T, string> rule)
         {
             return rule

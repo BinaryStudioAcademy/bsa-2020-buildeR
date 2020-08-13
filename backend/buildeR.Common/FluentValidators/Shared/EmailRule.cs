@@ -1,16 +1,30 @@
-using System.Text.RegularExpressions;
+using System;
+using System.Net.Mail;
 using FluentValidation;
 
 namespace buildeR.Common.FluentValidators.Shared
 {
     public static class EmailRule
     {
-        private static readonly Regex HasDigit = new Regex(@"\d");
-
         public static IRuleBuilderOptions<T, string> Email<T>(this IRuleBuilder<T, string> rule)
         {
+            static bool ValidEmail(string input)
+            {
+                try
+                {
+                    var m = new MailAddress(input);
+
+                    return true;
+                }
+                catch (FormatException)
+                {
+                    return false;
+                }
+            }
+
             return rule
-                .Must(input => !HasDigit.IsMatch(input));
+                .Must(ValidEmail)
+                .NoNonLatinLetters();
         }
     }
 }
