@@ -24,14 +24,12 @@ namespace buildeR
     {
         public Startup(IConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
-            var builder = new ConfigurationBuilder()
+            Configuration = new ConfigurationBuilder()
                 .SetBasePath(hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true,
-                    optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+                .AddEnvironmentVariables()
+                .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -46,7 +44,6 @@ namespace buildeR
                 .AddFluentValidation(fv =>
                     fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
 
-            Trace.WriteLine(Configuration["ConnectionStrings:BuilderDBConnection"]);
             var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
@@ -111,18 +108,16 @@ namespace buildeR
                 endpoints.MapHealthChecks("/health");
             });
 
-            if (env.IsDevelopment())
-            {
-                InitializeDatabase(app);
-            }
+            InitializeDatabase(app);
         }
 
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<BuilderContext>().Database.Migrate();
-            }
+                using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
+                context.Database.Migrate();
+            };
         }
     }
 }
