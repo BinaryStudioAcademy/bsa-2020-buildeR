@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NewFolder2\**" />
+    <EmbeddedResource Remove="NewFolder2\**" />
+    <None Remove="NewFolder2\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20200805120746_Initial.cs" />
     <Compile Remove="Migrations\20200805120746_Initial.Designer.cs" />
     <Compile Remove="Migrations\20200805175507_AddSeeding.cs" />
@@ -36,7 +42,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="..\buildeR.DAL\QuartzSqlScript.sql">
+    <Content Include="Scripts\QuartzSqlScript.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

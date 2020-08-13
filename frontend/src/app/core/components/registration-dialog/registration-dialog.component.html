@@ -6,10 +6,6 @@
                 placeholder="Your First Name">
             <div *ngIf="registerForm.controls['firstName'].errors">
                 <div class="error "
-                    [hidden]="registerForm.controls['firstName'].valid && registerForm.controls['firstName'].untouched || !registerForm.controls['firstName'].errors?.required">
-                    First name is required
-                </div>
-                <div class="error "
                     *ngIf="registerForm.controls['firstName'].errors.minlength">
                     The minimum length is 2 characters
                 </div>
@@ -29,10 +25,6 @@
             <input type="text" class="form-control form-control-sm" formControlName="lastName"
                 placeholder="Your Last Name">
             <div *ngIf="registerForm.controls['lastName'].errors">
-                <div class="error "
-                    [hidden]="registerForm.controls['lastName'].valid && registerForm.controls['lastName'].untouched || !registerForm.controls['lastName'].errors?.required">
-                    Last name is required
-                </div>
                 <div class="error "
                     *ngIf="registerForm.controls['lastName'].errors.minlength">
                     The minimum length is 2 characters
@@ -67,7 +59,7 @@
                 </div>
                 <div class="error "
                     *ngIf="registerForm.controls['username'].errors.pattern">
-                    Username must have only latin letters
+                    Username must have only latin letters, digits
                     and can't start or finish with these
                     characters ' - ', ' . '
                 </div>
@@ -81,7 +73,8 @@
                   Email is required
                 </div>
                 <div class="error "
-                     *ngIf="registerForm.controls['email'].errors.pattern">
+                     *ngIf="registerForm.controls['email'].errors.email
+                         || registerForm.controls['email'].errors.pattern">
                   Email must be like 'example@gmail.com'
                   Email can't start or finish with these
                   characters ' - ', ' . '

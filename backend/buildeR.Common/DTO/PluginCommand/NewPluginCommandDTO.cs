@@ -4,5 +4,6 @@
     {
         public string Name { get; set; }
         public int PluginId { get; set; }
+        public string TemplateForDocker { get; set; }
     }
 }

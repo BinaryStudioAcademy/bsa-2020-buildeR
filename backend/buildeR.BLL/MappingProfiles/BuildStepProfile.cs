@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using buildeR.Common.DTO.BuildStep;
 using buildeR.DAL.Entities;
@@ -16,9 +16,9 @@ namespace buildeR.BLL.MappingProfiles
                 .ForMember(dest => dest.Name,
                     src => src.MapFrom(s => s.BuildStepName))
                 .ForMember(dest => dest.PluginCommand,
-                    src => src.MapFrom(s => s.PluginCommand.Name))
-                .ForMember(dest => dest.BuildPluginCommand,
-                    src => src.MapFrom(s => s.PluginCommand.Plugin.PluginName))
+                    src => src.MapFrom(s => s.PluginCommand))
+                .ForMember(dest => dest.BuildPlugin,
+                    src => src.MapFrom(s => s.PluginCommand.Plugin))
                 .ForMember(dest => dest.Parameters,
                     src => src.MapFrom(s => s.BuildPluginParameters));
 

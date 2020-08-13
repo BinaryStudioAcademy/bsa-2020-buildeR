@@ -1,6 +1,6 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
-using buildeR.Common.FluentValidatiors;
+using buildeR.Common.FluentValidators.User;
 using buildeR.DAL.Context;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,7 +42,7 @@ namespace buildeR
             services
                 .AddControllers()
                 .AddFluentValidation(fv =>
-                    fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
+                    fv.RegisterValidatorsFromAssemblyContaining<UserDtoValidator>());
 
             var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
