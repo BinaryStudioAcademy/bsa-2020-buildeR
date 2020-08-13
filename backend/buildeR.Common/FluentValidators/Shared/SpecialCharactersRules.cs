@@ -7,7 +7,16 @@ namespace buildeR.Common.FluentValidators.Shared
 {
     public static class SpecialCharactersRules
     {
-        private static string SpecialCharsExceptRegExr(params char[] chars) => $@"[^a-zA-Z0-9\{string.Join(@"\", chars)}]";
+        private static Regex SpecialCharsExceptRegExr(params char[] chars)
+        {
+            if (chars.Contains('-'))
+            {
+                chars = chars.Except(new []{'-'}).ToArray();
+                return new Regex($@"[^a-zA-Z0-9-{string.Concat(chars.Select(ch => Regex.Escape(ch.ToString())))}]");
+            }
+            return new Regex($@"[^a-zA-Z0-9{string.Concat(chars.Select(ch => Regex.Escape(ch.ToString())))}]");
+        }
+
         private static readonly Regex HyphenOnEdges = new Regex(@"^-|-$");
         private static readonly Regex SpacesOnEdges = new Regex(@"^ | $");
         private static readonly Regex DotsOnEdges = new Regex(@"^\.|\.$");
@@ -22,7 +31,7 @@ namespace buildeR.Common.FluentValidators.Shared
         public static IRuleBuilderOptions<T, string> NoSpecialCharsExcept<T>(this IRuleBuilder<T, string> rule, params char[] chars)
         {
             return rule
-                .Must(input => !new Regex(SpecialCharsExceptRegExr(chars)).IsMatch(input));
+                .Must(input => !SpecialCharsExceptRegExr(chars).IsMatch(input));
         }
 
         public static IRuleBuilderOptions<T, string> NoHyphenOnEdges<T>(this IRuleBuilder<T, string> rule)
