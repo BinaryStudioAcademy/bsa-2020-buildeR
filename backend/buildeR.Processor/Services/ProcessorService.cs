@@ -88,16 +88,17 @@ namespace buildeR.Processor.Services
                     var containerId = await CreateContainerAsync(imageName, port);
 
                     if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
+                    {
+                        DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf("\\", StringComparison.Ordinal)));
                         throw new InvalidOperationException($"Image name {imageName}, container ID {containerId}");
+                    }
 
                     Log.Information($" ================= Image with name '{imageName}' and container with ID [{containerId}] were created");
 
                     await RunContainerAsync(containerId);
 
-                    // Need to wait until build will be finished because at the moment Container stops before all commands from Dockerfile are executed
-                    await Task.Delay(5000);// TODO: fix it. 
-
-                    await StopContainerAsync(containerId);
+                    await _dockerClient.Containers.WaitContainerAsync(containerId);
+                    
 
                     var logs = await GetLogFromContainer(containerId);//TODO: sent via SignalR
                     Log.Information($" ================= Logs from container:\n{logs}");
