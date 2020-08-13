@@ -38,7 +38,7 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
-
+            
             services
                 .AddControllers()
                 .AddFluentValidation(fv =>
@@ -49,7 +49,7 @@ namespace buildeR
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
 
             var migrationAssemblyForQuartzDB = typeof(QuartzDBContext).Assembly.GetName().Name;
-            services.AddDbContext<QuartzDBContext>(options =>
+            services.AddDbContext<QuartzDBContext>(options => 
                 options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"], opt => opt.MigrationsAssembly(migrationAssemblyForQuartzDB)));
             services.AddHealthChecks();
 
@@ -71,10 +71,10 @@ namespace buildeR
                         ValidateLifetime = true
                     };
                 });
-
+    
             services.AddSwaggerGen(swagger =>
             {
-                swagger.SwaggerDoc("v2", new OpenApiInfo { Title = "builder API", Version = "2.0" });
+                swagger.SwaggerDoc("v1", new OpenApiInfo {Title = "builder API", Version = "v1"});
                 swagger.AddFluentValidationRules();
                 swagger.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
                 {
@@ -84,15 +84,15 @@ namespace buildeR
                     Description = "JWT Authorization header using the Bearer scheme."
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
-                        },
-                        new string[] {}
-                    }
-                });
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+            },
+            new string[] {}
+        }
+    });
             });
         }
 
@@ -104,9 +104,13 @@ namespace buildeR
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("api/swagger/v2/swagger.json", "buildeR API"));
-
+            app.UseSwagger(c => c.RouteTemplate = "/api/{documentName}/swagger.json");
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "buildeR API");
+                c.RoutePrefix = "api";
+            });
+            
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
@@ -116,8 +120,6 @@ namespace buildeR
             });
 
             app.UseHttpsRedirection();
-
-            app.UseStaticFiles();
 
             app.UseRouting();
 
