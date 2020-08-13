@@ -30,13 +30,15 @@ namespace buildeR.BLL.Services
 
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
-            return await Context.Projects//TODO do need to check user existence?
+           
+            var projects = await Context.Projects
                 .AsNoTracking()
                 .Include(project => project.Owner)
                 .Include(project => project.BuildHistories)
-                .Where(project => project.OwnerId.Equals(userId))
-                .ProjectTo<ProjectInfoDTO>(Mapper.ConfigurationProvider)
+                .Where(project => project.OwnerId == userId)
                 .ToArrayAsync();
+            var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
+            return projectInfos;
         }
 
         public async Task<ProjectDTO> GetProjectByUserId(int userId, int projectId)

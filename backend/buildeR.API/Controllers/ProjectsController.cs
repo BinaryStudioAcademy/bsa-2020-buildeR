@@ -1,7 +1,6 @@
 ﻿using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Project;
-
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -37,7 +36,6 @@ namespace buildeR.API.Controllers
         [HttpPost]
         public async Task<ProjectDTO> CreateProject([FromBody] NewProjectDTO dto)
         {
-            dto.OwnerId = 1; // here will be userId from token or somthing else
             return await _projectService.CreateProject(dto);
         }
 
