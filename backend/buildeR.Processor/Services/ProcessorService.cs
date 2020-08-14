@@ -97,12 +97,13 @@ namespace buildeR.Processor.Services
                     Log.Information($" ================= Image with name '{imageName}' and container with ID [{containerId}] were created");
 
                     await RunContainerAsync(containerId);
-
-                    await _dockerClient.Containers.WaitContainerAsync(containerId);
+                    Log.Information($" ================= Logs from container:");
+                    await GetLogFromContainer(containerId);//TODO: sent via SignalR
+                    // We can start getting logs in real times while waiting for container to finsish
                     
+                    await _dockerClient.Containers.WaitContainerAsync(containerId);
 
-                    var logs = await GetLogFromContainer(containerId);//TODO: sent via SignalR
-                    Log.Information($" ================= Logs from container:\n{logs}");
+
 
                     await RemoveImageAndContainerAsync(imageName, containerId);
 
@@ -118,14 +119,14 @@ namespace buildeR.Processor.Services
 
 
         #region Docker
-        private async Task RunTestHelloWorldContainerAsync(ushort port = 7999)
-        {
-            const string imageName = "hello-world";
-            await PullImageByNameAsync(imageName);
-            var containerId = await CreateContainerAsync(imageName, port);
-            var logs = await GetLogFromContainer(containerId);
-            Log.Information(logs);
-        }
+        // private async Task RunTestHelloWorldContainerAsync(ushort port = 7999)
+        // {
+        //     const string imageName = "hello-world";
+        //     await PullImageByNameAsync(imageName);
+        //     var containerId = await CreateContainerAsync(imageName, port);
+        //     var logs = await GetLogFromContainer(containerId);
+        //     Log.Information(logs);
+        // }
 
         #region Dockerfile
         private string GenerateDockerFileContent(ExecutiveBuildStepDTO buildStep, string repositoryUrl)
@@ -277,10 +278,8 @@ namespace buildeR.Processor.Services
             await _dockerClient.Images.DeleteImageAsync(imageName, new ImageDeleteParameters());
         }
         #endregion
-        
-        public string finalLine = "";
-        
-        private async Task<string> GetLogFromContainer(string containerId)
+
+        private async Task GetLogFromContainer(string containerId)
         {
             // var logStream = await _dockerClient
             //     .Containers
@@ -304,18 +303,18 @@ namespace buildeR.Processor.Services
                 string line = null;
                 while ((line = await reader.ReadLineAsync()) != null)
                 {
-                    var firstSpaceIndex = line.IndexOf("Z ");
-                    var gettingDate = line.Substring(0, firstSpaceIndex+1);
-                    var firstTwoNumber = gettingDate.IndexOf("2");
-                    var finalDate = gettingDate.Substring(firstTwoNumber);
-                    var time = DateTime.Parse(finalDate);
-                    var message = line.Substring(firstSpaceIndex + 2).TrimStart();
-                    var lineToAdd = "[" + time.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU")) + "]" + " " + message;
-                    finalLine += lineToAdd;
-                    finalLine += Environment.NewLine;
+                    var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message 
+                    
+                    var gettingDate = line.Substring(0, firstSpaceIndex+1); // getting date string with garbage letters at the beginning
+                    var firstTwoNumber = gettingDate.IndexOf("2"); // start of the timestamp
+                    var finalDate = gettingDate.Substring(firstTwoNumber); // getting real timestamp
+                    var time = DateTime.Parse(finalDate); // parsing timestamp
+                    var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
+                    var lineToAdd = "[" + time.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU")) + "]" + " " + message; // log line
+                    Console.WriteLine("[" + DateTime.Now.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU")) + "]" + " - current time"); // current time to see delays
+                    Console.WriteLine(lineToAdd);
+                    Console.WriteLine("*****");
                 }
-            
-                return finalLine;
             }
         }
         #endregion
