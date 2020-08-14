@@ -6,6 +6,7 @@ import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { GithubAuthService } from '@core/services/github-auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,7 +23,8 @@ export class DashboardComponent extends BaseComponent
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private githubAuthService: GithubAuthService
   ) {
     super();
   }
@@ -57,5 +59,9 @@ export class DashboardComponent extends BaseComponent
         () => projectId,
         (error) => this.toastrService.showError(error)
       );
+  }
+
+  loginToGithub() {
+    this.githubAuthService.openGithubAuthWindow();
   }
 }

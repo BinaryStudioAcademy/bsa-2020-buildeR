@@ -16,6 +16,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
+import { GithubAuthEndpointComponent } from './components/github-auth-endpoint/github-auth-endpoint.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { RegistrationDialogComponent } from './components/registration-dialog/re
     SignInComponent,
     SignUpComponent,
     RegistrationDialogComponent,
+    GithubAuthEndpointComponent,
   ],
   imports: [
     HttpClientModule,
