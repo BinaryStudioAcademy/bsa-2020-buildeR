@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Notification } from '../../../shared/models/notification';
 import { NotificationType } from '../../../shared/models/notification-type';
 
@@ -11,6 +11,8 @@ export class NotificationsBlockComponent implements OnInit {
   public notifications: Notification[];
   public readNotifications: Notification[] = [];
   public NotificationType = NotificationType;
+
+  @Output() toggleNotifications = new EventEmitter<void>();
 
   constructor() {
     this.seed();
@@ -36,6 +38,10 @@ export class NotificationsBlockComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  toggle() {
+    this.toggleNotifications.emit();
   }
 
   // First 3 notifications with different types (can be more types: just need to add class to styles)

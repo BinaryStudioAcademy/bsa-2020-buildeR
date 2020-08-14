@@ -1,3 +1,11 @@
+// Background
+
+.notifications-background
+  width: 100vw
+  height: 100vh
+  position: fixed
+  top: 0
+  left: 0
 // Full block
 
 .notifications-block
@@ -46,10 +54,14 @@
 // Notifications list
 
 .all-notifications
+  display: flex
+  flex-direction: column-reverse
+  gap: 0.5rem
   max-height: 450px
   overflow-y: auto
   overflow-x: hidden
-  padding-right: 15px
+  padding: 1rem 0.3rem
+  scroll-behavior: smooth
 
 .no-notifications
   padding: auto
@@ -62,11 +74,9 @@
 .notification
   width: 100%
   display: table
-  margin: 10px 5px
+  // margin: 10px 5px
   margin-right: 10px
-  -webkit-box-shadow: 5px 5px 10px 0px rgba(156,156,156,0.5)
-  -moz-box-shadow: 5px 5px 10px 0px rgba(156,156,156,0.5)
-  box-shadow: 5px 5px 10px 0px rgba(156,156,156,0.5)
+  box-shadow: 2px 2px 5px 0px rgba(156,156,156,0.5)
 
 .notification-type, .notification-body
   display: table-cell
