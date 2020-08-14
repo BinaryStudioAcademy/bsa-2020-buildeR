@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using buildeR.Common.DTO.User;
 using buildeR.Common.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace buildeR.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         [HttpGet]
@@ -24,9 +26,9 @@ namespace buildeR.API.Controllers
                 Username = "buildeR",
                 AvatarUrl = null,
                 FirstName = "Build",
-                LastName = "R"
-            }); ;
-
+                LastName = "R",
+                Bio = ""
+            });
         }
     }
 }

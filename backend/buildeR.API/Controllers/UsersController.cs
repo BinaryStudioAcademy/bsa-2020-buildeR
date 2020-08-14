@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace buildeR.API.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -34,14 +35,16 @@ namespace buildeR.API.Controllers
             return await _userService.GetUserById(id);
         }
 
-        [HttpGet("getbyuid/{UId}")]
-        public async Task<UserDTO> GetByUId(string UId)
+        [AllowAnonymous]
+        [HttpGet("login/{UId}")]
+        public async Task<UserDTO> Login(string UId)
         {
             return await _userService.GetUserByUId(UId);
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<UserDTO> Create([FromBody] NewUserDTO user)
+        public async Task<UserDTO> Register([FromBody] NewUserDTO user)
         {
             return await _userService.Create(user);
         }

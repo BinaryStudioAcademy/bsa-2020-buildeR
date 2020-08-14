@@ -1,6 +1,6 @@
 using buildeR.API.Extensions;
 using buildeR.API.Middleware;
-using buildeR.Common.FluentValidatiors;
+using buildeR.Common.FluentValidators.User;
 using buildeR.DAL.Context;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace buildeR
@@ -38,21 +39,32 @@ namespace buildeR
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
-            
+
             services
                 .AddControllers()
                 .AddFluentValidation(fv =>
-                    fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
+                    fv.RegisterValidatorsFromAssemblyContaining<UserDtoValidator>());
 
             var migrationAssembly = typeof(BuilderContext).Assembly.GetName().Name;
             services.AddDbContext<BuilderContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:BuilderDBConnection"], opt => opt.MigrationsAssembly(migrationAssembly)));
 
+            var migrationAssemblyForQuartzDB = typeof(QuartzDBContext).Assembly.GetName().Name;
+            services.AddDbContext<QuartzDBContext>(options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"], opt => opt.MigrationsAssembly(migrationAssemblyForQuartzDB)));
+            
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
             services.RegisterRabbitMQ(Configuration);
-            services.AddCors();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AnyOrigin", x => x
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -68,11 +80,33 @@ namespace buildeR
                         ValidateLifetime = true
                     };
                 });
-    
-            services.AddSwaggerGen(swagger =>
+
+            services.AddSwaggerGen(o =>
             {
-                swagger.SwaggerDoc("v1", new OpenApiInfo {Title = "builder API", Version = "v1"});
-                swagger.AddFluentValidationRules();
+                o.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "v1" });
+                o.AddFluentValidationRules();
+                o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    BearerFormat = "JWT",
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    In = ParameterLocation.Header
+                });
+                o.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
             });
         }
 
@@ -84,10 +118,8 @@ namespace buildeR
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "buildeR API"); });
-            
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors("AnyOrigin");
+
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -97,10 +129,29 @@ namespace buildeR
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSwagger(o =>
+            {
+                if (env.IsProduction())
+                {
+                    o.RouteTemplate = "swagger/{documentName}/swagger.json";
+                    o.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
+                    });
+                }
+            });
+
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("./v1/swagger.json", "API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
@@ -117,6 +168,9 @@ namespace buildeR
             {
                 using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
                 context.Database.Migrate();
+
+                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
+                contextQuartz.Database.Migrate();
             };
         }
     }

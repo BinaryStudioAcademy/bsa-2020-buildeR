@@ -39,23 +39,37 @@ export class AuthenticationService {
     }
   }
 
+  signInWithUid(uid: string) {
+    this.userService.login(uid)
+      .subscribe((resp) => {
+        if (resp.body !== null) {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        }
+      });
+  }
 
   doGoogleSignIn(): Promise<void> {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
       this.isUidExist(auth);
-    });
+    },
+      (error) => console.log("Email exist")
+    );
   }
 
   doGithubSignIn(): Promise<void> {
     const githubProvider = new firebase.auth.GithubAuthProvider();
-    return this.angularAuth.signInWithPopup(githubProvider).then((auth) => {
-      this.isUidExist(auth);
-    });
+    return this.angularAuth.signInWithPopup(githubProvider).then(
+      (auth) => {
+        this.isUidExist(auth);
+      },
+      (error) => console.log("Email exist")
+    );
   }
 
   isUidExist(auth: firebase.auth.UserCredential): void {
-    this.userService.getUserByUId(auth.user.uid)
+    this.userService.login(auth.user.uid)
       .subscribe((resp) => {
         if (resp.body !== null) {
           this.currentUser = resp.body;
@@ -83,17 +97,26 @@ export class AuthenticationService {
       providerUrl: credential.credential.providerId
     } as NewUser;
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
+    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
     modalRef.componentInstance.details = user;
   }
 
   registerUser(user: NewUser) {
-    this.userService.createUser(user).subscribe(
+    this.userService.register(user).subscribe(
       (resp) => {
-        this.currentUser = resp.body;
-        this.router.navigate(['/portal']);
+        if (resp.body !== null) {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        } else {
+          user.username = "This Username has already taken";
+          const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
+          modalRef.componentInstance.details = user;
+          modalRef.componentInstance.isUsernameTaken = true;
+        }
       },
-      (error) => console.log(error));
+      (error) => {
+
+      });
   }
 
   doGithubSignUp(credential: firebase.auth.UserCredential) {
@@ -111,13 +134,14 @@ export class AuthenticationService {
       [user.firstName, user.lastName = ''] = name.split(' ');
     }
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
+    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
     modalRef.componentInstance.details = user;
   }
 
   logout(): Promise<void> {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
+    this.currentUser = undefined;
     this.router.navigate(['/']);
     return this.angularAuth.signOut();
   }
@@ -128,6 +152,15 @@ export class AuthenticationService {
 
   getUser(): User {
     return this.currentUser;
+  }
+
+  getUIdLocalStorage(): string {
+    const user: firebase.User = JSON.parse(localStorage.getItem('user'));
+    if (user != null) {
+      return user.uid;
+    } else {
+      return '';
+    }
   }
 
   public isAuthorized() {

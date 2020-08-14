@@ -10,6 +10,7 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
+      "launchBrowser": true,
       "environmentVariables": {
         "RABBIT_MQ_PASSWORD": "guest",
         "RABBIT_MQ_HOST_NAME": "localhost",

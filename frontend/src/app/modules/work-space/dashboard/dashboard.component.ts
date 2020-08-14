@@ -28,8 +28,8 @@ export class DashboardComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-  //  this.currentUser = this.authService.getUser();
-  //  this.getUserProjects(this.currentUser.id);
+    this.currentUser = this.authService.getUser();
+    this.getUserProjects(this.currentUser.id);
   }
 
   getUserProjects(userId: number) {
@@ -50,10 +50,12 @@ export class DashboardComponent extends BaseComponent
   }
 
   triggerBuild(projectId: number) {
-    this.projectService.startProjectBuild(projectId)
+    this.projectService
+      .startProjectBuild(projectId)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => projectId,
-        (error) => this.toastrService.showError(error));
+        (error) => this.toastrService.showError(error)
+      );
   }
 }

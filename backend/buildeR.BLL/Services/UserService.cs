@@ -58,6 +58,11 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> Create(NewUserDTO creatingUser)
         {
+            //if (await _context.Users.CountAsync(u => string.Equals(u.Username, creatingUser.Username, StringComparison.OrdinalIgnoreCase)) != 0)
+            //{
+            //    return null;
+            //}
+
             var userSN = new NewUserSocialNetworkDTO()
             {
                 UId = creatingUser.UId,
