@@ -15,7 +15,7 @@ namespace buildeR.Common.FluentValidators.User
                 .NoSpecialCharsExcept('_', '.', '-')
                 .NoNonLatinLetters();
         }
-        
+
         public static IRuleBuilderOptions<T, string> FirstName<T>(this IRuleBuilder<T, string> rule)
         {
             return rule
@@ -26,7 +26,7 @@ namespace buildeR.Common.FluentValidators.User
                 .NoSpecialCharsExcept('-', ' ')
                 .NoNonLatinLetters();
         }
-        
+
         public static IRuleBuilderOptions<T, string> LastName<T>(this IRuleBuilder<T, string> rule)
         {
             return rule

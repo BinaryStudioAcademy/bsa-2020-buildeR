@@ -11,6 +11,8 @@ namespace buildeR.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<User> entity)
         {
+            entity.HasIndex(e => e.Username)
+                .IsUnique();
             //entity.HasMany(e => e.BuildHistories)
             //    .WithOne(bh => bh.Performer)
             //    .HasForeignKey(bh => bh.PerformerId)

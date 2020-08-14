@@ -13,11 +13,11 @@ namespace buildeR.API.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly ProcessorProducer _producer;
-        public ProjectsController(IProjectService projectService, ProcessorProducer producer)
+        //private readonly ProcessorProducer _producer;
+        public ProjectsController(IProjectService projectService)
         {
             _projectService = projectService;
-            _producer = producer;
+            //_producer = producer;
         }
 
         [HttpGet("getProjectsByUserId/{userId:int}")]
@@ -56,7 +56,7 @@ namespace buildeR.API.Controllers
         public async Task<IActionResult> BuildProject(int projectId)
         {
             var build = await _projectService.GetExecutiveBuild(projectId);
-            _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
+            //_producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
             return Ok();
         }
     }

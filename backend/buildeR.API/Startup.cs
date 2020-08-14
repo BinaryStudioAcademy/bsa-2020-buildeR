@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace buildeR
@@ -51,11 +52,19 @@ namespace buildeR
             var migrationAssemblyForQuartzDB = typeof(QuartzDBContext).Assembly.GetName().Name;
             services.AddDbContext<QuartzDBContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:QuartzDBConnection"], opt => opt.MigrationsAssembly(migrationAssemblyForQuartzDB)));
+            
             services.AddHealthChecks();
 
             services.RegisterCustomServices();
             services.RegisterRabbitMQ(Configuration);
-            services.AddCors();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AnyOrigin", x => x
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -72,27 +81,27 @@ namespace buildeR
                     };
                 });
 
-            services.AddSwaggerGen(swagger =>
+            services.AddSwaggerGen(o =>
             {
-                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "v1" });
-                swagger.AddFluentValidationRules();
-                swagger.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+                o.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "v1" });
+                o.AddFluentValidationRules();
+                o.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     Description = "JWT Authorization header using the Bearer scheme."
                 });
-                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
-            },
-            new string[] {}
-        }
-    });
+                o.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                        },
+                        new string[] {}
+                    }
+                });
             });
         }
 
@@ -104,27 +113,32 @@ namespace buildeR
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger(c =>
-            {
-            #if !DEBUG
-              c.RouteTemplate = "swagger/{documentName}/swagger.json";
-              c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new System.Collections.Generic.List<OpenApiServer>
-              {
-                new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
-              });
-            #endif
-            });
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("./v1/swagger.json", "API V1");
-            });
+            app.UseCors("AnyOrigin");
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMiddleware<GenericExceptionHandlerMiddleware>();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseStaticFiles();
+
+            app.UseSwagger(o =>
+            {
+                if (env.IsProduction())
+                {
+                    o.RouteTemplate = "swagger/{documentName}/swagger.json";
+                    o.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
+                    });
+                }
+            });
+
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("./v1/swagger.json", "API V1");
             });
 
             app.UseHttpsRedirection();
@@ -150,8 +164,8 @@ namespace buildeR
                 using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
                 context.Database.Migrate();
 
-                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
-                contextQuartz.Database.Migrate();
+                //using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
+                //contextQuartz.Database.Migrate();
             };
         }
     }
