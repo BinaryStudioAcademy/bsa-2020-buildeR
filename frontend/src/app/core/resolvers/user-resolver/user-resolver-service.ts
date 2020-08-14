@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, RouterStateSnapshot, ActivatedRouteSnapshot, Resolve } from '@angular/router';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import { tap, map, catchError } from 'rxjs/operators/';
 import { EMPTY } from 'rxjs';
 import {UserService} from "../../services/user.service";
@@ -14,7 +14,8 @@ export class UserResolverService implements Resolve<User>{
   constructor(private router: Router, private userService: UserService, private authService: AuthenticationService) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
-    return this.userService.getUserById(this.authService.getUser().id).pipe(tap((resp) => {
+    return this.userService.getUserByIdRequest(this.authService.getUser().id).pipe(tap((resp) => {
+      console.log(resp);
       if (resp){
         return resp;
       }

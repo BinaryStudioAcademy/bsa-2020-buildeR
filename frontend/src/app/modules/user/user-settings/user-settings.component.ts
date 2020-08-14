@@ -26,11 +26,12 @@ export class UserSettingsComponent implements OnInit {
   constructor(private settingsService: UserSettingsService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
 
-    this.route.data.subscribe( data => this.details = <User>data.user.body);
+    this.route.data.subscribe( data => this.details = data.user);
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
