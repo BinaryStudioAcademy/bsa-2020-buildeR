@@ -2,8 +2,11 @@
     <img class="logo" src="../../../../assets/images/logo.png" />
     <form [formGroup]="registerForm" (ngSubmit)="save()">
         <div class="input-area">
-            <input type="text" class="form-control form-control-sm" formControlName="firstName"
-                placeholder="Your First Name">
+            <span class="has-float-label">
+                <input type="text" class="form-control form-control-sm" formControlName="firstName"
+                    placeholder="First name">
+                <label [ngStyle]="{'color': registerForm.controls['firstName'].errors? 'red' : '#777777'}" for="firstName">First name</label>
+            </span>
             <div *ngIf="registerForm.controls['firstName'].errors">
                 <div class="error " *ngIf="registerForm.controls['firstName'].errors.minlength">
                     The minimum length is 2 characters
@@ -19,8 +22,11 @@
             </div>
         </div>
         <div class="input-area">
-            <input type="text" class="form-control form-control-sm" formControlName="lastName"
-                placeholder="Your Last Name">
+            <span class="has-float-label">
+                <input type="text" class="form-control form-control-sm" formControlName="lastName"
+                    placeholder="Last name">
+                <label [ngStyle]="{'color': registerForm.controls['lastName'].errors? 'red' : '#777777'}" for="lastName">Last name</label>
+            </span>
             <div *ngIf="registerForm.controls['lastName'].errors">
                 <div class="error " *ngIf="registerForm.controls['lastName'].errors.minlength">
                     The minimum length is 2 characters
@@ -36,8 +42,11 @@
             </div>
         </div>
         <div class="input-area">
-            <input type="text" class="form-control form-control-sm" formControlName="username"
-                placeholder="Your username">
+            <span class="has-float-label">
+                <input type="text" class="form-control form-control-sm" formControlName="username"
+                    placeholder="Username">
+                <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : '#777777'}" for="username">Username</label>
+            </span>
             <div *ngIf="registerForm.controls['username'].errors">
                 <div class="error "
                     [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
@@ -60,8 +69,11 @@
             </div>
         </div>
         <div class="input-area">
-            <input type="email" class="form-control form-control-sm" formControlName="email"
-                placeholder="Your email: example@mail.com">
+            <span class="has-float-label">
+                <input type="email" class="form-control form-control-sm" formControlName="email"
+                    placeholder="example@mail.com">
+                <label [ngStyle]="{'color': registerForm.controls['email'].errors? 'red' : '#777777'}" for="email">Email</label>
+            </span>
             <div *ngIf="registerForm.controls['email'].errors">
                 <div class="error "
                     [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
@@ -75,7 +87,10 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-success"
-            [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
+        <div class="buttons">
+            <button type="submit" class="btn btn-success"
+                [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
+            <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
+        </div>
     </form>
 </div>
