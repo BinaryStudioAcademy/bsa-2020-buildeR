@@ -5,16 +5,13 @@
             <input type="text" class="form-control form-control-sm" formControlName="firstName"
                 placeholder="Your First Name">
             <div *ngIf="registerForm.controls['firstName'].errors">
-                <div class="error "
-                    *ngIf="registerForm.controls['firstName'].errors.minlength">
+                <div class="error " *ngIf="registerForm.controls['firstName'].errors.minlength">
                     The minimum length is 2 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['firstName'].errors.maxlength">
+                <div class="error " *ngIf="registerForm.controls['firstName'].errors.maxlength">
                     The maximum length is 30 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['firstName'].errors.pattern">
+                <div class="error " *ngIf="registerForm.controls['firstName'].errors.pattern">
                     First name must have only latin letters
                     and can't start or finish with these
                     characters ' - ', ' . '
@@ -25,16 +22,13 @@
             <input type="text" class="form-control form-control-sm" formControlName="lastName"
                 placeholder="Your Last Name">
             <div *ngIf="registerForm.controls['lastName'].errors">
-                <div class="error "
-                    *ngIf="registerForm.controls['lastName'].errors.minlength">
+                <div class="error " *ngIf="registerForm.controls['lastName'].errors.minlength">
                     The minimum length is 2 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['lastName'].errors.maxlength">
+                <div class="error " *ngIf="registerForm.controls['lastName'].errors.maxlength">
                     The maximum length is 30 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['lastName'].errors.pattern">
+                <div class="error " *ngIf="registerForm.controls['lastName'].errors.pattern">
                     Last name must have only latin letters
                     and can't start or finish with these
                     characters ' - ', ' . '
@@ -49,38 +43,39 @@
                     [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
                     Username is required
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['username'].errors.minlength">
+                <div class="error " *ngIf="registerForm.controls['username'].errors.minlength">
                     The minimum length is 3 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['username'].errors.maxlength">
+                <div class="error " *ngIf="registerForm.controls['username'].errors.maxlength">
                     The maximum length is 30 characters
                 </div>
-                <div class="error "
-                    *ngIf="registerForm.controls['username'].errors.pattern">
+                <div class="error " *ngIf="registerForm.controls['username'].errors.pattern">
                     Username must have only latin letters, digits
                     and can't start or finish with these
                     characters ' - ', ' . '
                 </div>
+                <!-- <div class="error " *ngIf="registerForm.controls['username'] === ">
+                    Username has already taken
+                </div> -->
             </div>
         </div>
         <div class="input-area">
-            <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="Your email: example@mail.com">
-              <div *ngIf="registerForm.controls['email'].errors">
+            <input type="email" class="form-control form-control-sm" formControlName="email"
+                placeholder="Your email: example@mail.com">
+            <div *ngIf="registerForm.controls['email'].errors">
                 <div class="error "
-                [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
-                  Email is required
+                    [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
+                    Email is required
                 </div>
-                <div class="error "
-                     *ngIf="registerForm.controls['email'].errors.email
+                <div class="error " *ngIf="registerForm.controls['email'].errors.email
                          || registerForm.controls['email'].errors.pattern">
-                  Email must be like 'example@gmail.com'
-                  Email can't start or finish with these
-                  characters ' - ', ' . '
+                    Email must be like 'example@gmail.com'
+                    Email can't start or finish with these
+                    characters ' - ', ' . '
                 </div>
-              </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-success" [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
+        <button type="submit" class="btn btn-success"
+            [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
     </form>
 </div>

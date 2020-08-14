@@ -53,14 +53,19 @@ export class AuthenticationService {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
       this.isUidExist(auth);
-    });
+    },
+      (error) => console.log("Email exist")
+    );
   }
 
   doGithubSignIn(): Promise<void> {
     const githubProvider = new firebase.auth.GithubAuthProvider();
-    return this.angularAuth.signInWithPopup(githubProvider).then((auth) => {
-      this.isUidExist(auth);
-    });
+    return this.angularAuth.signInWithPopup(githubProvider).then(
+      (auth) => {
+        this.isUidExist(auth);
+      },
+      (error) => console.log("Email exist")
+    );
   }
 
   isUidExist(auth: firebase.auth.UserCredential): void {
@@ -92,17 +97,26 @@ export class AuthenticationService {
       providerUrl: credential.credential.providerId
     } as NewUser;
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
+    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
     modalRef.componentInstance.details = user;
   }
 
   registerUser(user: NewUser) {
     this.userService.register(user).subscribe(
       (resp) => {
-        this.currentUser = resp.body;
-        this.router.navigate(['/portal']);
+        if (resp.body !== null) {
+          this.currentUser = resp.body;
+          this.router.navigate(['/portal']);
+        } else {
+          user.username = "This Username has already taken";
+          const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
+          modalRef.componentInstance.details = user;
+          modalRef.componentInstance.isUsernameTaken = true;
+        }
       },
-      (error) => console.log(error));
+      (error) => {
+
+      });
   }
 
   doGithubSignUp(credential: firebase.auth.UserCredential) {
@@ -120,7 +134,7 @@ export class AuthenticationService {
       [user.firstName, user.lastName = ''] = name.split(' ');
     }
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent, {backdrop: 'static', keyboard: false});
+    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
     modalRef.componentInstance.details = user;
   }
 
