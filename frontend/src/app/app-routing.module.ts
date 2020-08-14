@@ -4,11 +4,13 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LandingPageComponent } from '@core/components/landing-page/landing-page.component';
 import { SignUpComponent } from '@core/components/sign-up/sign-up.component';
 import { SignInComponent } from '@core/components/sign-in/sign-in.component';
+import { GithubAuthEndpointComponent } from '@core/components/github-auth-endpoint/github-auth-endpoint.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
   { path: 'signin', component: SignInComponent },
   { path: 'signup', component: SignUpComponent },
+  { path: 'gitAuth', component: GithubAuthEndpointComponent },
   {
     path: 'portal',
     canActivate: [AuthGuard],

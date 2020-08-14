@@ -258,12 +258,13 @@
                 </g>
               </svg>
             </div>
-            <span class="my-3"
-              >It seems that you don't have active projects. Maybe it's time to add
-              the first one?</span
-            >
+            <span class="my-3">It seems that you don't have active projects. Maybe it's time to add
+              the first one?</span>
             <button class="btn btn-success ml-5 my-3" routerLink="projects/create">
               Add first project
+            </button>
+            <button class="btn btn-success ml-5 my-3" (click)="loginToGithub()">
+              Sign in via github
             </button>
           </div>
   </div>
