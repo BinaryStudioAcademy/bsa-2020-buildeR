@@ -29,8 +29,7 @@ namespace buildeR.API.Controllers
         [HttpGet("{projectId}/settings")]
         public async Task<ProjectDTO> GetProjectById(int projectId)
         {
-            int userId = 1; // here will be userId from token or somthing else
-            return await _projectService.GetProjectByUserId(userId, projectId);
+            return await _projectService.GetAsync(projectId);
         }
 
         [HttpPost]
