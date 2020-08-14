@@ -4,6 +4,8 @@ import { HttpService } from '@core/services/http.service';
 import { environment } from '@env/../environments/environment';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
+import { User } from '@shared/models/user/user';
+
 
 @Component({
   selector: 'app-work-space',
@@ -14,6 +16,7 @@ export class WorkSpaceComponent implements OnInit {
   isShowNotifications = false;
   isMenuCollapsed = true;
   url = environment.signalRUrl + '/test';
+  user: User = {} as User;
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
@@ -25,6 +28,7 @@ export class WorkSpaceComponent implements OnInit {
     this.signalR.signalRecieved.subscribe(() => {
       alert('You just received a test broadcast');
     });
+    this.user = this.authService.getUser();
   }
 
   broadcast() {
