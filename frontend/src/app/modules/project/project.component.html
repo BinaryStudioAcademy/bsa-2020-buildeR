@@ -75,18 +75,18 @@
     <div class="project-navigation">
       <nav class="project-nav">
         <ul>
-          <li>
-            <a [routerLink]="['details']">
+          <li (click)="change(1)">
+            <a [routerLink]="['details']" [ngClass]="{ active: tab == 1 }">
               Current
             </a>
           </li>
-          <li>
-            <a [routerLink]="['/']">
+          <li (click)="change(2)">
+            <a [ngClass]="{ active: tab == 2 }">
               Build History
             </a>
           </li>
-          <li class="active">
-            <a [routerLink]="['settings']" class="active">
+          <li (click)="change(3)">
+            <a [routerLink]="['settings']" [ngClass]="{ active: tab == 3 }">
               Settings
             </a>
           </li>
