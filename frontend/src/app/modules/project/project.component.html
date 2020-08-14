@@ -25,8 +25,8 @@
         </svg>
       </span>
       <h1 class="user-project-names">
-        <a [routerLink]="['/']">{{ project.owner?.username }} </a>/
-        <a [routerLink]="['/']">{{ project.name }} </a>
+        <a [routerLink]="">{{ project.owner?.username }} </a>/
+        <a [routerLink]="">{{ project.name }} </a>
       </h1>
     </div>
     <div class="repo-icon">
@@ -81,7 +81,7 @@
             </a>
           </li>
           <li (click)="change(2)">
-            <a [ngClass]="{ active: tab == 2 }">
+            <a [routerLink]="" [ngClass]="{ active: tab == 2 }">
               Build History
             </a>
           </li>
