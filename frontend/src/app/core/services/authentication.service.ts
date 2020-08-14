@@ -146,6 +146,13 @@ export class AuthenticationService {
     return this.angularAuth.signOut();
   }
 
+  cancelRegistration(): Promise<void> {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    this.currentUser = undefined;
+    return this.angularAuth.signOut();
+  }
+
   getToken(): string {
     return localStorage.getItem('jwt');
   }

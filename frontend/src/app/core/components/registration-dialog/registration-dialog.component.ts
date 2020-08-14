@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthenticationService } from '@core/services/authentication.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-registration-dialog',
@@ -14,7 +14,9 @@ export class RegistrationDialogComponent implements OnInit {
   @Input() details: NewUser = {} as NewUser;
   @Input() isUsernameTaken = false;
   public registerForm: FormGroup;
-  constructor(public activeModal: NgbActiveModal, private authService: AuthenticationService) { }
+  constructor(
+    public activeModal: NgbActiveModal,
+    private authService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
@@ -66,6 +68,11 @@ export class RegistrationDialogComponent implements OnInit {
     this.details.email = this.registerForm.value[`email`];
     this.authService.registerUser(this.details);
     this.activeModal.close();
+  }
+
+  onCancel() {
+    this.activeModal.close();
+    this.authService.cancelRegistration();
   }
 
 }
