@@ -26,6 +26,7 @@ export class UserSettingsComponent implements OnInit {
   constructor(private settingsService: UserSettingsService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
+              private cropper: ModalCropperService,
               private route: ActivatedRoute) { }
 
   ngOnInit(): void {

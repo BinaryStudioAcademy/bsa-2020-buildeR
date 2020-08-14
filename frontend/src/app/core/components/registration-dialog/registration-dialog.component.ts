@@ -12,6 +12,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class RegistrationDialogComponent implements OnInit {
 
   @Input() details: NewUser = {} as NewUser;
+  @Input() isUsernameTaken = false;
   public registerForm: FormGroup;
   constructor(public activeModal: NgbActiveModal, private authService: AuthenticationService) { }
 
@@ -46,8 +47,21 @@ export class RegistrationDialogComponent implements OnInit {
   }
 
   save() {
-    this.details.firstName = this.registerForm.value[`firstName`];
-    this.details.lastName = this.registerForm.value[`lastName`];
+    const fName = this.registerForm.value[`firstName`];
+    if (fName === '') {
+      this.details.firstName = null;
+    }
+    else {
+      this.details.firstName = this.registerForm.value[`firstName`];
+    }
+    const lName = this.registerForm.value[`lastName`];
+    if (lName === '') {
+      this.details.lastName = null;
+    }
+    else {
+      this.details.lastName = this.registerForm.value[`lastName`];
+    }
+
     this.details.username = this.registerForm.value[`username`];
     this.details.email = this.registerForm.value[`email`];
     this.authService.registerUser(this.details);

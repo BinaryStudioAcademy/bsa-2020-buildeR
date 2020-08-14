@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, RouterStateSnapshot, ActivatedRouteSnapshot, Resolve } from '@angular/router';
-import { User } from '@shared/models/user';
+import { User } from '@shared/models/user/user';
 import { tap, map, catchError } from 'rxjs/operators/';
 import { EMPTY } from 'rxjs';
 import {UserService} from "../../services/user.service";
