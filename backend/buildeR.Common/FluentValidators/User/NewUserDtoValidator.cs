@@ -12,7 +12,6 @@ namespace buildeR.Common.FluentValidators.User
             RuleFor(u => u.LastName).LastName();
             RuleFor(u => u.FirstName).FirstName();
             RuleFor(u => u.Email).Email();
-            RuleFor(u => u.Bio).Bio();
         }
     }
 }
