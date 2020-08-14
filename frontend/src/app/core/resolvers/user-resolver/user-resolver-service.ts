@@ -14,7 +14,8 @@ export class UserResolverService implements Resolve<User>{
   constructor(private router: Router, private userService: UserService, private authService: AuthenticationService) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
-    return this.userService.getUserById(this.authService.getUser().id).pipe(tap((resp) => {
+    return this.userService.getUserByIdRequest(this.authService.getUser().id).pipe(tap((resp) => {
+      console.log(resp);
       if (resp){
         return resp;
       }

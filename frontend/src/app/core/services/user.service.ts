@@ -29,6 +29,10 @@ export class UserService {
     return this.httpService.getFullRequest<User>(`${this.routePrefix}/${userId}`);
   }
 
+  getUserByIdRequest(userId: number): Observable<User> {
+    return this.httpService.getRequest<User>(`${this.routePrefix}/${userId}`);
+  }
+
   login(uniqueId: string): Observable<HttpResponse<User>> {
     return this.httpService.getFullRequest<User>(`${this.routePrefix}/login/${uniqueId}`);
   }
