@@ -20,6 +20,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace buildeR.Processor.Services
 {
@@ -98,11 +99,10 @@ namespace buildeR.Processor.Services
                         $"Image with name '{imageName}' and container with ID [{containerId}] were created");
 
                     await RunContainerAsync(containerId);
+                    Log.Information($" ================= Logs from container:");
+                    await GetLogFromContainer(containerId);//TODO: sent via SignalR
 
                     await _dockerClient.Containers.WaitContainerAsync(containerId);
-
-                    var logs = await GetLogFromContainer(containerId); //TODO: sent via SignalR
-                    Log.Information($" ================= Logs from container:\n{logs}");
 
                     await RemoveImageAndContainerAsync(imageName, containerId);
                 }
@@ -286,15 +286,32 @@ namespace buildeR.Processor.Services
         }
         #endregion
 
-        private async Task<string> GetLogFromContainer(string containerId)
+        private async Task GetLogFromContainer(string containerId)
         {
-            var logStream = await _dockerClient
-                .Containers
-                .GetContainerLogsAsync(containerId, new ContainerLogsParameters() { ShowStderr = true, ShowStdout = true });
-            using (var streamReader = new StreamReader(logStream, Encoding.UTF8))
+            var logStream = await _dockerClient.Containers.GetContainerLogsAsync(containerId,
+                new ContainerLogsParameters
+                {
+                    Follow = true,
+                    ShowStderr = true,
+                    ShowStdout = true,
+                    Timestamps = true,
+
+                }, default);
+            using (var reader = new StreamReader(logStream))
             {
-                var logContent = await streamReader.ReadToEndAsync();
-                return new string(logContent.Where(c => !char.IsControl(c)).ToArray());//TODO: some control chars should not be removed, so need to change filter
+                string line = null;
+                while ((line = await reader.ReadLineAsync()) != null)
+                {
+                    var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
+                    
+                    var garbageDate = line.Substring(0, firstSpaceIndex+1); // getting date string with garbage letters at the beginning
+                    var date = garbageDate.Substring(9); // real timestamp always starts on 9th symbol because of docker logs format
+                    var timestamp = DateTime.Parse(date); // parsing timestamp
+                    
+                    var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
+                    var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
+                    Console.WriteLine(logLine);
+                }
             }
         }
         #endregion
