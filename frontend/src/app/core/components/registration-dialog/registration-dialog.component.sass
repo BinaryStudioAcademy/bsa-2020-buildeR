@@ -7,15 +7,114 @@
   grid-column-end: 2
   justify-self: start
   margin: 0 10px 20px
+  position: relative
 
 
 img
-    margin-bottom: 20px
+  margin-bottom: 30px
 
 .error
     color: red
     font-size: .75em
+    margin-top: 0.1rem
 
-input.ng-invalid.ng-untouched
-  border: 1px solid red
+.error-color
+
+input.ng-invalid
+  border: 2px solid red
+
+input
+  border: 2px solid blue
+  padding: 1.2rem .75rem
+
+.btn 
+  margin: 5px
+
+.buttons  
+  align-items: center
+  justify-content: center
+  display: flex
+
+.has-float-label 
+  display: block 
+  position: relative 
+  .form-control 
+    &::-webkit-input-placeholder 
+      opacity: 1 
+      -webkit-transition: all .2s 
+      transition: all .2s 
+    &::-moz-placeholder 
+      opacity: 1 
+      transition: all .2s 
+    &:-ms-input-placeholder 
+      opacity: 1 
+      transition: all .2s 
+    &::placeholder 
+      opacity: 1 
+      -webkit-transition: all .2s 
+      transition: all .2s 
+    &:placeholder-shown 
+      &:not(:focus)::-webkit-input-placeholder 
+        opacity: 0 
+      &:not(:focus)::-moz-placeholder 
+        opacity: 0 
+      &:not(:focus):-ms-input-placeholder 
+        opacity: 0 
+      &:not(:focus)::placeholder 
+        opacity: 0 
+      &:not(:focus) 
+        & + * 
+          font-size: 100% 
+          opacity: .75 
+          top: .75em 
+          color: #777777
+
+.has-float-label label, .has-float-label > span 
+  position: absolute 
+  cursor: text 
+  font-size: 75% 
+  opacity: 1 
+  -webkit-transition: all .2s 
+  transition: all .2s 
+  top: -.5em 
+  left: 0.75rem 
+  z-index: 3 
+  line-height: 1 
+  padding: 0 0.2rem
+  color: blue
+  background-color: white
+
+.has-float-label label::after, .has-float-label > span::after 
+  content: " " 
+  display: block 
+  position: absolute 
+  background: white  
+  top: 50% 
+  left: -.2em 
+  right: -.2em 
+  z-index: -1
+
+.input-group 
+  .has-float-label 
+    -webkit-box-flex: 1 
+    -webkit-flex-grow: 1 
+    -ms-flex-positive: 1 
+    flex-grow: 1 
+    margin-bottom: 0 
+    display: -webkit-box 
+    display: -webkit-flex 
+    display: -ms-flexbox 
+    display: flex 
+    -webkit-box-orient: vertical 
+    -webkit-box-direction: normal 
+    -webkit-flex-direction: column 
+    -ms-flex-direction: column 
+    flex-direction: column 
+    -webkit-box-pack: center 
+    -webkit-justify-content: center 
+    -ms-flex-pack: center 
+    justify-content: center 
+    .form-control 
+      width: 100% 
+      border-radius: 0.25rem 
 
