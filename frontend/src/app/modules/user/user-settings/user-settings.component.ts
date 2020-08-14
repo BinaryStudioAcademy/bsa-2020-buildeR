@@ -3,6 +3,7 @@ import { User } from '@shared/models/user/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModalCropperService } from '@core/services/modal-cropper.service';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -13,7 +14,8 @@ export class UserSettingsComponent implements OnInit {
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
 
-  constructor(private settingsService: UserSettingsService, private cropper: ModalCropperService) { }
+  constructor(private settingsService: UserSettingsService, private cropper: ModalCropperService,
+              private toastr: ToastrNotificationsService) { }
 
   ngOnInit(): void {
     this.settingsForm = new FormGroup({
@@ -39,6 +41,7 @@ export class UserSettingsComponent implements OnInit {
           ])
     });
   }
+
   async open(){
     const file = await this.cropper.open();
     if (file){
@@ -51,7 +54,7 @@ export class UserSettingsComponent implements OnInit {
   }
   upload(){
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
-    alert('Invalaid URL');
+    this.toastr.showError('Invalid URL');
     this.settingsForm.controls.avatarUrl.setValue('');
     return;
     }
