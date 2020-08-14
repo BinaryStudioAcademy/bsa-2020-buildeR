@@ -25,8 +25,8 @@
         </svg>
       </span>
       <h1 class="user-project-names">
-        <a href="#">{{ project.owner?.username }} </a>/
-        <a href="#">{{ project.name }} </a>
+        <a [routerLink]="['/']">{{ project.owner?.username }} </a>/
+        <a [routerLink]="['/']">{{ project.name }} </a>
       </h1>
     </div>
     <div class="repo-icon">
@@ -81,7 +81,7 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a [routerLink]="['/']">
               Build History
             </a>
           </li>
