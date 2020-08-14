@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
+using System;
 using System.Collections.Specialized;
 using System.Reflection;
 
@@ -46,6 +47,19 @@ namespace buildeR.API.Extensions
             services.AddTransient<ProcessorProducer>(sp => new ProcessorProducer(OwnConnectionFactory.GetConnetionFactory(), queueSettings));
         }
 
+        public static void RegisterHttpClient(this IServiceCollection services)
+        {
+            services.AddHttpClient("github", c =>
+            {
+                c.BaseAddress = new Uri("https://github.com/");
+            });
+            services.AddHttpClient("githubAPI", c =>
+            {
+                c.BaseAddress = new Uri("https://api.github.com/");
+                c.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+                c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
+            });
+        }
         private static IScheduler GetScheduler()
         {
             var properties = new NameValueCollection
