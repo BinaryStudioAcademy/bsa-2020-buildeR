@@ -85,19 +85,24 @@ namespace buildeR
             {
                 o.SwaggerDoc("v1", new OpenApiInfo { Title = "builder API", Version = "v1" });
                 o.AddFluentValidationRules();
-                o.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+                o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
                     BearerFormat = "JWT",
-                    Description = "JWT Authorization header using the Bearer scheme."
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    In = ParameterLocation.Header
                 });
                 o.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                            }
                         },
                         new string[] {}
                     }
@@ -122,7 +127,14 @@ namespace buildeR
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSwagger(o =>
             {
@@ -140,13 +152,6 @@ namespace buildeR
             {
                 o.SwaggerEndpoint("./v1/swagger.json", "API V1");
             });
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
