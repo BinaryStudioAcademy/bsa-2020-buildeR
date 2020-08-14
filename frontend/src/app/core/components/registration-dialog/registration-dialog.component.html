@@ -5,7 +5,7 @@
             <span class="has-float-label">
                 <input type="text" class="form-control form-control-sm" formControlName="firstName"
                     placeholder="First name">
-                <label [ngStyle]="{'color': registerForm.controls['firstName'].errors? 'red' : 'blue'}" for="firstName">First name</label>
+                <label [ngStyle]="{'color': registerForm.controls['firstName'].errors? 'red' : '#777777'}" for="firstName">First name</label>
             </span>
             <div *ngIf="registerForm.controls['firstName'].errors">
                 <div class="error " *ngIf="registerForm.controls['firstName'].errors.minlength">
@@ -25,7 +25,7 @@
             <span class="has-float-label">
                 <input type="text" class="form-control form-control-sm" formControlName="lastName"
                     placeholder="Last name">
-                <label [ngStyle]="{'color': registerForm.controls['lastName'].errors? 'red' : 'blue'}" for="lastName">Last name</label>
+                <label [ngStyle]="{'color': registerForm.controls['lastName'].errors? 'red' : '#777777'}" for="lastName">Last name</label>
             </span>
             <div *ngIf="registerForm.controls['lastName'].errors">
                 <div class="error " *ngIf="registerForm.controls['lastName'].errors.minlength">
@@ -45,7 +45,7 @@
             <span class="has-float-label">
                 <input type="text" class="form-control form-control-sm" formControlName="username"
                     placeholder="Username">
-                <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : 'blue'}" for="username">Username</label>
+                <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : '#777777'}" for="username">Username</label>
             </span>
             <div *ngIf="registerForm.controls['username'].errors">
                 <div class="error "
@@ -72,7 +72,7 @@
             <span class="has-float-label">
                 <input type="email" class="form-control form-control-sm" formControlName="email"
                     placeholder="example@mail.com">
-                <label [ngStyle]="{'color': registerForm.controls['email'].errors? 'red' : 'blue'}" for="email">Email</label>
+                <label [ngStyle]="{'color': registerForm.controls['email'].errors? 'red' : '#777777'}" for="email">Email</label>
             </span>
             <div *ngIf="registerForm.controls['email'].errors">
                 <div class="error "
@@ -90,7 +90,7 @@
         <div class="buttons">
             <button type="submit" class="btn btn-success"
                 [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
-            <button type="button" class="btn btn-danger" (click)="onCancel()">Cancel</button>
+            <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
         </div>
     </form>
 </div>
