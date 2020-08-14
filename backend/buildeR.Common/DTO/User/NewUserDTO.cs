@@ -11,9 +11,7 @@ namespace buildeR.Common.DTO.User
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Bio { get; set; }
         public string AvatarUrl { get; set; }
-
         public string UId { get; set; }
         public Provider ProviderId { get; set; }
         public string ProviderUrl { get; set; }
