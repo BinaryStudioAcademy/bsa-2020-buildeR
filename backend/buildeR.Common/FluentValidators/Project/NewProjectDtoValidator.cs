@@ -1,4 +1,5 @@
 using buildeR.Common.DTO.Project;
+using buildeR.Common.FluentValidators.Shared;
 using FluentValidation;
 
 namespace buildeR.Common.FluentValidators.Project
@@ -7,7 +8,7 @@ namespace buildeR.Common.FluentValidators.Project
     {
         public NewProjectDtoValidator()
         {
-            RuleFor(p => p.Description).Description();
+            RuleFor(p => p.Description).Description().CanBeNull();
             RuleFor(p => p.Name).Name();
         }
     }

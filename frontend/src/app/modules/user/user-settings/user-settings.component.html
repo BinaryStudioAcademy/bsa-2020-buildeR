@@ -1,6 +1,6 @@
 <div class="container">
   <div class="scroll-container">
-  <form [formGroup]="settingsForm">
+  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
     <div class="group">
       <div class="input-area">
       <div class="avatar-container" (click)="open()">
@@ -19,12 +19,52 @@
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="Name">
           <small>Use your real name so people can recognize you</small>
+            <div *ngIf="settingsForm.controls['firstName'].errors">
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['firstName'].errors.required">
+                First name is required
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['firstName'].errors.minlength">
+                The minimum length is 2 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['firstName'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['firstName'].errors.pattern">
+                First name must have only latin letters<br>
+                and can't start or finish with these<br>
+                characters ' - ', ' . ' and space<br>
+              </div>
+            </div>
       </div>
     <div class="field">
       <span>Last Name</span>
     </div>
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Name">
+          <div *ngIf="settingsForm.controls['lastName'].errors">
+            <div class="alert alert-danger"
+                 *ngIf="settingsForm.controls['lastName'].errors.required">
+              Last name is required
+            </div>
+            <div class="alert alert-danger"
+                 *ngIf="settingsForm.controls['lastName'].errors.minlength">
+              The minimum length is 2 characters
+            </div>
+            <div class="alert alert-danger"
+                 *ngIf="settingsForm.controls['lastName'].errors.maxlength">
+              The maximum length is 30 characters
+            </div>
+            <div class="alert alert-danger"
+                 *ngIf="settingsForm.controls['lastName'].errors.pattern">
+              Last name must have only latin letters<br>
+              and can't start or finish with these<br>
+              characters ' - ', ' . ' and space<br>
+            </div>
+          </div>
       </div>
       <div class="field">
         <span>Upload Photo by link</span>
@@ -38,18 +78,66 @@
       </div>
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="Your username">
+            <div *ngIf="settingsForm.controls['username'].errors">
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['username'].errors.required">
+                User name is required
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['username'].errors.minlength">
+                The minimum length is 3 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['username'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['username'].errors.pattern">
+                Username must have only latin letters<br>
+                and can't start or finish with these<br>
+                characters ' - ', ' . ' <br>
+              </div>
+            </div>
       </div>
       <div class="field">
         <span>Email</span>
       </div>
       <div class="input-area">
           <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="example@mail.com">
+            <div *ngIf="settingsForm.controls['email'].errors">
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['email'].errors.required">
+                Email is required
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['email'].errors.pattern">
+                Email must be like 'example@gmail.com' <br>
+                Email can't start or finish with these <br>
+                characters ' - ', ' . '
+              </div>
+            </div>
       </div>
       <div class="field">
         Location
       </div>
       <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="location" placeholder="Kharkiv, Ukraine">
+            <div *ngIf="settingsForm.controls['location'].errors">
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['location'].errors.minlength">
+                The minimum length is 2 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['location'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="alert alert-danger"
+                   *ngIf="settingsForm.controls['location'].errors.pattern">
+                Location must have only latin letters<br>
+                and can't start or finish with these<br>
+                characters ' - ', ' . ' <br>
+              </div>
+            </div>
       </div>
       <div class="field">
         Bio
@@ -57,6 +145,20 @@
       <div class="input-area">
           <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio" placeholder="Tell us something about yourself">
       </textarea>
+        <div *ngIf="settingsForm.controls['bio'].errors">
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['bio'].errors.maxlength">
+            The maximum length is 300 characters
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="settingsForm.controls['bio'].errors.pattern">
+            BIO must have only latin letters,<br>
+            digits and special characters<br>
+          </div>
+        </div>
+      </div>
+      <div class="save-button-container">
+        <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
       </div>
     </div>
   </form>

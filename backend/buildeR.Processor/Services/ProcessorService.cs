@@ -69,62 +69,55 @@ namespace buildeR.Processor.Services
 
         public async Task BuildProjectAsync(ExecutiveBuildDTO build)
         {
-            var pathToClonedRepository = Path.Combine(_pathToProjects, build.ProjectId.ToString(), "ClonedRepository");
+            var pathToClonedRepository = Path.Combine(
+                _pathToProjects,
+                $"{build.ProjectId}{DateTime.Now.Millisecond}{new Random().Next(1000000)}",
+                "ClonedRepository"
+                );
 
             try
             {
-                //await RunTestHelloWorldContainerAsync();
+                CloneRepository(build.RepositoryUrl, pathToClonedRepository);
 
                 foreach (var buildStep in build.BuildSteps.OrderBy(step => step.Index))
                 {
-                    CloneRepository(build.RepositoryUrl, pathToClonedRepository);
-
                     var dockerFileContent = GenerateDockerFileContent(buildStep, build.RepositoryUrl);
                     await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
                     var imageName = await CreateImageFromRepositoryWithDockerfileAsync(pathToClonedRepository);
 
-                    const int port = 8111;//TODO: need to detect free port and use it
-                    var containerId = await CreateContainerAsync(imageName, port);
+                    var portForNewContainer = await GetFreeDockerPort();
+                    var containerId = await CreateContainerAsync(imageName, (ushort)portForNewContainer);
 
                     if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
-                        throw new InvalidOperationException($"Image name {imageName}, container ID {containerId}");
+                    {
+                        throw new InvalidOperationException($"Fail on creation: Image name {imageName}, container ID {containerId}");
+                    }
 
-                    Log.Information($" ================= Image with name '{imageName}' and container with ID [{containerId}] were created");
+                    Log.Information(
+                        $"Image with name '{imageName}' and container with ID [{containerId}] were created");
 
                     await RunContainerAsync(containerId);
 
-                    // Need to wait until build will be finished because at the moment Container stops before all commands from Dockerfile are executed
-                    await Task.Delay(5000);// TODO: fix it. 
+                    await _dockerClient.Containers.WaitContainerAsync(containerId);
 
-                    await StopContainerAsync(containerId);
-
-                    var logs = await GetLogFromContainer(containerId);//TODO: sent via SignalR
+                    var logs = await GetLogFromContainer(containerId); //TODO: sent via SignalR
                     Log.Information($" ================= Logs from container:\n{logs}");
 
                     await RemoveImageAndContainerAsync(imageName, containerId);
-
-                    DeleteFolderWithSubfolders(pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf("\\", StringComparison.Ordinal)));
                 }
             }
             catch (Exception e)
             {
                 Log.Error(e.Message);
             }
+            finally
+            {
+                DeleteClonedRepository(pathToClonedRepository);
+            }
         }
-
-
 
         #region Docker
-        private async Task RunTestHelloWorldContainerAsync(ushort port = 7999)
-        {
-            const string imageName = "hello-world";
-            await PullImageByNameAsync(imageName);
-            var containerId = await CreateContainerAsync(imageName, port);
-            var logs = await GetLogFromContainer(containerId);
-            Log.Information(logs);
-        }
-
         #region Dockerfile
         private string GenerateDockerFileContent(ExecutiveBuildStepDTO buildStep, string repositoryUrl)
         {
@@ -207,6 +200,23 @@ namespace buildeR.Processor.Services
         #endregion
 
         #region Container
+        private async Task<int> GetFreeDockerPort()
+        {
+            var containers = await _dockerClient
+                .Containers
+                .ListContainersAsync(new ContainersListParameters() { All = true });
+
+            var reservedPorts = containers.SelectMany(container => container.Ports).Select(port => port.IP);
+
+            int selectedPort;
+            do
+            {
+                selectedPort = new Random().Next(1000, 9999);
+            } while (reservedPorts.Contains(selectedPort.ToString()));
+
+            return selectedPort;
+        }
+
         /// <summary />
         /// <param name="imageName">Name of image that will be used to create container</param>
         /// <param name="port">Expose port</param>
@@ -340,7 +350,7 @@ namespace buildeR.Processor.Services
             try
             {
                 EnsureExistDirectory(path);
-                Repository.Clone(repositoryUrl, path);
+                Repository.Clone(repositoryUrl, path);//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
             }
             catch (Exception e)
             {
@@ -351,6 +361,16 @@ namespace buildeR.Processor.Services
         private void EnsureExistDirectory(string path)
         {
             Directory.CreateDirectory(path);
+        }
+
+        /// <summary>
+        /// Will delete parent directory where the cloned repository is located
+        /// </summary>
+        /// <param name="pathToClonedRepository">Path to cloned repository</param>
+        private void DeleteClonedRepository(string pathToClonedRepository)
+        {
+            var pathToParentDirectory = pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf(IsCurrentOsLinux ? "/" : "\\", StringComparison.Ordinal));
+            DeleteFolderWithSubfolders(pathToParentDirectory);
         }
 
         private void DeleteFolderWithSubfolders(string path)

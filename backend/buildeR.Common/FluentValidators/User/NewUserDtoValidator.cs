@@ -9,8 +9,8 @@ namespace buildeR.Common.FluentValidators.User
         public NewUserDtoValidator()
         {
             RuleFor(u => u.Username).Username();
-            RuleFor(u => u.LastName).LastName();
-            RuleFor(u => u.FirstName).FirstName();
+            RuleFor(u => u.LastName).LastName().CanBeNull();
+            RuleFor(u => u.FirstName).FirstName().CanBeNull();
             RuleFor(u => u.Email).Email();
         }
     }
