@@ -20,6 +20,7 @@ export class ProjectComponent implements OnInit {
   id: number;
   project: Project = {} as Project;
   isLoading = false;
+  tab = 1;
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
@@ -29,7 +30,9 @@ export class ProjectComponent implements OnInit {
       .pipe(switchMap((params) => params.getAll('projectId')))
       .subscribe((data) => (this.id = Number(data)));
   }
-
+  change(id: number) {
+    this.tab = id;
+  }
   ngOnInit(): void {
     this.getProject(this.id);
   }
