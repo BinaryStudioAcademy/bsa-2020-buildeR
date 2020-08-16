@@ -2,6 +2,8 @@
 using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
 
+using Confluent.Kafka;
+
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
@@ -31,6 +33,9 @@ namespace buildeR.Processor.Services
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
 
+        private readonly ProducerConfig _config;
+        private readonly IProducer<Null, string> _producer;
+
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         #endregion
@@ -43,6 +48,14 @@ namespace buildeR.Processor.Services
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
+
+
+            // Kafka producer to send logs from docker to SignalR project
+            _config = new ProducerConfig
+            {
+                BootstrapServers = "localhost:9092"
+            };
+            _producer = new ProducerBuilder<Null, string>(_config).Build();
         }
 
         private void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
@@ -310,8 +323,10 @@ namespace buildeR.Processor.Services
                     
                     var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
                     var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
-                    Console.WriteLine(logLine);
+
+                    await _producer.ProduceAsync("weblog", new Message<Null, string> { Value = logLine });
                 }
+                _producer.Dispose();
             }
         }
         #endregion
