@@ -5,17 +5,20 @@
     <div class="list-group list-group-flush">
       <a
         routerLink="/portal/dashboard/user"
-        class="list-group-item list-group-item-action bg-light"
+        class="list-group-item list-group-item-action bg-light active"
+        (click)="setStyleActiveElement($event)"
         >Profile</a
       >
       <a
         [routerLink]="['/']"
         class="list-group-item list-group-item-action bg-light"
+        (click)="setStyleActiveElement($event)"
         >Project settings</a
       >
       <a
         [routerLink]="['/']"
         class="list-group-item list-group-item-action bg-light"
+        (click)="setStyleActiveElement($event)"
         >New settings</a
       >
     </div>
