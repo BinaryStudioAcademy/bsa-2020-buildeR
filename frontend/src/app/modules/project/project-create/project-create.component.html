@@ -26,10 +26,13 @@
       <span>Public repository</span>
     </div>
     <div class="input-area">
-      <input type="checkbox" class="form-control form-control-sm" [(ngModel)]="newProject.isPublic"
-        (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel" id="isPublic-checkbox">
-
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="isPublicSwitch" [(ngModel)]="newProject.isPublic"
+          (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel">
+        <label class="custom-control-label" for="isPublicSwitch"></label>
+      </div>
     </div>
+
     <div class="field">
       <span>Repository Url</span>
     </div>
