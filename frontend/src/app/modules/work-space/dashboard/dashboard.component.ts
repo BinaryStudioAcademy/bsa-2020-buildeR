@@ -58,4 +58,14 @@ export class DashboardComponent extends BaseComponent
         (error) => this.toastrService.showError(error)
       );
   }
+
+  changeFavoriteStateOfProject(project: ProjectInfo){
+    this.projectService
+      .changeFavoriteState(project.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => project.isFavorite = !project.isFavorite,
+        (error) => this.toastrService.showError(error)
+      );
+  }
 }
