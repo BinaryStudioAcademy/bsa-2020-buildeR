@@ -92,5 +92,14 @@ namespace buildeR.BLL.Services
             return executiveBuild;
         }
     
+
+        public async Task ChangeFavoriteStateAsync(int projectId)
+        {
+            var project = await GetAsync(projectId, true);
+            project.IsFavorite = !project.IsFavorite;
+
+            Context.Entry(project).State = EntityState.Modified;
+            await Context.SaveChangesAsync();
+        }
     }
 }
