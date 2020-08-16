@@ -310,23 +310,22 @@ namespace buildeR.Processor.Services
                     Timestamps = true,
 
                 }, default);
+
             using (var reader = new StreamReader(logStream))
             {
                 string line = null;
                 while ((line = await reader.ReadLineAsync()) != null)
                 {
                     var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
-                    
-                    var garbageDate = line.Substring(0, firstSpaceIndex+1); // getting date string with garbage letters at the beginning
+
+                    var garbageDate = line.Substring(0, firstSpaceIndex + 1); // getting date string with garbage letters at the beginning
                     var date = garbageDate.Substring(9); // real timestamp always starts on 9th symbol because of docker logs format
                     var timestamp = DateTime.Parse(date); // parsing timestamp
-                    
+
                     var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
                     var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
-
                     await _producer.ProduceAsync("weblog", new Message<Null, string> { Value = logLine });
                 }
-                _producer.Dispose();
             }
         }
         #endregion
