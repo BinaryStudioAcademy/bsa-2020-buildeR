@@ -1,4 +1,4 @@
-export interface GithubRepository {
+export interface Repository {
   id: number;
   name: string;
 }

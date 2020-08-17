@@ -60,6 +60,8 @@ export class AuthenticationService {
 
   doGithubSignIn(): Promise<void> {
     const githubProvider = new firebase.auth.GithubAuthProvider();
+    githubProvider.addScope('repo');
+    githubProvider.addScope('admin:repo_hook');
     return this.angularAuth.signInWithPopup(githubProvider).then(
       (auth) => {
         console.log(auth.credential);

@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../core/services/http.service';
+import { HttpService } from './http.service';
 import { SynchronizedUser } from '../models/SynchronizedUser';
+import { Repository } from '../models/Repository';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SynchronizationService {
 
-  constructor(private httpService: HttpService) {
-    const accessToken = !localStorage.getItem('github-access-token');
+  endpoint = '/synchronization';
 
-    if (accessToken) {
-      console.log('User did not authorized with github.');
-      // do some things
-    }
-
-  }
+  constructor(private httpService: HttpService, private authService: AuthenticationService) { }
 
   getSynchronizedUser(): Observable<SynchronizedUser> {
-    return this.httpService.getRequest<SynchronizedUser>('');
+    throw new Error('In progress');
+  }
+
+  getUserRepositories(): Observable<Repository[]> {
+    const userId = this.authService.getUser().id;
+    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/${userId}`);
   }
 }
