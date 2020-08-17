@@ -6,6 +6,7 @@ import { ProjectCreateComponent } from './project-create/project-create.componen
 import { ProjectComponent } from './project.component';
 import { ProjectResolverService } from '@core/resolvers/project-resolver.service';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
+import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 const routes: Routes = [
   {
     path: 'create',
@@ -25,6 +26,10 @@ const routes: Routes = [
       {
         path: 'details',
         component: ProjectDetailsComponent,
+      },
+      {
+        path: 'history',
+        component: ProjectBuildHistoryComponent,
       },
     ],
   },

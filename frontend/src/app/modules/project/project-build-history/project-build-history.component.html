@@ -1,0 +1,13 @@
+<ul class="build-container">
+  <li *ngFor="let build of builds | keyvalue">
+    <div class='user-commit'>
+      <p>{{build.key.performer.username}}</p>
+      <p>{{build.key.commitHash.substring(0, 6)}}</p>
+    </div>
+    <div class="build-info">
+      <p class="status">#{{build.key.id}} {{build.key.buildStatus | buildStatus}}</p>
+      <p class="build-time">{{build.value | date:"mm 'min' ss 'sec'"}}</p>
+      <p class="start-time">{{build.key.buildAt | date:"short"}}</p>
+    </div>
+  </li>
+</ul>
