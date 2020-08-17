@@ -22,8 +22,7 @@ select
 
 input
   width: 300px
-input[type=checkbox]
-  width: 30px
+
 textarea
   width: 300px
 
@@ -31,6 +30,11 @@ textarea
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+
+.required-field::after
+    content: "*"
+    color: red
+
 
 .small-title
   margin-top: 0
