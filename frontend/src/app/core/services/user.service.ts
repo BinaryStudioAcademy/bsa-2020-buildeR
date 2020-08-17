@@ -41,4 +41,8 @@ export class UserService {
     return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
   }
 
+  validateUsername(username: string) {
+    return this.httpService.getRequest<boolean>(`${this.routePrefix}/validate-username/${username}`);
+  }
+
 }

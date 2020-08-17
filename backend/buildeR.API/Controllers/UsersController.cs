@@ -17,7 +17,7 @@ namespace buildeR.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private IUserService _userService;
+        private readonly IUserService _userService;
         public UsersController(IUserService userService)
         {
             _userService = userService;
@@ -39,14 +39,21 @@ namespace buildeR.API.Controllers
         [HttpGet("login/{UId}")]
         public async Task<UserDTO> Login(string UId)
         {
-            return await _userService.GetUserByUId(UId);
+            return await _userService.Login(UId);
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<UserDTO> Register([FromBody] NewUserDTO user)
         {
-            return await _userService.Create(user);
+            return await _userService.Register(user);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("validate-username/{username}")]
+        public async Task<bool> ValidateUsername(string username)
+        {
+            return await _userService.ValidateUsername(username);
         }
 
         [HttpPut]

@@ -35,7 +35,7 @@ namespace buildeR.BLL.Services
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> GetUserByUId(string UId)
+        public async Task<UserDTO> Login(string UId)
         {
             var user = await _context.Users
                 .Include(u => u.UserSocialNetworks)
@@ -56,13 +56,8 @@ namespace buildeR.BLL.Services
             return _mapper.Map<ICollection<UserDTO>>(users);
         }
 
-        public async Task<UserDTO> Create(NewUserDTO creatingUser)
+        public async Task<UserDTO> Register(NewUserDTO creatingUser)
         {
-            //if (await _context.Users.CountAsync(u => string.Equals(u.Username, creatingUser.Username, StringComparison.OrdinalIgnoreCase)) != 0)
-            //{
-            //    return null;
-            //}
-
             var userSN = new NewUserSocialNetworkDTO()
             {
                 UId = creatingUser.UId,
@@ -107,6 +102,12 @@ namespace buildeR.BLL.Services
             _context.Entry(existing).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(existing);
+        }
+
+        public async Task<bool> ValidateUsername(string username)
+        {
+            int coincidenceCount = await _context.Users.CountAsync(x => x.Username.ToLower() == username.ToLower());
+            return coincidenceCount == 0;
         }
     }
 }

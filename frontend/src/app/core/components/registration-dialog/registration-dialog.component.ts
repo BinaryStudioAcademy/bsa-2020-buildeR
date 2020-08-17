@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { UserService } from '@core/services/user.service';
+import { UsernameValidator } from '@core/validators/username';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
 
@@ -12,11 +14,12 @@ import { NewUser } from '@shared/models/user/new-user';
 export class RegistrationDialogComponent implements OnInit {
 
   @Input() details: NewUser = {} as NewUser;
-  @Input() isUsernameTaken = false;
   public registerForm: FormGroup;
   constructor(
     public activeModal: NgbActiveModal,
-    private authService: AuthenticationService) { }
+    private authService: AuthenticationService,
+    private usernameValidator: UsernameValidator,
+    private userService: UserService) { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
@@ -43,8 +46,10 @@ export class RegistrationDialogComponent implements OnInit {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(30),
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$`)
-        ]),
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$`),
+        ],
+        [this.usernameValidator.checkUsername.bind(this)]
+      ),
     });
   }
 

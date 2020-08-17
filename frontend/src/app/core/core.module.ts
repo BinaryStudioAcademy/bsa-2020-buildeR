@@ -17,13 +17,15 @@ import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
 
+import { UsernameValidator } from './validators/username';
+
 @NgModule({
   declarations: [
     ModalContentComponent,
     LandingPageComponent,
     SignInComponent,
     SignUpComponent,
-    RegistrationDialogComponent,
+    RegistrationDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -34,7 +36,8 @@ import { RegistrationDialogComponent } from './components/registration-dialog/re
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    UsernameValidator
   ],
   exports: [
     LandingPageComponent,
