@@ -62,6 +62,8 @@ export class AuthenticationService {
     const githubProvider = new firebase.auth.GithubAuthProvider();
     return this.angularAuth.signInWithPopup(githubProvider).then(
       (auth) => {
+        console.log(auth.credential);
+        localStorage.setItem('github-access-token', auth.credential['accessToken']);
         this.isUidExist(auth);
       },
       (error) => console.log("Email exist")

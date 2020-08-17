@@ -6,6 +6,8 @@ import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { SynchronizationService } from '@core/services/synchronization.service';
+import { SynchronizedUser } from '@core/models/SynchronizedUser';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,12 +19,14 @@ export class DashboardComponent extends BaseComponent
   userProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
+  currentGithubUser: SynchronizedUser;
   loadingProjects = false;
 
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private githubService: SynchronizationService
   ) {
     super();
   }
@@ -30,6 +34,8 @@ export class DashboardComponent extends BaseComponent
   ngOnInit(): void {
     this.currentUser = this.authService.getUser();
     this.getUserProjects(this.currentUser.id);
+    this.githubService.getSynchronizedUser()
+      .subscribe((user) => this.currentGithubUser = user);
   }
 
   getUserProjects(userId: number) {
