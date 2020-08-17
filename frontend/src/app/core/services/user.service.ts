@@ -43,10 +43,6 @@ export class UserService {
     return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
   }
 
-  refreshToken(userId: number, token: string) {
-    return this.httpService.putRequest(`${this.routePrefix}/${userId}/refresh-token/${token}`, null);
-  }
-
   changeImageUrl(url: string){
     this.subject.next(url);
   }

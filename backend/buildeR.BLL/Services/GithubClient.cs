@@ -56,7 +56,7 @@ namespace buildeR.BLL.Services
             var userToSocialNetwork = await _context.UserSocialNetworks
                                             .FirstOrDefaultAsync(u => u.UserId == userId && u.SocialNetworkId == provider.Id);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", userToSocialNetwork.AccessToken);
+            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", userToSocialNetwork.AccessToken);
         }
     }
 }

@@ -6,6 +6,5 @@
         public int SocialNetworkId { get; set; }
         public string SocialNetworkUrl { get; set; }
         public string UId { get; set; }
-        public string AccessToken { get; set; }
     }
 }

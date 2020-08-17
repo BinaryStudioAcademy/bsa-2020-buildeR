@@ -45,10 +45,6 @@ export class FirebaseSignInService {
       .subscribe((resp) => {
         if (resp.body !== null) {
           this.authService.setUser(resp.body);
-
-          this.userService.refreshToken(resp.body.id, credential.credential['accessToken'])
-            .subscribe(() => resp.body.id);
-
           this.router.navigate(['/portal']);
         }
         else {

@@ -59,11 +59,5 @@ namespace buildeR.API.Controllers
         {
             await _userService.Delete(id);
         }
-
-        [HttpPut("{id:int}/refresh-token/{token}")]
-        public async Task RefreshUserToken(int id, string token)
-        {
-            await _userService.RefreshSocialNetworkToken(id, token);
-        }
     }
 }
