@@ -1,59 +1,78 @@
-﻿using buildeR.SignalR.Hubs;
-using Confluent.Kafka;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using buildeR.SignalR.Hubs;
+using Confluent.Kafka;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace buildeR.SignalR
 {
     public class Worker : BackgroundService
     {
-        private readonly IHubContext<LogsHub> _logsHub;
+        private Thread _pollLoopThread;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private ConsumerConfig _consumerConfig;
+        private string _topic;
+        private IHubContext<LogsHub> _logsHubContext;
 
-        public Worker(IHubContext<LogsHub> logsHub)
+        public Worker(IHubContext<LogsHub> logsHubContext)
         {
-            _logsHub = logsHub;
+            _consumerConfig = new ConsumerConfig
+            {
+                GroupId = "logs-consumers-group",
+                BootstrapServers = "localhost:9092",
+            };
+            _topic = "weblog";
+            _logsHubContext = logsHubContext;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            // We need thread because kafka consuming can't be done asynchronously 
+            _pollLoopThread = new Thread(() =>
             {
-                var conf = new ConsumerConfig
+                try
                 {
-                    GroupId = "test-consumer-group",
-                    BootstrapServers = "localhost:9092",
-                    // Note: The AutoOffsetReset property determines the start offset in the event
-                    // there are not yet any committed offsets for the consumer group for the
-                    // topic/partitions of interest. By default, offsets are committed
-                    // automatically, so in this example, consumption will only start from the
-                    // earliest message in the topic 'my-topic' the first time you run the program.
-                    AutoOffsetReset = AutoOffsetReset.Earliest
-                };
-
-                using (var c = new ConsumerBuilder<Ignore, string>(conf).Build())
-                {
-                    c.Subscribe("weblog");
-
-                    CancellationTokenSource cts = new CancellationTokenSource();
-                    Console.CancelKeyPress += (_, e) =>
+                    using (var consumer = new ConsumerBuilder<Null, string>(_consumerConfig).Build())
                     {
-                        e.Cancel = true; // prevent the process from terminating.
-                        cts.Cancel();
-                    };
-                    while (true)
-                    {
-                        var cr = c.Consume(cts.Token);
+                        consumer.Subscribe(_topic);
 
-                        Console.WriteLine($"Consumed message '{cr.Message.Value}' at: '{cr.TopicPartitionOffset}'.");
-                        await _logsHub.Clients.All.SendAsync("SendMessage", cr.Message.Value, cts.Token);
+                        try
+                        {
+                            while (!_cancellationTokenSource.IsCancellationRequested)
+                            {
+                                var cr = consumer.Consume(_cancellationTokenSource.Token);
+
+                                // Broadcast is a method that will be called on client to receive messages
+                                _logsHubContext.Clients.All.SendAsync("Broadcast", $"{cr.Message.Value}");
+                            }
+                        }
+                        catch (OperationCanceledException) { }
+
+                        consumer.Close();
                     }
                 }
-            }
+                catch
+                {
+
+                }
+            });
+
+            _pollLoopThread.Start();
+
+            return Task.CompletedTask;
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                _cancellationTokenSource.Cancel();
+                _pollLoopThread.Join();
+            });
         }
     }
 }
