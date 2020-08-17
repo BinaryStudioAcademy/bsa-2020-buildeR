@@ -1,3 +1,6 @@
+a, p, div
+  overflow: hidden
+
 .vertical-line
   border-right: 0.1rem solid grey
 
@@ -29,19 +32,67 @@
 .bg-star
   color: #edde3f
 
+.star-area
+  margin-top: 1%
+  margin-bottom: 1%
+
+.star-btn
+  text-align: center
+  width: 100%
+  height: 100%
+
 .star
   font-size: 2rem
+  overflow: visible
 
-@media (max-width: 992px)
-  .col-md-1, .col-md-2, .col-md-12
+
+@media (min-width: 992px)
+  .row
+    min-height: 5rem
+
+@media (max-width: 991px)
+  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-12
     padding-left: 0 !important
     padding-right: 0 !important
-
-@media (min-width: 767px) and (max-width: 992px)
+  .row
+    min-height: 4rem
   .vertical-line
     margin-right: 3px
     margin-left: -3px
 
+
 @media (max-width: 767px)
+  .container
+    min-width: 320px
+  .row
+    position: relative
+    margin-left: 1px
+    margin-right: 1px
+    min-height: 0
   .vertical-line
     border: 0
+  .drop-down-area
+    position: absolute
+    top: 0
+    right: 5%
+    width: 10%
+  .btn
+    margin-bottom: 5px
+
+@media (max-width: 568px)
+  .star-btn
+    padding: 0
+  .star
+    font-size: 1.5rem
+  .btn
+    font-size: 0.8rem
+  span
+    font-size: 0.8rem
+
+@media (max-width:368px)
+  .btn
+    font-size: 0.6rem
+  span
+    font-size: 0.6rem
+
+
