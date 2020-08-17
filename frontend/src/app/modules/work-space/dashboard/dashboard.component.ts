@@ -15,6 +15,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class DashboardComponent extends BaseComponent
   implements OnInit, OnDestroy {
   userProjects: ProjectInfo[];
+  starredProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
   loadingProjects = false;
@@ -41,6 +42,7 @@ export class DashboardComponent extends BaseComponent
         (resp) => {
           this.loadingProjects = false;
           this.cachedUserProjects = this.userProjects = resp.body;
+          this.starredProjects = this.userProjects.filter(project => project.isFavorite);
         },
         (error) => {
           this.loadingProjects = false;
@@ -59,12 +61,20 @@ export class DashboardComponent extends BaseComponent
       );
   }
 
-  changeFavoriteStateOfProject(project: ProjectInfo){
+  changeFavoriteStateOfProject(project: ProjectInfo) {
     this.projectService
       .changeFavoriteState(project.id)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        () => project.isFavorite = !project.isFavorite,
+        () => {
+          project.isFavorite = !project.isFavorite;
+          if (project.isFavorite) {
+            this.starredProjects.push(project);
+          }
+          else {
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
+          }
+        },
         (error) => this.toastrService.showError(error)
       );
   }
