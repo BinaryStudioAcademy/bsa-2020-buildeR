@@ -2,8 +2,6 @@
 using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
 
-using Confluent.Kafka;
-
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
@@ -33,8 +31,7 @@ namespace buildeR.Processor.Services
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
 
-        private readonly ProducerConfig _config;
-        private readonly IProducer<Null, string> _producer;
+        private readonly KafkaService _kafkaService;
 
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
@@ -46,16 +43,10 @@ namespace buildeR.Processor.Services
 
             _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
 
+            _kafkaService = new KafkaService();
+
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
-
-
-            // Kafka producer to send logs from docker to SignalR project
-            _config = new ProducerConfig
-            {
-                BootstrapServers = "localhost:9092"
-            };
-            _producer = new ProducerBuilder<Null, string>(_config).Build();
         }
 
         private void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
@@ -113,7 +104,7 @@ namespace buildeR.Processor.Services
 
                     await RunContainerAsync(containerId);
                     Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId);//TODO: sent via SignalR
+                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);//TODO: sent via SignalR
 
                     await _dockerClient.Containers.WaitContainerAsync(containerId);
 
@@ -299,7 +290,7 @@ namespace buildeR.Processor.Services
         }
         #endregion
 
-        private async Task GetLogFromContainer(string containerId)
+        private async Task GetLogFromContainer(string containerId, int buildId, int stepId)
         {
             var logStream = await _dockerClient.Containers.GetContainerLogsAsync(containerId,
                 new ContainerLogsParameters
@@ -324,7 +315,18 @@ namespace buildeR.Processor.Services
 
                     var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
                     var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
-                    await _producer.ProduceAsync("weblog", new Message<Null, string> { Value = logLine });
+
+                    var log = new ProjectLog()
+                    {
+                        timestamp = timestamp,
+                        message = message,
+                        buildId = buildId,
+                        buildStep = stepId
+                    };
+
+                    await _kafkaService.SendLog(log);
+                    Console.WriteLine(logLine);
+                    Console.WriteLine(DateTime.Now.ToString());
                 }
             }
         }
