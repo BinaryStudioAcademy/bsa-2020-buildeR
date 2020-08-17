@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
+import * as firebase from 'firebase';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { UserService } from '@core/services/user.service';
+import { RegisterDialogService } from '@core/services/register-dialog.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -9,17 +13,33 @@ import { Router } from '@angular/router';
 })
 export class SignInComponent implements OnInit {
 
-  constructor(private authService: AuthenticationService, private router: Router) { }
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    private angularAuth: AngularFireAuth,
+    private userService: UserService,
+    private registerDialog: RegisterDialogService) { }
 
   ngOnInit() {
   }
 
   signInWithGithub() {
-    this.authService.doGithubSignIn();
+    const githubProvider = new firebase.auth.GithubAuthProvider();
+    return this.angularAuth.signInWithPopup(githubProvider).then(
+      (auth) => {
+        this.login(auth);
+      },
+      (error) => console.log('Email exist')
+    );
   }
 
   signInWithGoogle() {
-    this.authService.doGoogleSignIn();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
+      this.login(auth);
+    },
+      (error) => console.log('Email exist')
+    );
   }
 
   back() {
@@ -28,6 +48,23 @@ export class SignInComponent implements OnInit {
 
   goSignUp() {
     this.router.navigate(['/signup']);
+  }
+
+  login(auth: firebase.auth.UserCredential): void {
+    this.userService.login(auth.user.uid)
+      .subscribe((resp) => {
+        if (resp.body !== null) {
+          this.authService.setUser(resp.body);
+          this.router.navigate(['/portal']);
+        }
+        else {
+          if (auth.credential.providerId === 'google.com') {
+            this.registerDialog.doGoogleSignUp(auth);
+          } else {
+            this.registerDialog.doGithubSignUp(auth);
+          }
+        }
+      });
   }
 
 }
