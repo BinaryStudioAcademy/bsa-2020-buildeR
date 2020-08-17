@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user/user';
-import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModalCropperService } from '@core/services/modal-cropper.service';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
@@ -22,7 +21,7 @@ export class UserSettingsComponent implements OnInit {
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
 
-  constructor(private settingsService: UserSettingsService,
+  constructor(private settingsService: UserService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
               private route: ActivatedRoute,
@@ -84,6 +83,7 @@ export class UserSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
+    this.userService.url.subscribe(url => this.changedUser.avatarUrl = url);
   }
 
   onSubmit(user: User) {
@@ -93,10 +93,11 @@ export class UserSettingsComponent implements OnInit {
       this.details = updateUser;
       this.isChanged = true;
       this.toastrService.showSuccess('Your profile was updated!');
+      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
     }, error =>
     {
       console.error(error);
-      this.toastrService.showError('Your profile wasn\'t updated')
+      this.toastrService.showError('Your profile wasn\'t updated');
     });
   }
 
@@ -113,16 +114,17 @@ export class UserSettingsComponent implements OnInit {
   upload(){
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
     this.toastrService.showError('Invalaid URL');
-    this.settingsForm.controls.avatarUrl.setValue('');
     return;
     }
-    this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
-    this.settingsService.updateSettings(this.details).subscribe((res) =>
+    console.log('we here');
+    this.settingsService.updateUser(this.details).subscribe((res) =>
     {
-      console.log('avatar url was updated');
-      this.toastrService.showSuccess('Your avatar was updated');
+      console.log(res);
+      this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
     },
-    (err) => console.log(err));
+    (err) => {
+      console.log(err);
+    });
   }
 
   private isValidUrl(url: string) {
