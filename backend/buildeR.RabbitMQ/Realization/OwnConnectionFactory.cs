@@ -1,23 +1,22 @@
 ﻿using buildeR.RabbitMq.Models;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace buildeR.RabbitMq.Realization
 {
     public static class OwnConnectionFactory
     {
-        public static IConnectionFactory GetConnetionFactory()
+        public static IConnectionFactory GetConnectionFactory(IConfiguration configuration)
         {
-            IConnectionFactory factory = new ConnectionFactory()
+            var settings = new ConnectionFactorySettings(configuration);
+            IConnectionFactory factory = new ConnectionFactory
             {
-                HostName = ConnectionFactorySettings.HostName,
-                Port = ConnectionFactorySettings.Host,
-                UserName = ConnectionFactorySettings.UserName,
-                Password = ConnectionFactorySettings.Password,
-                VirtualHost = ConnectionFactorySettings.VirtualHost,
-                ContinuationTimeout = ConnectionFactorySettings.ContinuationTimeout,
+                HostName = settings.HostName,
+                Port = settings.Host,
+                UserName = settings.UserName,
+                Password = settings.Password,
+                VirtualHost = settings.VirtualHost,
+                ContinuationTimeout = settings.ContinuationTimeout,
             };
             return factory;
         }
