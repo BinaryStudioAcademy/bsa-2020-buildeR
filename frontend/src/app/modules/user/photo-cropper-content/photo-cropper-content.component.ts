@@ -38,4 +38,8 @@ save(){
   const file = new File([this.croppedImage], 'image.png');
   this.activeModal.close(file);
 }
+
+close(){
+  this.activeModal.dismiss();
+}
 }

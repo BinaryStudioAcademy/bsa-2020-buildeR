@@ -1,5 +1,9 @@
 <div class="container center-block">
-
+  <div class="modal-header">
+  <button type="button" class="close" aria-label="Close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
   <input type="file" (change)="fileChangeEvent($event)" />
 
   <image-cropper
