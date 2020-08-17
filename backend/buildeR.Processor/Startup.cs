@@ -20,7 +20,7 @@ namespace builder.Processor
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.RegisterConnectionFactory();
+            services.RegisterConnectionFactory(Configuration);
 
             services.RegisterServices(Configuration);
         }

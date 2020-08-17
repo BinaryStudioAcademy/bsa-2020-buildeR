@@ -55,7 +55,7 @@ namespace buildeR
             
             services.AddHealthChecks();
 
-            services.RegisterCustomServices();
+            services.RegisterCustomServices(Configuration);
             services.RegisterRabbitMQ(Configuration);
 
             services.AddCors(options =>
