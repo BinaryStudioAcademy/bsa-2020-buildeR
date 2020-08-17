@@ -2,6 +2,6 @@ export interface NewProject {
   name: string;
   description: string;
   isPublic: boolean;
-  repositoryUrl: string;
+  repository: string;
   ownerId: number;
 }
