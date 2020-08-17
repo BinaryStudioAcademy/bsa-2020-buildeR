@@ -48,7 +48,7 @@ namespace buildeR.BLL.Services
         private void SetUpHttpClient(int userId)
         {
             //todo: get github access token from database
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", "69b84d50ca36b473c82893e30a35ee065944c748");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", "c4f53d10721ac8a217615c45f1c1b96096f2472c");
         }
     }
 }
