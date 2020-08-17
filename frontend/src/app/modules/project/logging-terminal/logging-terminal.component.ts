@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
 import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
@@ -20,7 +20,7 @@ type Action = {
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent extends BaseComponent implements OnInit {
+export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
   private log = new Subject<string>();
   private step = 1;
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
@@ -44,10 +44,16 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit {
     //   .getTestBuildLog()
     //   .pipe(delay(0))
     //   .subscribe((line) => this.buildLog(line));
+    this.logsService.buildConnection();
+    this.logsService.startConnectionAndJoinGroup('111'); // '111' is buildId of our demo project
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));
     });
+  }
+
+  ngOnDestroy(): void {
+    this.logsService.stopConnection();
   }
 
   loggin() {
@@ -98,14 +104,14 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit {
   // Temporary solution for converting logs to existing format
   private formatLog(line: string) {
     const log: Log = JSON.parse(line);
-    const { timestamp, message } = log;
-    return `[${this.step++} ${timestamp} INF] ${message}`;
+    const { Timestamp, Message } = log;
+    return `[${this.step++} ${Timestamp} INF] ${Message}`;
   }
 }
 
 class Log {
-  timestamp: Date;
-  message: string;
-  buildId: number;
-  buildStep: number;
+  Timestamp: Date;
+  Message: string;
+  BuildId: number;
+  BuildStep: number;
 }
