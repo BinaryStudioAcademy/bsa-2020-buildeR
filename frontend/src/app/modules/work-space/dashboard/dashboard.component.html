@@ -17,21 +17,20 @@
 
     <div class="container">
         <div class="row my-3 border rounded" *ngFor="let project of userProjects">
-            <div class="d-inline my-auto ml-2 mr-2">
-                <button class="btn" title="Star this project" (click)="changeFavoriteStateOfProject(project)">
+            <div class="col-md-1 col-sm-2 vertical-line my-auto">
+                <button class="btn" aria-pressed="false" title="Star this project" (click)="changeFavoriteStateOfProject(project)">
           <i [ngClass]="project.isFavorite ? 'fa fa-star star bg-star' :'fa fa-star-o star'"></i>
         </button>
             </div>
-            <div class="d-inline vl my-2"></div>
-            <div class="d-inline my-auto mx-5">
-                <p>
+            <div class="col-md-2 mx-0 px-0 col-sm-8 my-auto">
+                <div class="col-md-12 col-sm-5">
                     <a class="text-dark" [routerLink]="['user']">{{
             project?.owner.username
           }}</a>
-                </p>
-                <p>
+                </div>
+                <div class="col-md-12 col-sm-5">
                     <a class="text-dark" [routerLink]="['projects', project?.id, 'details']">{{ project.name }}</a>
-                </p>
+                </div>
             </div>
 
             <div *ngIf="
@@ -40,42 +39,42 @@
           else notExistBuildBlock
         "></div>
             <ng-template #existBuildBlock>
-                <div class="d-inline my-auto mx-5">
-                    <p class="text-muted small">
+                <div class="col-md-2 mx-0 px-0 col-sm-12 my-auto">
+                    <div class="col-md-12 col-sm-5 text-muted small">
                         Default branch
-                    </p>
-                    <p class="text-dark small">
+                    </div>
+                    <div class="col-md-12 col-sm-5 text-dark small">
                         {{ project.lastBuildHistory.branchHash }}
-                    </p>
+                    </div>
                 </div>
-                <div class="d-inline my-auto mx-5">
-                    <p class="text-muted small">
+                <div class="col-md-2 mx-0 px-0 col-sm-12 my-auto">
+                    <div class="col-md-12 col-sm-5 text-muted small">
                         Last build
-                    </p>
-                    <p class="small font-weight-bold build-status">
+                    </div>
+                    <div class="col-md-12 col-sm-5 small font-weight-bold build-status">
                         <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
               <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span> {{ project.lastBuildHistory.buildStatus | buildStatus }}
                         </span>
-                    </p>
+                    </div>
                 </div>
-                <div class="d-inline my-auto ml-5 mr-2">
-                    <p class="text-muted small">
+                <div class="col-md-2 mx-0 px-0 col-sm-12 my-auto">
+                    <div class="col-md-12 col-sm-5 text-muted small">
                         Commit
-                    </p>
-                    <p class="text-dark small">
+                    </div>
+                    <div class="col-md-12 col-sm-5 text-dark small">
                         {{ project.lastBuildHistory.commitHash }}
-                    </p>
+                    </div>
                 </div>
-                <div class="d-inline my-auto ml-5">
-                    <p class="text-muted small">
+                <div class="col-md-2 mx-0 px-0 col-sm-8 my-auto">
+                    <div class="col-md-12 col-sm-5 text-muted small">
                         Finished
-                    </p>
-                    <p class="small">
+                    </div>
+                    <div class="col-md-12 col-sm-5 small">
                         {{ project.lastBuildHistory.buildAt | dateAgo }}
-                    </p>
+                    </div>
                 </div>
 
-                <div class="d-inline my-auto ml-auto mr-3">
+                <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto">
                     <div class="dropdown" ngbDropdown>
                         <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="toggler-icon"></span>
@@ -89,10 +88,10 @@
                 </div>
             </ng-template>
             <ng-template #notExistBuildBlock>
-                <div class="d-inline m-auto">
+                <div class="col-4 m-auto">
                     There are no builds for this project yet
                 </div>
-                <div class="d-inline mr-auto my-auto">
+                <div class="col-4 my-auto">
                     <button class="btn btn-info" (click)="triggerBuild(project.id)">
             Trigger a build
           </button>
