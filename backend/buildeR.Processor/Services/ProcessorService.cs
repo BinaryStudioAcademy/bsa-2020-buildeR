@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using buildeR.Common.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace buildeR.Processor.Services
 {
@@ -39,13 +40,13 @@ namespace buildeR.Processor.Services
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         #endregion
 
-        public ProcessorService(IConsumer consumer)
+        public ProcessorService(IConfiguration config, IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
             _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
 
-            _kafkaProducer = new KafkaProducer("weblog");
+            _kafkaProducer = new KafkaProducer(config, "weblog");
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
@@ -307,6 +308,7 @@ namespace buildeR.Processor.Services
             using (var reader = new StreamReader(logStream))
             {
                 string line = null;
+                
                 while ((line = await reader.ReadLineAsync()) != null)
                 {
                     var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
@@ -319,10 +321,10 @@ namespace buildeR.Processor.Services
 
                     var log = new ProjectLog()
                     {
-                        timestamp = timestamp,
-                        message = message,
-                        buildId = buildId,
-                        buildStep = stepId
+                        Timestamp = timestamp,
+                        Message = message,
+                        BuildId = buildId,
+                        BuildStep = stepId
                     };
 
                     await _kafkaProducer.SendLog(log);
