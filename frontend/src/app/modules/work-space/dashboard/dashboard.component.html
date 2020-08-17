@@ -23,10 +23,10 @@
         </button>
             </div>
             <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                <div class="col-md-12 col-sm-5 col-5 my-auto">
+                <div class="col-md-12 col-sm-5 col-5 row-top">
                     <a class="text-dark" [routerLink]="['user']">{{project?.owner.username}}</a>
                 </div>
-                <div class="col-md-12 col-sm-5 col-5 my-auto offset-2 offset-md-0 align-text-top">
+                <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
                     <a class="text-dark" [routerLink]="['projects', project?.id, 'details']">{{project.name}}</a>
                 </div>
             </div>
@@ -38,36 +38,36 @@
         "></div>
             <ng-template #existBuildBlock>
                 <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                    <div class="col-md-12 col-sm-5 text-muted small">
+                    <div class="col-md-12 col-sm-5 text-muted small row-top">
                         Default branch
                     </div>
-                    <div class="col-md-12 col-sm-5 text-dark small">
+                    <div class="col-md-12 col-sm-5 text-dark small row-bottom">
                         {{project.lastBuildHistory.branchHash}}
                     </div>
                 </div>
                 <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                    <div class="col-md-12 col-sm-5 text-muted small">
+                    <div class="col-md-12 col-sm-5 text-muted small row-top">
                         Last build
                     </div>
-                    <div class="col-md-12 col-sm-5 small font-weight-bold build-status">
+                    <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
                         <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
               <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span> {{ project.lastBuildHistory.buildStatus | buildStatus }}
                         </span>
                     </div>
                 </div>
                 <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                    <div class="col-md-12 col-sm-5 text-muted small">
+                    <div class="col-md-12 col-sm-5 text-muted small row-top">
                         Commit
                     </div>
-                    <div class="col-md-12 col-sm-5 text-dark small">
+                    <div class="col-md-12 col-sm-5 text-dark small row-bottom">
                         {{ project.lastBuildHistory.commitHash }}
                     </div>
                 </div>
                 <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                    <div class="col-md-12 col-sm-5 text-muted small">
+                    <div class="col-md-12 col-sm-5 text-muted small row-top">
                         Finished
                     </div>
-                    <div class="col-md-12 col-sm-5 small">
+                    <div class="col-md-12 col-sm-5 small row-bottom">
                         {{ project.lastBuildHistory.buildAt | dateAgo }}
                     </div>
                 </div>

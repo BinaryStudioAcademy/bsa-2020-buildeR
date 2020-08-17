@@ -4,6 +4,14 @@ a, p, div
 .vertical-line
   border-right: 0.1rem solid grey
 
+.row-top
+  margin-top: 4%
+  margin-bottom: 2%
+
+.row-bottom
+  margin-top: 2%
+  margin-bottom: 4%
+
 .toggler-icon
   display: inline-block
   width: 1.5em
@@ -45,6 +53,16 @@ a, p, div
   font-size: 2rem
   overflow: visible
 
+@media only screen and (min-width: 767px)
+  .row-bottom:after
+    content: ""
+    display: block
+    position: absolute
+    top: 0
+    right: 0
+    width: 2em
+    height: 100%
+    background: linear-gradient(-90deg, #fff 30%, rgba(255, 255, 255, 0) 100%)
 
 @media (min-width: 992px)
   .row
@@ -60,7 +78,6 @@ a, p, div
     margin-right: 3px
     margin-left: -3px
 
-
 @media (max-width: 767px)
   .container
     min-width: 320px
@@ -69,6 +86,12 @@ a, p, div
     margin-left: 1px
     margin-right: 1px
     min-height: 0
+  .row-top
+    margin-top: 0
+    margin-bottom: 0
+  .row-bottom
+    margin-top: 0
+    margin-bottom: 0
   .vertical-line
     border: 0
   .drop-down-area
@@ -94,5 +117,3 @@ a, p, div
     font-size: 0.6rem
   span
     font-size: 0.6rem
-
-
