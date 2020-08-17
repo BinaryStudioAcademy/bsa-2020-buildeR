@@ -5,7 +5,7 @@ import { environment } from '@env/../environments/environment';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
 import { User } from '@shared/models/user/user';
-import { ImgageHeaderService } from '@core/services/imgage-header-service.service';
+import { UserService } from '@core/services/user.service';
 
 @Component({
   selector: 'app-work-space',
@@ -22,7 +22,7 @@ export class WorkSpaceComponent implements OnInit {
     private httpService: HttpService,
     private authService: AuthenticationService,
     private router: Router,
-    private changeImageService: ImgageHeaderService
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +30,7 @@ export class WorkSpaceComponent implements OnInit {
       alert('You just received a test broadcast');
     });
     this.user = this.authService.getUser();
-    this.changeImageService.url.subscribe(url => {
+    this.userService.url.subscribe(url => {
       console.log(url);
       this.user.avatarUrl = url;
     });

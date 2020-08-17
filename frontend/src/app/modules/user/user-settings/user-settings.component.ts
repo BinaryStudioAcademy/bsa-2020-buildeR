@@ -1,13 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user/user';
-import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModalCropperService } from '@core/services/modal-cropper.service';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
-import { ImgageHeaderService } from '@core/services/imgage-header-service.service';
-import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-user-settings',
@@ -24,12 +21,11 @@ export class UserSettingsComponent implements OnInit {
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
 
-  constructor(private settingsService: UserSettingsService,
+  constructor(private settingsService: UserService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
               private route: ActivatedRoute,
-              private cropper: ModalCropperService,
-              private headerAvatar: ImgageHeaderService) { }
+              private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
 
@@ -86,7 +82,7 @@ export class UserSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
-    this.headerAvatar.url.subscribe(url => this.changedUser.avatarUrl = url);
+    this.userService.url.subscribe(url => this.changedUser.avatarUrl = url);
   }
 
   onSubmit(user: User) {
@@ -96,7 +92,7 @@ export class UserSettingsComponent implements OnInit {
       this.details = updateUser;
       this.isChanged = true;
       this.toastrService.showSuccess('Your profile was updated!');
-      this.headerAvatar.changeUrl(this.settingsForm.controls.avatarUrl.value);
+      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
     }, error =>
     {
       console.error(error);
@@ -120,7 +116,7 @@ export class UserSettingsComponent implements OnInit {
     return;
     }
     console.log('we here');
-    this.settingsService.updateSettings(this.details).subscribe((res) =>
+    this.settingsService.updateUser(this.details).subscribe((res) =>
     {
       console.log(res);
       this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
