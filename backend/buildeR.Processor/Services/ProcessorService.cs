@@ -1,6 +1,7 @@
 ﻿using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
+using buildeR.Kafka;
 
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -21,6 +22,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using buildeR.Common.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace buildeR.Processor.Services
 {
@@ -31,15 +34,19 @@ namespace buildeR.Processor.Services
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
 
+        private readonly KafkaProducer _kafkaProducer;
+
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         #endregion
 
-        public ProcessorService(IConsumer consumer)
+        public ProcessorService(IConfiguration config, IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
             _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
+
+            _kafkaProducer = new KafkaProducer(config, "weblog");
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
@@ -100,7 +107,7 @@ namespace buildeR.Processor.Services
 
                     await RunContainerAsync(containerId);
                     Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId);//TODO: sent via SignalR
+                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);
 
                     await _dockerClient.Containers.WaitContainerAsync(containerId);
 
@@ -286,7 +293,7 @@ namespace buildeR.Processor.Services
         }
         #endregion
 
-        private async Task GetLogFromContainer(string containerId)
+        private async Task GetLogFromContainer(string containerId, int buildId, int stepId)
         {
             var logStream = await _dockerClient.Containers.GetContainerLogsAsync(containerId,
                 new ContainerLogsParameters
@@ -297,20 +304,30 @@ namespace buildeR.Processor.Services
                     Timestamps = true,
 
                 }, default);
+
             using (var reader = new StreamReader(logStream))
             {
                 string line = null;
+                
                 while ((line = await reader.ReadLineAsync()) != null)
                 {
                     var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
-                    
-                    var garbageDate = line.Substring(0, firstSpaceIndex+1); // getting date string with garbage letters at the beginning
-                    var date = garbageDate.Substring(9); // real timestamp always starts on 9th symbol because of docker logs format
+
+                    var garbageDate = line.Substring(0, firstSpaceIndex + 1); // getting date string with garbage letters at the beginning
+                    var date = garbageDate.Substring(8); // real timestamp always starts on 9th symbol because of docker logs format
                     var timestamp = DateTime.Parse(date); // parsing timestamp
-                    
+
                     var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
-                    var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
-                    Console.WriteLine(logLine);
+
+                    var log = new ProjectLog()
+                    {
+                        Timestamp = timestamp,
+                        Message = message,
+                        BuildId = buildId,
+                        BuildStep = stepId
+                    };
+
+                    await _kafkaProducer.SendLog(log);
                 }
             }
         }
