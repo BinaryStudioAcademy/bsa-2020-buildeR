@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
 import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
+import { ProjectLogsService } from '@core/services/projects-logs.service';
+import { Subject } from 'rxjs';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -18,6 +21,8 @@ type Action = {
   styleUrls: ['./logging-terminal.component.sass'],
 })
 export class LoggingTerminalComponent extends BaseComponent implements OnInit {
+  private log = new Subject<string>();
+  private step = 1;
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
 
   private lineNumber: number = 1;
@@ -30,15 +35,25 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit {
     [boolean, Action[]]
   >();
 
-  constructor(private buildService: BuildLogService) {
+  constructor(private buildService: BuildLogService, private logsService: ProjectLogsService) {
     super();
   }
 
   ngOnInit(): void {
-    this.buildService
-      .getTestBuildLog()
-      .pipe(delay(0))
-      .subscribe((line) => this.buildLog(line));
+    // this.buildService
+    //   .getTestBuildLog()
+    //   .pipe(delay(0))
+    //   .subscribe((line) => this.buildLog(line));
+    this.logsService.logsListener(this.log);
+    this.log.subscribe((message) => {
+      this.buildLog(this.formatLog(message));
+    });
+  }
+
+  loggin() {
+    this.log.subscribe((line) => {
+      this.buildLog(line);
+    });
   }
 
   clear() {
@@ -79,4 +94,18 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit {
 
     this.buildSteps.get(step)[1].push(a);
   }
+
+  // Temporary solution for converting logs to existing format
+  private formatLog(line: string) {
+    const log: Log = JSON.parse(line);
+    const { timestamp, message } = log;
+    return `[${this.step++} ${timestamp} INF] ${message}`;
+  }
+}
+
+class Log {
+  timestamp: Date;
+  message: string;
+  buildId: number;
+  buildStep: number;
 }
