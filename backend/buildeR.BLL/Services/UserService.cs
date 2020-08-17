@@ -67,7 +67,7 @@ namespace buildeR.BLL.Services
             {
                 UId = creatingUser.UId,
                 SocialNetworkId = (int)creatingUser.ProviderId+1,
-                SocialNetworkUrl = creatingUser.ProviderUrl
+                SocialNetworkUrl = creatingUser.ProviderUrl,
             };
 
             var user = _mapper.Map<User>(creatingUser);
