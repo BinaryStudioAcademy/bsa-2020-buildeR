@@ -1,5 +1,5 @@
 export interface NewProjectTrigger {
-  projectId: string;
+  projectId: number;
   branchHash: string;
   cronExpression: string;
 }
