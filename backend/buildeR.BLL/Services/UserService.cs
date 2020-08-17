@@ -19,13 +19,15 @@ namespace buildeR.BLL.Services
     {
         private readonly BuilderContext _context;
         private readonly IMapper _mapper;
+        private readonly IEmailBuilder _emailBuilder;
         private readonly IEmailService _emailService;
 
-        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService)
+        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder)
         {
             _context = context;
             _mapper = mapper;
             _emailService = emailService;
+            _emailBuilder = emailBuilder;
         }
 
         public async Task<UserDTO> GetUserById(int id)
@@ -85,7 +87,8 @@ namespace buildeR.BLL.Services
             _context.Add(userSNEntity);
             await _context.SaveChangesAsync();
 
-            await _emailService.ConfirmRegistration(creatingUser.Email, creatingUser.FirstName);
+            var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
+            await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, emailModel.Subject, emailModel.Title, emailModel.Body);
 
             return userDto;
         }
