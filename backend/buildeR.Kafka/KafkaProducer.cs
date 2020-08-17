@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using buildeR.Common.DTO;
 using Newtonsoft.Json;
 
-namespace buildeR.Processor.Services
+namespace buildeR.Kafka
 {
-    public class KafkaService
+    public class KafkaProducer
     {
         private ProducerConfig _config;
         private IProducer<Null, string> _producer;
         private string _topic;
-        public KafkaService()
+        public KafkaProducer(string topic)
         {
-            _topic = "weblog";
+            _topic = topic;
 
             _config = new ProducerConfig
             {

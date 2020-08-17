@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\buildeR.Common\buildeR.Common.csproj" />
+    <ProjectReference Include="..\buildeR.Kafka\buildeR.Kafka.csproj" />
     <ProjectReference Include="..\buildeR.RabbitMQ\buildeR.RabbitMq.csproj" />
   </ItemGroup>
 

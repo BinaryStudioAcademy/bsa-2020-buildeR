@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using buildeR.SignalR.Hubs;
+using buildeR.SignalR.Services;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -14,19 +15,16 @@ namespace buildeR.SignalR
     {
         private Thread _pollLoopThread;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private ConsumerConfig _consumerConfig;
         private string _topic;
         private IHubContext<LogsHub> _logsHubContext;
 
+        private KafkaConsumer _kafkaConsumer;
+
         public Worker(IHubContext<LogsHub> logsHubContext)
         {
-            _consumerConfig = new ConsumerConfig
-            {
-                GroupId = "logs-consumers-group",
-                BootstrapServers = "localhost:9092",
-            };
             _topic = "weblog";
             _logsHubContext = logsHubContext;
+            _kafkaConsumer = new KafkaConsumer(_topic);
         }
 
         protected override Task ExecuteAsync(CancellationToken cancellationToken)
@@ -36,7 +34,7 @@ namespace buildeR.SignalR
             {
                 try
                 {
-                    using (var consumer = new ConsumerBuilder<Null, string>(_consumerConfig).Build())
+                    using (var consumer = _kafkaConsumer.consumer)
                     {
                         consumer.Subscribe(_topic);
 

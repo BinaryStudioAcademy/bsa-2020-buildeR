@@ -13,4 +13,8 @@
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\buildeR.Kafka\buildeR.Kafka.csproj" />
+  </ItemGroup>
+
 </Project>

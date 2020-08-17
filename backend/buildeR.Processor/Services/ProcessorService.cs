@@ -1,6 +1,7 @@
 ﻿using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.RabbitMq.Interfaces;
+using buildeR.Kafka;
 
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -21,6 +22,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using buildeR.Common.DTO;
 
 namespace buildeR.Processor.Services
 {
@@ -31,7 +33,7 @@ namespace buildeR.Processor.Services
         private readonly DockerClient _dockerClient;
         private readonly string _pathToProjects;
 
-        private readonly KafkaService _kafkaService;
+        private readonly KafkaProducer _kafkaProducer;
 
         private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
@@ -43,7 +45,7 @@ namespace buildeR.Processor.Services
 
             _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
 
-            _kafkaService = new KafkaService();
+            _kafkaProducer = new KafkaProducer("weblog");
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
@@ -104,7 +106,7 @@ namespace buildeR.Processor.Services
 
                     await RunContainerAsync(containerId);
                     Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);//TODO: sent via SignalR
+                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);
 
                     await _dockerClient.Containers.WaitContainerAsync(containerId);
 
@@ -310,11 +312,10 @@ namespace buildeR.Processor.Services
                     var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
 
                     var garbageDate = line.Substring(0, firstSpaceIndex + 1); // getting date string with garbage letters at the beginning
-                    var date = garbageDate.Substring(9); // real timestamp always starts on 9th symbol because of docker logs format
+                    var date = garbageDate.Substring(8); // real timestamp always starts on 9th symbol because of docker logs format
                     var timestamp = DateTime.Parse(date); // parsing timestamp
 
                     var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
-                    var logLine = $"[{timestamp.ToString("G", CultureInfo.CreateSpecificCulture("ru-RU"))}] {message}"; // log line
 
                     var log = new ProjectLog()
                     {
@@ -324,9 +325,7 @@ namespace buildeR.Processor.Services
                         buildStep = stepId
                     };
 
-                    await _kafkaService.SendLog(log);
-                    Console.WriteLine(logLine);
-                    Console.WriteLine(DateTime.Now.ToString());
+                    await _kafkaProducer.SendLog(log);
                 }
             }
         }
