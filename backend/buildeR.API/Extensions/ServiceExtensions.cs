@@ -4,6 +4,8 @@ using buildeR.BLL.MappingProfiles;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
+using buildeR.Common.Interfaces;
+using buildeR.Common.Services;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +33,8 @@ namespace buildeR.API.Extensions
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<IBuildService, BuildService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailBuilder, EmailBuilder>();
 
             services.RegisterAutoMapper();
         }
