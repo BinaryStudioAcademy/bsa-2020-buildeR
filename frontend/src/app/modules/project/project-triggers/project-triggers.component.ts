@@ -59,15 +59,17 @@ export class ProjectTriggersComponent implements OnInit {
     }
   }
   updateTrigger(upTrigger: UpdateTriggerCron) {
-    const index = this.triggers.findIndex(t => t.id === upTrigger.id);
-    console.log(upTrigger.cronExpression);
+
+    const findTrigger = this.triggers.find(t => t.id === upTrigger.id);
+
     const trigger: ProjectTrigger = {
-      id: this.triggers[index].id,
-      projectId: this.triggers[index].projectId,
-      branchHash: this.triggers[index].branchHash,
+      id: findTrigger.id,
+      projectId: findTrigger.projectId,
+      branchHash: findTrigger.branchHash,
       cronExpression: upTrigger.cronExpression
     };
 
+    const index = this.triggers.findIndex(t => t.id === upTrigger.id);
     this.triggerService.updateTrigger(trigger).subscribe(
       (data) => {
         this.triggers.splice(index, 1, data);
@@ -78,10 +80,10 @@ export class ProjectTriggersComponent implements OnInit {
 
   }
   deleteTrigger(id: number) {
-    const index = this.triggers.findIndex(t => t.id === id);
+
     this.triggerService.deleteTrigger(id).subscribe(
       (data) => {
-        this.triggers.splice(index, 1);
+        this.triggers = this.triggers.filter(x => x.id !== id);
         this.toastrService.showSuccess('trigger deleted');
       },
       (error) => this.toastrService.showError(error.message, error.name)

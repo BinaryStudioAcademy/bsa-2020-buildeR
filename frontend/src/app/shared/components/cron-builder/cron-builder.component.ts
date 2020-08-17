@@ -28,7 +28,6 @@ export class CronBuilderComponent implements OnInit {
   }
   saveBuildPeriod() {
     this.cronSetUp.emit(this.cronResult);
-    this.cronResult = '';
   }
   updating() {
     const upTr: UpdateTriggerCron = {
