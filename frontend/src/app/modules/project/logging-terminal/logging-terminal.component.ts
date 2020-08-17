@@ -4,7 +4,6 @@ import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
