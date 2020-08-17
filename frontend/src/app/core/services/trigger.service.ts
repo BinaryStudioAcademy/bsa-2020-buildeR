@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
-import { ProjectTrigger } from 'src/app/shared/models/project/project-trigger';
-import { NewProjectTrigger } from 'src/app/shared/models/project/new-project-trigger';
+import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
+import { NewProjectTrigger } from '@shared/models/project/project-trigger/new-project-trigger';
 import { Observable } from 'rxjs';
+import { ProjectTrigger } from '@shared/models/project/project-trigger/project-trigger';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,16 @@ export class TriggerService {
 
   constructor(private httpService: HttpService) { }
 
-  public createTrigger(newTrigger: NewProjectTrigger): Observable<ProjectTrigger> {
-    return this.httpService.postRequest<ProjectTrigger>(`${this.routePrefix}`, newTrigger);
+  public getTriggersByProjectId(projectId: number): Observable<ProjectTriggerInfo[]> {
+    return this.httpService.getRequest<ProjectTriggerInfo[]>(`${this.routePrefix}/GetByProjectId/${projectId}`);
+  }
+  public createTrigger(newTrigger: NewProjectTrigger): Observable<ProjectTriggerInfo> {
+    return this.httpService.postRequest<ProjectTriggerInfo>(`${this.routePrefix}`, newTrigger);
+  }
+  public updateTrigger(trigger: ProjectTrigger): Observable<ProjectTriggerInfo> {
+    return this.httpService.putRequest<ProjectTriggerInfo>(`${this.routePrefix}`, trigger);
+  }
+  public deleteTrigger(triggerId: number) {
+    return this.httpService.deleteRequest(`${this.routePrefix}/${triggerId}`);
   }
 }
