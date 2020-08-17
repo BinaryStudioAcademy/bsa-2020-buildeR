@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace buildeR.RabbitMq.Models
 {
-    public static class ConnectionFactorySettings
+    public class ConnectionFactorySettings
     {
-        public static string HostName { get; set; } = Environment.GetEnvironmentVariable("RABBIT_MQ_HOST_NAME");
-        public static int Host { get; set; } = 5672;
-        public static string UserName { get; set; } = Environment.GetEnvironmentVariable("RABBIT_MQ_USERNAME");
-        public static string Password { get; set; } = Environment.GetEnvironmentVariable("RABBIT_MQ_PASSWORD");
-        public static string VirtualHost { get; set; } = "/";
-        public static TimeSpan ContinuationTimeout { get; set; } = new TimeSpan(10, 0, 0, 0);
+        // private readonly IConfiguration _configuration;
+        private readonly IConfigurationSection _section;
+        
+        public ConnectionFactorySettings(IConfiguration configuration)
+        {
+            _section = configuration.GetSection("RabbitMQ:ConnectionSettings");
+        }
+        
+        public string HostName => _section["RABBIT_MQ_HOST_NAME"];
+        public int Host { get; set; } = 5672;
+        public string UserName => _section["RABBIT_MQ_USERNAME"];
+        public string Password => _section["RABBIT_MQ_PASSWORD"];
+        public string VirtualHost { get; set; } = "/";
+        public TimeSpan ContinuationTimeout { get; set; } = new TimeSpan(10, 0, 0, 0);
     }
 }

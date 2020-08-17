@@ -4,9 +4,6 @@ using buildeR.BLL.MappingProfiles;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
-
-using buildeR.Common.DTO.User;
-using buildeR.DAL.Entities;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
@@ -42,8 +39,8 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            QueueSettings queueSettings = configuration.GetSection("Queues:ToProcessor").Get<QueueSettings>();
-            services.AddTransient<ProcessorProducer>(sp => new ProcessorProducer(OwnConnectionFactory.GetConnetionFactory(), queueSettings));
+            QueueSettings queueSettings = configuration.GetSection("RabbitMQ:Queues:ToProcessor").Get<QueueSettings>();
+            services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
         }
 
         private static IScheduler GetScheduler()
