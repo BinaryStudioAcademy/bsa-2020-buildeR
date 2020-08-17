@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '@core/services/authentication.service';
+import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { UserService } from '@core/services/user.service';
-import { RegisterDialogService } from '@core/services/register-dialog.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -14,32 +10,18 @@ import { RegisterDialogService } from '@core/services/register-dialog.service';
 export class SignInComponent implements OnInit {
 
   constructor(
-    private authService: AuthenticationService,
     private router: Router,
-    private angularAuth: AngularFireAuth,
-    private userService: UserService,
-    private registerDialog: RegisterDialogService) { }
+    private firebaseSignInService: FirebaseSignInService) { }
 
   ngOnInit() {
   }
 
   signInWithGithub() {
-    const githubProvider = new firebase.auth.GithubAuthProvider();
-    return this.angularAuth.signInWithPopup(githubProvider).then(
-      (auth) => {
-        this.login(auth);
-      },
-      (error) => console.log('Email exist')
-    );
+    this.firebaseSignInService.signInWithGithub();
   }
 
   signInWithGoogle() {
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-    return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
-      this.login(auth);
-    },
-      (error) => console.log('Email exist')
-    );
+    this.firebaseSignInService.signInWithGoogle();
   }
 
   back() {
@@ -48,23 +30,6 @@ export class SignInComponent implements OnInit {
 
   goSignUp() {
     this.router.navigate(['/signup']);
-  }
-
-  login(auth: firebase.auth.UserCredential): void {
-    this.userService.login(auth.user.uid)
-      .subscribe((resp) => {
-        if (resp.body !== null) {
-          this.authService.setUser(resp.body);
-          this.router.navigate(['/portal']);
-        }
-        else {
-          if (auth.credential.providerId === 'google.com') {
-            this.registerDialog.doGoogleSignUp(auth);
-          } else {
-            this.registerDialog.doGithubSignUp(auth);
-          }
-        }
-      });
   }
 
 }

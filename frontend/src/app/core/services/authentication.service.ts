@@ -3,7 +3,6 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import * as firebase from 'firebase';
 import { UserService } from './user.service';
 
 @Injectable({

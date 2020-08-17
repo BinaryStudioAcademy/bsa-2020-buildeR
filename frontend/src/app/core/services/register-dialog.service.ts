@@ -48,4 +48,18 @@ export class RegisterDialogService {
 
     this.openModal(user);
   }
+
+  signUp(auth: firebase.auth.UserCredential) {
+    const provider = auth.credential.providerId;
+    switch (provider) {
+      case 'google.com': {
+        this.doGoogleSignUp(auth);
+        break;
+      }
+      case 'github.com': {
+        this.doGithubSignUp(auth);
+        break;
+      }
+    }
+  }
 }
