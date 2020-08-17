@@ -10,18 +10,62 @@
 #navbar-horisontal
   height: 100px
 
-#sidebar-wrapper
-  min-height: 100vh
-  width: 300px
+//#sidebar-wrapper
+//  min-height: 100vh
+//  width: 300px
 
 #page-content-wrapper
-    padding: 0
-    margin: 0
-    z-index: 0
+  padding: 0
+  z-index: 0
+  height: 100vh
+  width: 100%
+
 
 .active
-  background-color: rgb(210, 217, 223) !important
-  border-bottom-color: grey
-  border-top-color: grey
-  color: #495057
+  background-color: white !important
+  color: #3eaaaf !important
+  p::after
+      content: ""
+      color: #3eaaaf
+      display: block
+      position: absolute
+      bottom: -7px
+      width: 100%
+      height: 2px
+      background-color: #3eaaaf
+
+#wrapper
+  min-height: 100vh
+  flex-direction: column
+
+#sidebar-wrapper-test
+  width: 100%
+
+.list-group-horizontal
+  width: 100%
+  border-bottom: 2px solid #f1f1f1
+  padding: 5px 0
+  .list-group-item
+    padding: 0
+    display: flex
+    color: #666
+    justify-content: center
+    border-style: none
+    &:hover
+      color: #3eaaaf
+      background-color: white
+    p
+      position: relative
+      margin: 0
+      padding: 0
+    p:hover::after
+      content: ""
+      color: #3eaaaf
+      display: block
+      position: absolute
+      bottom: -7px
+      width: 100%
+      height: 2px
+      background-color: #3eaaaf
+
 
