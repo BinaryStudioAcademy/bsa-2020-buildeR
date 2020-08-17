@@ -30,12 +30,11 @@ namespace buildeR.Common.Services
         public async Task ConfirmRegistration(string email, string firstName)
         {
             string baseUrl = _configuration.GetValue<string>("ClientUrl");
-            string link = "http://localhost:4200/portal/user";
             string subject = "Successful SignUp";
             string title = @"<b style=""font-size: 20px"">Welcome</b>";
             string body = @$"Hey {firstName}, <br><br> Thank you for signing up with buildeR. We hope you enjoy your time with us.
-                Check your <a href={link}>account</a>
-                    and update your profile.<br><br>Cheers,<br>buildeR team";
+                          Check your <a href=""{baseUrl}/portal/user"">account</a>
+                          and update your profile.<br><br>Cheers,<br>buildeR team";
             List<string> emails = new List<string>
             {
                 email
