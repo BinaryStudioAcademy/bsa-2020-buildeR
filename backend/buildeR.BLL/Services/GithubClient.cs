@@ -1,5 +1,8 @@
 ﻿using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.Synchronization.Github;
+using buildeR.Common.Enums;
+using buildeR.DAL.Context;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,22 +16,24 @@ namespace buildeR.BLL.Services
     public class GithubClient : IGithubClient
     {
         private readonly HttpClient _client;
-        public GithubClient(IHttpClientFactory factory)
+        private readonly BuilderContext _context;
+        public GithubClient(IHttpClientFactory factory, BuilderContext context)
         {
             _client = factory.CreateClient("github");
+            _context = context;
         }
 
-        public Task<GithubUser> GetUserFromToken(int userId)
+        public async Task<GithubUser> GetUserFromToken(int userId)
         {
-            SetUpHttpClient(userId);
+            await SetUpHttpClient(userId);
 
             throw new NotImplementedException();
             //todo
         }
 
-        public Task<IEnumerable<GithubBranch>> GetRepositoryBranches(int userId, string repositoryName)
+        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(int userId, string repositoryName)
         {
-            SetUpHttpClient(userId);
+            await SetUpHttpClient(userId);
 
             throw new NotImplementedException();
             //todo
@@ -36,7 +41,7 @@ namespace buildeR.BLL.Services
 
         public async Task<IEnumerable<GithubRepository>> GetUserRepositories(int userId)
         {
-            SetUpHttpClient(userId);
+            await SetUpHttpClient(userId);
 
             var endpoint = $"user/repos?visibility=all&affiliation=owner";
             var response = await _client.GetAsync(endpoint);
@@ -45,10 +50,13 @@ namespace buildeR.BLL.Services
             return JsonConvert.DeserializeObject<IEnumerable<GithubRepository>>(content);
         }
 
-        private void SetUpHttpClient(int userId)
+        private async Task SetUpHttpClient(int userId)
         {
-            //todo: get github access token from database
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", "c4f53d10721ac8a217615c45f1c1b96096f2472c");
+            var provider = await _context.SocialNetworks.FirstOrDefaultAsync(s => s.ProviderName == Provider.GitHub);
+            var userToSocialNetwork = await _context.UserSocialNetworks
+                                            .FirstOrDefaultAsync(u => u.UserId == userId && u.SocialNetworkId == provider.Id);
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", userToSocialNetwork.AccessToken);
         }
     }
 }

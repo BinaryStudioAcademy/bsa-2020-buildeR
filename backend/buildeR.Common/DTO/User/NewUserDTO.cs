@@ -15,5 +15,6 @@ namespace buildeR.Common.DTO.User
         public string UId { get; set; }
         public Provider ProviderId { get; set; }
         public string ProviderUrl { get; set; }
+        public string AccessToken { get; set; }
     }
 }

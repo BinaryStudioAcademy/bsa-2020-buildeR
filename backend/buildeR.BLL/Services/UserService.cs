@@ -67,7 +67,8 @@ namespace buildeR.BLL.Services
             {
                 UId = creatingUser.UId,
                 SocialNetworkId = (int)creatingUser.ProviderId+1,
-                SocialNetworkUrl = creatingUser.ProviderUrl
+                SocialNetworkUrl = creatingUser.ProviderUrl,
+                AccessToken = creatingUser.AccessToken       
             };
 
             var user = _mapper.Map<User>(creatingUser);
@@ -107,6 +108,14 @@ namespace buildeR.BLL.Services
             _context.Entry(existing).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(existing);
+        }
+
+        public async Task RefreshSocialNetworkToken(int userId, string token)
+        {
+            //todo: select social network which user specify in settings
+            var userToSocialNetwork = await _context.UserSocialNetworks.FirstOrDefaultAsync(u => u.Id == userId);
+            userToSocialNetwork.AccessToken = token;
+            await _context.SaveChangesAsync();
         }
     }
 }

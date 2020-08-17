@@ -12,5 +12,6 @@ namespace buildeR.BLL.Interfaces
         Task<UserDTO> Create(NewUserDTO creatingUser);
         Task<UserDTO> Update(UserDTO userDTO);
         Task Delete(int id);
+        Task RefreshSocialNetworkToken(int userId, string token);
     }
 }

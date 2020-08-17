@@ -21,9 +21,10 @@ export class FirebaseSignInService {
 
   signInWithGithub() {
     const githubProvider = new auth.GithubAuthProvider();
+    githubProvider.addScope('admin:hooks');
+    githubProvider.addScope('repo');
     return this.angularAuth.signInWithPopup(githubProvider).then(
       (credential) => {
-        localStorage.setItem('github-access-token', credential.credential['accessToken']);
         this.login(credential);
       },
       (error) => console.log('Email exist')
@@ -44,6 +45,10 @@ export class FirebaseSignInService {
       .subscribe((resp) => {
         if (resp.body !== null) {
           this.authService.setUser(resp.body);
+
+          this.userService.refreshToken(resp.body.id, credential.credential['accessToken'])
+            .subscribe(() => resp.body.id);
+
           this.router.navigate(['/portal']);
         }
         else {
