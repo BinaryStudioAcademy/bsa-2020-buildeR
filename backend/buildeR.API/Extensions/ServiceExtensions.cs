@@ -33,6 +33,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<IBuildService, BuildService>();
             services.AddScoped<IGithubClient, GithubClient>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.RegisterAutoMapper();
         }

@@ -5,27 +5,28 @@ using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.Synchronization.Github;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace buildeR.API.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class SynchronizationController : ControllerBase
     {
-        private readonly IGithubClient _githubClient;
+        private readonly ISynchronizationService _synchronizationService;
 
-        public SynchronizationController(IGithubClient githubClient)
+        public SynchronizationController(ISynchronizationService synchronizationService)
         {
-            _githubClient = githubClient;
+            _synchronizationService = synchronizationService;
         }
 
         [HttpGet("repos/{userId:int}")]
         public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
         {
-            var repos = await _githubClient.GetUserRepositories(userId);
-            return repos.Select(r => new Repository { Id = r.Id, Name = r.Name });
+            return await _synchronizationService.GetUserRepositories(userId);
         }
     }
 }
