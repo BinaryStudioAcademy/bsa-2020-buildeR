@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
+import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,21 +10,20 @@ export class ProjectLogsService {
   private logsHubConnection: HubConnection;
 
   constructor() {
-    this.buildConnection();
-    this.startConnection();
    }
 
-   private buildConnection() {
+   public buildConnection() {
      this.logsHubConnection = new HubConnectionBuilder()
-     .withUrl('http://localhost:5070/logsHub')
+     .withUrl(environment.logsHub)
      .build();
    }
 
-   private startConnection() {
+   public startConnectionAndJoinGroup(groupName: string) {
      this.logsHubConnection
       .start()
       .then(() => {
         console.log('Connection started...');
+        this.logsHubConnection.invoke('JoinGroup', groupName); // Automatically join group after connecting
       })
       .catch(err => {
         console.log('Error while starting connection: ' + err);
@@ -32,6 +32,11 @@ export class ProjectLogsService {
           this.startConnection();
         }, 3000);
       });
+   }
+
+   public stopConnection() {
+     this.logsHubConnection
+      .stop(); // It also makes user leave his group automaticlly after disconnecting
    }
 
    public logsListener(logSubject: Subject<string>) {
