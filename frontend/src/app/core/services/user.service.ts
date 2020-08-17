@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { HttpService } from '../../core/services/http.service';
 import { User } from '../../shared/models/user/user';
 import { NewUser } from '../../shared/models/user/new-user';
+import { ValidateUser } from '@shared/models/user/validate-user';
 
 @Injectable({
   providedIn: 'root'
@@ -47,8 +48,8 @@ export class UserService {
     this.subject.next(url);
   }
 
-  validateUsername(username: string) {
-    return this.httpService.getRequest<boolean>(`${this.routePrefix}/validate-username/${username}`);
+  validateUsername(user: ValidateUser): Observable<HttpResponse<boolean>> {
+    return this.httpService.postFullRequest<boolean>(`${this.routePrefix}/validate-username`, user);
   }
 
 }

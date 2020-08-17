@@ -63,7 +63,7 @@
           and can't start or finish with these
           characters ' - ', ' . '
         </div>
-        <div class="error " *ngIf="registerForm.controls['username'].errors?.isExists">
+        <div class="error " *ngIf="registerForm.controls['username'].errors?.isUsernameExists">
           Username has already been taken
         </div>
       </div>

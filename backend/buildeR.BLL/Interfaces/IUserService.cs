@@ -11,7 +11,7 @@ namespace buildeR.BLL.Interfaces
         Task<ICollection<UserDTO>> GetAll();
         Task<UserDTO> Register(NewUserDTO creatingUser);
         Task<UserDTO> Update(UserDTO userDTO);
-        Task<bool> ValidateUsername(string username);
+        Task<bool> ValidateUsername(ValidateUserDTO user);
         Task Delete(int id);
     }
 }

@@ -104,10 +104,16 @@ namespace buildeR.BLL.Services
             return _mapper.Map<UserDTO>(existing);
         }
 
-        public async Task<bool> ValidateUsername(string username)
+        public async Task<bool> ValidateUsername(ValidateUserDTO user)
         {
-            int coincidenceCount = await _context.Users.CountAsync(x => x.Username.ToLower() == username.ToLower());
-            return coincidenceCount == 0;
+            if (user.Id != 0)
+            {
+                return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower() && x.Id != user.Id);
+            }
+            else
+            {
+                return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower());
+            }
         }
     }
 }

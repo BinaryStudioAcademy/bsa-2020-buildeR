@@ -50,10 +50,10 @@ namespace buildeR.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("validate-username/{username}")]
-        public async Task<bool> ValidateUsername(string username)
+        [HttpPost("validate-username")]
+        public async Task<bool> ValidateUsername([FromBody] ValidateUserDTO user)
         {
-            return await _userService.ValidateUsername(username);
+            return await _userService.ValidateUsername(user);
         }
 
         [HttpPut]
