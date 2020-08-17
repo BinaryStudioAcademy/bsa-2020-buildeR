@@ -57,6 +57,7 @@ namespace buildeR
 
             services.RegisterCustomServices();
             services.RegisterRabbitMQ(Configuration);
+            services.RegisterHttpCients();
 
             services.AddCors(options =>
             {
