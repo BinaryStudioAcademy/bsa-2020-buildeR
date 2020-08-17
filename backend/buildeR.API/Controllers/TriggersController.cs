@@ -16,7 +16,7 @@ namespace buildeR.API.Controllers
             _triggerService = triggerService;
         }
         [HttpGet("{id}")]
-        public async Task<ProjectTriggerInfoDTO> GetAll(int id)
+        public async Task<ProjectTriggerInfoDTO> GetTriggerById(int id)
         {
             return await _triggerService.GetTriggerInfoById(id);
         }

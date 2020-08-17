@@ -34,46 +34,71 @@ namespace buildeR.BLL.Services
             var triggerInfoDTO = Mapper.Map<ProjectTriggerInfoDTO>(quartzInfoDTO);
             return triggerInfoDTO;
         }
-        public async Task<ProjectTriggerInfoDTO> GetTriggerInfoById(int triggerId, int projectId)
-        {
-            var quartzInfoDTO = await _quartzService
-                .GetByTriggerIdAndProjectId(triggerId.ToString(), projectId.ToString());
-            var triggerInfoDTO = Mapper.Map<ProjectTriggerInfoDTO>(quartzInfoDTO);
-            return triggerInfoDTO;
-        }
         public async Task<ProjectTriggerInfoDTO> CreateTrigger(NewProjectTriggerDTO trigger)
         {
-            var cronExpression = trigger.CronExpression; // because entity ProjectTrigger don't have field "CronExpression"
-
-            var createdTriggerDTO = await base.AddAsync(trigger);
-            if(createdTriggerDTO != null)
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                createdTriggerDTO.CronExpression = cronExpression; // set CronExpression 
-                var quartzDTO = Mapper.Map<QuartzDTO>(createdTriggerDTO);
+                try
+                {
+                    var cronExpression = trigger.CronExpression; // because entity ProjectTrigger don't have field "CronExpression"
+                    var createdTriggerDTO = await base.AddAsync(trigger);
 
-                var quartzInfo = await _quartzService.AddScheduleJob(quartzDTO);
-                
-                return Mapper.Map<ProjectTriggerInfoDTO>(quartzInfo);
+                    createdTriggerDTO.CronExpression = cronExpression; // set CronExpression 
+                    var quartzDTO = Mapper.Map<QuartzDTO>(createdTriggerDTO);
+
+                    var quartzInfo = await _quartzService.AddScheduleJob(quartzDTO);
+                    var projectTriggerInfoDTO = Mapper.Map<ProjectTriggerInfoDTO>(quartzInfo);
+                    transaction.Commit();
+                    return projectTriggerInfoDTO;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
             }
-            throw new ArgumentNullException();
         }
         public async Task<ProjectTriggerInfoDTO> UpdateTrigger(ProjectTriggerDTO trigger)
         {
-            var cronExpression = trigger.CronExpression;
-            await base.UpdateAsync(trigger);
-            var updatedTrigger = await base.GetAsync(trigger.Id);
-            updatedTrigger.CronExpression = cronExpression;
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var cronExpression = trigger.CronExpression;
+                    await base.UpdateAsync(trigger);
+                    var updatedTrigger = await base.GetAsync(trigger.Id);
+                    updatedTrigger.CronExpression = cronExpression;
 
-            var quartzDTO = Mapper.Map<QuartzDTO>(updatedTrigger);
-            var quartzInfo =  await _quartzService.UpdateScheduleJob(quartzDTO);
-            return Mapper.Map<ProjectTriggerInfoDTO>(quartzInfo);
+                    var quartzDTO = Mapper.Map<QuartzDTO>(updatedTrigger);
+                    var quartzInfo =  await _quartzService.UpdateScheduleJob(quartzDTO);
+                    var projectTriggerInfoDTO = Mapper.Map<ProjectTriggerInfoDTO>(quartzInfo);
+                    transaction.Commit();
+                    return projectTriggerInfoDTO;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
         }
         public async Task DeleteTrigger(int id)
         {
-            var trigger = await base.GetAsync(id);
-            var quartzDTO = Mapper.Map<QuartzDTO>(trigger);
-            await _quartzService.DeletScheduleJob(quartzDTO);
-            await base.RemoveAsync(id);
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var trigger = await base.GetAsync(id);
+                    var quartzDTO = Mapper.Map<QuartzDTO>(trigger);
+                    await _quartzService.DeletScheduleJob(quartzDTO);
+                    await base.RemoveAsync(id);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
         }
     }
 }
