@@ -2,8 +2,30 @@
     userProjects?.length;
     then existActiveProjects;
     else emptyActiveProjects
-  "></div>
+  ">
+</div>
 <ng-template #existActiveProjects>
+
+    <div class="container my-3">
+        <span class="my-auto">Starred repositories</span>
+    </div>
+
+    <div *ngIf="starredProjects?.length;
+    then existStarredProjects;
+    else emptyStarredProjects
+    ">
+    </div>
+    <ng-template #existStarredProjects>
+
+    </ng-template>
+    <ng-template #emptyStarredProjects>
+        <div class="container border rounded my-3">
+            <div class="row">
+                <p class="m-auto text-center"><i class="fa fa-star-o"></i> You can keep track of your favorite repositories here once you start starring!</p>
+            </div>
+        </div>
+    </ng-template>
+
     <div class="container d-flex flex-row my-3">
         <span class="my-auto">
       Active projects
