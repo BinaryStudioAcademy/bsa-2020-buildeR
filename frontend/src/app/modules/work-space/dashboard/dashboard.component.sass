@@ -1,5 +1,5 @@
-.vl
-  border-left: 2px solid grey
+.vertical-line
+  border-right: 0.1rem solid grey
 
 .toggler-icon
   display: inline-block
@@ -31,3 +31,17 @@
 
 .star
   font-size: 2rem
+
+@media (max-width: 992px)
+  .col-md-1, .col-md-2, .col-md-12
+    padding-left: 0 !important
+    padding-right: 0 !important
+
+@media (min-width: 767px) and (max-width: 992px)
+  .vertical-line
+    margin-right: 3px
+    margin-left: -3px
+
+@media (max-width: 767px)
+  .vertical-line
+    border: 0
