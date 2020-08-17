@@ -7,9 +7,9 @@ namespace buildeR.Common.DTO
 {
     public class ProjectLog
     {
-        public DateTime timestamp { get; set; }
-        public string message { get; set; }
-        public int buildId { get; set; }
-        public int buildStep { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Message { get; set; }
+        public int BuildId { get; set; }
+        public int BuildStep { get; set; }
     }
 }
