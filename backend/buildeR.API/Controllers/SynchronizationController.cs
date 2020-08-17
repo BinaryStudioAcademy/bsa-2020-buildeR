@@ -24,9 +24,9 @@ namespace buildeR.API.Controllers
         }
 
         [HttpGet("repos/{userId:int}")]
-        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
+        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId, [FromHeader]string ProviderAuthorization)
         {
-            return await _synchronizationService.GetUserRepositories(userId);
+            return await _synchronizationService.GetUserRepositories(userId, ProviderAuthorization);
         }
     }
 }

@@ -6,6 +6,6 @@ namespace buildeR.BLL.Interfaces
 {
     public interface ISynchronizationService
     {
-        Task<IEnumerable<Repository>> GetUserRepositories(int userId);
+        Task<IEnumerable<Repository>> GetUserRepositories(int userId, string accessToken);
     }
 }

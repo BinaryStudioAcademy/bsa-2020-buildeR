@@ -23,25 +23,25 @@ namespace buildeR.BLL.Services
             _context = context;
         }
 
-        public async Task<GithubUser> GetUserFromToken(int userId)
+        public async Task<GithubUser> GetUserFromToken(int userId, string providerToken)
         {
-            await SetUpHttpClient(userId);
+            SetUpHttpClient(providerToken);
 
             throw new NotImplementedException();
             //todo
         }
 
-        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(int userId, string repositoryName)
+        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(int userId, string repositoryName, string providerToken)
         {
-            await SetUpHttpClient(userId);
+            SetUpHttpClient(providerToken);
 
             throw new NotImplementedException();
             //todo
         }
 
-        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(int userId)
+        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(int userId, string providerToken)
         {
-            await SetUpHttpClient(userId);
+            SetUpHttpClient(providerToken);
 
             var endpoint = $"user/repos?visibility=all&affiliation=owner";
             var response = await _client.GetAsync(endpoint);
@@ -50,13 +50,9 @@ namespace buildeR.BLL.Services
             return JsonConvert.DeserializeObject<IEnumerable<GithubRepository>>(content);
         }
 
-        private async Task SetUpHttpClient(int userId)
+        private void SetUpHttpClient(string token)
         {
-            var provider = await _context.SocialNetworks.FirstOrDefaultAsync(s => s.ProviderName == Provider.GitHub);
-            var userToSocialNetwork = await _context.UserSocialNetworks
-                                            .FirstOrDefaultAsync(u => u.UserId == userId && u.SocialNetworkId == provider.Id);
-
-            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", userToSocialNetwork.AccessToken);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
         }
     }
 }
