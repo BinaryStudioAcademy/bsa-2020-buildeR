@@ -7,5 +7,11 @@ using System.Threading.Tasks;
 
 namespace buildeR.SignalR.Hubs
 {
-    public class LogsHub : Hub { }
+    public class LogsHub : Hub
+    {
+        public async Task JoinGroup(string groupName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        }
+    }
 }

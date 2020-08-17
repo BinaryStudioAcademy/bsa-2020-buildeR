@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using buildeR.Common.DTO;
 using buildeR.SignalR.Hubs;
 using buildeR.SignalR.Services;
 using Confluent.Kafka;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace buildeR.SignalR
 {
@@ -20,11 +22,11 @@ namespace buildeR.SignalR
 
         private KafkaConsumer _kafkaConsumer;
 
-        public Worker(IHubContext<LogsHub> logsHubContext)
+        public Worker(IConfiguration config, IHubContext<LogsHub> logsHubContext)
         {
             _topic = "weblog";
             _logsHubContext = logsHubContext;
-            _kafkaConsumer = new KafkaConsumer(_topic);
+            _kafkaConsumer = new KafkaConsumer(config, _topic);
         }
 
         protected override Task ExecuteAsync(CancellationToken cancellationToken)
@@ -44,8 +46,9 @@ namespace buildeR.SignalR
                             {
                                 var cr = consumer.Consume(_cancellationTokenSource.Token);
 
+                                var groupId = JsonConvert.DeserializeObject<ProjectLog>(cr.Message.Value).BuildId.ToString();
                                 // Broadcast is a method that will be called on client to receive messages
-                                _logsHubContext.Clients.All.SendAsync("Broadcast", $"{cr.Message.Value}");
+                                _logsHubContext.Clients.Group(groupId).SendAsync("Broadcast", $"{cr.Message.Value}");
                             }
                         }
                         catch (OperationCanceledException) { }
