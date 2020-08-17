@@ -10,4 +10,5 @@ export interface NewUser {
   uId: string;
   providerId: Providers;
   providerUrl: string;
+  accessToken: string;
 }
