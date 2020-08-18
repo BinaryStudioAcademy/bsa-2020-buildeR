@@ -12,6 +12,8 @@ import { CronJobsModule } from 'ngx-cron-jobs';
 import { CronBuilderComponent } from './components/cron-builder/cron-builder.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LogLevelDirective } from './directives/log-level.directive';
+import { TimespanPipe } from './pipes/timespan.pipe';
+import { BuildHistoryStatusDirective } from './directives/build-history-status.directive';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -23,6 +25,8 @@ import { LogLevelDirective } from './directives/log-level.directive';
     LogLevelDirective,
     CronBuilderComponent,
     NotFoundComponent,
+    TimespanPipe,
+    BuildHistoryStatusDirective,
   ],
   imports: [
     CommonModule,
@@ -41,11 +45,13 @@ import { LogLevelDirective } from './directives/log-level.directive';
     FormsModule,
     BuildStatusPipe,
     DateAgoPipe,
+    TimespanPipe,
     BuildStatusColorDirective,
     BuildStatusIconDirective,
     LogLevelDirective,
     NotFoundComponent,
     CronBuilderComponent,
+    BuildHistoryStatusDirective
   ],
 })
 export class SharedModule {}

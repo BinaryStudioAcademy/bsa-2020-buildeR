@@ -1,5 +1,6 @@
 export enum BuildStatus {
-  NotStarted,
-  Failed,
-  Passed,
+  Error,
+  Failure,
+  Pending,
+  Success,
 }
