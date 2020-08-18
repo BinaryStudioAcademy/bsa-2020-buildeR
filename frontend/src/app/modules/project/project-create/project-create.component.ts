@@ -15,7 +15,7 @@ import { Repository } from '@core/models/Repository';
 })
 export class ProjectCreateComponent implements OnInit {
   newProject: NewProject;
-  user: User = this.authService.getUser();
+  user: User = this.authService.getCurrentUser();
   repositories: Repository[];
 
   constructor(
@@ -47,7 +47,7 @@ export class ProjectCreateComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
-        this.router.navigate(['portal/dashboard']);
+        this.router.navigate(['portal']);
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);
@@ -55,7 +55,7 @@ export class ProjectCreateComponent implements OnInit {
     );
   }
   cancel() {
-    this.router.navigate(['portal/dashboard']);
+    this.router.navigate(['portal']);
   }
   onToggle(change: boolean) {
     change = !change;

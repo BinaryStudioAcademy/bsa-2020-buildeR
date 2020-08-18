@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ProjectResolverService } from './project-resolver.service';
+import { ProjectResolverService } from './project.resolver';
 
 describe('ProjectResolverService', () => {
   let service: ProjectResolverService;
