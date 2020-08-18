@@ -1,11 +1,11 @@
 using AutoMapper;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.MappingProfiles;
+using buildeR.BLL.Providers;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
-using buildeR.Common.Interfaces;
-using buildeR.Common.Services;
+using buildeR.Common.Extensions;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +39,8 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
 
+            services.AddTransient<IBuildOperationsService, BuildOperationsService>();
+
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)
@@ -47,7 +49,7 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            QueueSettings queueSettings = configuration.GetSection("RabbitMQ:Queues:ToProcessor").Get<QueueSettings>();
+            var queueSettings = configuration.Bind<QueueSettings>("RabbitMQ:Queues:ToProcessor");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
         }
         public static void RegisterHttpCients(this IServiceCollection services)

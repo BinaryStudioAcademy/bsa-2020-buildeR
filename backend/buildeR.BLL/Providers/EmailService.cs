@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using buildeR.Common.Interfaces;
+using buildeR.BLL.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace buildeR.Common.Services
+namespace buildeR.BLL.Providers
 {
-    
     public class EmailService : IEmailService
     {
         private readonly string _senderEmail;
@@ -22,10 +19,9 @@ namespace buildeR.Common.Services
         {
             _builder = builder;
 
-            var sendgridSection = configuration.GetSection("Sendgrid");
-            _apiKey = sendgridSection["SENDGRID_API_KEY"];
-            _senderEmail = sendgridSection["SENDGRID_EMAIL"];
-            _senderName = sendgridSection["SENDGRID_Name"];
+            _apiKey = configuration["SENDGRID_API_KEY"];
+            _senderEmail = configuration["SENDGRID_EMAIL"];
+            _senderName = configuration["SENDGRID_Name"];
         }
 
         public async Task SendEmailAsync(List<string> emails, string subject, string title, string body)

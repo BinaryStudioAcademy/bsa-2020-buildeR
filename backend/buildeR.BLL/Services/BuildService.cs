@@ -7,7 +7,9 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace buildeR.BLL.Services
 {
@@ -34,7 +36,17 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
-            return await base.AddAsync(build);
+
+            var lastNumber = Context.BuildHistories.AsNoTracking().Where(bh => bh.ProjectId == build.ProjectId)
+                .Select(bh => bh.Number).Max();
+
+            var history = await base.AddAsync(build);
+
+            history.Number = lastNumber + 1;
+
+            await Update(history);
+
+            return history;
         }
         public async Task Update(BuildHistoryDTO build)
         {
@@ -52,6 +64,11 @@ namespace buildeR.BLL.Services
                 throw new NotFoundException(nameof(BuildHistory), id);
             }
             await base.RemoveAsync(id);
+        }
+
+        public async Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id)
+        {
+            return Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(await Context.BuildHistories.AsNoTracking().Where(bh => bh.Project.Id == id).ToListAsync());
         }
     }
 }

@@ -41,6 +41,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
                     b.Property<int>("PerformerId")
                         .HasColumnType("int");
 

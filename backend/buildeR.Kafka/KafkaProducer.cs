@@ -20,7 +20,7 @@ namespace buildeR.Kafka
 
             _config = new ProducerConfig
             {
-                BootstrapServers = configuration.GetSection("Kafka:BootstrapServers").Value
+                BootstrapServers = configuration["Kafka:BootstrapServers"]
             };
             _producer = new ProducerBuilder<Null, string>(_config).Build();
         }
