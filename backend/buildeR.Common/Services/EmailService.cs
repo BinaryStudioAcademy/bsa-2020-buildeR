@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using buildeR.Common.Interfaces;
+using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -16,14 +17,18 @@ namespace buildeR.Common.Services
         private readonly string _apiKey;
         private readonly IEmailBuilder _builder;
         private readonly SendGridClient _client;
-        public EmailService(IEmailBuilder builder)
+        
+        private readonly IConfigurationSection _section;
+        public EmailService(IEmailBuilder builder, IConfiguration configuration)
         {
-            _apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-            _senderEmail = Environment.GetEnvironmentVariable("SENDGRID_EMAIL");
-            _senderName = Environment.GetEnvironmentVariable("SENDGRID_Name");
+            _section = configuration.GetSection("Sendgrid");
+            _apiKey = _section["SENDGRID_API_KEY"];
+            _senderEmail = _section["SENDGRID_EMAIL"];
+            _senderName = _section["SENDGRID_Name"];
             _builder = builder;
             _client = new SendGridClient(_apiKey);
         }
+
         public async Task SendEmailAsync(List<string> emails, string subject, string title, string body)
         {
 

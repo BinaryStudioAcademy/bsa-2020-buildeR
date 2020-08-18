@@ -8,6 +8,7 @@ using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.Common.Enums;
+using buildeR.Common.Interfaces;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,15 @@ namespace buildeR.BLL.Services
     {
         private readonly BuilderContext _context;
         private readonly IMapper _mapper;
+        private readonly IEmailBuilder _emailBuilder;
+        private readonly IEmailService _emailService;
 
-        public UserService(BuilderContext context, IMapper mapper)
+        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder)
         {
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
+            _emailBuilder = emailBuilder;
         }
 
         public async Task<UserDTO> GetUserById(int id)
@@ -76,6 +81,9 @@ namespace buildeR.BLL.Services
             var userSNEntity = _mapper.Map<UserSocialNetwork>(userSN);
             _context.Add(userSNEntity);
             await _context.SaveChangesAsync();
+
+            var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
+            await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, emailModel.Subject, emailModel.Title, emailModel.Body);
 
             return userDto;
         }

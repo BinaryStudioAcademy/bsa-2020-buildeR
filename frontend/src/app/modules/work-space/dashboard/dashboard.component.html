@@ -1,17 +1,15 @@
-<div
-  *ngIf="
+<div *ngIf="
     userProjects?.length;
     then existActiveProjects;
     else emptyActiveProjects
-  "
-></div>
+  "></div>
 <ng-template #existActiveProjects>
   <div class="container d-flex flex-row my-3">
     <span class="my-auto">
       Active projects
     </span>
     <div class="ml-auto">
-      <button class="btn btn-info" [routerLink]="'projects/create'">
+      <button class="btn btn-info" [routerLink]="'../projects/create'">
         +
       </button>
     </div>
@@ -22,33 +20,26 @@
       <div class="d-inline my-auto ml-2 mr-2">
         <button class="btn star" title="Star this project">
           <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABmJLR0QA/wD/AP+gvaeTAAAB10lEQVRIic3WwYtNcRQH8M+8odhgMRZsvGIkL1loFmjqEZqFP8Ha2h/wBktLu4kVIaKmKQuhKGVBmc3MbKiJBbGQoTdMGq7FPc+9bu9xL++VU6ff7fy+3/M959f5/br8x3YhfKB2DEn40UEKPcoJPR6UyKEQeB+eRKzv9jCStzAZ3w/6LXIgEn/AJmyQdTXeT6F7kXQyFzsdsbtlEgx1idWwDaPYiT04iSXU8TFwG/FS2uFFzOE5XuAVvhcTr8dZTGMeK7LJynurS1GtHtiVyDWNM1g3hAncKSR4E9V1fAH38a2AG5bep0Z03/GtBdwErMVMrpJml8qrWlN2MjOh8bOya7GxhP3/ILJPNpG38iJ5sSsBaPu7y3hQOiwJbnYTyYtdDuAyDlcQGcen4N7Amj8RimI7SoiMBjYJ7nDZ6mpYDGKzBL4Z2MXglrYaPgd5cwn8SGC/qNAN6XEleFuB8y4427tt9mpzd6wLhfgYboePFfbmY21UEeqA52LdJR3XJzge/lT6WuwtI9RrBDsdLeMSTkjPvo3zsXcKR/AMV/G6wC1ls359JL9Kf0i25DAjOCcdgDx2topQO0ir0VH9N9h6YFZlr0ppm8J1Pc67hzWCM1VFqO/2AwJSiX+umWHxAAAAAElFTkSuQmCC"
-          />
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABmJLR0QA/wD/AP+gvaeTAAAB10lEQVRIic3WwYtNcRQH8M+8odhgMRZsvGIkL1loFmjqEZqFP8Ha2h/wBktLu4kVIaKmKQuhKGVBmc3MbKiJBbGQoTdMGq7FPc+9bu9xL++VU6ff7fy+3/M959f5/br8x3YhfKB2DEn40UEKPcoJPR6UyKEQeB+eRKzv9jCStzAZ3w/6LXIgEn/AJmyQdTXeT6F7kXQyFzsdsbtlEgx1idWwDaPYiT04iSXU8TFwG/FS2uFFzOE5XuAVvhcTr8dZTGMeK7LJynurS1GtHtiVyDWNM1g3hAncKSR4E9V1fAH38a2AG5bep0Z03/GtBdwErMVMrpJml8qrWlN2MjOh8bOya7GxhP3/ILJPNpG38iJ5sSsBaPu7y3hQOiwJbnYTyYtdDuAyDlcQGcen4N7Amj8RimI7SoiMBjYJ7nDZ6mpYDGKzBL4Z2MXglrYaPgd5cwn8SGC/qNAN6XEleFuB8y4427tt9mpzd6wLhfgYboePFfbmY21UEeqA52LdJR3XJzge/lT6WuwtI9RrBDsdLeMSTkjPvo3zsXcKR/AMV/G6wC1ls359JL9Kf0i25DAjOCcdgDx2topQO0ir0VH9N9h6YFZlr0ppm8J1Pc67hzWCM1VFqO/2AwJSiX+umWHxAAAAAElFTkSuQmCC" />
         </button>
       </div>
       <div class="d-inline vl my-2"></div>
       <div class="d-inline my-auto mx-5">
         <p>
-          <a class="text-dark" [routerLink]="['user']">{{
+          <a class="text-dark" [routerLink]="['../user']">{{
             project?.owner.username
           }}</a>
         </p>
         <p>
-          <a
-            class="text-dark"
-            [routerLink]="['projects', project?.id, 'details']"
-            >{{ project.name }}</a
-          >
+          <a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{ project.name }}</a>
         </p>
       </div>
 
-      <div
-        *ngIf="
+      <div *ngIf="
           project.lastBuildHistory;
           then existBuildBlock;
           else notExistBuildBlock
-        "
-      ></div>
+        "></div>
       <ng-template #existBuildBlock>
         <div class="d-inline my-auto mx-5">
           <p class="text-muted small">
@@ -63,14 +54,8 @@
             Last build
           </p>
           <p class="small font-weight-bold build-status">
-            <span
-              buildStatusColor
-              [buildStatus]="project.lastBuildHistory.buildStatus"
-            >
-              <span
-                buildStatusIcon
-                [buildStatus]="project.lastBuildHistory.buildStatus"
-              ></span>
+            <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
+              <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span>
               {{ project.lastBuildHistory.buildStatus | buildStatus }}
             </span>
           </p>
@@ -94,22 +79,11 @@
 
         <div class="d-inline my-auto ml-auto mr-3">
           <div class="dropdown" ngbDropdown>
-            <button
-              ngbDropdownToggle
-              class="btn"
-              type="button"
-              id="dropdownMenuButton"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
+            <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
               <span class="toggler-icon"></span>
             </button>
-            <div
-              ngbDropdownMenu
-              class="dropdown-menu"
-              aria-labelledby="dropdownMenuButton"
-            >
+            <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <button class="btn btn-success dropdown-item">Run</button>
               <button class="btn dropdown-item">Settings</button>
               <button class="btn btn-danger dropdown-item">Remove</button>
@@ -151,11 +125,9 @@
           </g>
           </svg>
       </div>
-      <span class="my-3"
-        >It seems that you don't have active projects. Maybe it's time to add
-        the first one?</span
-      >
-      <button class="btn btn-success" routerLink="projects/create">
+      <span class="my-3">It seems that you don't have active projects. Maybe it's time to add
+        the first one?</span>
+      <button class="btn btn-success" routerLink="../projects/create">
         Add first project
       </button>
     </div>
