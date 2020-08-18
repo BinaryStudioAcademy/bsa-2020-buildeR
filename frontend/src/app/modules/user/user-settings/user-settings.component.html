@@ -2,18 +2,6 @@
     <div class="scroll-container">
         <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
             <div class="group">
-                <div class="input-area">
-                    <div class="avatar-container">
-                        <div class="avatar-inner-container" (click)="open()">
-                            <input hidden class="file-hide" #file accept="image/*" type="file">
-                            <img class="avatar avatar-style" src="{{details.avatarUrl}}" onerror="this.src='../../../../assets/images/Avatar-default.png'">
-                            <div class="img-text mx-auto">
-                                Change
-                            </div>
-                        </div>
-                        <small class="nickname"> @{{details.username}}</small><small class="date-since"> Member since {{details.createdAt | date:'mediumDate'}} </small>
-                    </div>
-                </div>
                 <div class="field">
                     <span>First Name</span>
                 </div>
@@ -118,7 +106,8 @@
                 </div>
                 <div class="input-area">
                     <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio" placeholder="Tell us something about yourself">
-      </textarea>
+
+               </textarea>
                     <div *ngIf="settingsForm.controls['bio'].errors">
                         <div class="error" *ngIf="settingsForm.controls['bio'].errors.maxlength">
                             The maximum length is 300 characters
