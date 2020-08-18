@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200818093400_buildHistoryNumbers")]
+    partial class buildHistoryNumbers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,9 +229,6 @@ namespace buildeR.DAL.Migrations
                     b.Property<bool>("IsCleanUpBeforeBuild")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsFavorite")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -239,7 +238,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Repository")
+                    b.Property<string>("RepositoryUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

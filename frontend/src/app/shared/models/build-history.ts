@@ -4,6 +4,7 @@ import { BuildStatus } from './build-status';
 export interface BuildHistory {
   id: number;
   // project: Project;
+  number: Number,
   performer: User;
   duration: number;
   buildAt: Date;

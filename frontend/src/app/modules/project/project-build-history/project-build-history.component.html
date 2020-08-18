@@ -1,0 +1,13 @@
+<ul class="build-container">
+  <li *ngFor="let build of builds" [appBuildHistoryStatusOutline]="build.buildStatus">
+    <div class='user-commit'>
+      <a>{{build.performer.username}}</a>
+      <p><i class="fas fa-code"></i> {{build.commitHash.substring(0, 6)}}</p>
+    </div>
+    <div class="build-info">
+      <p class="status" [appBuildHistoryStatus]="build.buildStatus"><i class="fas fa-hammer"></i> #{{build.number}} {{build.buildStatus | buildStatus}}</p>
+      <p class="build-time"><i class="far fa-clock"></i> {{build.duration | timespan}}</p>
+      <p class="start-time"><i class="far fa-calendar-alt"></i> {{build.buildAt | dateAgo}}</p>
+    </div>
+  </li>
+</ul>

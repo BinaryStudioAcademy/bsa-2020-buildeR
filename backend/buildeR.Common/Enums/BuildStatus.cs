@@ -9,6 +9,8 @@ namespace buildeR.Common.Enums
         Error,
         Failure,
         Pending,
-        Success
+        Success,
+        Canceled,
+        InProgress
     }
 }

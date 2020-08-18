@@ -8,6 +8,7 @@ import { ProjectComponent } from './project.component';
 import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.component';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
+import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ProjectTriggersComponent } from './project-triggers/project-triggers.co
     ProjectSettingsComponent,
     LoggingTerminalComponent,
     ProjectDetailsComponent,
-    ProjectTriggersComponent
+    ProjectTriggersComponent,
+    ProjectBuildHistoryComponent
   ],
   imports: [ProjectRoutingModule, SharedModule],
 })
