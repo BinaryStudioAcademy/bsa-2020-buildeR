@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user/user';
 import { UserSettingsService } from '@core/services/user-settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ModalCropperService } from '@core/services/modal-cropper.service';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
@@ -25,8 +24,7 @@ export class UserSettingsComponent implements OnInit {
   constructor(private settingsService: UserSettingsService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
-              private route: ActivatedRoute,
-              private cropper: ModalCropperService) { }
+              private route: ActivatedRoute) { }
 
   ngOnInit(): void {
 
