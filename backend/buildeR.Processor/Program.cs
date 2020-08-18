@@ -28,11 +28,11 @@ namespace builder.Processor
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile(
-                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
-                    optional: true)
-                .Build();
+                    .SetBasePath(environment)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{environment}.json", reloadOnChange: true, optional: true)
+                    .AddEnvironmentVariables()
+                    .Build();
 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()

@@ -3,8 +3,6 @@ using buildeR.RabbitMq.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace buildeR.RabbitMq.Realization
 {
@@ -16,8 +14,8 @@ namespace buildeR.RabbitMq.Realization
             add => _consumer.Received += value;
             remove => _consumer.Received -= value;
         }
-        private IModel _model;
-        private QueueSettings _queueSettings;
+        private readonly IModel _model;
+        private readonly QueueSettings _queueSettings;
 
         public Consumer(IConnectionFactory factory, QueueSettings settings)
         {

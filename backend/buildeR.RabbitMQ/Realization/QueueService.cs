@@ -1,16 +1,13 @@
 ﻿using buildeR.RabbitMq.Interfaces;
 using buildeR.RabbitMq.Models;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace buildeR.RabbitMq.Realization
 {
     public class QueueService : IQueue
     {
-        private IConnection _connection;
-        private IModel _model;
+        private readonly IConnection _connection;
+        private readonly IModel _model;
 
         public QueueService(IConnectionFactory factory, QueueSettings queueSettings)
         {

@@ -4,6 +4,7 @@ using buildeR.BLL.MappingProfiles;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
+using buildeR.Common.Extensions;
 using buildeR.Common.Interfaces;
 using buildeR.Common.Services;
 using buildeR.RabbitMq.Models;
@@ -47,7 +48,7 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            QueueSettings queueSettings = configuration.GetSection("RabbitMQ:Queues:ToProcessor").Get<QueueSettings>();
+            var queueSettings = configuration.Bind<QueueSettings>("RabbitMQ:Queues:ToProcessor");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
         }
         public static void RegisterHttpCients(this IServiceCollection services)

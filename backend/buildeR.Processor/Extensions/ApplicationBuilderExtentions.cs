@@ -1,8 +1,8 @@
 ﻿using buildeR.Processor.Services;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace buildeR.Processor.Extensions
 {
@@ -14,7 +14,7 @@ namespace buildeR.Processor.Extensions
         {
             Service = app.ApplicationServices.GetService<ProcessorService>();
 
-            var lifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
+            var lifetime = app.ApplicationServices.GetService<IHostApplicationLifetime>();
 
             lifetime.ApplicationStarted.Register(OnStarted);
             lifetime.ApplicationStopping.Register(OnStopping);

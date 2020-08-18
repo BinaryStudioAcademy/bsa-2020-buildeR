@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace buildeR.Processor.Extensions
+namespace buildeR.Common.Extensions
 {
     public static class ConfigurationExtensions
     {
