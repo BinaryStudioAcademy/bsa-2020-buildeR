@@ -11,6 +11,9 @@ import {UserResolverService} from "../../core/resolvers/user-resolver/user-resol
   imports: [CommonModule, RouterModule.forChild([{
     path: '',
     component: UserComponent,
+    resolve: {
+      user: UserResolverService
+    },
     children: [{
       path: '',
       component: UserSettingsComponent,

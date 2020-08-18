@@ -1,20 +1,29 @@
 <div class="d-flex bd-highlight" mb-3 id="wrapper">
   <!-- Sidebar -->
   <div id="sidebar-wrapper-test">
+      <div class="avatar-container container">
+        <input hidden class="file-hide" #file accept="image/*" type="file" >
+        <img class="avatar avatar-style" src="{{currentUser.avatarUrl}}"
+             onerror="this.src='../../../../assets/images/Avatar-default.png'">
+        <div class="account-details">
+          <h1 class ="nickname"> @{{currentUser.username}}</h1>
+          <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
+        </div>
+      </div>
     <ul class="list-group list-group-horizontal container">
         <a
           routerLink="/portal/dashboard/user"
-          class="list-group-item list-group-item-action active"
+          class="list-group-item active"
           (click)="setStyleActiveElement($event)"
         ><p>Profile</p></a>
         <a
           [routerLink]="['/']"
-          class="list-group-item list-group-item-action"
+          class="list-group-item"
           (click)="setStyleActiveElement($event)"
         ><p>Project settings</p></a>
         <a
           [routerLink]="['/']"
-          class="list-group-item list-group-item-action"
+          class="list-group-item"
           (click)="setStyleActiveElement($event)"
         ><p>New settings</p></a>
     </ul>

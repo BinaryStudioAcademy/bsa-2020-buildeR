@@ -40,17 +40,19 @@
 
 #sidebar-wrapper-test
   width: 100%
+  margin-bottom: 35px
 
 .list-group-horizontal
   width: 100%
   border-bottom: 2px solid #f1f1f1
-  padding: 5px 0
+  margin-top: 15px
   .list-group-item
-    padding: 0
+    padding: 5px 15px
     display: flex
     color: #666
-    justify-content: center
+    justify-content: start
     border-style: none
+    text-decoration: none
     &:hover
       color: #3eaaaf
       background-color: white
@@ -68,4 +70,29 @@
       height: 2px
       background-color: #3eaaaf
 
+// styles for avatar
+.avatar-style
+  height: 75px
+  width: 75px
+  opacity: 1
+  display: block
+  transition: .5s ease
+  backface-visibility: hidden
+  border-radius: 50%
 
+.avatar-container
+  margin-top: 15px
+  position: relative
+  display: flex
+  align-items: start
+  justify-content: start
+  .account-details
+    margin-left: 20px
+    h1
+      color: #666
+      font-family: "Source Sans Pro", Helvetica, sans-serif
+      font-weight: 300
+      font-size: 40px
+    div
+      color: #9d9d9d
+      font-size: 14px
