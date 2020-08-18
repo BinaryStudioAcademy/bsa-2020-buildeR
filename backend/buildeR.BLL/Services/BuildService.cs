@@ -36,7 +36,17 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
-            return await base.AddAsync(build);
+
+            var lastNumber = Context.BuildHistories.AsNoTracking().Where(bh => bh.ProjectId == build.ProjectId)
+                .Select(bh => bh.Number).Max();
+
+            var history = await base.AddAsync(build);
+
+            history.Number = lastNumber;
+
+            await Update(history);
+
+            return history;
         }
         public async Task Update(BuildHistoryDTO build)
         {

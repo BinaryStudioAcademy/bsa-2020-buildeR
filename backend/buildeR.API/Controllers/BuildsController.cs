@@ -34,23 +34,39 @@ namespace buildeR.API.Controllers
             {
                 new BuildHistoryDTO
                 {
-                    Duration = 600, BuildAt = DateTime.Now, CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    Number = 1, Duration = 600000, BuildAt = DateTime.Now,
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
                     BuildStatus = 0, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
                 },
                 new BuildHistoryDTO
                 {
-                    Duration = 123, BuildAt = DateTime.Now, CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    Number = 2, Duration = 123000, BuildAt = DateTime.Now - TimeSpan.FromDays(5),
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
                     BuildStatus = 1, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
                 },
                 new BuildHistoryDTO
                 {
-                    Duration = 12, BuildAt = DateTime.Now, CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    Number = 3, Duration = 12000, BuildAt = DateTime.Now - TimeSpan.FromDays(10),
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
                     BuildStatus = 2, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
                 },
                 new BuildHistoryDTO
                 {
-                    Duration = 1234, BuildAt = DateTime.Now, CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    Number = 4, Duration = 1000, BuildAt = DateTime.Now - TimeSpan.FromMinutes(45),
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
                     BuildStatus = 3, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
+                },
+                new BuildHistoryDTO
+                {
+                    Number = 5, Duration = 1, BuildAt = DateTime.Now - TimeSpan.FromMinutes(45),
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    BuildStatus = 4, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
+                },
+                new BuildHistoryDTO
+                {
+                    Number = 6, Duration = 123, BuildAt = DateTime.Now - TimeSpan.FromDays(365),
+                    CommitHash = "e74a56257b44dc0dbd95144aa65bd6c760d68662",
+                    BuildStatus = 5, ProjectId = id, Performer = new UserDTO {Id = 28, Username = "Zhenia"}
                 }
             }.AsEnumerable();
         }
@@ -62,15 +78,15 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BuildHistoryDTO> Create(NewBuildHistoryDTO BuildStep)
+        public async Task<BuildHistoryDTO> Create(NewBuildHistoryDTO buildHistory)
         {
-            return await _buildService.Create(BuildStep);
+            return await _buildService.Create(buildHistory);
         }
 
         [HttpPut]
-        public async Task Update(BuildHistoryDTO BuildStep)
+        public async Task Update(BuildHistoryDTO buildHistory)
         {
-            await _buildService.Update(BuildStep);
+            await _buildService.Update(buildHistory);
         }
 
         [HttpDelete("{id}")]
