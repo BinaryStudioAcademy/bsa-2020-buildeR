@@ -9,7 +9,6 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class AuthenticationService {
-
   user: firebase.User;
   currentUser: User = undefined;
   constructor(
@@ -76,6 +75,13 @@ export class AuthenticationService {
 
   getToken(): string {
     return localStorage.getItem('jwt');
+  }
+
+  refreshToken() {
+    this.user.getIdToken().then((theToken) => {
+      localStorage.setItem('jwt', theToken);
+    });
+    return this.getToken();
   }
 
   getUser(): User {
