@@ -9,7 +9,6 @@ namespace buildeR.DAL.Entities
         public string SocialNetworkUrl { get; set; }
         public string UId { get; set; }
 
-
         public virtual SocialNetwork SocialNetwork { get; set; }
         public virtual User User { get; set; }
     }

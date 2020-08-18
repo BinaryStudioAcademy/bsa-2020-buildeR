@@ -13,6 +13,13 @@ form
   justify-self: start
   margin: 0 10px 20px
 
+select
+  height: calc(1.5em + 0.5rem - 3px)
+  width: 300px
+  border: 1px solid #ced4da
+  border-radius: 0.2rem
+  outline: none
+
 input
   width: 300px
 
@@ -23,6 +30,11 @@ textarea
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+
+.required-field::after
+    content: "*"
+    color: red
+
 
 .small-title
   margin-top: 0

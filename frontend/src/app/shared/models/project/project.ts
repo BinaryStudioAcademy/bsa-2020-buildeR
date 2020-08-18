@@ -8,11 +8,12 @@ export interface Project {
   name: string;
   description: string;
   isPublic: boolean;
-  repositoryUrl: string;
+  repository: string;
   credentialsId: string;
   isAutoCancelBranchBuilds: boolean;
   isAutoCancelPullRequestBuilds: boolean;
   isCleanUpBeforeBuild: boolean;
+  isFavorite: boolean;
   cancelAfter?: number;
 
   owner: User;

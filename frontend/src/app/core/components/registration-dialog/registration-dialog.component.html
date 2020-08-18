@@ -1,96 +1,96 @@
 <div class="modal-body">
-    <img class="logo" src="../../../../assets/images/logo.png" />
-    <form [formGroup]="registerForm" (ngSubmit)="save()">
-        <div class="input-area">
-            <span class="has-float-label">
-                <input type="text" class="form-control form-control-sm" formControlName="firstName"
-                    placeholder="First name">
-                <label [ngStyle]="{'color': registerForm.controls['firstName'].errors? 'red' : '#777777'}" for="firstName">First name</label>
-            </span>
-            <div *ngIf="registerForm.controls['firstName'].errors">
-                <div class="error " *ngIf="registerForm.controls['firstName'].errors.minlength">
-                    The minimum length is 2 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['firstName'].errors.maxlength">
-                    The maximum length is 30 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['firstName'].errors.pattern">
-                    First name must have only latin letters
-                    and can't start or finish with these
-                    characters ' - ', ' . '
-                </div>
-            </div>
+  <img class="logo" src="../../../../assets/images/logo.png" />
+  <form [formGroup]="registerForm" (ngSubmit)="save()">
+    <div class="input-area">
+      <span class="has-float-label">
+        <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="First name">
+        <label [ngStyle]="{'color': registerForm.controls['firstName'].errors? 'red' : '#777777'}" for="firstName">First
+          name</label>
+      </span>
+      <div *ngIf="registerForm.controls['firstName'].errors">
+        <div class="error " *ngIf="registerForm.controls['firstName'].errors.minlength">
+          The minimum length is 2 characters
         </div>
-        <div class="input-area">
-            <span class="has-float-label">
-                <input type="text" class="form-control form-control-sm" formControlName="lastName"
-                    placeholder="Last name">
-                <label [ngStyle]="{'color': registerForm.controls['lastName'].errors? 'red' : '#777777'}" for="lastName">Last name</label>
-            </span>
-            <div *ngIf="registerForm.controls['lastName'].errors">
-                <div class="error " *ngIf="registerForm.controls['lastName'].errors.minlength">
-                    The minimum length is 2 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['lastName'].errors.maxlength">
-                    The maximum length is 30 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['lastName'].errors.pattern">
-                    Last name must have only latin letters
-                    and can't start or finish with these
-                    characters ' - ', ' . '
-                </div>
-            </div>
+        <div class="error " *ngIf="registerForm.controls['firstName'].errors.maxlength">
+          The maximum length is 30 characters
         </div>
-        <div class="input-area">
-            <span class="has-float-label">
-                <input type="text" class="form-control form-control-sm" formControlName="username"
-                    placeholder="Username">
-                <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : '#777777'}" for="username">Username</label>
-            </span>
-            <div *ngIf="registerForm.controls['username'].errors">
-                <div class="error "
-                    [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
-                    Username is required
-                </div>
-                <div class="error " *ngIf="registerForm.controls['username'].errors.minlength">
-                    The minimum length is 3 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['username'].errors.maxlength">
-                    The maximum length is 30 characters
-                </div>
-                <div class="error " *ngIf="registerForm.controls['username'].errors.pattern">
-                    Username must have only latin letters, digits
-                    and can't start or finish with these
-                    characters ' - ', ' . '
-                </div>
-                <!-- <div class="error " *ngIf="registerForm.controls['username'] === ">
-                    Username has already taken
-                </div> -->
-            </div>
+        <div class="error " *ngIf="registerForm.controls['firstName'].errors.pattern">
+          First name must have only latin letters
+          and can't start or finish with these
+          characters ' - ', ' . '
         </div>
-        <div class="input-area">
-            <span class="has-float-label">
-                <input type="email" class="form-control form-control-sm" formControlName="email"
-                    placeholder="example@mail.com">
-                <label [ngStyle]="{'color': registerForm.controls['email'].errors? 'red' : '#777777'}" for="email">Email</label>
-            </span>
-            <div *ngIf="registerForm.controls['email'].errors">
-                <div class="error "
-                    [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
-                    Email is required
-                </div>
-                <div class="error " *ngIf="registerForm.controls['email'].errors.email
+      </div>
+    </div>
+    <div class="input-area">
+      <span class="has-float-label">
+        <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Last name">
+        <label [ngStyle]="{'color': registerForm.controls['lastName'].errors? 'red' : '#777777'}" for="lastName">Last
+          name</label>
+      </span>
+      <div *ngIf="registerForm.controls['lastName'].errors">
+        <div class="error " *ngIf="registerForm.controls['lastName'].errors.minlength">
+          The minimum length is 2 characters
+        </div>
+        <div class="error " *ngIf="registerForm.controls['lastName'].errors.maxlength">
+          The maximum length is 30 characters
+        </div>
+        <div class="error " *ngIf="registerForm.controls['lastName'].errors.pattern">
+          Last name must have only latin letters
+          and can't start or finish with these
+          characters ' - ', ' . '
+        </div>
+      </div>
+    </div>
+    <div class="input-area">
+      <span class="has-float-label">
+        <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="Username">
+        <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : '#777777'}"
+          for="username">Username<span class="required">*</span></label>
+      </span>
+      <div *ngIf="registerForm.controls['username'].errors">
+        <div class="error "
+          [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
+          Username is required
+        </div>
+        <div class="error " *ngIf="registerForm.controls['username'].errors.minlength">
+          The minimum length is 3 characters
+        </div>
+        <div class="error " *ngIf="registerForm.controls['username'].errors.maxlength">
+          The maximum length is 30 characters
+        </div>
+        <div class="error " *ngIf="registerForm.controls['username'].errors.pattern">
+          Username must have only latin letters, digits
+          and can't start or finish with these
+          characters ' - ', ' . '
+        </div>
+        <div class="error " *ngIf="registerForm.controls['username'].errors?.isUsernameExists">
+          Username has already been taken
+        </div>
+      </div>
+    </div>
+    <div class="input-area">
+      <span class="has-float-label">
+        <input type="email" class="form-control form-control-sm" formControlName="email" placeholder="example@mail.com">
+        <label [ngStyle]="{'color': registerForm.controls['email'].errors? 'red' : '#777777'}" for="email">Email<span
+            class="required">*</span></label>
+      </span>
+      <div *ngIf="registerForm.controls['email'].errors">
+        <div class="error "
+          [hidden]="registerForm.controls['email'].valid && registerForm.controls['email'].untouched || !registerForm.controls['email'].errors?.required">
+          Email is required
+        </div>
+        <div class="error " *ngIf="registerForm.controls['email'].errors.email
                          || registerForm.controls['email'].errors.pattern">
-                    Email must be like 'example@gmail.com'
-                    Email can't start or finish with these
-                    characters ' - ', ' . '
-                </div>
-            </div>
+          Email must be like 'example@gmail.com'
+          Email can't start or finish with these
+          characters ' - ', ' . '
         </div>
-        <div class="buttons">
-            <button type="submit" class="btn btn-success"
-                [disabled]="registerForm.invalid || !registerForm.dirty">Save</button>
-            <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
-        </div>
-    </form>
+      </div>
+    </div>
+    <div class="buttons">
+      <button type="submit" class="btn btn-success"
+        [disabled]="registerForm.invalid">Save</button>
+      <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
 </div>

@@ -1,155 +1,60 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { User } from '@shared/models/user/user';
-import * as firebase from 'firebase';
-import { UserService } from './user.service';
 import { NewUser } from '@shared/models/user/new-user';
-import { Providers } from '@shared/models/providers';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RegistrationDialogComponent } from '@core/components/registration-dialog/registration-dialog.component';
+import { User } from '@shared/models/user/user';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
+  private currentUser: User;
+  private firebaseUser: firebase.User;
 
-  user: firebase.User;
-  currentUser: User = undefined;
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
-    private modalService: NgbModal,
-    private router: Router) {
-    this.angularAuth.authState.subscribe(user => {
-      this.configureAuthState(user);
-    });
+    private router: Router
+  ) {
+    this.angularAuth.authState.subscribe(this.configureAuthState);
   }
 
-  configureAuthState(user: firebase.User): void {
+  configureAuthState = (user: firebase.User) => {
     if (user) {
-      user.getIdToken().then((theToken) => {
-        this.user = user;
-        localStorage.setItem('user', JSON.stringify(this.user));
-        localStorage.setItem('jwt', theToken);
+      return user.getIdToken().then((token) => {
+        this.populateAuth(token, user);
+        return this.loadCurrentUser();
       });
     }
-    else {
-      this.user = null;
-    }
+
+    this.clearAuth();
   }
 
-  signInWithUid(uid: string) {
-    this.userService.login(uid)
-      .subscribe((resp) => {
-        if (resp.body !== null) {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        }
-      });
-  }
-
-  doGoogleSignIn(): Promise<void> {
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-    return this.angularAuth.signInWithPopup(googleProvider).then((auth) => {
-      this.isUidExist(auth);
-    },
-      (error) => console.log("Email exist")
-    );
-  }
-
-  doGithubSignIn(): Promise<void> {
-    const githubProvider = new firebase.auth.GithubAuthProvider();
-    return this.angularAuth.signInWithPopup(githubProvider).then(
-      (auth) => {
-        this.isUidExist(auth);
-      },
-      (error) => console.log("Email exist")
-    );
-  }
-
-  isUidExist(auth: firebase.auth.UserCredential): void {
-    this.userService.login(auth.user.uid)
-      .subscribe((resp) => {
-        if (resp.body !== null) {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        }
-        else {
-          if (auth.credential.providerId === 'google.com') {
-            this.doGoogleSignUp(auth);
-          } else {
-            this.doGithubSignUp(auth);
-          }
-        }
-      });
-  }
-
-  doGoogleSignUp(credential: firebase.auth.UserCredential) {
-    const user = {
-      email: credential.user.email,
-      username: credential.user.displayName,
-      avatarUrl: credential.user.photoURL,
-      firstName: credential.additionalUserInfo.profile[`given_name`],
-      lastName: credential.additionalUserInfo.profile[`family_name`],
-      providerId: Providers.Google,
-      uId: credential.user.uid,
-      providerUrl: credential.credential.providerId
-    } as NewUser;
-
-    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.details = user;
-  }
-
-  registerUser(user: NewUser) {
-    this.userService.register(user).subscribe(
-      (resp) => {
-        if (resp.body !== null) {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        } else {
-          user.username = "This Username has already taken";
-          const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
-          modalRef.componentInstance.details = user;
-          modalRef.componentInstance.isUsernameTaken = true;
-        }
-      },
-      (error) => {
-
-      });
-  }
-
-  doGithubSignUp(credential: firebase.auth.UserCredential) {
-    const user = {
-      email: credential.user.email,
-      username: credential.additionalUserInfo.username,
-      avatarUrl: credential.user.photoURL,
-      providerId: Providers.Github,
-      uId: credential.user.uid,
-      providerUrl: credential.credential.providerId
-    } as NewUser;
-
-    const name: string = credential.additionalUserInfo.profile[`name`];
-    if (name != null) {
-      [user.firstName, user.lastName = ''] = name.split(' ');
+  async loadCurrentUser(force?: boolean) {
+    if (!this.currentUser || force) {
+      this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
     }
 
-    const modalRef = this.modalService.open(RegistrationDialogComponent, { backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.details = user;
+    return this.currentUser;
   }
 
-  logout(): Promise<void> {
-    localStorage.removeItem('user');
-    localStorage.removeItem('jwt');
-    this.currentUser = undefined;
+  registerUser(newUser: NewUser) {
+    this.userService.register(newUser).subscribe(
+      user => {
+        this.currentUser = user;
+        this.router.navigate(['/portal']);
+      });
+  }
+
+  logout() {
+    this.clearAuth();
     this.router.navigate(['/']);
     return this.angularAuth.signOut();
   }
 
   cancelRegistration(): Promise<void> {
-    localStorage.removeItem('user');
-    localStorage.removeItem('jwt');
-    this.currentUser = undefined;
+    this.clearAuth();
     return this.angularAuth.signOut();
   }
 
@@ -157,25 +62,42 @@ export class AuthenticationService {
     return localStorage.getItem('jwt');
   }
 
-  getUser(): User {
+  refreshToken() {
+    return this.firebaseUser.getIdToken().then((theToken) => {
+      localStorage.setItem('jwt', theToken);
+    });
+  }
+
+  getCurrentUser() {
     return this.currentUser;
   }
 
-  getUIdLocalStorage(): string {
-    const user: firebase.User = JSON.parse(localStorage.getItem('user'));
-    if (user != null) {
-      return user.uid;
-    } else {
-      return '';
+  getFireUser() {
+    if (!this.firebaseUser) {
+      this.firebaseUser = JSON.parse(localStorage.getItem('user'));
     }
+
+    return this.firebaseUser;
   }
 
-  public isAuthorized() {
-    if (this.currentUser === undefined) {
+  setUser(user: User) {
+    this.currentUser = user;
+  }
 
-      this.router.navigate(['/']);
-      return false;
-    }
-    return true;
+  isAuthorized() {
+    return Boolean(this.getFireUser());
+  }
+
+  populateAuth(jwt: string, user: firebase.User) {
+    this.firebaseUser = user;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('jwt', jwt);
+  }
+
+  clearAuth() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    this.firebaseUser = undefined;
+    this.currentUser = undefined;
   }
 }

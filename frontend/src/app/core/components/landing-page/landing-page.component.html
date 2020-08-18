@@ -2,27 +2,18 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
-    <a class="navbar-brand" href="#"
-      ><img class="logo" src="../../../../assets/images/logo.png"
-    /></a>
-    <button
-      (click)="isMenuCollapsed = !isMenuCollapsed"
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button (click)="isMenuCollapsed = !isMenuCollapsed" class="navbar-toggler" type="button" data-toggle="collapse"
+      data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+      aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div
-      class="collapse navbar-collapse"
-      id="navbarSupportedContent"
-      [ngbCollapse]="isMenuCollapsed"
-    >
+    <a class="navbar-brand" href="#"><img class="logo" src="../../../../assets/images/logo.png" /></a>
+    <div class="d-flex order-lg-1 ml-auto pr-2">
+      <button type="button" class="btn btn-success" [routerLink]="'/signin'">
+        Sign in
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isMenuCollapsed">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <a class="nav-link" href="#">Home</a>
@@ -32,26 +23,6 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#flow">Flow</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <button
-            type="button"
-            class="btn btn-primary mr-2 mb-2"
-            (click)="signUpRedirect()"
-          >
-            Sign up
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            type="button"
-            class="btn btn-outline-primary"
-            (click)="signInRedirect()"
-          >
-            Sign in
-          </button>
         </li>
       </ul>
     </div>
@@ -82,9 +53,7 @@
   <div id="features">
     <h2 class="text-center mt-5 mb-5">Main features</h2>
 
-    <div
-      class="text-white row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1"
-    >
+    <div class="text-white row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1">
       <div class="col mb-4">
         <div class="card bg-dark h-100">
           <div class="card-body">

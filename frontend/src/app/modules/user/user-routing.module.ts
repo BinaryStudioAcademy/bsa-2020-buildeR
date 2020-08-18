@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { UserComponent } from './user.component';
 import { CommonModule } from '@angular/common';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
-import {UserResolverService} from "../../core/resolvers/user-resolver/user-resolver-service";
+import { UserResolverService } from '../../core/resolvers/user.resolver';
 
 
 @NgModule({

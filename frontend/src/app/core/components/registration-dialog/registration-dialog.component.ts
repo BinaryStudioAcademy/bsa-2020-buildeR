@@ -1,8 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { UserService } from '@core/services/user.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
+import { switchMap, map } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import { User } from 'firebase';
+import { ValidateUser } from '../../../shared/models/user/validate-user';
+import { usernameAsyncValidator } from '../../validators/custom-async-validator';
 
 @Component({
   selector: 'app-registration-dialog',
@@ -12,11 +18,11 @@ import { NewUser } from '@shared/models/user/new-user';
 export class RegistrationDialogComponent implements OnInit {
 
   @Input() details: NewUser = {} as NewUser;
-  @Input() isUsernameTaken = false;
   public registerForm: FormGroup;
   constructor(
     public activeModal: NgbActiveModal,
-    private authService: AuthenticationService) { }
+    private authService: AuthenticationService,
+    private userService: UserService) { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
@@ -43,8 +49,12 @@ export class RegistrationDialogComponent implements OnInit {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(30),
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$`)
-        ]),
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$`),
+        ],
+        [
+          usernameAsyncValidator(this.userService)
+        ]
+      ),
     });
   }
 
@@ -73,6 +83,18 @@ export class RegistrationDialogComponent implements OnInit {
   onCancel() {
     this.activeModal.close();
     this.authService.cancelRegistration();
+  }
+
+  usernameValidator(time: number = 500) {
+    return (input: FormControl) => {
+      const user = {id: 0, username: input.value} as ValidateUser;
+      return timer(time).pipe(
+        switchMap(() => this.userService.validateUsername(user)),
+        map(res => {
+          return res ? null : { isExists: true };
+        })
+      );
+    };
   }
 
 }

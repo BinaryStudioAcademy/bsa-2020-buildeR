@@ -39,4 +39,8 @@ export class ProjectService {
       null
     );
   }
+
+  public changeFavoriteState(projectId: number){
+    return this.httpService.postRequest(`${this.routePrefix}/markFavorite/${projectId}`, null);
+  }
 }

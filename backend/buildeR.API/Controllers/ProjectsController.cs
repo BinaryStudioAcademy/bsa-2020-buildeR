@@ -1,4 +1,5 @@
-﻿using buildeR.BLL.RabbitMQ;
+﻿using buildeR.BLL.Interfaces;
+using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Project;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,11 @@ namespace buildeR.API.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly ProcessorProducer _producer;
-        public ProjectsController(IProjectService projectService, ProcessorProducer producer)
+        private readonly IBuildOperationsService _builder;
+        public ProjectsController(IProjectService projectService, IBuildOperationsService builder)
         {
+            _builder = builder;
             _projectService = projectService;
-            _producer = producer;
         }
 
         [HttpGet("getProjectsByUserId/{userId:int}")]
@@ -55,9 +56,14 @@ namespace buildeR.API.Controllers
         [HttpPost("{projectId}/build")]
         public async Task<IActionResult> BuildProject(int projectId)
         {
-            var build = await _projectService.GetExecutiveBuild(projectId);
-            _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
+            await _builder.StartBuild(projectId);
             return Ok();
+        }
+
+        [HttpPost("markFavorite/{projectId}")]
+        public async Task ChangeFavoriteState(int projectId)
+        {
+            await _projectService.ChangeFavoriteStateAsync(projectId);
         }
     }
 }
