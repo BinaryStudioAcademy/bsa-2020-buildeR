@@ -48,6 +48,8 @@ export class ProjectCreateComponent implements OnInit {
       (resp) => {
         this.toastrService.showSuccess('project created');
         this.router.navigate(['portal']);
+        this.syncService.registerWebhook(resp.id)
+          .subscribe(() => resp.id);
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);

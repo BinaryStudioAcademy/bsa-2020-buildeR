@@ -39,6 +39,8 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
 
+            services.AddTransient<IBuildOperationsService, BuildOperationsService>();
+
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)
