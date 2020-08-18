@@ -1,5 +1,4 @@
 using buildeR.Processor.Extensions;
-using buildeR.Processor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,13 +12,20 @@ namespace builder.Processor
     {
         private IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+                .AddEnvironmentVariables()
+                .Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
+
             services.RegisterConnectionFactory(Configuration);
 
             services.RegisterServices(Configuration);
@@ -38,10 +44,7 @@ namespace builder.Processor
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapHealthChecks("/health");
             });
         }
     }
