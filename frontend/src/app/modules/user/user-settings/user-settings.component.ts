@@ -100,16 +100,6 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  async open(){
-    const file = await this.cropper.open();
-    if (file){
-      console.log('we have cropped ' + typeof(file));
-      // now we can use it for saving image logic
-    }
-    else{
-      console.log('Image didn`t change');
-    }
-  }
   upload(){
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
     this.toastrService.showError('Invalaid URL');

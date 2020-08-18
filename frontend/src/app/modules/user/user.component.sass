@@ -10,10 +10,6 @@
 #navbar-horisontal
   height: 100px
 
-//#sidebar-wrapper
-//  min-height: 100vh
-//  width: 300px
-
 #page-content-wrapper
   padding: 0
   z-index: 0
@@ -72,8 +68,8 @@
 
 // styles for avatar
 .avatar-style
-  height: 75px
-  width: 75px
+  height: 90px
+  width: 90px
   opacity: 1
   display: block
   transition: .5s ease
@@ -96,3 +92,38 @@
     div
       color: #9d9d9d
       font-size: 14px
+
+.avatar-wrapper
+  position: relative
+  .img-text
+    width: 100%
+    height: 100%
+    border-radius: 50%
+    opacity: 0
+    top: 0
+    left: 0
+    color: grey
+    position: absolute
+    display: flex
+    justify-content: center
+    align-items: center
+  &:hover
+    cursor: pointer
+    img
+      opacity: 0.3
+    .img-text
+      opacity: 1
+
+@media screen and (max-width: 500px)
+  .avatar-style
+    height: 60px
+    width: 60px
+  .account-details
+    h1
+      font-size: 26px !important
+    div
+      font-size: 12px !important
+  .list-group-item
+    font-size: 14px
+  .img-text
+    font-size: 12px !important

@@ -2,9 +2,14 @@
   <!-- Sidebar -->
   <div id="sidebar-wrapper-test">
       <div class="avatar-container container">
-        <input hidden class="file-hide" #file accept="image/*" type="file" >
-        <img class="avatar avatar-style" src="{{currentUser.avatarUrl}}"
-             onerror="this.src='../../../../assets/images/Avatar-default.png'">
+        <div class="avatar-wrapper" (click)="open()">
+          <input hidden class="file-hide" #file accept="image/*" type="file" >
+          <img class="avatar avatar-style" src="{{currentUser.avatarUrl}}"
+               onerror="this.src='../../../../assets/images/Avatar-default.png'">
+          <div class="img-text">
+            Change
+          </div>
+        </div>
         <div class="account-details">
           <h1 class ="nickname"> @{{currentUser.username}}</h1>
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
