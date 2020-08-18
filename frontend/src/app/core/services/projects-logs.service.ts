@@ -14,7 +14,7 @@ export class ProjectLogsService {
 
    public buildConnection() {
      this.logsHubConnection = new HubConnectionBuilder()
-     .withUrl(environment.logsHub)
+     .withUrl(`${environment.signalRUrl}/logsHub`)
      .build();
    }
 
