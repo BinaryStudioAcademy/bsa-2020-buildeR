@@ -23,6 +23,20 @@ export class TokenInterceptorService implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        if (
+          request.url.includes('refreshtoken') ||
+          request.url.includes('login')
+      ) {
+          // We do another check to see if refresh token failed
+          // In this case we want to logout user and to redirect it to login page
+
+          if (request.url.includes('refreshtoken')) {
+              this.auth.logout();
+          }
+
+          return throwError(error);
+      }
+
         if (error && error.status === 401) {
           if (this.refreshTokenInProgress) {
             return this.refreshTokenSubject.pipe(
