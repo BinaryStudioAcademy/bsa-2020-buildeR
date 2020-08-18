@@ -23,7 +23,7 @@ import { RegistrationDialogComponent } from './components/registration-dialog/re
     LandingPageComponent,
     SignInComponent,
     SignUpComponent,
-    RegistrationDialogComponent,
+    RegistrationDialogComponent
   ],
   imports: [
     HttpClientModule,

@@ -26,12 +26,10 @@
         </div>
       </div>
       <span class="mr-sm-2 text">previous fire time: </span>
-      <ng-container *ngIf='compareToMinDate(trigger.previousFireTime)' ngIfElse='elseNotYet'>
-        <span class="mr-sm-2">{{trigger.previousFireTime | date:'medium'}}</span>
-      </ng-container>
-      <ng-container #elseNotYet>
+      <span *ngIf="compareToMinDate(trigger.previousFireTime); else elseNotYet" class="mr-sm-2">{{trigger.previousFireTime | date:'medium'}}</span>
+      <ng-template #elseNotYet>
         <span class="mr-sm-2">- still was not -</span>
-      </ng-container>
+      </ng-template>
       <div class="d-inline vl mr-sm-2"></div>
       <span class="mr-sm-2 text">next fire time: </span><span class="mr-sm-2"> {{trigger.nextFireTime | date:'medium'}}</span>
     </div>

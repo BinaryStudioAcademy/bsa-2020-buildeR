@@ -25,7 +25,7 @@ export class RegisterDialogService {
       lastName: credential.additionalUserInfo.profile[`family_name`],
       providerId: Providers.Google,
       uId: credential.user.uid,
-      providerUrl: credential.credential.providerId
+      providerUrl: credential.credential.providerId,
     } as NewUser;
 
     this.openModal(user);
@@ -38,7 +38,8 @@ export class RegisterDialogService {
       avatarUrl: credential.user.photoURL,
       providerId: Providers.Github,
       uId: credential.user.uid,
-      providerUrl: credential.credential.providerId
+      providerUrl: credential.credential.providerId,
+      accessToken: credential.credential['accessToken']
     } as NewUser;
 
     const name: string = credential.additionalUserInfo.profile[`name`];

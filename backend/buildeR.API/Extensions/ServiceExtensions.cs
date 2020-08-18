@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
+using System;
 using System.Collections.Specialized;
 using System.Reflection;
 
@@ -33,6 +34,8 @@ namespace buildeR.API.Extensions
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<IBuildService, BuildService>();
+            services.AddScoped<IGithubClient, GithubClient>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
 
@@ -46,6 +49,15 @@ namespace buildeR.API.Extensions
         {
             QueueSettings queueSettings = configuration.GetSection("RabbitMQ:Queues:ToProcessor").Get<QueueSettings>();
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
+        }
+        public static void RegisterHttpCients(this IServiceCollection services)
+        {
+            services.AddHttpClient("github", c =>
+            {
+                c.BaseAddress = new Uri("https://api.github.com/");
+                c.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+                c.DefaultRequestHeaders.Add("User-Agent", "buildeR-http-client");
+            });
         }
 
         private static IScheduler GetScheduler(IConfiguration configuration)

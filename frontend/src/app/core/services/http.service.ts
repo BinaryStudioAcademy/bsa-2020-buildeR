@@ -19,7 +19,7 @@ export class HttpService {
   }
 
   setHeader(key: string, value: string) {
-    this.headers[key] = value;
+    this.headers = this.headers.set(key, value);
   }
 
   deleteHeader(key: string) {

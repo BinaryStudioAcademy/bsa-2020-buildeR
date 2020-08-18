@@ -1,16 +1,19 @@
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpService } from '../../core/services/http.service';
 import { User } from '../../shared/models/user/user';
 import { NewUser } from '../../shared/models/user/new-user';
+import { ValidateUser } from '@shared/models/user/validate-user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   public routePrefix = '/users';
+  private subject = new Subject<string>();
+  url = this.subject.asObservable();
 
   constructor(private httpService: HttpService) { }
 
@@ -39,6 +42,14 @@ export class UserService {
 
   updateUser(user: User): Observable<User> {
     return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
+  }
+
+  changeImageUrl(url: string){
+    this.subject.next(url);
+  }
+
+  validateUsername(user: ValidateUser): Observable<HttpResponse<boolean>> {
+    return this.httpService.postFullRequest<boolean>(`${this.routePrefix}/validate-username`, user);
   }
 
 }
