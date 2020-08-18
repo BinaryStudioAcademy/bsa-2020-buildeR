@@ -1,4 +1,14 @@
 <div *ngIf="
+  loadingProjects ;
+  then loading;
+  else loaded;
+"></div>
+
+<ng-template #loading>
+    <div class="loader">Loading...</div>
+</ng-template>
+<ng-template #loaded>
+    <div *ngIf="
     userProjects?.length;
     then existActiveProjects;
     else emptyActiveProjects

@@ -1,148 +1,174 @@
 version: '3.8'
 services:
 
-  vault:
-    image: vault:1.5.0
-    container_name: vault
-    restart: on-failure
-    ports:
-        - 8200:8200
-    networks:
-        - back
-    environment:
-        - VAULT_ADDR=http://0.0.0.0:8200
-        - VAULT_API_ADDR=http://0.0.0.0:8200
-        - VAULT_ADDRESS=http://0.0.0.0:8200
-    volumes:
-        - ./vault/config:/vault/config
-        - ./vault/policies:/vault/policies
-        - ./vault/data:/vault/data
-        - ./vault/logs:/vault/logs
-    cap_add:
-        - IPC_LOCK
-    command: server
+    vault:
+        image: vault:1.5.0
+        container_name: vault
+        restart: on-failure
+        ports:
+            - 8200:8200
+        networks:
+            - back
+        environment:
+            - VAULT_ADDR=http://0.0.0.0:8200
+            - VAULT_API_ADDR=http://0.0.0.0:8200
+            - VAULT_ADDRESS=http://0.0.0.0:8200
+        volumes:
+            - ./vault/config:/vault/config
+            - ./vault/policies:/vault/policies
+            - ./vault/data:/vault/data
+            - ./vault/logs:/vault/logs
+        cap_add:
+            - IPC_LOCK
+        command: server
 
-  sql_server:
-    image: mcr.microsoft.com/mssql/server:2017-latest
-    container_name: sql_server
-    ports:
-        - 1433:1433
-    networks:
-        - back
-    environment:
-        SA_PASSWORD: ${SA_PASSWORD}
-        ACCEPT_EULA: "Y"
-    volumes:
-        - ./mssql:/var/opt/mssql
+    sql_server:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        container_name: sql_server
+        ports:
+            - 1433:1433
+        networks:
+            - back
+        environment:
+            SA_PASSWORD: ${SA_PASSWORD}
+            ACCEPT_EULA: "Y"
+        volumes:
+            - ./mssql:/var/opt/mssql
 
-  rabbitmq:
-    image: rabbitmq:3.8.6-alpine
-    container_name: rabbitmq
-    restart: on-failure
-    ports:
-        - 5672:5672
-    networks:
-        - back
-    environment:
-        - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
-        - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
+    rabbitmq:
+        image: rabbitmq:3.8.6-alpine
+        container_name: rabbitmq
+        restart: on-failure
+        ports:
+            - 5672:5672
+        networks:
+            - back
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
+            - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
 
-  elasticsearch:
-    image: elasticsearch:7.8.1
-    container_name: elasticsearch
-    ports:
-        - 9200:9200
-    volumes:
-        - elasticsearch-data:/usr/share/elasticsearch/data
-    environment:
-        - xpack.monitoring.enabled=true
-        - xpack.watcher.enabled=false
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        - discovery.type=single-node
-    networks:
-        - back
+    elasticsearch:
+        image: elasticsearch:7.8.1
+        container_name: elasticsearch
+        ports:
+            - 9200:9200
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        environment:
+            - xpack.monitoring.enabled=true
+            - xpack.watcher.enabled=false
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - discovery.type=single-node
+        networks:
+            - back
 
-  kibana:
-    depends_on:
-        - elasticsearch
-    image: kibana:7.8.1
-    container_name: kibana
-    ports:
-        - 5601:5601
-    environment:
-        - ELASTICSEARCH_URL=http://elasticsearch:9200
-        - SERVER_BASEPATH=/kibana
-    networks:
-        - back
+    kibana:
+        depends_on:
+            - elasticsearch
+        image: kibana:7.8.1
+        container_name: kibana
+        ports:
+            - 5601:5601
+        environment:
+            - ELASTICSEARCH_URL=http://elasticsearch:9200
+            - SERVER_BASEPATH=/kibana
+        networks:
+            - back
 
-  builder_api:
-    depends_on:
-        - sql_server
-    image: bsa2020builder/builder_api:latest
-    container_name: 'builder_api'
-    restart: on-failure
-    networks:
-        - back
-    ports:
-        - "5050:5050"
-    environment:
-        ASPNETCORE_ENVIRONMENT: 'Production'
-        VAULT_ADDRESS: 'http://vault:8200'
-        VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
-    env_file:
-        - /etc/environment
+    zookeeper:
+        image: confluentinc/cp-zookeeper:latest
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 2181
+            ZOOKEEPER_TICK_TIME: 2000
+        
+    kafka:
+        image: confluentinc/cp-kafka:latest
+        depends_on:
+            - zookeeper
+        ports:
+            - 9092:9092
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+            KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  builder_processor:
-    depends_on:
-        - vault
-    image: bsa2020builder/builder_processor:latest
-    container_name: 'builder_processor'
-    restart: on-failure
-    networks:
-        - back
-    ports:
-        - "5060:5060"
-    environment:
-        ASPNETCORE_ENVIRONMENT: 'Production'
-        VAULT_ADDRESS: 'http://vault:8200'
-        VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
-    env_file:
-        - /etc/environment
+    builder_api:
+        depends_on:
+            - sql_server
+            - rabbitmq
+            - kafka
+        image: bsa2020builder/builder_api:latest
+        container_name: 'builder_api'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5050:5050"
+        environment:
+            ASPNETCORE_ENVIRONMENT: 'Production'
+            VAULT_ADDRESS: 'http://vault:8200'
+            VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
+        env_file:
+            - /etc/environment
 
-  builder_signalr:
-    image: bsa2020builder/builder_signalr:latest
-    container_name: 'builder_signalr'
-    restart: on-failure
-    networks:
-        - back
-    ports:
-        - "5070:5070"
-    environment:
-        ASPNETCORE_ENVIRONMENT: 'Production'
+    builder_processor:
+        depends_on:
+            - vault
+            - rabbitmq
+            - kafka
+        image: bsa2020builder/builder_processor:latest
+        container_name: 'builder_processor'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5060:5060"
+        environment:
+            ASPNETCORE_ENVIRONMENT: 'Production'
+            VAULT_ADDRESS: 'http://vault:8200'
+            VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
+        env_file:
+            - /etc/environment
 
-  builder_frontend:
-    depends_on:
-        - builder_api
-        - builder_processor
-        - builder_signalr
-        - kibana
-    image: bsa2020builder/builder_frontend:latest
-    container_name: 'builder_frontend'
-    restart: on-failure
-    networks:
-        - back
-        - front
-    ports:
-        - "80:80"
-        - "443:443"
-    volumes:
-       - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-       - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem
-       - /etc/letsencrypt/live/bsa-builder.xyz/cert.pem:/etc/letsencrypt/live/bsa-builder.xyz/cert.pem
-       - /etc/letsencrypt/live/bsa-builder.xyz/chain.pem:/etc/letsencrypt/live/bsa-builder.xyz/chain.pem
-       - /etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem:/etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem
-       - /etc/letsencrypt/live/bsa-builder.xyz/privkey.pem:/etc/letsencrypt/live/bsa-builder.xyz/privkey.pem
-       - /var/log/nginx:/var/log/nginx
+    builder_signalr:
+        depends_on:
+            - kafka
+        image: bsa2020builder/builder_signalr:latest
+        container_name: 'builder_signalr'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5070:5070"
+        environment:
+            ASPNETCORE_ENVIRONMENT: 'Production'
+
+    builder_frontend:
+        depends_on:
+            - builder_api
+            - builder_processor
+            - builder_signalr
+            - kibana
+        image: bsa2020builder/builder_frontend:latest
+        container_name: 'builder_frontend'
+        restart: on-failure
+        networks:
+            - back
+            - front
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+           - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+           - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/cert.pem:/etc/letsencrypt/live/bsa-builder.xyz/cert.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/chain.pem:/etc/letsencrypt/live/bsa-builder.xyz/chain.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem:/etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/privkey.pem:/etc/letsencrypt/live/bsa-builder.xyz/privkey.pem
+           - /var/log/nginx:/var/log/nginx
 
 networks:
     back:
