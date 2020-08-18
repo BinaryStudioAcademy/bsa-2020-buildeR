@@ -3,4 +3,6 @@ export enum BuildStatus {
   Failure,
   Pending,
   Success,
+  Canceled,
+  InProgress,
 }
