@@ -1,10 +1,10 @@
 ﻿using buildeR.Common.DTO;
-using buildeR.Common.Interfaces;
+using buildeR.BLL.Interfaces;
 using Microsoft.Extensions.Configuration;
 
-namespace buildeR.Common.Services
+namespace buildeR.BLL.Providers
 {
-    public class EmailBuilder: IEmailBuilder 
+    public class EmailBuilder : IEmailBuilder 
     {
         private readonly IConfiguration _configuration;
 

@@ -1,12 +1,11 @@
 using AutoMapper;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.MappingProfiles;
+using buildeR.BLL.Providers;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.Extensions;
-using buildeR.Common.Interfaces;
-using buildeR.Common.Services;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;

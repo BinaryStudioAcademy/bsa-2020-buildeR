@@ -7,8 +7,6 @@ using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
-using buildeR.Common.Enums;
-using buildeR.Common.Interfaces;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;

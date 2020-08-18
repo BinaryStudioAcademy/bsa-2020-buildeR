@@ -1,9 +1,6 @@
 ﻿using buildeR.Common.DTO;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace buildeR.Common.Interfaces
+namespace buildeR.BLL.Interfaces
 {
     public interface IEmailBuilder
     {
