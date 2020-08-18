@@ -1,17 +1,17 @@
 import {
   Directive,
-  ElementRef,
-  Renderer2,
   AfterViewInit,
   Input,
+  ElementRef,
+  Renderer2,
 } from '@angular/core';
 import { BuildStatus } from '@shared/models/build-status';
 
 @Directive({
-  selector: '[appBuildHistoryStatus]',
+  selector: '[appBuildHistoryStatusOutline]',
 })
-export class BuildHistoryStatusDirective implements AfterViewInit {
-  @Input('appBuildHistoryStatus') status: BuildStatus;
+export class BuildHistoryStatusOutlineDirective implements AfterViewInit {
+  @Input('appBuildHistoryStatusOutline') status: BuildStatus;
   private statusColor: string;
 
   constructor(private elRef: ElementRef, private renderer: Renderer2) {}
@@ -40,8 +40,8 @@ export class BuildHistoryStatusDirective implements AfterViewInit {
 
     this.renderer.setStyle(
       this.elRef.nativeElement,
-      'color',
-      `${this.statusColor}`
+      'background',
+      `linear-gradient(to right,${this.statusColor} 0,${this.statusColor} 10px,#fff 10px,#fff 100%) no-repeat`
     );
   }
 }

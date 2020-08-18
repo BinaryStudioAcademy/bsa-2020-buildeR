@@ -14,6 +14,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LogLevelDirective } from './directives/log-level.directive';
 import { TimespanPipe } from './pipes/timespan.pipe';
 import { BuildHistoryStatusDirective } from './directives/build-history-status.directive';
+import { BuildHistoryStatusOutlineDirective } from './directives/build-history-status-outline.directive';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -27,6 +28,7 @@ import { BuildHistoryStatusDirective } from './directives/build-history-status.d
     NotFoundComponent,
     TimespanPipe,
     BuildHistoryStatusDirective,
+    BuildHistoryStatusOutlineDirective,
   ],
   imports: [
     CommonModule,
@@ -51,7 +53,8 @@ import { BuildHistoryStatusDirective } from './directives/build-history-status.d
     LogLevelDirective,
     NotFoundComponent,
     CronBuilderComponent,
-    BuildHistoryStatusDirective
+    BuildHistoryStatusDirective,
+    BuildHistoryStatusOutlineDirective,
   ],
 })
 export class SharedModule {}
