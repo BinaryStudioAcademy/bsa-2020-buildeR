@@ -13,6 +13,7 @@ namespace buildeR.DAL.Entities
         public DateTime BuildAt { get; set; }
         public string BranchHash { get; set; }
         public string CommitHash { get; set; }
+        public int Number { get; set; }
 
         public virtual User Performer { get; set; }
         public virtual Project Project { get; set; }
