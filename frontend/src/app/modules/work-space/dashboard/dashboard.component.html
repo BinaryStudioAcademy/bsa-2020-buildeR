@@ -29,16 +29,10 @@
       <div class="d-inline vl my-2"></div>
       <div class="d-inline my-auto mx-5">
         <p>
-          <a class="text-dark" [routerLink]="['user']">{{
-            project?.owner.username
-          }}</a>
+          <a class="text-dark" [routerLink]="'user'">{{ project?.owner.username }}</a>
         </p>
         <p>
-          <a
-            class="text-dark"
-            [routerLink]="['projects', project?.id, 'details']"
-            >{{ project.name }}</a
-          >
+          <a class="text-dark" [routerLink]="['projects', project?.id, 'details']">{{ project.name }}</a>
         </p>
       </div>
 
@@ -155,7 +149,7 @@
         >It seems that you don't have active projects. Maybe it's time to add
         the first one?</span
       >
-      <button class="btn btn-success" routerLink="projects/create">
+      <button class="btn btn-success" [routerLink]="'../projects/create'">
         Add first project
       </button>
     </div>

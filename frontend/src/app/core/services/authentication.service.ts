@@ -9,68 +9,50 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class AuthenticationService {
+  firebaseUser: firebase.User;
+  currentUser: User;
+  fireToken: string;
 
-  user: firebase.User;
-  currentUser: User = undefined;
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
-    private router: Router) {
-    this.angularAuth.authState.subscribe(user => {
-      this.configureAuthState(user);
-    });
+    private router: Router
+  ) {
+    this.angularAuth.authState.subscribe(this.configureAuthState);
   }
 
-  configureAuthState(user: firebase.User): void {
+  configureAuthState = (user: firebase.User) => {
     if (user) {
-      user.getIdToken().then((theToken) => {
-        this.user = user;
-        localStorage.setItem('user', JSON.stringify(this.user));
-        localStorage.setItem('jwt', theToken);
-        this.signInWithUid(this.getUIdLocalStorage());
+      return user.getIdToken().then((token) => {
+        this.populateAuth(token, user);
+        return this.loadCurrentUser();
       });
     }
-    else {
-      this.user = null;
-    }
+
+    this.clearAuth();
   }
 
-  signInWithUid(uid: string) {
-    this.userService.login(uid)
-      .subscribe((resp) => {
-        if (resp.body !== null) {
-          this.currentUser = resp.body;
-          this.router.navigate(['/portal']);
-        }
-      });
+  loadCurrentUser() {
+    return this.userService.login(this.firebaseUser.uid).toPromise()
+      .then(user => this.currentUser = user);
   }
 
   registerUser(user: NewUser) {
     this.userService.register(user).subscribe(
       (resp) => {
-        if (resp.body !== null) {
-          this.currentUser = resp.body;
+          this.currentUser = resp;
           this.router.navigate(['/portal']);
-        } else {
-        }
-      },
-      (error) => {
-
       });
   }
 
   logout(): Promise<void> {
-    localStorage.removeItem('user');
-    localStorage.removeItem('jwt');
-    this.currentUser = undefined;
+    this.clearAuth();
     this.router.navigate(['/']);
     return this.angularAuth.signOut();
   }
 
   cancelRegistration(): Promise<void> {
-    localStorage.removeItem('user');
-    localStorage.removeItem('jwt');
-    this.currentUser = undefined;
+    this.clearAuth();
     return this.angularAuth.signOut();
   }
 
@@ -78,29 +60,36 @@ export class AuthenticationService {
     return localStorage.getItem('jwt');
   }
 
-  getUser(): User {
+  getCurrentUser() {
     return this.currentUser;
   }
 
-  setUser(user: User): void {
+  getFireUser() {
+    if (!this.firebaseUser) {
+      this.firebaseUser = JSON.parse(localStorage.getItem('user'));
+    }
+
+    return this.firebaseUser;
+  }
+
+  setUser(user: User) {
     this.currentUser = user;
   }
 
-  getUIdLocalStorage(): string {
-    const user: firebase.User = JSON.parse(localStorage.getItem('user'));
-    if (user != null) {
-      return user.uid;
-    } else {
-      return '';
-    }
+  isAuthorized() {
+    return Boolean(this.getFireUser());
   }
 
-  public isAuthorized() {
-    if (this.currentUser === undefined) {
+  populateAuth(jwt: string, user: firebase.User) {
+    this.firebaseUser = user;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('jwt', jwt);
+  }
 
-      this.router.navigate(['/']);
-      return false;
-    }
-    return true;
+  clearAuth() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    this.currentUser = undefined;
+    this.firebaseUser = undefined;
   }
 }

@@ -10,7 +10,7 @@ export const usernameAsyncValidator = (userService: UserService, userId: number 
     return timer(time).pipe(
       switchMap(() => userService.validateUsername(user)),
       map(res => {
-        return !res.body ? null : { isUsernameExists: true };
+        return !res ? null : { isUsernameExists: true };
       })
     );
   };

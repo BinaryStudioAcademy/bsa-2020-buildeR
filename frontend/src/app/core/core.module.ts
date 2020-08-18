@@ -12,10 +12,11 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
-import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
+import { HomeGuard } from './guards/home.guard';
 
 @NgModule({
   declarations: [
@@ -32,8 +33,9 @@ import { RegistrationDialogComponent } from './components/registration-dialog/re
     AngularFireAuthModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     AuthGuard,
+    HomeGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   exports: [
