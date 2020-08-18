@@ -12,10 +12,11 @@ import { ModalContentComponent } from './components/modal-content/modal-content.
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
-import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
+import { HomeGuard } from './guards/home.guard';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 
 @NgModule({
@@ -33,10 +34,10 @@ import { TokenInterceptorService } from './interceptors/token-interceptor.servic
     AngularFireAuthModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
+    HomeGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+      { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
   ],
   exports: [
     LandingPageComponent,

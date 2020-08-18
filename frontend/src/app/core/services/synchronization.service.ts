@@ -21,7 +21,7 @@ export class SynchronizationService {
 
   getUserRepositories(): Observable<Repository[]> {
     const token = localStorage.getItem('github-access-token');
-    const userId = this.authService.getUser().id;
+    const userId = this.authService.getCurrentUser().id;
 
     this.httpService.setHeader('ProviderAuthorization', token);
 

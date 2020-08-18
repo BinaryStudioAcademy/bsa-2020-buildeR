@@ -33,7 +33,7 @@ export class DashboardComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getUser();
+    this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
     this.githubService.getSynchronizedUser()
       .subscribe((user) => this.currentGithubUser = user);
