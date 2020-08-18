@@ -3,6 +3,39 @@
     <h2 class="small-title">
       Triggers
     </h2>
+    <!-- Show Triggers -->
+    <ng-container *ngFor="let trigger of triggers">
+      <div class="border my-2 p-2">
+      <div class="trigger-options mb-1">
+        <div class="mr-sm-2">
+          <h5 class="text">Branch </h5>
+          <select class="form-control" [(ngModel)]="trigger.branchHash">
+            <ng-container *ngFor="let branch of branches">
+              <option [value]='branch' [selected]="trigger.branchHash == branch">{{branch}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="mr-sm-2">
+          <h5 class="text">Period of builds:</h5>
+          <app-cron-builder
+          [triggerId]='trigger.id'
+          [cronInput]='trigger.cronExpression'
+          (updateEv)='updateTrigger($event)'
+          (deleteEv)='deleteTrigger($event)'>
+          </app-cron-builder>
+        </div>
+      </div>
+      <span class="mr-sm-2 text">previous fire time: </span>
+      <span *ngIf="compareToMinDate(trigger.previousFireTime); else elseNotYet" class="mr-sm-2">{{trigger.previousFireTime | date:'medium'}}</span>
+      <ng-template #elseNotYet>
+        <span class="mr-sm-2">- still was not -</span>
+      </ng-template>
+      <div class="d-inline vl mr-sm-2"></div>
+      <span class="mr-sm-2 text">next fire time: </span><span class="mr-sm-2"> {{trigger.nextFireTime | date:'medium'}}</span>
+    </div>
+    </ng-container>
+    <!-- end show triggers -->
+    <!-- Add new trigger -->
     <div class="custom-control custom-switch">
       <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="runOnShedule"
         (change)="onToggle(runOnShedule)">
@@ -12,8 +45,7 @@
       <div class="trigger-options">
         <div class="mr-sm-2">
           <h5 class="text-over">Branch </h5>
-          <select class="form-inline form-control" [(ngModel)]="selectedBranch" name="team" #team="ngModel"
-            id="team-input">
+          <select class="form-control" [(ngModel)]="selectedBranch" name="selected" #selected="ngModel">
             <ng-container *ngFor="let branch of branches">
               <option [value]='branch'>{{branch}}</option>
             </ng-container>
@@ -25,5 +57,6 @@
         </div>
       </div>
     </ng-container>
+    <!-- end add new trigger -->
   </div>
 </div>

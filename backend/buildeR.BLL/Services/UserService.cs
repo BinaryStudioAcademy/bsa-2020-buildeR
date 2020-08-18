@@ -8,6 +8,7 @@ using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.Common.Enums;
+using buildeR.Common.Interfaces;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,15 @@ namespace buildeR.BLL.Services
     {
         private readonly BuilderContext _context;
         private readonly IMapper _mapper;
+        private readonly IEmailBuilder _emailBuilder;
+        private readonly IEmailService _emailService;
 
-        public UserService(BuilderContext context, IMapper mapper)
+        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder)
         {
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
+            _emailBuilder = emailBuilder;
         }
 
         public async Task<UserDTO> GetUserById(int id)
@@ -35,7 +40,7 @@ namespace buildeR.BLL.Services
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> GetUserByUId(string UId)
+        public async Task<UserDTO> Login(string UId)
         {
             var user = await _context.Users
                 .Include(u => u.UserSocialNetworks)
@@ -56,18 +61,13 @@ namespace buildeR.BLL.Services
             return _mapper.Map<ICollection<UserDTO>>(users);
         }
 
-        public async Task<UserDTO> Create(NewUserDTO creatingUser)
+        public async Task<UserDTO> Register(NewUserDTO creatingUser)
         {
-            //if (await _context.Users.CountAsync(u => string.Equals(u.Username, creatingUser.Username, StringComparison.OrdinalIgnoreCase)) != 0)
-            //{
-            //    return null;
-            //}
-
             var userSN = new NewUserSocialNetworkDTO()
             {
                 UId = creatingUser.UId,
                 SocialNetworkId = (int)creatingUser.ProviderId+1,
-                SocialNetworkUrl = creatingUser.ProviderUrl
+                SocialNetworkUrl = creatingUser.ProviderUrl,
             };
 
             var user = _mapper.Map<User>(creatingUser);
@@ -81,6 +81,9 @@ namespace buildeR.BLL.Services
             var userSNEntity = _mapper.Map<UserSocialNetwork>(userSN);
             _context.Add(userSNEntity);
             await _context.SaveChangesAsync();
+
+            var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
+            await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, emailModel.Subject, emailModel.Title, emailModel.Body);
 
             return userDto;
         }
@@ -107,6 +110,18 @@ namespace buildeR.BLL.Services
             _context.Entry(existing).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(existing);
+        }
+
+        public async Task<bool> ValidateUsername(ValidateUserDTO user)
+        {
+            if (user.Id != 0)
+            {
+                return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower() && x.Id != user.Id);
+            }
+            else
+            {
+                return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower());
+            }
         }
     }
 }

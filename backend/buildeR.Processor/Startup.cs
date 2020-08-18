@@ -1,5 +1,5 @@
 using buildeR.Processor.Extensions;
-
+using buildeR.Processor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +20,7 @@ namespace builder.Processor
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.RegisterConnectionFactory();
+            services.RegisterConnectionFactory(Configuration);
 
             services.RegisterServices(Configuration);
         }

@@ -5,6 +5,8 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { Router } from '@angular/router';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '../../../shared/models/user/user';
+import { SynchronizationService } from '@core/services/synchronization.service';
+import { Repository } from '@core/models/Repository';
 
 @Component({
   selector: 'app-project-create',
@@ -14,22 +16,30 @@ import { User } from '../../../shared/models/user/user';
 export class ProjectCreateComponent implements OnInit {
   newProject: NewProject;
   user: User = this.authService.getUser();
+  repositories: Repository[];
+
   constructor(
     private router: Router,
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private syncService: SynchronizationService
   ) {}
 
   ngOnInit(): void {
     this.defaultValues();
+    this.syncService.getUserRepositories()
+      .subscribe(repos => {
+        this.repositories = repos;
+        console.log(repos);
+      });
   }
   defaultValues() {
     this.newProject = {
       name: '',
       description: '',
       isPublic: true,
-      repositoryUrl: '',
+      repository: '',
       ownerId: this.user.id,
     };
   }

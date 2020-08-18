@@ -1,6 +1,6 @@
 export interface ProjectTrigger {
-  id: string;
-  projectId: string;
+  id: number;
+  projectId: number;
   branchHash: string;
   cronExpression: string;
 }

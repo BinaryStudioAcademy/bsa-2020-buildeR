@@ -84,7 +84,7 @@ namespace buildeR.BLL.Services
             var executiveBuild = new ExecutiveBuildDTO();
 
             executiveBuild.ProjectId = project.Id;
-            executiveBuild.RepositoryUrl = project.RepositoryUrl;
+            executiveBuild.RepositoryUrl = project.Repository;
             executiveBuild.BuildSteps = project.BuildSteps
                 .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
                 .OrderBy(buildstep => buildstep.Index);

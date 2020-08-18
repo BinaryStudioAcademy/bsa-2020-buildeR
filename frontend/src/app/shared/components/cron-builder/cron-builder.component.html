@@ -1,11 +1,18 @@
 <div class="cron-wr">
-  <cron-jobs [(ngModel)]="cronResult"> </cron-jobs>
-  <ng-template [ngIf]="cronResult" [ngIfElse]="elseBlock">
-    <button (click)="saveBuildPeriod()" class="btn btn-info">Add </button>
-   </ng-template>
+  <cron-jobs [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
 
-   <ng-template #elseBlock>
-    <button (click)="saveBuildPeriod()" class="btn btn-secondary" disabled>Add </button>
-   </ng-template>
+  <div *ngIf="cronInput; else elseBlock" class="btn-wr">
+    <button (click)="updating()" class="btn btn-warning">Update </button>
+    <button (click)="deleting()" class="btn btn-danger">Delete </button>
+  </div>
 
+  <ng-template #elseBlock>
+
+    <button *ngIf="cronResult; else elseNewCron" (click)="saveBuildPeriod()" class="btn btn-info">Add </button>
+
+    <ng-template #elseNewCron>
+      <button (click)="saveBuildPeriod()" class="btn btn-secondary" disabled>Add </button>
+    </ng-template>
+
+  </ng-template>
 </div>

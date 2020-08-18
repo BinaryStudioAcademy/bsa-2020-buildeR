@@ -4,15 +4,15 @@ using buildeR.BLL.MappingProfiles;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services;
 using buildeR.BLL.Services.Abstract;
-
-using buildeR.Common.DTO.User;
-using buildeR.DAL.Entities;
+using buildeR.Common.Interfaces;
+using buildeR.Common.Services;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
+using System;
 using System.Collections.Specialized;
 using System.Reflection;
 
@@ -20,7 +20,7 @@ namespace buildeR.API.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void RegisterCustomServices(this IServiceCollection services)
+        public static void RegisterCustomServices(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddControllers()
@@ -29,10 +29,15 @@ namespace buildeR.API.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IQuartzService, QuartzService>();
-            services.AddSingleton(provider => GetScheduler());
+            services.AddScoped<ITriggerService, TriggerService>();
+            services.AddSingleton(provider => GetScheduler(configuration));
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<IBuildService, BuildService>();
+            services.AddScoped<IGithubClient, GithubClient>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailBuilder, EmailBuilder>();
 
             services.RegisterAutoMapper();
         }
@@ -42,11 +47,20 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            QueueSettings queueSettings = configuration.GetSection("Queues:ToProcessor").Get<QueueSettings>();
-            services.AddTransient<ProcessorProducer>(sp => new ProcessorProducer(OwnConnectionFactory.GetConnetionFactory(), queueSettings));
+            QueueSettings queueSettings = configuration.GetSection("RabbitMQ:Queues:ToProcessor").Get<QueueSettings>();
+            services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
+        }
+        public static void RegisterHttpCients(this IServiceCollection services)
+        {
+            services.AddHttpClient("github", c =>
+            {
+                c.BaseAddress = new Uri("https://api.github.com/");
+                c.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+                c.DefaultRequestHeaders.Add("User-Agent", "buildeR-http-client");
+            });
         }
 
-        private static IScheduler GetScheduler()
+        private static IScheduler GetScheduler(IConfiguration configuration)
         {
             var properties = new NameValueCollection
             {
@@ -59,7 +73,7 @@ namespace buildeR.API.Extensions
                 ["quartz.jobStore.tablePrefix"] = "QRTZ_",
                 ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz",
                 ["quartz.dataSource.default.provider"] = "SqlServer",
-                ["quartz.dataSource.default.connectionString"] = "Server=localhost;Database=QuartzDB;Trusted_Connection=true;"
+                ["quartz.dataSource.default.connectionString"] = configuration["ConnectionStrings:QuartzDBConnection"] // "Server=localhost;Database=QuartzDB;Trusted_Connection=true;"
             };
             var schedulerFactory = new StdSchedulerFactory(properties);
             var scheduler = schedulerFactory.GetScheduler().Result;

@@ -7,7 +7,7 @@
       <input hidden class="file-hide" #file accept="image/*" type="file" >
       <img class="avatar avatar-style" src="{{details.avatarUrl}}"
       onerror="this.src='../../../../assets/images/Avatar-default.png'">
-      <small class ="nickname"> @{{details.username}}</small><small class="date-since"> Member since {{details.creationDate | date:'mediumDate'}} </small>
+      <small class ="nickname"> @{{details.username}}</small><small class="date-since"> Member since {{details.createdAt | date:'mediumDate'}} </small>
       <div class="img-text">
         Change
       </div>
@@ -69,7 +69,7 @@
       </div>
       <div class="input-area with-btn">
         <input type="url" class="form-control form-control-sm upload" formControlName="avatarUrl" placeholder="http://avatar.link">
-        <button class="btn btn-info btn-sm" (click)="upload()">Upload</button>
+        <button type="button" class="btn btn-info btn-sm" (click)="upload()">Upload</button>
     </div>
       <div class="field">
         Username

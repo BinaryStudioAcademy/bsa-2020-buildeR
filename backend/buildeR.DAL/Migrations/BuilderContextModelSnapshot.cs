@@ -236,7 +236,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("RepositoryUrl")
+                    b.Property<string>("Repository")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

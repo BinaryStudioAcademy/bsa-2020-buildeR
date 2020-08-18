@@ -1,5 +1,6 @@
 import { BuildHistory } from '../build-history';
 import { User } from '../user/user';
+import { ProjectTrigger } from './project-trigger/project-trigger';
 
 export interface Project {
   id: number;
@@ -7,7 +8,7 @@ export interface Project {
   name: string;
   description: string;
   isPublic: boolean;
-  repositoryUrl: string;
+  repository: string;
   credentialsId: string;
   isAutoCancelBranchBuilds: boolean;
   isAutoCancelPullRequestBuilds: boolean;
@@ -18,5 +19,5 @@ export interface Project {
   owner: User;
   buildHistories: BuildHistory[];
  // buildSteps: BuildSteps[];
- // projectTriggers: ProjectTriggers[];
+  projectTriggers: ProjectTrigger[];
 }

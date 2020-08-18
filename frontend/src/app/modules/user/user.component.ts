@@ -12,4 +12,11 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  setStyleActiveElement(el) {
+    let current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    // event.className += " active";
+    (el.currentTarget as HTMLElement).className += " active";
+  }
+
 }

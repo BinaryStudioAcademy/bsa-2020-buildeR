@@ -14,9 +14,9 @@ namespace buildeR.Processor.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void RegisterConnectionFactory(this IServiceCollection services)
+        public static void RegisterConnectionFactory(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IConnectionFactory>(_ => OwnConnectionFactory.GetConnetionFactory());
+            services.AddSingleton<IConnectionFactory>(_ => OwnConnectionFactory.GetConnectionFactory(configuration));
             services.AddSingleton<IProducerConsumerWrapper, ProducerConsumerWrapper>();
         }
 
@@ -28,8 +28,8 @@ namespace buildeR.Processor.Extensions
         private static ProcessorService ProcessServiceFactory(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             var connectionProvider = serviceProvider.GetService<IProducerConsumerWrapper>();
-            var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("Queues:FromAPIToProcessor"));
-            return new ProcessorService(consumer);
+            var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("RabbitMQ:Queues:FromAPIToProcessor"));
+            return new ProcessorService(configuration, consumer);
         }
     }
 }

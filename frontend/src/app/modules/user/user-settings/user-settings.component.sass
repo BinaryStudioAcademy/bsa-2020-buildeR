@@ -3,21 +3,28 @@
     grid-template-columns: 2
     grid-template-rows: 6
 
+
 .input-area
   grid-column-start: 1
   grid-column-end: 2
   justify-self: start
   margin: 0 10px 20px
+  z-index: 0
+  position: relative
 
 
 .field
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+  z-index: 0
+  position: relative
 
 .avatar-style
-  height: 200px
-  width: 200px
+  max-width: 200px
+  max-height: 200px
+  height: auto
+  width: auto
   opacity: 1
   display: block
   transition: .5s ease
@@ -46,7 +53,7 @@
     cursor: pointer
     font-size: 24px
     color: #7f7f7f
-    margin-left: 15%
+    margin-left: 7%
 input
   width: 300px
 

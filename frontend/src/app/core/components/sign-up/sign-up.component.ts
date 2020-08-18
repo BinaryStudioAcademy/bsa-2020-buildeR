@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
+import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -9,17 +9,20 @@ import { Router } from '@angular/router';
 })
 export class SignUpComponent implements OnInit {
 
-  constructor(private authService: AuthenticationService, private router: Router) { }
+  constructor(
+    private router: Router,
+    private firebaseSignInService: FirebaseSignInService
+  ) { }
 
   ngOnInit() {
   }
 
   signInWithGithub() {
-    this.authService.doGithubSignIn();
+    this.firebaseSignInService.signInWithGithub();
   }
 
   signInWithGoogle() {
-    this.authService.doGoogleSignIn();
+    this.firebaseSignInService.signInWithGoogle();
   }
 
   back() {
@@ -29,4 +32,5 @@ export class SignUpComponent implements OnInit {
   goSignIn() {
     this.router.navigate(['/signin']);
   }
+
 }
