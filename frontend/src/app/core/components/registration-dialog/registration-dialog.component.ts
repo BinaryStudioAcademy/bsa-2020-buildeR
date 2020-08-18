@@ -22,7 +22,6 @@ export class RegistrationDialogComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private authService: AuthenticationService,
-    //private usernameValidator: UsernameValidator,
     private userService: UserService) { }
 
   ngOnInit(): void {
