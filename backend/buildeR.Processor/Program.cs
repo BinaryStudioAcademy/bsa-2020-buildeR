@@ -28,7 +28,6 @@ namespace builder.Processor
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
-                    .SetBasePath(environment)
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environment}.json", reloadOnChange: true, optional: true)
                     .AddEnvironmentVariables()
