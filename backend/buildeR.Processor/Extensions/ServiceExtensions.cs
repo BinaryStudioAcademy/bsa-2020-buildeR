@@ -29,7 +29,7 @@ namespace buildeR.Processor.Extensions
         private static ProcessorService ProcessServiceFactory(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             var connectionProvider = serviceProvider.GetService<IProducerConsumerWrapper>();
-            var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("RabbitMQ:Queues:FromAPIToProcessor"));
+            var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("Queues:FromAPIToProcessor"));
             return new ProcessorService(configuration, consumer);
         }
     }
