@@ -85,8 +85,9 @@ namespace buildeR
                 o.AddFluentValidationRules();
                 o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {
-                    Type = SecuritySchemeType.Http,
+                    Type = SecuritySchemeType.ApiKey,
                     Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    Name = "Authorization",
                     BearerFormat = "JWT",
                     Description = "JWT Authorization header using the Bearer scheme.",
                     In = ParameterLocation.Header
@@ -96,6 +97,9 @@ namespace buildeR
                     {
                         new OpenApiSecurityScheme
                         {
+                            Scheme = "oauth2",
+                            Name = JwtBearerDefaults.AuthenticationScheme,
+                            In = ParameterLocation.Header,
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
