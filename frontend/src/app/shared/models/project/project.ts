@@ -13,6 +13,7 @@ export interface Project {
   isAutoCancelBranchBuilds: boolean;
   isAutoCancelPullRequestBuilds: boolean;
   isCleanUpBeforeBuild: boolean;
+  isFavorite: boolean;
   cancelAfter?: number;
 
   owner: User;

@@ -17,6 +17,7 @@ import { SynchronizedUser } from '@core/models/SynchronizedUser';
 export class DashboardComponent extends BaseComponent
   implements OnInit, OnDestroy {
   userProjects: ProjectInfo[];
+  starredProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
   currentGithubUser: SynchronizedUser;
@@ -47,6 +48,7 @@ export class DashboardComponent extends BaseComponent
         (resp) => {
           this.loadingProjects = false;
           this.cachedUserProjects = this.userProjects = resp.body;
+          this.starredProjects = this.userProjects.filter(project => project.isFavorite);
         },
         (error) => {
           this.loadingProjects = false;
@@ -61,6 +63,24 @@ export class DashboardComponent extends BaseComponent
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => projectId,
+        (error) => this.toastrService.showError(error)
+      );
+  }
+
+  changeFavoriteStateOfProject(project: ProjectInfo) {
+    this.projectService
+      .changeFavoriteState(project.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => {
+          project.isFavorite = !project.isFavorite;
+          if (project.isFavorite) {
+            this.starredProjects.push(project);
+          }
+          else {
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
+          }
+        },
         (error) => this.toastrService.showError(error)
       );
   }

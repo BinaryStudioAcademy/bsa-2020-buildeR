@@ -20,6 +20,7 @@ namespace buildeR.Common.DTO.Project
         public bool IsAutoCancelBranchBuilds { get; set; }
         public bool IsAutoCancelPullRequestBuilds { get; set; }
         public bool IsCleanUpBeforeBuild { get; set; }
+        public bool IsFavorite { get; set; }
         public int? CancelAfter { get; set; }
 
         public UserDTO Owner { get; set; }
