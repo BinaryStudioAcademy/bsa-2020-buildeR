@@ -32,6 +32,7 @@ import { BuildHistoryStatusOutlineDirective } from './directives/build-history-s
   ],
   imports: [
     CommonModule,
+    RouterModule,
     NgbModule,
     NgbCollapseModule,
     CronJobsModule,
@@ -41,6 +42,7 @@ import { BuildHistoryStatusOutlineDirective } from './directives/build-history-s
   ],
   exports: [
     CommonModule,
+    RouterModule,
     NgbModule,
     NgbCollapseModule,
     ReactiveFormsModule,

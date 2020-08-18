@@ -6,6 +6,8 @@ import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { SynchronizationService } from '@core/services/synchronization.service';
+import { SynchronizedUser } from '@core/models/SynchronizedUser';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,21 +17,27 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class DashboardComponent extends BaseComponent
   implements OnInit, OnDestroy {
   userProjects: ProjectInfo[];
+  starredProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
+  currentGithubUser: SynchronizedUser;
   loadingProjects = false;
 
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private githubService: SynchronizationService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getUser();
+    this.loadingProjects = true;
+    this.currentUser = this.authService.getCurrentUser();    
     this.getUserProjects(this.currentUser.id);
+    this.githubService.getSynchronizedUser()
+      .subscribe((user) => this.currentGithubUser = user);
   }
 
   getUserProjects(userId: number) {
@@ -41,6 +49,7 @@ export class DashboardComponent extends BaseComponent
         (resp) => {
           this.loadingProjects = false;
           this.cachedUserProjects = this.userProjects = resp.body;
+          this.starredProjects = this.userProjects.filter(project => project.isFavorite);
         },
         (error) => {
           this.loadingProjects = false;
@@ -55,6 +64,24 @@ export class DashboardComponent extends BaseComponent
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => projectId,
+        (error) => this.toastrService.showError(error)
+      );
+  }
+
+  changeFavoriteStateOfProject(project: ProjectInfo) {
+    this.projectService
+      .changeFavoriteState(project.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => {
+          project.isFavorite = !project.isFavorite;
+          if (project.isFavorite) {
+            this.starredProjects.push(project);
+          }
+          else {
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
+          }
+        },
         (error) => this.toastrService.showError(error)
       );
   }

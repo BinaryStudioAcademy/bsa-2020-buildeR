@@ -227,6 +227,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<bool>("IsCleanUpBeforeBuild")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -236,7 +239,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("RepositoryUrl")
+                    b.Property<string>("Repository")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

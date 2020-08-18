@@ -34,7 +34,7 @@ namespace buildeR.SignalR
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
-
+            services.AddHostedService<Worker>();
             services.AddSignalR();
             services.AddControllers();
             services.AddHealthChecks();
@@ -56,6 +56,7 @@ namespace buildeR.SignalR
                 endpoints.MapControllers();
                 endpoints.MapHub<TestHub>("/testhub");
                 endpoints.MapHealthChecks("/health");
+                endpoints.MapHub<LogsHub>("/logshub");
             });
         }
 

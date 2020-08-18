@@ -1,18 +1,18 @@
-import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpService } from '../../core/services/http.service';
 import { User } from '../../shared/models/user/user';
 import { NewUser } from '../../shared/models/user/new-user';
+import { ValidateUser } from '@shared/models/user/validate-user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   public routePrefix = '/users';
-  private subject = new Subject<string>();
-  url = this.subject.asObservable();
+  private userLogoUrl$ = new Subject<string>();
+  userLogoUrl = this.userLogoUrl$.asObservable();
 
   constructor(private httpService: HttpService) { }
 
@@ -23,28 +23,31 @@ export class UserService {
     return this.httpService.getRequest<User>(environment.apiUrl + '/auth/');
   }
 
-  register(user: NewUser): Observable<HttpResponse<User>> {
-    return this.httpService.postFullRequest<User>(`${this.routePrefix}`, user);
+  register(user: NewUser) {
+    return this.httpService.postRequest<User>(`${this.routePrefix}`, user);
   }
 
-  getUserById(userId: number): Observable<HttpResponse<User>> {
-    return this.httpService.getFullRequest<User>(`${this.routePrefix}/${userId}`);
-  }
-
-  getUserByIdRequest(userId: number): Observable<User> {
+  getUserById(userId: number) {
     return this.httpService.getRequest<User>(`${this.routePrefix}/${userId}`);
   }
 
-  login(uniqueId: string): Observable<HttpResponse<User>> {
-    return this.httpService.getFullRequest<User>(`${this.routePrefix}/login/${uniqueId}`);
+  getUserByIdRequest(userId: number) {
+    return this.httpService.getRequest<User>(`${this.routePrefix}/${userId}`);
   }
 
-  updateUser(user: User): Observable<User> {
+  login(uniqueId: string) {
+    return this.httpService.getRequest<User>(`${this.routePrefix}/login/${uniqueId}`);
+  }
+
+  updateUser(user: User) {
     return this.httpService.putRequest<User>(`${this.routePrefix}`, user);
   }
 
-  changeImageUrl(url: string){
-    this.subject.next(url);
+  changeImageUrl(url: string) {
+    this.userLogoUrl$.next(url);
   }
 
+  validateUsername(user: ValidateUser): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.routePrefix}/validate-username`, user);
+  }
 }

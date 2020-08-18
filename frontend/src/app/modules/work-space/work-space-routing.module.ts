@@ -19,12 +19,12 @@ const routes = [
         component: DashboardComponent,
       },
       {
-        path: 'dashboard/user',
+        path: 'user',
         loadChildren: () =>
           import('../../modules/user/user.module').then((m) => m.UserModule),
       },
       {
-        path: 'dashboard/projects',
+        path: 'projects',
         loadChildren: () =>
           import('../../modules/project/project.module').then(
             (m) => m.ProjectModule

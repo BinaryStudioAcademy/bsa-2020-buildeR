@@ -16,7 +16,7 @@ export class WorkSpaceComponent implements OnInit {
   isShowNotifications = false;
   isMenuCollapsed = true;
   url = environment.signalRUrl + '/test';
-  user: User = {} as User;
+  user: User;
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
@@ -29,8 +29,8 @@ export class WorkSpaceComponent implements OnInit {
     this.signalR.signalRecieved.subscribe(() => {
       alert('You just received a test broadcast');
     });
-    this.user = this.authService.getUser();
-    this.userService.url.subscribe(url => {
+    this.user = this.authService.getCurrentUser();
+    this.userService.userLogoUrl.subscribe(url => {
       console.log(url);
       this.user.avatarUrl = url;
     });
@@ -46,10 +46,6 @@ export class WorkSpaceComponent implements OnInit {
   }
 
   showNotifications() {
-    if (this.isShowNotifications) {
-      this.isShowNotifications = false;
-    } else {
-      this.isShowNotifications = true;
-    }
+    this.isShowNotifications = !this.isShowNotifications;
   }
 }

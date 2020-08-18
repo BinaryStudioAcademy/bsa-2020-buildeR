@@ -83,7 +83,7 @@ export class UserSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
-    this.userService.url.subscribe(url => this.changedUser.avatarUrl = url);
+    this.userService.userLogoUrl.subscribe(url => this.changedUser.avatarUrl = url);
   }
 
   onSubmit(user: User) {
