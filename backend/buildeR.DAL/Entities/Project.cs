@@ -22,6 +22,7 @@ namespace buildeR.DAL.Entities
         public bool IsAutoCancelBranchBuilds { get; set; }
         public bool IsAutoCancelPullRequestBuilds { get; set; }
         public bool IsCleanUpBeforeBuild { get; set; }
+        public bool IsFavorite { get; set; }
         public int? CancelAfter { get; set; }
 
         public virtual User Owner { get; set; }

@@ -26,6 +26,7 @@ import { LogLevelDirective } from './directives/log-level.directive';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     NgbModule,
     NgbCollapseModule,
     CronJobsModule,
@@ -35,6 +36,7 @@ import { LogLevelDirective } from './directives/log-level.directive';
   ],
   exports: [
     CommonModule,
+    RouterModule,
     NgbModule,
     NgbCollapseModule,
     ReactiveFormsModule,

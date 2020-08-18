@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 
 @Component({
@@ -8,29 +8,22 @@ import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
   styleUrls: ['./sign-up.component.sass']
 })
 export class SignUpComponent implements OnInit {
+  redirectUrl: string;
 
   constructor(
-    private router: Router,
+    private route: ActivatedRoute,
     private firebaseSignInService: FirebaseSignInService
   ) { }
 
   ngOnInit() {
+    this.redirectUrl = this.route.snapshot.queryParams.redirectUrl ?? '/portal';
   }
 
   signInWithGithub() {
-    this.firebaseSignInService.signInWithGithub();
+    this.firebaseSignInService.signInWithGithub(this.redirectUrl);
   }
 
   signInWithGoogle() {
-    this.firebaseSignInService.signInWithGoogle();
+    this.firebaseSignInService.signInWithGoogle(this.redirectUrl);
   }
-
-  back() {
-    this.router.navigate(['/']);
-  }
-
-  goSignIn() {
-    this.router.navigate(['/signin']);
-  }
-
 }

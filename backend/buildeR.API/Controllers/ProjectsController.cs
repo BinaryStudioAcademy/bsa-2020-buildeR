@@ -59,5 +59,11 @@ namespace buildeR.API.Controllers
             _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
             return Ok();
         }
+
+        [HttpPost("markFavorite/{projectId}")]
+        public async Task ChangeFavoriteState(int projectId)
+        {
+            await _projectService.ChangeFavoriteStateAsync(projectId);
+        }
     }
 }

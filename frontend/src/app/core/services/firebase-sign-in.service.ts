@@ -19,34 +19,34 @@ export class FirebaseSignInService {
     private authService: AuthenticationService
   ) { }
 
-  signInWithGithub() {
+  signInWithGithub(redirectUrl?: string) {
     const githubProvider = new auth.GithubAuthProvider();
     githubProvider.addScope('admin:hooks');
     githubProvider.addScope('repo');
     return this.angularAuth.signInWithPopup(githubProvider).then(
       (credential) => {
         localStorage.setItem('github-access-token', credential.credential['accessToken']);
-        this.login(credential);
+        this.login(credential, redirectUrl);
       },
       (error) => console.log('Email exist')
     );
   }
 
-  signInWithGoogle() {
+  signInWithGoogle(redirectUrl?: string) {
     const googleProvider = new auth.GoogleAuthProvider();
     return this.angularAuth.signInWithPopup(googleProvider).then((credential) => {
-      this.login(credential);
+      this.login(credential, redirectUrl);
     },
       (error) => console.log('Email exist')
     );
   }
 
-  login(credential: firebase.auth.UserCredential): void {
+  login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
       .subscribe((resp) => {
-        if (resp.body !== null) {
-          this.authService.setUser(resp.body);
-          this.router.navigate(['/portal']);
+        if (resp) {
+          this.authService.setUser(resp);
+          this.router.navigate([redirectUrl ?? '/portal']);
         }
         else {
           this.registerDialog.signUp(credential);

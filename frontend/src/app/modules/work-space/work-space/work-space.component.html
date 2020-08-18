@@ -5,8 +5,9 @@
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" [routerLink]="['dashboard']"><img class="logo"
-        src="../../../../assets/images/logo.png" /></a>
+    <a class="navbar-brand" [routerLink]="['dashboard']">
+      <img class="logo" src="../../../../assets/images/logo.png" />
+    </a>
     <div class="d-flex order-lg-1 ml-auto pr-2">
       <div class="nav-item">
         <a class="nav-link">
@@ -22,11 +23,11 @@
 
       <div class="nav-item" ngbDropdown>
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-          <img src="{{user.avatarUrl}}" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
+          <img [src]="user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
             class="avatar" />
         </a>
         <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right">
-          <a ngbDropdownItem [routerLink]="'../user'">Settings</a>
+          <a ngbDropdownItem [routerLink]="'user'">Settings</a>
           <a ngbDropdownItem (click)="broadcast()">Broadcast</a>
           <a ngbDropdownItem (click)="logOut()">Logout</a>
         </div>
