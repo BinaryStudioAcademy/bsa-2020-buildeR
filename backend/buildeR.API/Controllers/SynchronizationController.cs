@@ -8,6 +8,7 @@ using buildeR.Common.DTO.Synchronization.Github;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace buildeR.API.Controllers
 {
@@ -17,10 +18,11 @@ namespace buildeR.API.Controllers
     public class SynchronizationController : ControllerBase
     {
         private readonly ISynchronizationService _synchronizationService;
-
-        public SynchronizationController(ISynchronizationService synchronizationService)
+        private readonly LinkGenerator _linkGenerator;
+        public SynchronizationController(ISynchronizationService synchronizationService, LinkGenerator linkGenerator)
         {
             _synchronizationService = synchronizationService;
+            _linkGenerator = linkGenerator;
         }
 
         [HttpGet("repos/{userId:int}")]
@@ -32,7 +34,8 @@ namespace buildeR.API.Controllers
         [HttpPost("hooks/{projectId}")]
         public async Task RegisterWebhooks(int projectId, [FromHeader] string ProviderAuthorization)
         {
-            var callback = Url.RouteUrl("webhooks", new { projectId = projectId });
+            var callback = Url.RouteUrl("Webhooks", new { controller = $"webhooks" }, Request.Scheme);
+
             await _synchronizationService.RegisterWebhook(projectId, callback, ProviderAuthorization);
         }
     }

@@ -66,12 +66,13 @@ namespace buildeR.BLL.Services
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
             
             var hook = new NewGithubWebhookDTO();
-            hook.Events.Add("push");
-            hook.Config.Url = callback;
+            hook.events.Add("push");
+            hook.config.url = callback;
 
-            var content = new StringContent(JsonConvert.SerializeObject(hook), Encoding.UTF8, "application/json");
+            var serializedHook = JsonConvert.SerializeObject(hook); 
+            var content = new StringContent(serializedHook, Encoding.UTF8, "application/json");
 
-            var repsonse = await _client.PostAsync(endpoint, content);
+            var response = await _client.PostAsync(endpoint, content);
         }
     }
 }

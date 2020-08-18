@@ -15,7 +15,6 @@ import { EMPTY } from 'rxjs';
 })
 export class ProjectResolverService implements Resolve<Project> {
   constructor(private router: Router, private projectService: ProjectService) {}
-  proj: Project;
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const id = parseInt(route.paramMap.get('projectId'), 10);
     return this.projectService.getProjectById(id).pipe(

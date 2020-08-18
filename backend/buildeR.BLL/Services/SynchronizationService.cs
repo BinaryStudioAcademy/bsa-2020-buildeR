@@ -26,6 +26,8 @@ namespace buildeR.BLL.Services
 
         public async Task RegisterWebhook(int projectId, string callback, string accessToken)
         {
+            callback += $"/{projectId}/github";
+
             var project = await _projectService.GetAsync(projectId);
             await _githubClient.CreateWebhook(project.Repository, callback, accessToken);
         }

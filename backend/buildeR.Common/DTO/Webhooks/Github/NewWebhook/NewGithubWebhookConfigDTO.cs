@@ -6,8 +6,8 @@ namespace buildeR.Common.DTO.Webhooks.Github.NewWebhook
 {
     public class NewGithubWebhookConfigDTO
     {
-        public string Url { get; set; }
-        public string Content_Type { get; } = "json";
-        public string Insecure_SSL { get; } = "0";
+        public string url { get; set; }
+        public string content_type { get; } = "json";
+        public string insecure_ssl { get; } = "1";
     }
 }

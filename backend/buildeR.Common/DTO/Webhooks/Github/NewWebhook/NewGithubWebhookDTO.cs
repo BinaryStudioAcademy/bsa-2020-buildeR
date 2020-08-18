@@ -6,9 +6,9 @@ namespace buildeR.Common.DTO.Webhooks.Github.NewWebhook
 {
     public class NewGithubWebhookDTO
     {
-        public string Name { get; } = "web";
-        public bool Active { get; set; } = true;
-        public IList<string> Events { get; set; } = new List<string>();
-        public NewGithubWebhookConfigDTO Config { get; } = new NewGithubWebhookConfigDTO();
+        public string name { get; } = "web";
+        public bool active { get; set; } = true;
+        public IList<string> events { get; set; } = new List<string>();
+        public NewGithubWebhookConfigDTO config { get; } = new NewGithubWebhookConfigDTO();
     }
 }

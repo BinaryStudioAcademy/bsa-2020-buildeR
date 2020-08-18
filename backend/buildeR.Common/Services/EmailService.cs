@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using buildeR.Common.Interfaces;
@@ -16,35 +17,31 @@ namespace buildeR.Common.Services
         private readonly string _senderName;
         private readonly string _apiKey;
         private readonly IEmailBuilder _builder;
-        private readonly SendGridClient _client;
         
-        private readonly IConfigurationSection _section;
         public EmailService(IEmailBuilder builder, IConfiguration configuration)
         {
-            _section = configuration.GetSection("Sendgrid");
-            _apiKey = _section["SENDGRID_API_KEY"];
-            _senderEmail = _section["SENDGRID_EMAIL"];
-            _senderName = _section["SENDGRID_Name"];
             _builder = builder;
-            _client = new SendGridClient(_apiKey);
+
+            var sendgridSection = configuration.GetSection("Sendgrid");
+            _apiKey = sendgridSection["SENDGRID_API_KEY"];
+            _senderEmail = sendgridSection["SENDGRID_EMAIL"];
+            _senderName = sendgridSection["SENDGRID_Name"];
         }
 
         public async Task SendEmailAsync(List<string> emails, string subject, string title, string body)
         {
 
-            SendGridMessage msg = new SendGridMessage()
+            var msg = new SendGridMessage()
             {
                 From = new EmailAddress(_senderEmail, _senderName),
                 Subject = subject,
-                HtmlContent = _builder.CreateTemplate(title, body)
+                HtmlContent = _builder.CreateTemplate(title, body),
             };
 
-            foreach (var email in emails)
-            {
-                msg.AddTo(new EmailAddress(email));
-            }
+            msg.AddTos(emails.Select(email => new EmailAddress(email)).ToList());
 
-            await _client.SendEmailAsync(msg);
+            var client = new SendGridClient(_apiKey);
+            await client.SendEmailAsync(msg);
         }
     }
 }
