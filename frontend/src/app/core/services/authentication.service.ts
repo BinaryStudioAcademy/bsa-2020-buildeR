@@ -9,9 +9,8 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  firebaseUser: firebase.User;
-  currentUser: User;
-  fireToken: string;
+  private currentUser: User;
+  private firebaseUser: firebase.User;
 
   constructor(
     private angularAuth: AngularFireAuth,
@@ -32,20 +31,23 @@ export class AuthenticationService {
     this.clearAuth();
   }
 
-  loadCurrentUser() {
-    return this.userService.login(this.firebaseUser.uid).toPromise()
-      .then(user => this.currentUser = user);
+  async loadCurrentUser(force?: boolean) {
+    if (!this.currentUser || force) {
+      this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
+    }
+
+    return this.currentUser;
   }
 
-  registerUser(user: NewUser) {
-    this.userService.register(user).subscribe(
-      (resp) => {
-          this.currentUser = resp;
-          this.router.navigate(['/portal']);
+  registerUser(newUser: NewUser) {
+    this.userService.register(newUser).subscribe(
+      user => {
+        this.currentUser = user;
+        this.router.navigate(['/portal']);
       });
   }
 
-  logout(): Promise<void> {
+  logout() {
     this.clearAuth();
     this.router.navigate(['/']);
     return this.angularAuth.signOut();
@@ -89,7 +91,7 @@ export class AuthenticationService {
   clearAuth() {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
-    this.currentUser = undefined;
     this.firebaseUser = undefined;
+    this.currentUser = undefined;
   }
 }
