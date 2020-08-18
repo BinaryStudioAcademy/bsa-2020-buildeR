@@ -5,6 +5,8 @@ import { RegisterDialogService } from '@core/services/register-dialog.service';
 import { Router } from '@angular/router';
 import { auth } from 'firebase/app';
 import { AuthenticationService } from './authentication.service';
+import { LinkProvider } from '@shared/models/user/link-provider';
+import { Providers } from '@shared/models/providers';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +27,12 @@ export class FirebaseSignInService {
     githubProvider.addScope('repo');
     return this.angularAuth.signInWithPopup(githubProvider).then(
       (credential) => {
-        localStorage.setItem('github-access-token', credential.credential['accessToken']);
+        localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
-      (error) => console.log('Email exist')
+      (error) => {
+        console.log('Need to link with github');
+      }
     );
   }
 
@@ -37,8 +41,56 @@ export class FirebaseSignInService {
     return this.angularAuth.signInWithPopup(googleProvider).then((credential) => {
       this.login(credential, redirectUrl);
     },
-      (error) => console.log('Email exist')
+      (error) => {
+        console.log('Need to link with google');
+      }
     );
+  }
+
+  linkWithGithub() {
+    const githubProvider = new auth.GithubAuthProvider();
+    const fireUser = this.authService.getFireUser();
+    fireUser.linkWithPopup(githubProvider).then((result) => {
+      const credential = result.credential;
+      const user = result.user;
+      const linkUser = {
+        userId: this.authService.getCurrentUser().id,
+        providerId: Providers.Github,
+        providerUrl: credential.providerId,
+        uId: user.uid
+      } as LinkProvider;
+      this.userService.linkProvider(linkUser)
+      .subscribe((resp) => {
+        if (resp) {
+          this.authService.setUser(resp);
+        }
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
+  linkWithGoogle() {
+    const googleProvider = new auth.GoogleAuthProvider();
+    const fireUser = this.authService.getFireUser();
+    fireUser.linkWithPopup(googleProvider).then((result) => {
+      const credential = result.credential;
+      const user = result.user;
+      const linkUser = {
+        userId: this.authService.getCurrentUser().id,
+        providerId: Providers.Google,
+        providerUrl: credential.providerId,
+        uId: user.uid
+      } as LinkProvider;
+      this.userService.linkProvider(linkUser)
+      .subscribe((resp) => {
+        if (resp) {
+          this.authService.setUser(resp);
+        }
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   login(credential: auth.UserCredential, redirectUrl?: string): void {

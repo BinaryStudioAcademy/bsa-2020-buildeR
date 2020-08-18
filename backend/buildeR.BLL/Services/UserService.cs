@@ -123,5 +123,32 @@ namespace buildeR.BLL.Services
                 return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower());
             }
         }
+
+        public async Task<UserDTO> LinkProvider(LinkProviderDTO userLink)
+        {
+            var isUserExist = await _context.Users.AnyAsync(u => u.Id == userLink.UserId);
+
+            if (isUserExist)
+            {
+                var userSN = new NewUserSocialNetworkDTO()
+                {
+                    UId = userLink.UId,
+                    SocialNetworkId = (int)userLink.ProviderId + 1,
+                    SocialNetworkUrl = userLink.ProviderUrl,
+                };
+
+                userSN.UserId = userLink.UserId;
+                var userSNEntity = _mapper.Map<UserSocialNetwork>(userSN);
+                _context.Add(userSNEntity);
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userLink.UserId);
+                return _mapper.Map<UserDTO>(updatedUser);
+            }
+            else
+            {
+                throw new NotFoundException("user", userLink.UserId);
+            }
+        }
     }
 }

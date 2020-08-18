@@ -5,6 +5,7 @@ import { ModalCropperService } from '@core/services/modal-cropper.service';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -25,7 +26,8 @@ export class UserSettingsComponent implements OnInit {
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
               private route: ActivatedRoute,
-              private cropper: ModalCropperService) { }
+              private cropper: ModalCropperService,
+              private fbr: FirebaseSignInService) { }
 
   ngOnInit(): void {
 
@@ -134,5 +136,15 @@ export class UserSettingsComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  linkWithGithub()
+  {
+    this.fbr.linkWithGithub();
+  }
+
+  linkWithGoogle()
+  {
+    this.fbr.linkWithGoogle();
   }
 }
