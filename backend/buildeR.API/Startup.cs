@@ -15,9 +15,6 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace buildeR
 {
@@ -137,22 +134,8 @@ namespace buildeR
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseSwagger(o =>
-            {
-                if (env.IsProduction())
-                {
-                    o.RouteTemplate = "swagger/{documentName}/swagger.json";
-                    o.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new List<OpenApiServer>
-                    {
-                        new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
-                    });
-                }
-            });
-
-            app.UseSwaggerUI(o =>
-            {
-                o.SwaggerEndpoint("./v1/swagger.json", "API V1");
-            });
+            app.UseSwagger();
+            app.UseSwaggerUI(o => o.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
 
             app.UseEndpoints(endpoints =>
             {

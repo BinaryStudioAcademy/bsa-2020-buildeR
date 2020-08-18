@@ -1,15 +1,12 @@
 ﻿using buildeR.RabbitMq.Interfaces;
 using buildeR.RabbitMq.Models;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace buildeR.RabbitMq.Realization
 {
     public class ProducerConsumerWrapper: IProducerConsumerWrapper
     {
-        IConnectionFactory _connectionFactory;
+        readonly IConnectionFactory _connectionFactory;
 
         public ProducerConsumerWrapper(IConnectionFactory connectionFactory)
         {

@@ -1,4 +1,5 @@
-﻿using buildeR.Processor.Services;
+﻿using buildeR.Common.Extensions;
+using buildeR.Processor.Services;
 using buildeR.RabbitMq.Interfaces;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace buildeR.Common.Interfaces
+namespace buildeR.BLL.Interfaces
 {
     public interface IEmailService
     {

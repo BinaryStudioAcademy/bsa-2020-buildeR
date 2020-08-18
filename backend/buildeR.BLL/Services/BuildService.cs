@@ -42,7 +42,7 @@ namespace buildeR.BLL.Services
 
             var history = await base.AddAsync(build);
 
-            history.Number = lastNumber;
+            history.Number = lastNumber + 1;
 
             await Update(history);
 
