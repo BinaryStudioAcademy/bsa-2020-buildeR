@@ -27,4 +27,11 @@ export class SynchronizationService {
 
     return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/${userId}`);
   }
+
+  registerWebhook(projectId: number): Observable<any> {
+    const token = localStorage.getItem('github-access-token');
+    this.httpService.setHeader('ProviderAuthorization', token);
+
+    return this.httpService.postRequest<any>(`${this.endpoint}/hooks/${projectId}`, null);
+  }
 }

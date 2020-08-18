@@ -28,5 +28,12 @@ namespace buildeR.API.Controllers
         {
             return await _synchronizationService.GetUserRepositories(userId, ProviderAuthorization);
         }
+
+        [HttpPost("hooks/{projectId}")]
+        public async Task RegisterWebhooks(int projectId, [FromHeader] string ProviderAuthorization)
+        {
+            var callback = Url.RouteUrl("webhooks", new { projectId = projectId });
+            await _synchronizationService.RegisterWebhook(projectId, callback, ProviderAuthorization);
+        }
     }
 }
