@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ProjectBuildHistoryComponent extends BaseComponent
   implements OnInit {
   projectId: number;
-  builds: Map<BuildHistory, Date> = new Map<BuildHistory, Date>();
+  builds: BuildHistory[] = [];
 
   constructor(
     private buildHistoryService: BuildHistoryService,
@@ -26,11 +26,7 @@ export class ProjectBuildHistoryComponent extends BaseComponent
       this.projectId = params.projectId;
       this.buildHistoryService
         .getBuildHistory(this.projectId)
-        .subscribe((response) => (response.body.map(bh => {
-          const timespan = new Date(0);
-          timespan.setSeconds(bh.duration);
-          this.builds.set(bh, timespan);
-        })));
+        .subscribe((response) => this.builds = response.body);
     });
   }
 }
