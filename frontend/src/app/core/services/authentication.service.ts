@@ -62,6 +62,12 @@ export class AuthenticationService {
     return localStorage.getItem('jwt');
   }
 
+  refreshToken() {
+    return this.firebaseUser.getIdToken().then((theToken) => {
+      localStorage.setItem('jwt', theToken);
+    });
+  }
+
   getCurrentUser() {
     return this.currentUser;
   }

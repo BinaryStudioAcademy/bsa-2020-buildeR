@@ -1,63 +1,70 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { BehaviorSubject, Observable, from, throwError } from 'rxjs';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, from, throwError, of } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, filter, take, finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenInterceptorService implements HttpInterceptor {
 
-  authRequest = null;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private refreshTokenInProgress = false;
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private auth: AuthenticationService) { }
 
   intercept(
-    req: HttpRequest<any>,
+    request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (!this.authService.isAuthorized()) {
-      return next.handle(req);
+    if (!this.auth.isAuthorized()) {
+      return next.handle(request);
     }
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error && error.status === 401) {
+          if (this.refreshTokenInProgress) {
+            return this.refreshTokenSubject.pipe(
+              filter(result => result !== null),
+              take(1),
+              switchMap(() => next.handle(this.addAuthenticationToken(request)))
+            );
+          } else {
+            this.refreshTokenInProgress = true;
 
-    if (!this.authRequest) {
-      this.authRequest = this.authService.getToken();
-    }
+            this.refreshTokenSubject.next(null);
 
-    return this.authRequest.pipe(
-      switchMap((token: string) => {
-        this.authRequest = null;
-        const authReq = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return next.handle(authReq);
-      }),
-      catchError((error) => {
-        if (error.status === 401) {
-          if (!this.authRequest) {
-            this.authRequest = from(this.authService.refreshToken());
-            if (!this.authRequest) {
-              return throwError(error);
-            }
+            return this.refreshAccessToken().pipe(
+              switchMap((success: boolean) => {
+                this.refreshTokenSubject.next(success);
+                return next.handle(this.addAuthenticationToken(request));
+              }),
+              finalize(() => (this.refreshTokenInProgress = false))
+            );
           }
-          return this.authRequest.pipe(
-            switchMap((newToken: string) => {
-              this.authRequest = null;
-              const authReqRepeat = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken}`,
-                },
-              });
-              return next.handle(authReqRepeat);
-            })
-          );
         } else {
           return throwError(error);
         }
       })
-    );
+    ) as Observable<HttpEvent<any>>;
+  }
+
+  private refreshAccessToken(): Observable<any> {
+    return of(this.auth.refreshToken());
+  }
+
+  addAuthenticationToken(request) {
+    const accessToken = this.auth.getToken();
+
+    if (!accessToken) {
+      return request;
+    }
+
+    return request.clone({
+      setHeaders: {
+        Authorization: this.auth.getToken()
+      }
+    });
   }
 }

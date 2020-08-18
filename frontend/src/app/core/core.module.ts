@@ -37,7 +37,8 @@ import { TokenInterceptorService } from './interceptors/token-interceptor.servic
     AuthGuard,
     HomeGuard,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-      { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
   ],
   exports: [
     LandingPageComponent,
