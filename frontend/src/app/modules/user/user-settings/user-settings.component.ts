@@ -152,7 +152,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       if (item.socialNetworkId - 1 === Number(provider)) {
         return true;
       }
-      return false;
     }
+    return false;
   }
 }
