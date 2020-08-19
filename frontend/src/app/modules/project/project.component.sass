@@ -54,7 +54,7 @@
   flex-direction: column
   align-content: center
 
-.project-nav
+nav
   margin-bottom: 1rem
 
 .list-group-horizontal
@@ -62,28 +62,44 @@
   border-bottom: 2px solid #f1f1f1
   margin-top: 15px
   .list-group-item
-    padding: 5px 15px
+    padding: 5px 15px 0 15px
     display: flex
     color: #666
     justify-content: start
     border-style: none
     text-decoration: none
+    box-sizing: content-box
     &:hover
-      color: #3eaaaf
-      background-color: white
+      a
+        color: #3eaaaf
+        background-color: white
+
+        &::after
+          content: ""
+          color: #3eaaaf
+          display: block
+          position: absolute
+          bottom: -2px
+          width: 100%
+          height: 2px
+          background-color: #3eaaaf
+
     a
       position: relative
-      margin: 0
-      padding: 0
+      display: inline-block
+      padding-bottom: 5px
       text-decoration: none
       color: #666
-    a:hover::after
-      content: ""
-      color: #3eaaaf
-      display: block
-      position: absolute
-      bottom: -7px
-      width: 100%
-      height: 2px
-      background-color: #3eaaaf
 
+.active
+  background-color: white !important
+  color: #3eaaaf !important
+  a::after
+    content: ""
+    color: #3eaaaf
+    display: block
+    position: absolute
+    bottom: -2px
+    width: 100%
+    height: 2px
+    background-color: #3eaaaf

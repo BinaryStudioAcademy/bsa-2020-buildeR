@@ -75,18 +75,18 @@
     <div>
       <nav class="project-nav">
         <ul class="list-group list-group-horizontal container">
-          <li (click)="change(1)" class="list-group-item" >
-            <a [routerLink]="['details']"[ngClass]="{ active: tab == 1 }">
+          <li class="list-group-item" [ngClass]="{ active: tab == 1 }">
+            <a (click)="change(1)" [routerLink]="['details']">
               Current
             </a>
           </li>
-          <li (click)="change(2)" class="list-group-item" >
-            <a [routerLink]="['history']" [ngClass]="{ active: tab == 2 }">
+          <li class="list-group-item" [ngClass]="{ active: tab == 2 }">
+            <a (click)="change(2)"  [routerLink]="['history']" >
               Build History
             </a>
           </li>
-          <li (click)="change(3)" class="list-group-item" >
-            <a [routerLink]="['settings']" [ngClass]="{ active: tab == 3 }">
+          <li class="list-group-item" [ngClass]="{ active: tab == 3 }">
+            <a (click)="change(3)" [routerLink]="['settings']">
               Settings
             </a>
           </li>
