@@ -4,6 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import { emailDotValidator } from '@core/validators/email-dot-validator';
+
 
 @Component({
   selector: 'app-user-settings',
@@ -47,7 +49,9 @@ export class UserSettingsComponent implements OnInit {
         email: new FormControl(this.details.email,
         [
            Validators.required,
-           Validators.pattern('^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$')
+           Validators.email,
+           Validators.pattern(`^[a-zA-Z].*`),
+           emailDotValidator()
         ]),
         location: new FormControl(this.details.location,
           [

@@ -7,8 +7,9 @@ import { NewUser } from '@shared/models/user/new-user';
 import { switchMap, map } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { User } from 'firebase';
-import { ValidateUser } from '../../../shared/models/user/validate-user';
-import { usernameAsyncValidator } from '../../validators/custom-async-validator';
+import { ValidateUser } from '@shared/models/user/validate-user';
+import { usernameAsyncValidator } from '@core/validators/custom-async-validator';
+import { emailDotValidator } from '@core/validators/email-dot-validator';
 
 @Component({
   selector: 'app-registration-dialog',
@@ -43,7 +44,7 @@ export class RegistrationDialogComponent implements OnInit {
           Validators.required,
           Validators.email,
           Validators.pattern(`^[a-zA-Z].*`),
-          this.emailDotValidator()
+          emailDotValidator()
         ]),
       username: new FormControl(this.details.username,
         [
@@ -98,20 +99,6 @@ export class RegistrationDialogComponent implements OnInit {
     };
   }
 
-  emailDotValidator(){
-    return(input: FormControl) => {
-      const email = input.value;
-      if (email != null){
-        const domain = email.split('@')[1];
-        console.log(domain);
-        const index = domain.indexOf('.');
-        if (index < 1){
-            console.log(index);
-            return { notValid: true };
-          }
-        return null;
-        }
-    };
-  }
+
 
 }
