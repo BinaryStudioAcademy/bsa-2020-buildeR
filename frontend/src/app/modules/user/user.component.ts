@@ -10,6 +10,7 @@ import {UserService} from "../../core/services/user.service";
   styleUrls: ['./user.component.sass']
 })
 export class UserComponent implements OnInit {
+  tab = 1;
 
   currentUser: User = {} as User;
 
@@ -25,11 +26,8 @@ export class UserComponent implements OnInit {
     });
   }
 
-  setStyleActiveElement(el) {
-    let current = document.getElementsByClassName("active");
-    current[0].className = current[0].className.replace(" active", "");
-    // event.className += " active";
-    (el.currentTarget as HTMLElement).className += " active";
+  change(id: number) {
+    this.tab = id;
   }
 
   async open(){
