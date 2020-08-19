@@ -42,7 +42,8 @@ export class RegistrationDialogComponent implements OnInit {
         [
           Validators.required,
           Validators.email,
-          Validators.pattern(`^[a-zA-Z].*`)
+          Validators.pattern(`^[a-zA-Z].*`),
+          this.emailDotValidator()
         ]),
       username: new FormControl(this.details.username,
         [
@@ -94,6 +95,22 @@ export class RegistrationDialogComponent implements OnInit {
           return res ? null : { isExists: true };
         })
       );
+    };
+  }
+
+  emailDotValidator(){
+    return(input: FormControl) => {
+      const email = input.value;
+      if (email != null){
+        const domain = email.split('@')[1];
+        console.log(domain);
+        const index = domain.indexOf('.');
+        if (index < 1){
+            console.log(index);
+            return { notValid: true };
+          }
+        return null;
+        }
     };
   }
 
