@@ -15,25 +15,7 @@
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
         </div>
       </div>
-    <nav>
-      <ul class="list-group list-group-horizontal container">
-        <li class="list-group-item" [ngClass]="{ active: tab == 1 }">
-          <a (click)="change(1)" [routerLink]="[]">
-            Profile
-          </a>
-        </li>
-        <li class="list-group-item" [ngClass]="{ active: tab == 2 }">
-          <a (click)="change(2)"  [routerLink]="[]" >
-            Project settings
-          </a>
-        </li>
-        <li class="list-group-item" [ngClass]="{ active: tab == 3 }">
-          <a (click)="change(3)" [routerLink]="[]">
-            New settings
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
   </div>
 
 
