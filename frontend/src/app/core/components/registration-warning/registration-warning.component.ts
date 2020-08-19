@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Providers } from '@shared/models/providers';
-import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 
 @Component({
   selector: 'app-registration-warning',
@@ -13,7 +12,7 @@ export class RegistrationWarningComponent implements OnInit {
   @Input() linkProvider: Providers;
   existProvider: Providers;
 
-  constructor(public activeModal: NgbActiveModal, private firebaseSignIn: FirebaseSignInService) { }
+  constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
     switch (this.linkProvider) {
