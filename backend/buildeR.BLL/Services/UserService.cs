@@ -83,7 +83,7 @@ namespace buildeR.BLL.Services
             var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
             await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, emailModel.Subject, emailModel.Title, emailModel.Body);
 
-            return userDto;
+            return _mapper.Map<UserDTO>(user);
         }
 
         public async Task Delete(int id)

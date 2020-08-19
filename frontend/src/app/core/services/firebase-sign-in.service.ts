@@ -1,22 +1,24 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { UserService } from '@core/services/user.service';
-import { RegisterDialogService } from '@core/services/register-dialog.service';
 import { Router } from '@angular/router';
-import { auth } from 'firebase/app';
-import { AuthenticationService } from './authentication.service';
-import { LinkProvider } from '@shared/models/user/link-provider';
-import { Providers } from '@shared/models/providers';
+import { RegisterDialogService } from '@core/services/register-dialog.service';
+import { UserService } from '@core/services/user.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Providers } from '@shared/models/providers';
+import { LinkProvider } from '@shared/models/user/link-provider';
+import { auth } from 'firebase/app';
 import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
+import { AuthenticationService } from './authentication.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseSignInService {
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
-    private angularAuth: AngularFireAuth,
     private userService: UserService,
     private registerDialog: RegisterDialogService,
     private router: Router,
@@ -28,9 +30,9 @@ export class FirebaseSignInService {
     const githubProvider = new auth.GithubAuthProvider();
     githubProvider.addScope('admin:hooks');
     githubProvider.addScope('repo');
-    return this.angularAuth.signInWithPopup(githubProvider).then(
+    return this.authService.getAngularAuth().signInWithPopup(githubProvider).then(
       (credential) => {
-        localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
+        // localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
       (error) => {
@@ -42,7 +44,26 @@ export class FirebaseSignInService {
 
   signInWithGoogle(redirectUrl?: string) {
     const googleProvider = new auth.GoogleAuthProvider();
-    return this.angularAuth.signInWithPopup(googleProvider).then((credential) => {
+    // this.angularAuth.signInWithRedirect(googleProvider);
+    // this.angularAuth.getRedirectResult().then((result) => {
+    //   if (result) {
+    //     // This gives you a Google Access Token. You can use it to access the Google API.
+    //     this.login(result, redirectUrl);
+    //     // ...
+    //   }
+    //   // The signed-in user info.
+    //   //var user = result.user;
+    // }).catch((error) => {
+    //   // Handle Errors here.
+    //   var errorCode = error.code;
+    //   var errorMessage = error.message;
+    //   // The email of the user's account used.
+    //   var email = error.email;
+    //   // The firebase.auth.AuthCredential type that was used.
+    //   var credential = error.credential;
+    //   // ...
+    // });
+    return this.authService.getAngularAuth().signInWithPopup(googleProvider).then((credential) => {
       this.login(credential, redirectUrl);
     },
       (error) => {
@@ -65,11 +86,11 @@ export class FirebaseSignInService {
         uId: user.uid
       } as LinkProvider;
       this.userService.linkProvider(linkUser)
-      .subscribe((resp) => {
-        if (resp) {
-          this.authService.setUser(resp);
-        }
-      });
+        .subscribe((resp) => {
+          if (resp) {
+            this.authService.setUser(resp);
+          }
+        });
     }).catch((err) => {
       console.log(err);
     });
@@ -88,11 +109,11 @@ export class FirebaseSignInService {
         uId: user.uid
       } as LinkProvider;
       this.userService.linkProvider(linkUser)
-      .subscribe((resp) => {
-        if (resp) {
-          this.authService.setUser(resp);
-        }
-      });
+        .subscribe((resp) => {
+          if (resp) {
+            this.authService.setUser(resp);
+          }
+        });
     }).catch((err) => {
       console.log(err);
     });
@@ -102,8 +123,15 @@ export class FirebaseSignInService {
     this.userService.login(credential.user.uid)
       .subscribe((resp) => {
         if (resp) {
-          this.authService.setUser(resp);
-          this.router.navigate([redirectUrl ?? '/portal']);
+          this.authService.getAngularAuth().authState
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((user) => {
+              this.authService.configureAuthState(user);
+              if (user.uid === resp.userSocialNetworks[0].uId) {
+                this.authService.setUser(resp);
+                this.router.navigate([redirectUrl ?? '/portal']);
+              }
+            });
         }
         else {
           this.registerDialog.signUp(credential);
