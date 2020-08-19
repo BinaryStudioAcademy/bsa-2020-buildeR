@@ -41,7 +41,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
 
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
-
+            services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)

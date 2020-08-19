@@ -15,23 +15,23 @@ namespace buildeR.API.Controllers
     [ApiController]
     public class WebhooksController : ControllerBase
     {
-        private readonly IBuildOperationsService _builder;
-
-        public WebhooksController(IBuildOperationsService builder)
+        private readonly IWebhooksHandler _handler;
+        public WebhooksController(IWebhooksHandler handler)
         {
-            _builder = builder;
+            _handler = handler;
         }
 
         [HttpPost()]
         public async Task WebhookCallback()
         {
-
+            //this method is used for generating callback links for repo providers
+            //please, don't touch it :3
         }
 
         [HttpPost("{projectId}/github")]
         public async Task GithubWebhookCallback(int projectId, [FromBody]PushGithubPayloadDTO payload)
         {
-            await _builder.StartBuild(projectId);
+            await _handler.HandleGithubPushEvent(projectId, payload);
         }
     }
 }
