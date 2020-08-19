@@ -82,5 +82,5 @@ export class RegistrationDialogComponent implements OnInit {
     this.activeModal.close();
     this.authService.cancelRegistration();
   }
-  
+
 }

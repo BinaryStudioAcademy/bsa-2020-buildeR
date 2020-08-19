@@ -138,21 +138,4 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     }
     return true;
   }
-
-  linkWithGithub() {
-    this.fbr.linkWithGithub();
-  }
-
-  linkWithGoogle() {
-    this.fbr.linkWithGoogle();
-  }
-
-  isProviderAdded(provider: Providers) {
-    for (const item of this.details.userSocialNetworks) {
-      if (item.socialNetworkId - 1 === Number(provider)) {
-        return true;
-      }
-    }
-    return false;
-  }
 }
