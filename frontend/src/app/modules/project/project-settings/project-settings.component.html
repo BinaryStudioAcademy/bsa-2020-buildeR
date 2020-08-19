@@ -1,5 +1,5 @@
 <div class="settings">
-  <div class="settings-section">
+  <div class="settings-section border-bottom">
     <h2 class="small-title">
       General
     </h2>
@@ -9,18 +9,17 @@
           <span>Project name</span>
         </div>
         <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="name" >
+          <input type="text" class="form-control form-control-sm" formControlName="name">
         </div>
         <div class="field">
           <span>Public repository</span>
         </div>
-              <div class="input-area">
-                <div class="custom-control custom-switch">
-                  <input type="checkbox" class="custom-control-input" id="isPublicSwitch"
-                  name="isPublic"/>
-                  <label class="custom-control-label" for="isPublicSwitch"></label>
-                </div>
-            </div>
+        <div class="input-area">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="isPublicSwitch" name="isPublic" />
+            <label class="custom-control-label" for="isPublicSwitch"></label>
+          </div>
+        </div>
         <div class="field">
           <span>Description</span>
         </div>
@@ -34,5 +33,23 @@
         <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
       </div>
     </form>
+
+    <br />
   </div>
+  <div class="settings-section border-bottom">
+    <h2 class="small-title">
+      Enviroment Variables
+    </h2>
+    <p>Customize your build using enviroment variables. </p>
+    <form (ngSubmit)="save()" [formGroup]="projectForm">
+      <div class="group-ev">
+      </div>
+    </form>
+  </div>
+  <div class="settings-section border-bottom">
+    <h2 class="small-title">
+      Cron Jobs
+    </h2>
+  </div>
+
 </div>
