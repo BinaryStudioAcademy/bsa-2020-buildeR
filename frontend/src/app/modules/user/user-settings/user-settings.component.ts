@@ -31,14 +31,12 @@ export class UserSettingsComponent implements OnInit {
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
-          Validators.required,
           Validators.minLength(2),
           Validators.maxLength(30),
           Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
         ]),
       lastName: new FormControl(this.details.lastName,
          [
-           Validators.required,
            Validators.minLength(2),
            Validators.maxLength(30),
            Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
