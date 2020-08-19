@@ -128,16 +128,14 @@ namespace buildeR.Processor.Services
         {
             string dockerfile = "";
             var template = Template.Parse(
-                @"FROM {{ bs.Plugin.BuildPlugin.DockerImage }}:lts
-                  WORKDIR /src/{{ bs.WorkDirectory }}
+                @"FROM {{ this.build_plugin.docker_image }}:lts
+                  WORKDIR /src/{{ this.work_directory }}
                   COPY . .
-                  RUN {{ bs.BuildPlugin.Runner }} {{ bs.PluginCommand }}");
+                  RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }}");
 
+            var bs = buildSteps.FirstOrDefault();
+            dockerfile += template.Render(bs);
 
-            foreach (var bs in buildSteps)
-            {
-                dockerfile += template.Render(bs);
-            }
 
             return dockerfile;
 
