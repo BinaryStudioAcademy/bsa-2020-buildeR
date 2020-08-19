@@ -8,6 +8,8 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { SynchronizedUser } from '@core/models/SynchronizedUser';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,14 +29,15 @@ export class DashboardComponent extends BaseComponent
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
-    private githubService: SynchronizationService
+    private githubService: SynchronizationService,
+    private modalService: NgbModal
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.loadingProjects = true;
-    this.currentUser = this.authService.getCurrentUser();    
+    this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
     this.githubService.getSynchronizedUser()
       .subscribe((user) => this.currentGithubUser = user);
@@ -84,5 +87,27 @@ export class DashboardComponent extends BaseComponent
         },
         (error) => this.toastrService.showError(error)
       );
+  }
+
+  deleteProject(projectId: number) {
+    const modalRef = this.modalService.open(ModalContentComponent);
+    let data = {
+      title: 'Are you sure?',
+      message: 'You are going to delete project.',
+      text: 'Press "yes" button to confirm deleting project or "no" button to come back.'
+    };
+    modalRef.componentInstance.content = data;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.projectService.deleteProject(projectId).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+            this.userProjects = this.userProjects.filter(proj => proj.id !== projectId);
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }

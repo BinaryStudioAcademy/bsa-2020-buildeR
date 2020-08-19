@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using buildeR.BLL.Exceptions;
+using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildPluginParameter;
@@ -10,7 +11,7 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +20,10 @@ namespace buildeR.BLL.Services
 {
     public sealed class ProjectService : BaseCrudService<Project, ProjectDTO, NewProjectDTO>, IProjectService
     {
-        public ProjectService(BuilderContext context, IMapper mapper) : base(context, mapper)
+        private readonly IQuartzService _quartzService;
+        public ProjectService(BuilderContext context, IMapper mapper, IQuartzService quartzService) : base(context, mapper)
         {
+            _quartzService = quartzService;
         }
 
         public override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
@@ -66,7 +69,19 @@ namespace buildeR.BLL.Services
 
         public async Task DeleteProject(int id)
         {
-             await base.RemoveAsync(id);     
+            //var triggers = await _triggerService.GetAllByProjectId(id);
+            //foreach(var trigger in triggers)
+            //{
+            //    await _triggerService.DeleteTrigger(trigger.Id);
+            //}
+            //string projectId = Convert.ToString(id);
+            await _quartzService.DeleteAllSheduleJob(id.ToString());
+            var project = await GetAsync(id);
+            if (project == null)
+            {
+                throw new NotFoundException(nameof(Project), id);
+            }
+            await base.RemoveAsync(id);     
         }       
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
