@@ -15,23 +15,7 @@
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
         </div>
       </div>
-    <ul class="list-group list-group-horizontal container">
-        <a
-          routerLink="/portal/dashboard/user"
-          class="list-group-item active"
-          (click)="setStyleActiveElement($event)"
-        ><p>Profile</p></a>
-        <a
-          [routerLink]="['/']"
-          class="list-group-item"
-          (click)="setStyleActiveElement($event)"
-        ><p>Project settings</p></a>
-        <a
-          [routerLink]="['/']"
-          class="list-group-item"
-          (click)="setStyleActiveElement($event)"
-        ><p>New settings</p></a>
-    </ul>
+    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
   </div>
 
 
