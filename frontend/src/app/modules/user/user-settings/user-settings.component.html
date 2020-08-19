@@ -68,6 +68,9 @@
             <div class="error" *ngIf="settingsForm.controls['username'].errors.pattern">
               Username must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '<br>
             </div>
+            <div class="error" *ngIf="settingsForm.controls['username'].errors?.isUsernameExists">
+              Username has already been taken
+            </div>
           </div>
         </div>
         <div class="field">
