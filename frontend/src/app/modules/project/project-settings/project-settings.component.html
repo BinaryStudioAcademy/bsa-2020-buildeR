@@ -9,17 +9,27 @@
           <span>Project name</span>
         </div>
         <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Name">
+          <input type="text" class="form-control form-control-sm" formControlName="name" >
         </div>
+        <div class="field">
+          <span>Public repository</span>
+        </div>
+              <div class="input-area">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="isPublicSwitch"
+                  name="isPublic"/>
+                  <label class="custom-control-label" for="isPublicSwitch"></label>
+                </div>
+            </div>
         <div class="field">
           <span>Description</span>
         </div>
         <div class="input-area">
-          <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description" placeholder="Name">
+          <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description">
           </textarea>
         </div>
       </div>
-      <div class="btn-wp">
+      <div class="d-flex justify-content-center">
         <button type="submit" class="btn btn-success" [disabled]="projectForm.errors">Save</button>
         <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
       </div>

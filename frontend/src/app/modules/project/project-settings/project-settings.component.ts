@@ -1,5 +1,5 @@
 import { Project } from 'src/app/shared/models/project/project';
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
@@ -11,11 +11,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./project-settings.component.sass']
 })
 export class ProjectSettingsComponent implements OnInit {
-  projectId: number;
-  project: Project = {} as Project;
-  public projectForm: FormGroup;
   isLoading = false;
-
+  projectId: number;
+  public projectForm: FormGroup;
+  @Input() project: Project = {} as Project;
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
@@ -24,20 +23,16 @@ export class ProjectSettingsComponent implements OnInit {
   {
     route.parent.params.subscribe(
       (params) => this.projectId = params.projectId);
-
+    this.route.parent.data.subscribe(data => this.project = data.project);
   }
 
   ngOnInit(): void {
-    this.projectService.getProjectById(this.projectId).subscribe((res) => {
-      this.project = res;
-    }, (err) => this.toastrService.showError(err));
-
-
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
           Validators.required
         ]),
+        isPublic: new FormControl(this.project.isPublic),
         description: new FormControl(this.project.description,
           [
             Validators.required
@@ -46,23 +41,6 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
 
-  // getProject(projectId: number) {
-  //     this.isLoading = true;
-  //     this.projectService
-  //     .getProjectById(projectId)
-  //       .subscribe(
-  //         (data) => {
-  //           this.isLoading = false;
-  //           this.tempProjectName = data.name;
-  //           this.tempProjectDescription = data.description;
-  //           this.project = data;
-  //         },
-  //         (error) => {
-  //           this.isLoading = false;
-  //           this.toastrService.showError(error.message, error.name);
-  //         }
-  //       );
-  // }
   reset() {
   }
   save() {
