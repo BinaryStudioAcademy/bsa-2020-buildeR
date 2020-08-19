@@ -21,7 +21,7 @@ namespace buildeR.BLL.Services
         public async Task<IEnumerable<Repository>> GetUserRepositories(int userId, string providerToken)
         {
             var repos = await _githubClient.GetUserRepositories(userId, providerToken);
-            return repos.Select(r => new Repository { Id = r.Id, Name = r.Name });
+            return repos.Select(r => new Repository { Id = r.Id, Name = r.Name, Private = r.Private });
         }
 
         public async Task RegisterWebhook(int projectId, string callback, string accessToken)

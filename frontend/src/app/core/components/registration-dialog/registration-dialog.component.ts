@@ -5,7 +5,7 @@ import { UserService } from '@core/services/user.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
 import { timer } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { User } from 'firebase';
 import { ValidateUser } from '../../../shared/models/user/validate-user';
 import { usernameAsyncValidator } from '../../validators/custom-async-validator';
 
@@ -41,7 +41,8 @@ export class RegistrationDialogComponent implements OnInit {
         [
           Validators.required,
           Validators.email,
-          Validators.pattern(`^[a-zA-Z].*`)
+          Validators.pattern(`^[a-zA-Z].*`),
+          emailDotValidator()
         ]),
       username: new FormControl(this.details.username,
         [
@@ -95,5 +96,7 @@ export class RegistrationDialogComponent implements OnInit {
       );
     };
   }
+
+
 
 }

@@ -23,6 +23,7 @@
     "@angular/router": "^10.0.9",
     "@microsoft/signalr": "^3.1.7",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
+    "@ng-select/ng-select": "^5.0.1",
     "bootstrap": "^4.5.0",
     "firebase": "^7.17.2",
     "font-awesome": "^4.7.0",
