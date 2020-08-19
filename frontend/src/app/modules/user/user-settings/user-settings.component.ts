@@ -5,6 +5,8 @@ import {ToastrNotificationsService} from '../../../core/services/toastr-notifica
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
 import {usernameAsyncValidator} from "../../../core/validators/custom-async-validator";
+import { emailDotValidator } from '@core/validators/email-dot-validator';
+
 
 @Component({
   selector: 'app-user-settings',
@@ -46,7 +48,9 @@ export class UserSettingsComponent implements OnInit {
         email: new FormControl(this.details.email,
         [
            Validators.required,
-           Validators.pattern('^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$')
+           Validators.email,
+           Validators.pattern(`^[a-zA-Z].*`),
+           emailDotValidator()
         ]),
         location: new FormControl(this.details.location,
           [
@@ -97,7 +101,7 @@ export class UserSettingsComponent implements OnInit {
     }, error =>
     {
       console.error(error);
-      this.toastrService.showError('Your profile wasn\'t updateds');
+      this.toastrService.showError('Your profile wasn\'t updated');
     });
   }
 

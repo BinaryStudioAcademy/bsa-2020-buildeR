@@ -83,7 +83,9 @@
             <div class="error" *ngIf="settingsForm.controls['email'].errors.required">
               Email is required
             </div>
-            <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern">
+            <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern
+            || settingsForm.controls['email'].errors.email
+            || settingsForm.controls['email'].errors.notValid">
               Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
               '<br>
             </div>
