@@ -10,6 +10,7 @@ import { ProjectDetailsComponent } from './project-details/project-details.compo
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     LoggingTerminalComponent,
     ProjectDetailsComponent,
     ProjectTriggersComponent,
-    ProjectBuildHistoryComponent
+    ProjectBuildHistoryComponent,
+    ProjectBuildStepsComponent
   ],
   imports: [ProjectRoutingModule, SharedModule, NgSelectModule],
 })
