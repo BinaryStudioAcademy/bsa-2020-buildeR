@@ -3,74 +3,6 @@
     grid-template-columns: 2
     grid-template-rows: 6
 
-
-.input-area
-  grid-column-start: 1
-  grid-column-end: 2
-  justify-self: start
-  margin: 0 10px 20px
-  z-index: 0
-  position: relative
-
-
-.field
-  grid-column-start: 0
-  grid-column-end: 1
-  justify-self: end
-  z-index: 0
-  position: relative
-
-.avatar-style
-  max-width: 200px
-  max-height: 200px
-  height: auto
-  width: auto
-  opacity: 1
-  display: block
-  transition: .5s ease
-  backface-visibility: hidden
-  border-radius: 150px
-  margin-left: 15%
-  margin-top: 5%
-
-.avatar-container
-   position: relative
-
-.avatar-inner-container
-   position: relative
-   &:hover
-    img
-     opacity: 0.3
-    .img-text
-      opacity: 1
-
-.img-text
-    transition: .5s ease
-    opacity: 0
-    position: absolute
-    top: 50%
-    left: 50%
-    transform: translate(-50%, -50%)
-    -ms-transform: translate(-50%, -50%)
-    text-align: center
-    cursor: pointer
-    font-size: 24px
-    color: #7f7f7f
-    margin-left: 7%
-input
-  width: 300px
-
-textarea
-  width: 300px
-
-small
-  color: grey
-
-.group
-    display: grid
-    grid-template-columns: 2
-    grid-template-rows: 6
-
 ::ng-deep body, html
   height: 100%
   width: 100%
@@ -85,7 +17,7 @@ small
 .scroll-container
   width: 100%
   position: absolute
-  height: calc(100% - 83px)
+  height: calc(100% - 83px - 178px)
   overflow: auto
 
 .input-area
@@ -94,53 +26,21 @@ small
   justify-self: start
   margin: 0 10px 20px
 
+.input-group
+  width: 300px
+  justify-self: start
+  margin: 0 10px 20px
+
 .field
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
 
-.avatar-style
-  height: 200px
-  width: 200px
-  opacity: 1
-  display: block
-  transition: .5s ease
-  backface-visibility: hidden
-  border-radius: 150px
-  margin-left: 15%
-  margin-top: 5%
-
-.img-text
-    transition: .5s ease
-    opacity: 0
-    position: absolute
-    top: 50%
-    left: 50%
-    transform: translate(-50%, -50%)
-    -ms-transform: translate(-50%, -50%)
-    text-align: center
-    cursor: pointer
-    font-size: 24px
-    color: #7f7f7f
-    margin-left: 15%
 input
   width: 300px
 
 textarea
   width: 300px
-
-small
-  color: grey
-
-
-.nickname
-  font-weight: bolder
-
-.date-since
-  margin-left: 10px
-
-.nickname .date-since
-  margin-top: 10px
 
 .with-btn
   display: flex
@@ -156,8 +56,33 @@ small
   font-size: .75em
 
 .save-button-container
-  position: absolute
-  top: 15px
-  right: 20px
+  grid-column-start: 1
+  grid-column-end: 2
+  width: 300px
+  margin: 0 10px
+  display: flex
+  justify-content: center
+  justify-self: start
   button
     width: 100px
+
+@media screen and (max-width: 675px)
+  .container
+    max-width: 100%
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+
+

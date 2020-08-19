@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from '@shared/models/user/user';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ModalCropperService } from '@core/services/modal-cropper.service';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
@@ -25,9 +24,8 @@ export class UserSettingsComponent implements OnInit {
   constructor(private settingsService: UserService,
               private toastrService: ToastrNotificationsService,
               private userService: UserService,
-              private route: ActivatedRoute,
-              private cropper: ModalCropperService,
-              private fbr: FirebaseSignInService) { }
+      private route: ActivatedRoute,
+      private fbr: FirebaseSignInService) { }
 
   ngOnInit(): void {
 
@@ -103,16 +101,6 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  async open(){
-    const file = await this.cropper.open();
-    if (file){
-      console.log('we have cropped ' + typeof(file));
-      // now we can use it for saving image logic
-    }
-    else{
-      console.log('Image didn`t change');
-    }
-  }
   upload(){
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)){
     this.toastrService.showError('Invalaid URL');
