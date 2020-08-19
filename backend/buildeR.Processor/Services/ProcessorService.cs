@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using buildeR.Common.DTO;
 using Microsoft.Extensions.Configuration;
+using Scriban;
 
 namespace buildeR.Processor.Services
 {
@@ -87,32 +88,29 @@ namespace buildeR.Processor.Services
             {
                 CloneRepository(build.RepositoryUrl, pathToClonedRepository);
 
-                foreach (var buildStep in build.BuildSteps.OrderBy(step => step.Index))
+                var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
+                await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+
+                var imageName = await CreateImageFromRepositoryWithDockerfileAsync(pathToClonedRepository);
+
+                var portForNewContainer = await GetFreeDockerPort();
+                var containerId = await CreateContainerAsync(imageName, (ushort)portForNewContainer);
+
+                if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
                 {
-                    var dockerFileContent = GenerateDockerFileContent(buildStep, build.RepositoryUrl);
-                    await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
-
-                    var imageName = await CreateImageFromRepositoryWithDockerfileAsync(pathToClonedRepository);
-
-                    var portForNewContainer = await GetFreeDockerPort();
-                    var containerId = await CreateContainerAsync(imageName, (ushort)portForNewContainer);
-
-                    if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
-                    {
-                        throw new InvalidOperationException($"Fail on creation: Image name {imageName}, container ID {containerId}");
-                    }
-
-                    Log.Information(
-                        $"Image with name '{imageName}' and container with ID [{containerId}] were created");
-
-                    await RunContainerAsync(containerId);
-                    Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);
-
-                    await _dockerClient.Containers.WaitContainerAsync(containerId);
-
-                    await RemoveImageAndContainerAsync(imageName, containerId);
+                    throw new InvalidOperationException($"Fail on creation: Image name {imageName}, container ID {containerId}");
                 }
+
+                Log.Information(
+                    $"Image with name '{imageName}' and container with ID [{containerId}] were created");
+
+                await RunContainerAsync(containerId);
+                Log.Information($" ================= Logs from container:");
+                await GetLogFromContainer(containerId, build.ProjectId, 1);
+
+                await _dockerClient.Containers.WaitContainerAsync(containerId);
+
+                await RemoveImageAndContainerAsync(imageName, containerId);
             }
             catch (Exception e)
             {
@@ -126,22 +124,37 @@ namespace buildeR.Processor.Services
 
         #region Docker
         #region Dockerfile
-        private string GenerateDockerFileContent(ExecutiveBuildStepDTO buildStep, string repositoryUrl)
+        private string GenerateDockerFileContent(IEnumerable<ExecutiveBuildStepDTO> buildSteps, string repositoryUrl)
         {
-            var repositoryName = new string(repositoryUrl.TakeLast(repositoryUrl.Length - repositoryUrl.LastIndexOf('/') - 1).ToArray());
-            var workDir = buildStep.WorkDirectory;
-            var buildPluginImage = buildStep.BuildPlugin.DockerImageName;//for example "mcr.microsoft.com/dotnet/core/sdk"
-            var buildPluginCommand = buildStep.BuildPlugin.Command; //e.g. "dotnet"
+            string dockerfile = "";
+            var template = Template.Parse(
+                @"FROM {{ bs.Plugin.BuildPlugin.DockerImage }}:lts
+                  WORKDIR /src/{{ bs.WorkDirectory }}
+                  COPY . .
+                  RUN {{ bs.BuildPlugin.Runner }} {{ bs.PluginCommand }}");
 
-            return buildStep
-                .PluginCommand
-                .TemplateForDocker
-                    .Replace("{BUILD_PLUGIN_IMAGE}", buildPluginImage)
-                    .Replace("{BUILD_PLUGIN_VERSION}", ":latest")//TODO: from where we take version? for now will be used last version of image
-                    .Replace("{BUILD_PLUGIN_COMMAND}", buildPluginCommand)
-                    .Replace("{REPOS_NAME}", repositoryName)
-                    .Replace("{WORK_DIR_NAME}", workDir)
-                    .Replace("{PLUGIN_COMMAND_NAME}", buildStep.PluginCommand.Name);//like "build"
+
+            foreach (var bs in buildSteps)
+            {
+                dockerfile += template.Render(bs);
+            }
+
+            return dockerfile;
+
+            //var repositoryName = new string(repositoryUrl.TakeLast(repositoryUrl.Length - repositoryUrl.LastIndexOf('/') - 1).ToArray());
+            //var workDir = buildStep.WorkDirectory;
+            //var buildPluginImage = buildStep.BuildPlugin.DockerImageName;//for example "mcr.microsoft.com/dotnet/core/sdk"
+            //var buildPluginCommand = buildStep.BuildPlugin.Command; //e.g. "dotnet"
+
+            //return buildStep
+            //    .PluginCommand
+            //    .TemplateForDocker
+            //        .Replace("{BUILD_PLUGIN_IMAGE}", buildPluginImage)
+            //        .Replace("{BUILD_PLUGIN_VERSION}", ":latest")//TODO: from where we take version? for now will be used last version of image
+            //        .Replace("{BUILD_PLUGIN_COMMAND}", buildPluginCommand)
+            //        .Replace("{REPOS_NAME}", repositoryName)
+            //        .Replace("{WORK_DIR_NAME}", workDir)
+            //        .Replace("{PLUGIN_COMMAND_NAME}", buildStep.PluginCommand.Name);//like "build"
         }
 
         private async Task CreateDockerFileAsync(string content, string path)

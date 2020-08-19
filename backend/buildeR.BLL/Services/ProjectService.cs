@@ -70,26 +70,27 @@ namespace buildeR.BLL.Services
         }       
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
-            var project = await Context.Projects
-                                                .Include(p => p.BuildSteps)
-                                                    .ThenInclude(s => s.PluginCommand)
-                                                        .ThenInclude(c => c.Plugin)
-                                                .Include(p => p.BuildSteps)
-                                                    .ThenInclude(s => s.BuildPluginParameters)
-                                                .FirstOrDefaultAsync(p => p.Id == projectId);
+            //var project = await Context.Projects
+            //                                    .Include(p => p.BuildSteps)
+            //                                        .ThenInclude(s => s.PluginCommand)
+            //                                            .ThenInclude(c => c.Plugin)
+            //                                    .Include(p => p.BuildSteps)
+            //                                        .ThenInclude(s => s.BuildPluginParameters)
+            //                                    .FirstOrDefaultAsync(p => p.Id == projectId);
 
-            if (project == null)
-                throw new NotFoundException("Project", projectId);
+            //if (project == null)
+            //    throw new NotFoundException("Project", projectId);
 
-            var executiveBuild = new ExecutiveBuildDTO();
+            //var executiveBuild = new ExecutiveBuildDTO();
 
-            executiveBuild.ProjectId = project.Id;
-            executiveBuild.RepositoryUrl = project.Repository;
-            executiveBuild.BuildSteps = project.BuildSteps
-                .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
-                .OrderBy(buildstep => buildstep.Index);
+            //executiveBuild.ProjectId = project.Id;
+            //executiveBuild.RepositoryUrl = project.Repository;
+            //executiveBuild.BuildSteps = project.BuildSteps
+            //    .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
+            //    .OrderBy(buildstep => buildstep.Index);
 
-            return executiveBuild;
+            //return executiveBuild;
+            return new ExecutiveBuildDTO();
         }
     
 
