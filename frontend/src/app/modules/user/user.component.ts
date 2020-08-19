@@ -3,6 +3,7 @@ import {User} from "../../shared/models/user/user";
 import {ActivatedRoute} from "@angular/router";
 import {ModalCropperService} from "../../core/services/modal-cropper.service";
 import {UserService} from "../../core/services/user.service";
+import { TabRoute } from '@shared/models/tabs/tab-route';
 
 @Component({
   selector: 'app-user',
@@ -10,8 +11,13 @@ import {UserService} from "../../core/services/user.service";
   styleUrls: ['./user.component.sass']
 })
 export class UserComponent implements OnInit {
-
   currentUser: User = {} as User;
+
+  tabRoutes: TabRoute[] = [
+    { name: 'Profile', route: '' },
+    { name: 'Project settings', route: '' },
+    { name: 'New settings', route: '' },
+  ];
 
   constructor(private route: ActivatedRoute, private cropper: ModalCropperService, private userService: UserService) { }
 
@@ -23,13 +29,6 @@ export class UserComponent implements OnInit {
     this.userService.userLogoUserName.subscribe( userName => {
       this.currentUser.username = userName;
     });
-  }
-
-  setStyleActiveElement(el) {
-    let current = document.getElementsByClassName("active");
-    current[0].className = current[0].className.replace(" active", "");
-    // event.className += " active";
-    (el.currentTarget as HTMLElement).className += " active";
   }
 
   async open(){
