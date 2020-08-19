@@ -1,0 +1,37 @@
+<div class="custom-control custom-switch">
+  <input type="checkbox" class="custom-control-input" id="app" [(ngModel)]="appChecked" (change)="onToggleApp()">
+  <label class="custom-control-label" for="app">Enable app notifications</label>
+</div>
+<div class="custom-control custom-switch">
+  <input type="checkbox" class="custom-control-input" id="email1" [(ngModel)]="emailChecked" (change)="onToggleEmail()">
+  <label class="custom-control-label" for="email1">Enable email notifications</label>
+</div>
+<div class="setting-container">
+    <div class="setting-text">
+      <span>Resive updates</span>
+    </div>
+    <div class="setting-app mr-2">
+      <span>App</span>
+    </div>
+    <div class="setting-email">
+      <span>Email</span>
+    </div>
+    <div class="line">
+    </div>
+  <ng-container *ngFor="let setting of settings">
+    <div class="setting-text">
+      <span>{{setting.description}}</span>
+    </div>
+    <div class="custom-control custom-switch setting-app">
+      <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}app" [(ngModel)]="setting.app"
+        (change)="onToggle(setting.app)">
+      <label class="custom-control-label" for="{{setting.notificationType}}app"></label>
+    </div>
+    <div class="custom-control custom-switch setting-email">
+      <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}email" [(ngModel)]="setting.email"
+        (change)="onToggle(setting.email)">
+      <label class="custom-control-label" for="{{setting.notificationType}}email"></label>
+    </div>
+  </ng-container>
+</div>
+<button class="btn btn-success" (click)="save()">Save</button>
