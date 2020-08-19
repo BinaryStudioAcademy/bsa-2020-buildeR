@@ -72,20 +72,20 @@
     </div>
   </div>
   <div class="project-main">
-    <div class="project-navigation">
+    <div>
       <nav class="project-nav">
-        <ul>
-          <li (click)="change(1)">
-            <a [routerLink]="['details']" [ngClass]="{ active: tab == 1 }">
+        <ul class="list-group list-group-horizontal container">
+          <li (click)="change(1)" class="list-group-item" >
+            <a [routerLink]="['details']"[ngClass]="{ active: tab == 1 }">
               Current
             </a>
           </li>
-          <li (click)="change(2)">
+          <li (click)="change(2)" class="list-group-item" >
             <a [routerLink]="['history']" [ngClass]="{ active: tab == 2 }">
               Build History
             </a>
           </li>
-          <li (click)="change(3)">
+          <li (click)="change(3)" class="list-group-item" >
             <a [routerLink]="['settings']" [ngClass]="{ active: tab == 3 }">
               Settings
             </a>
