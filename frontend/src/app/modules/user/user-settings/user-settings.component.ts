@@ -81,7 +81,6 @@ export class UserSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
-    this.userService.userLogoUrl.subscribe(url => this.changedUser.avatarUrl = url);
   }
 
   onSubmit(user: User) {
@@ -91,7 +90,7 @@ export class UserSettingsComponent implements OnInit {
       this.details = updateUser;
       this.isChanged = true;
       this.toastrService.showSuccess('Your profile was updated!');
-      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
+      this.userService.changeUserName(this.settingsForm.controls.username.value);
     }, error =>
     {
       console.error(error);
@@ -108,6 +107,7 @@ export class UserSettingsComponent implements OnInit {
     this.settingsService.updateUser(this.details).subscribe((res) =>
     {
       console.log(res);
+      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
       this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
     },
     (err) => {

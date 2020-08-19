@@ -12,7 +12,10 @@ import { ValidateUser } from '@shared/models/user/validate-user';
 export class UserService {
   public routePrefix = '/users';
   private userLogoUrl$ = new Subject<string>();
+  private userLogoUserName$ = new Subject<string>();
+
   userLogoUrl = this.userLogoUrl$.asObservable();
+  userLogoUserName = this.userLogoUserName$.asObservable();
 
   constructor(private httpService: HttpService) { }
 
@@ -45,6 +48,10 @@ export class UserService {
 
   changeImageUrl(url: string) {
     this.userLogoUrl$.next(url);
+  }
+
+  changeUserName(userName: string) {
+    this.userLogoUserName$.next(userName);
   }
 
   validateUsername(user: ValidateUser): Observable<boolean> {
