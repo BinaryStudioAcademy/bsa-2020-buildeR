@@ -1,6 +1,9 @@
 form
   padding: 10px
   margin: 0px auto
+  display: flex
+  flex-direction: column
+  align-items: center
 
 .group
     display: grid
@@ -13,12 +16,24 @@ form
   justify-self: start
   margin: 0 10px 20px
 
-select
+datalist
+  max-height: 100px
+  overflow-x: hidden
+
+ng-select
   height: calc(1.5em + 0.5rem - 3px)
   width: 300px
   border: 1px solid #ced4da
   border-radius: 0.2rem
   outline: none
+  ::ng-deep ng-dropdown-panel
+    background: white !important
+    width: 300px
+    border: 1px solid #ced4da
+    border-radius: 0.2rem
+    .ng-option
+      padding: 5px
+      border-bottom: 1px solid #ced4da
 
 input
   width: 300px
@@ -50,4 +65,3 @@ textarea
 
 .btn
   margin: 10px
-
