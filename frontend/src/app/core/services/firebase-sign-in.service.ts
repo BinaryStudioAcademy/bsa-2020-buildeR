@@ -7,6 +7,8 @@ import { auth } from 'firebase/app';
 import { AuthenticationService } from './authentication.service';
 import { LinkProvider } from '@shared/models/user/link-provider';
 import { Providers } from '@shared/models/providers';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,8 @@ export class FirebaseSignInService {
     private userService: UserService,
     private registerDialog: RegisterDialogService,
     private router: Router,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private modalService: NgbModal
   ) { }
 
   signInWithGithub(redirectUrl?: string) {
@@ -31,7 +34,8 @@ export class FirebaseSignInService {
         this.login(credential, redirectUrl);
       },
       (error) => {
-        console.log('Need to link with github');
+        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.provider = Providers.Github;
       }
     );
   }
@@ -42,7 +46,8 @@ export class FirebaseSignInService {
       this.login(credential, redirectUrl);
     },
       (error) => {
-        console.log('Need to link with google');
+        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.provider = Providers.Google;
       }
     );
   }

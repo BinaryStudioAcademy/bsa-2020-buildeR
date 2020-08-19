@@ -4,9 +4,8 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { UserService } from '@core/services/user.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
-import { switchMap, map } from 'rxjs/operators';
 import { timer } from 'rxjs';
-import { User } from 'firebase';
+import { map, switchMap } from 'rxjs/operators';
 import { ValidateUser } from '../../../shared/models/user/validate-user';
 import { usernameAsyncValidator } from '../../validators/custom-async-validator';
 
