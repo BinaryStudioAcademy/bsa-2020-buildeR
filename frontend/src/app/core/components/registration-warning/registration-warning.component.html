@@ -1,10 +1,12 @@
 <div class="modal-body">
     <img class="logo" src="../../../../assets/images/logo.png" />
-    <p>It seems that you would like to login with Github. 
-        To make it possible login with Google and 
-        link with Github in user settings firstly</p>
-        <div class="buttons">
-            <button type="submit" class="btn btn-success" ngbAutofocus (click)="ok()">OK</button>
-            <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
-          </div>
+    <p>It seems that you would like to login with {{getProviderValue(linkProvider)}},
+        but you've already had an account in buildeR.
+        To make it possible, firstly, login with {{getProviderValue(existProvider)}} and
+        link with {{getProviderValue(linkProvider)}} in user settings.</p>
+    <div class="buttons">
+        <button type="submit" class="btn btn-success" ngbAutofocus (click)="signIn()">Sign in with
+            {{getProviderValue(existProvider)}}</button>
+        <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
+    </div>
 </div>

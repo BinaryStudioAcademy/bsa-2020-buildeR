@@ -5,6 +5,9 @@ import { ToastrNotificationsService } from '../../../core/services/toastr-notifi
 import { UserService } from '../../../core/services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
+import { Providers } from '@shared/models/providers';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 
 @Component({
   selector: 'app-user-settings',
@@ -20,6 +23,7 @@ export class UserSettingsComponent implements OnInit {
 
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
+
 
   constructor(
     private settingsService: UserService,
@@ -130,5 +134,17 @@ export class UserSettingsComponent implements OnInit {
 
   linkWithGoogle() {
     this.fbr.linkWithGoogle();
+  }
+
+  isProviderAdded(provider: Providers)
+  {
+    for (const item of this.details.userSocialNetworks)
+    {
+      if (item.socialNetworkId - 1 === Number(provider))
+      {
+        return true;
+      }
+      return false;
+    }
   }
 }

@@ -51,9 +51,11 @@ export class AuthenticationService {
           .pipe(takeUntil(this.unsubscribe$))
           .subscribe((user) => {
             this.configureAuthState(user);
-            if (user.uid === userResult.userSocialNetworks[0].uId) {
-              this.currentUser = userResult;
-              this.router.navigate(['/portal']);
+            if (user) {
+              if (user.uid === userResult.userSocialNetworks[0].uId) {
+                this.currentUser = userResult;
+                this.router.navigate(['/portal']);
+              }
             }
           });
       });

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Providers } from '@shared/models/providers';
+import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 
 @Component({
   selector: 'app-registration-warning',
@@ -9,20 +10,33 @@ import { Providers } from '@shared/models/providers';
 })
 export class RegistrationWarningComponent implements OnInit {
 
-  @Input() provider: Providers;
+  @Input() linkProvider: Providers;
+  existProvider: Providers;
 
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(public activeModal: NgbActiveModal, private firebaseSignIn: FirebaseSignInService) { }
 
   ngOnInit(): void {
+    switch (this.linkProvider) {
+      case Providers.Github: {
+        this.existProvider = Providers.Google;
+        break;
+      }
+      case Providers.Google: {
+        this.existProvider = Providers.Github;
+        break;
+      }
+    }
   }
 
-  ok(){
-    // switch(this.provider) {
-    //   case Providers.Github: 
-    // }
+  getProviderValue(key: Providers) {
+    return Providers[Number(key)];
   }
 
-  onCancel(){
-    this.activeModal.close();
+  signIn() {
+    this.activeModal.close(this.existProvider);
+  }
+
+  onCancel() {
+    this.activeModal.dismiss();
   }
 }

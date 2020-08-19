@@ -32,43 +32,62 @@ export class FirebaseSignInService {
     githubProvider.addScope('repo');
     return this.authService.getAngularAuth().signInWithPopup(githubProvider).then(
       (credential) => {
-        // localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
+        localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
       (error) => {
-        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-        modalRef.componentInstance.provider = Providers.Github;
+        switch (error.code) {
+          case 'auth/account-exists-with-different-credential': {
+            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+            modalRef.componentInstance.linkProvider = Providers.Github;
+            modalRef.result.then((res) => {
+              switch (res) {
+                case Providers.Github: {
+                  this.signInWithGithub();
+                  break;
+                }
+                case Providers.Google: {
+                  this.signInWithGoogle();
+                  break;
+                }
+              }
+            }, (reason) => console.log(reason));
+            break;
+          }
+          case 'auth/cancelled-popup-request': break;
+          default: console.log(error);
+        }
       }
     );
   }
 
   signInWithGoogle(redirectUrl?: string) {
     const googleProvider = new auth.GoogleAuthProvider();
-    // this.angularAuth.signInWithRedirect(googleProvider);
-    // this.angularAuth.getRedirectResult().then((result) => {
-    //   if (result) {
-    //     // This gives you a Google Access Token. You can use it to access the Google API.
-    //     this.login(result, redirectUrl);
-    //     // ...
-    //   }
-    //   // The signed-in user info.
-    //   //var user = result.user;
-    // }).catch((error) => {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // The email of the user's account used.
-    //   var email = error.email;
-    //   // The firebase.auth.AuthCredential type that was used.
-    //   var credential = error.credential;
-    //   // ...
-    // });
     return this.authService.getAngularAuth().signInWithPopup(googleProvider).then((credential) => {
       this.login(credential, redirectUrl);
     },
       (error) => {
-        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-        modalRef.componentInstance.provider = Providers.Google;
+        switch (error.code) {
+          case 'auth/account-exists-with-different-credential': {
+            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+            modalRef.componentInstance.linkProvider = Providers.Google;
+            modalRef.result.then((res) => {
+              switch (res) {
+                case Providers.Github: {
+                  this.signInWithGithub();
+                  break;
+                }
+                case Providers.Google: {
+                  this.signInWithGoogle();
+                  break;
+                }
+              }
+            }, (reason) => console.log(reason));
+            break;
+          }
+          case 'auth/cancelled-popup-request': break;
+          default: console.log(error);
+        }
       }
     );
   }
@@ -127,9 +146,11 @@ export class FirebaseSignInService {
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe((user) => {
               this.authService.configureAuthState(user);
-              if (user.uid === resp.userSocialNetworks[0].uId) {
-                this.authService.setUser(resp);
-                this.router.navigate([redirectUrl ?? '/portal']);
+              if (user) {
+                if (user.uid === resp.userSocialNetworks[0].uId) {
+                  this.authService.setUser(resp);
+                  this.router.navigate([redirectUrl ?? '/portal']);
+                }
               }
             });
         }
