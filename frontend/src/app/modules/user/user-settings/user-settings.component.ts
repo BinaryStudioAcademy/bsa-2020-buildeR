@@ -4,6 +4,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
 import {UserService} from '../../../core/services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import {usernameAsyncValidator} from "../../../core/validators/custom-async-validator";
+import { emailDotValidator } from '@core/validators/email-dot-validator';
+
 
 @Component({
   selector: 'app-user-settings',
@@ -31,14 +34,12 @@ export class UserSettingsComponent implements OnInit {
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
-          Validators.required,
           Validators.minLength(2),
           Validators.maxLength(30),
           Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
         ]),
       lastName: new FormControl(this.details.lastName,
          [
-           Validators.required,
            Validators.minLength(2),
            Validators.maxLength(30),
            Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
@@ -47,7 +48,9 @@ export class UserSettingsComponent implements OnInit {
         email: new FormControl(this.details.email,
         [
            Validators.required,
-           Validators.pattern('^(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{2,30}(?<![-\\.])@(?![-\\.])(?!.*--)(?!.*\\.\\.)[\\w-\\.]{3,30}(?<![-\\.])$')
+           Validators.email,
+           Validators.pattern(`^[a-zA-Z].*`),
+           emailDotValidator()
         ]),
         location: new FormControl(this.details.location,
           [
@@ -61,7 +64,11 @@ export class UserSettingsComponent implements OnInit {
             Validators.minLength(3),
             Validators.maxLength(30),
             Validators.pattern('^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._]+(?<![-\\.])$')
-          ]),
+          ],
+          [
+            usernameAsyncValidator(this.userService, this.details.id)
+          ]
+        ),
         bio : new FormControl(this.details.bio,
           [
             Validators.maxLength(300),
@@ -81,7 +88,6 @@ export class UserSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
-    this.userService.userLogoUrl.subscribe(url => this.changedUser.avatarUrl = url);
   }
 
   onSubmit(user: User) {
@@ -91,7 +97,7 @@ export class UserSettingsComponent implements OnInit {
       this.details = updateUser;
       this.isChanged = true;
       this.toastrService.showSuccess('Your profile was updated!');
-      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
+      this.userService.changeUserName(this.settingsForm.controls.username.value);
     }, error =>
     {
       console.error(error);
@@ -108,6 +114,7 @@ export class UserSettingsComponent implements OnInit {
     this.settingsService.updateUser(this.details).subscribe((res) =>
     {
       console.log(res);
+      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
       this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
     },
     (err) => {

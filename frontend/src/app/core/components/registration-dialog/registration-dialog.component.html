@@ -80,7 +80,8 @@
           Email is required
         </div>
         <div class="error " *ngIf="registerForm.controls['email'].errors.email
-                         || registerForm.controls['email'].errors.pattern">
+                         || registerForm.controls['email'].errors.pattern
+                         || registerForm.controls['email'].errors.notValid">
           Email must be like 'example@gmail.com'
           Email can't start or finish with these
           characters ' - ', ' . '

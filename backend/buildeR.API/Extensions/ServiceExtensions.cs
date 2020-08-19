@@ -50,7 +50,7 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            var queueSettings = configuration.Bind<QueueSettings>("RabbitMQ:Queues:ToProcessor");
+            var queueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
         }
         public static void RegisterHttpCients(this IServiceCollection services)
