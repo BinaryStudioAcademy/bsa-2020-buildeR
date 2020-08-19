@@ -1,3 +1,9 @@
+.settings-wrp
+  overflow-y: scroll
+  overflow-x: hidden
+  height: 380px
+
+
 .group
     display: grid
     grid-template-columns: 2
@@ -62,7 +68,7 @@ textarea
   font-size: .75em
 
 h2
-  color: skyblue
+  color: #03BBD5
   font-weight: bolder
 
 .save-button-container
@@ -78,8 +84,41 @@ h2
 
 .group-ev
   display: grid
-  grid-template-columns: 2
-  grid-template-rows: 6
+  grid-template-columns: 5
+  grid-template-rows: 2
+
+.name
+  grid-column-start: 1
+  grid-column-end: 2
+
+.value
+  grid-column-start: 2
+  grid-column-end: 3
+
+.branch
+  grid-column-start: 3
+  grid-column-end: 4
+
+.isOn
+ grid-column-start: 4
+ grid-column-end: 5
+
+.addSwitch
+  padding-top: 25px
+
+.add-cron
+
+
+.group-jobs
+  display: grid
+  grid-template-columns: 4
+  grid-template-rows: 2
+
+.add
+  margin-top:28px
+
+.form-control-ev
+  width: 90%
 
 
 @media screen and (max-width: 675px)
@@ -100,3 +139,18 @@ h2
     justify-self: center
     margin-left: 0
     margin-right: 0
+  .group-ev
+   grid-template-columns: 2
+   grid-template-rows: 5
+  .name
+    grid-column-start: 0
+    grid-column-end: 1
+  .value
+    grid-column-start: 0
+    grid-column-end: 1
+  .branch
+    grid-column-start: 0
+    grid-column-end: 1
+  .isOn
+    grid-column-start: 0
+    grid-column-end: 1
