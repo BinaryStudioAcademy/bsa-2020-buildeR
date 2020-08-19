@@ -1,21 +1,24 @@
-.settings
-  padding-top: .8em
-  display: flex
-
-.settings-section
-  padding: 0 0 1em
-  margin-bottom: 3em
-  width: 100%
-  border-bottom: 2px solid #f1f1f1
-
-form
-  padding: 10px
-  margin: 0px auto
-
 .group
     display: grid
     grid-template-columns: 2
-    grid-template-rows: 2
+    grid-template-rows: 6
+
+::ng-deep body, html
+  height: 100%
+  width: 100%
+  overflow: hidden
+
+.container
+  height: 100%
+  position: relative
+  display: flex
+  justify-content: center
+
+.scroll-container
+  width: 100%
+  position: absolute
+  height: calc(100% - 83px - 178px)
+  overflow: auto
 
 .input-area
   grid-column-start: 1
@@ -23,29 +26,63 @@ form
   justify-self: start
   margin: 0 10px 20px
 
-input
+.input-group
   width: 300px
-
-textarea
-  width: 300px
+  justify-self: start
+  margin: 0 10px 20px
 
 .field
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
 
-.small-title
-  margin-top: 0
-  font-size: 18px
-  color: #3eaaaf
+input
+  width: 300px
+
+textarea
+  width: 300px
+
+.with-btn
+  display: flex
+
+.upload
+  width: 236px
+
+.form-control.ng-touched.ng-invalid
+  border: solid red 1px
 
 .error
-  color: crimson
-  font-size: 12px
+  color: red
+  font-size: .75em
 
-.btn-wp
-  text-align: center
+.save-button-container
+  grid-column-start: 1
+  grid-column-end: 2
+  width: 300px
+  margin: 0 10px
+  display: flex
+  justify-content: center
+  justify-self: start
+  button
+    width: 100px
 
-.btn
-  margin: 10px
+@media screen and (max-width: 675px)
+  .container
+    max-width: 100%
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+
 
