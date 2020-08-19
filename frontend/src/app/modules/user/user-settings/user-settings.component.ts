@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { User } from '@shared/models/user/user';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from '../../../core/services/toastr-notifications.service';
@@ -15,7 +15,7 @@ import { Providers } from '@shared/models/providers';
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.sass']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent implements OnInit, OnDestroy {
 
   // hardcoded date for test
 
@@ -34,6 +34,7 @@ export class UserSettingsComponent implements OnInit {
     private fbr: FirebaseSignInService) { }
 
   ngOnInit(): void {
+    document.body.style.overflow = 'hidden';
 
     this.route.data.subscribe(data => this.details = data.user);
     this.settingsForm = new FormGroup({
@@ -94,6 +95,11 @@ export class UserSettingsComponent implements OnInit {
       }
     });
   }
+
+  ngOnDestroy(): void {
+    document.body.style.overflow = 'scroll';
+  }
+
 
   onSubmit(user: User) {
     user.id = this.details.id;

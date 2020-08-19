@@ -72,27 +72,7 @@
     </div>
   </div>
   <div class="project-main">
-    <div class="project-navigation">
-      <nav class="project-nav">
-        <ul>
-          <li (click)="change(1)">
-            <a [routerLink]="['details']" [ngClass]="{ active: tab == 1 }">
-              Current
-            </a>
-          </li>
-          <li (click)="change(2)">
-            <a [routerLink]="['history']" [ngClass]="{ active: tab == 2 }">
-              Build History
-            </a>
-          </li>
-          <li (click)="change(3)">
-            <a [routerLink]="['settings']" [ngClass]="{ active: tab == 3 }">
-              Settings
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
     <div class="project-body">
       <router-outlet></router-outlet>
     </div>

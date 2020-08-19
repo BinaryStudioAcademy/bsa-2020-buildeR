@@ -10,6 +10,7 @@ import {
   Router,
 } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { TabRoute } from '@shared/models/tabs/tab-route';
 
 @Component({
   selector: 'app-project',
@@ -20,7 +21,13 @@ export class ProjectComponent implements OnInit {
   id: number;
   project: Project = {} as Project;
   isLoading = false;
-  tab = 1;
+
+  tabRoutes: TabRoute[] = [
+    { name: 'Current', route: 'details' },
+    { name: 'Build History', route: 'history' },
+    { name: 'Settings', route: 'settings' },
+  ];
+
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
@@ -30,9 +37,7 @@ export class ProjectComponent implements OnInit {
       .pipe(switchMap((params) => params.getAll('projectId')))
       .subscribe((data) => (this.id = Number(data)));
   }
-  change(id: number) {
-    this.tab = id;
-  }
+
   ngOnInit(): void {
     this.getProject(this.id);
   }
