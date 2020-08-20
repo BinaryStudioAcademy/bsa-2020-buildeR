@@ -33,7 +33,7 @@ namespace buildeR.API.Controllers
 
         [HttpGet("{repoName}/branches")]
         public async Task<IEnumerable<Branch>> GetRepositoryBranches(string repoName, [FromHeader]string ProviderAuthorization)
-        {
+         {
             return await _synchronizationService.GetRepositoryBranches(repoName, ProviderAuthorization);
         }
 

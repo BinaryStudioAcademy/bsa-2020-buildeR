@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NewProjectTrigger} from '@shared/models/project/project-trigger/new-project-trigger';
 import { UpdateTriggerCron } from '@shared/models/project/project-trigger/update-trigger-cron';
 import { ProjectTrigger } from '@shared/models/project/project-trigger/project-trigger';
 import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
 import { TriggerService } from '@core/services/trigger.service';
+import { SynchronizationService } from '@core/services/synchronization.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ActivatedRoute } from '@angular/router';
+import { Branch } from '@core/models/Branch';
+import { ProjectService } from '@core/services/project.service';
+import { Project } from '@shared/models/project/project';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { Observable, Subject, merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-triggers',
@@ -13,26 +20,55 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./project-triggers.component.sass']
 })
 export class ProjectTriggersComponent implements OnInit {
-  projectId: number;
-  branches: string [] = ['master', 'dev'];
+  project: Project;
+  branches: Branch[];
   selectedBranch: string;
   runOnShedule = true;
   triggers: ProjectTriggerInfo[] = [];
+
+  model: any;
+  @ViewChild('branch', {static: true}) instance: NgbTypeahead;
+
+  branchInputFocus$ = new Subject<string>();
+  branchInputClick$ = new Subject<string>();
+
+  search = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.branchInputClick$.pipe(filter(() => !this.instance.isPopupOpen()));
+    const inputFocus$ = this.branchInputFocus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map(term => (term === '' ? this.branches.map((r) => r.name).slice(0, 8)
+        : this.branches.map((r) => r.name).filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 8))
+    );
+  }
+
   constructor(
     private triggerService: TriggerService,
     private toastrService: ToastrNotificationsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private projectSerivce: ProjectService,
+    private syncService: SynchronizationService
     )
-    {
-      route.parent.params.subscribe(
-        (params) => this.projectId = params.projectId);
-    }
+    { }
+
   ngOnInit(): void {
-    this.getTriggers();
+    this.route.parent.params
+    .subscribe(
+      (params) => this.projectSerivce.getProjectById(params.projectId)
+            .subscribe(p => {
+              this.project = p;
+              this.getTriggers();
+              this.syncService.getRepositoryBranches(p.repository)
+              .subscribe(branches => {
+                this.branches = branches;
+                console.log(branches);
+              });
+            }));
   }
 
   getTriggers() {
-    this.triggerService.getTriggersByProjectId(this.projectId).subscribe(
+    this.triggerService.getTriggersByProjectId(this.project.id).subscribe(
       (data) => this.triggers = data,
       (error) => this.toastrService.showError(error.message, error.name)
     );
@@ -42,7 +78,7 @@ export class ProjectTriggersComponent implements OnInit {
     if (this.selectedBranch) {
 
      const newTrigger: NewProjectTrigger = {
-       projectId: this.projectId,
+       projectId: this.project.id,
        branchHash: this.selectedBranch,
        cronExpression: cron
       };

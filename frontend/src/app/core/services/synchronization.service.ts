@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { SynchronizedUser } from '../models/SynchronizedUser';
 import { Repository } from '../models/Repository';
+import { Branch } from '../models/Branch';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -25,6 +26,14 @@ export class SynchronizationService {
     this.httpService.setHeader('ProviderAuthorization', token);
 
     return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/`);
+  }
+
+  getRepositoryBranches(repoName: string): Observable<Branch[]> {
+    const token = localStorage.getItem('github-access-token');
+
+    this.httpService.setHeader('ProviderAuthorization', token);
+
+    return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${repoName}/branches`);
   }
 
   registerWebhook(projectId: number): Observable<any> {

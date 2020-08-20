@@ -50,7 +50,6 @@ export class ProjectCreateComponent implements OnInit {
     this.syncService.getUserRepositories()
       .subscribe(repos => {
         this.repositories = repos;
-        console.log(repos);
       });
   }
   defaultValues() {
