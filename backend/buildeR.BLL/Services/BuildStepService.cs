@@ -54,12 +54,25 @@ namespace buildeR.BLL.Services
         }
         public async Task Delete(int id)
         {
-            var buildStep = await base.GetAsync(id);
-            if (buildStep == null)
+            var stepToDelete = await base.GetAsync(id);
+            if (stepToDelete == null)
             {
                 throw new NotFoundException(nameof(BuildStep), id);
             }
-            //TODO: reorder other build steps of this project (change indexes)
+
+            //Need to change indexes of other build steps 
+            var projectBuildStepsWithIndexMoreBuildStepToDelete = await Context
+                .BuildSteps
+                .AsNoTracking()
+                .Where(buildStep => buildStep.ProjectId == stepToDelete.ProjectId && buildStep.Index > stepToDelete.Index)
+                .ToListAsync();
+
+            foreach (var buildStep in projectBuildStepsWithIndexMoreBuildStepToDelete)
+            {
+                --buildStep.Index;
+                Context.Entry(buildStep).State = EntityState.Modified;
+            }
+
             await base.RemoveAsync(id);
         }
 
