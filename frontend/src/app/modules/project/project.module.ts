@@ -22,5 +22,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ProjectBuildHistoryComponent
   ],
   imports: [ProjectRoutingModule, SharedModule],
+  exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }
