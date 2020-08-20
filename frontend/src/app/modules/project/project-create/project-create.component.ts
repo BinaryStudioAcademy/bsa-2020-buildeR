@@ -10,6 +10,7 @@ import { Repository } from '@core/models/Repository';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-project-create',
@@ -20,6 +21,7 @@ export class ProjectCreateComponent implements OnInit {
   newProject: NewProject;
   user: User = this.authService.getCurrentUser();
   repositories: Repository[];
+  projectForm: FormGroup;
 
   @ViewChild('repository', {static: true}) instance: NgbTypeahead;
 
@@ -47,6 +49,21 @@ export class ProjectCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.defaultValues();
+    this.projectForm = new FormGroup({
+      name: new FormControl(this.newProject.name,
+        [
+          Validators.minLength(4),
+          Validators.maxLength(32),
+          Validators.required
+        ]),
+      description: new FormControl(this.newProject.description, []),
+      isPublic: new FormControl(this.newProject.isPublic, []),
+      repositoryInput: new FormControl(this.newProject.repository,
+        [
+          Validators.required
+        ]
+      ),
+    });
     this.syncService.getUserRepositories()
       .subscribe(repos => {
         this.repositories = repos;
@@ -63,6 +80,8 @@ export class ProjectCreateComponent implements OnInit {
     };
   }
   save() {
+    this.newProject = this.projectForm.value as NewProject;
+    this.newProject.ownerId = this.user.id;
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
