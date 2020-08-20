@@ -8,6 +8,8 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { SynchronizedUser } from '@core/models/SynchronizedUser';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,14 +29,15 @@ export class DashboardComponent extends BaseComponent
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
-    private githubService: SynchronizationService
+    private githubService: SynchronizationService,
+    private modalService: NgbModal
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.loadingProjects = true;
-    this.currentUser = this.authService.getCurrentUser();    
+    this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
     this.githubService.getSynchronizedUser()
       .subscribe((user) => this.currentGithubUser = user);
@@ -84,5 +87,11 @@ export class DashboardComponent extends BaseComponent
         },
         (error) => this.toastrService.showError(error)
       );
+  }
+
+  openCreateProjectModal() {
+      const modalRef = this.modalService.open(ProjectCreateComponent);
+      modalRef.result
+      .then(() => this.getUserProjects(this.currentUser.id));
   }
 }
