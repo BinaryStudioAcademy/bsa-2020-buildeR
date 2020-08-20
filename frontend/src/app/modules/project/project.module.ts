@@ -11,6 +11,7 @@ import { ProjectTriggersComponent } from './project-triggers/project-triggers.co
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,6 @@ import { ProjectBuildStepsComponent } from './project-build-steps/project-build-
     ProjectBuildHistoryComponent,
     ProjectBuildStepsComponent
   ],
-  imports: [ProjectRoutingModule, SharedModule, NgSelectModule],
+  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule],
 })
 export class ProjectModule { }
