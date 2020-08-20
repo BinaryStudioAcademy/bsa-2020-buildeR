@@ -23,7 +23,7 @@ export class ProjectTriggersComponent implements OnInit {
   project: Project;
   branches: Branch[];
   selectedBranch: string;
-  runOnShedule = true;
+  runOnShedule = false;
   triggers: ProjectTriggerInfo[] = [];
 
   @ViewChild('branch', {static: false}) branchInput: NgbTypeahead;
