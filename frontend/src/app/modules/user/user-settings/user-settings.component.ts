@@ -156,7 +156,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   isProviderAdded(provider: Providers) {
-    const check = (item: UserSocialNetwork) => item.socialNetworkId - 1 === Number(provider);
+    const check = (item: UserSocialNetwork) => item.providerName === provider;
     return this.details.userSocialNetworks.some(check);
   }
 }

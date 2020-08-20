@@ -96,7 +96,7 @@ export class FirebaseSignInService {
       const user = result.user;
       const linkUser = {
         userId: this.authService.getCurrentUser().id,
-        providerId: Providers.Github,
+        providerName: Providers.Github,
         providerUrl: credential.providerId,
         uId: user.uid
       } as LinkProvider;
@@ -126,7 +126,7 @@ export class FirebaseSignInService {
       const user = result.user;
       const linkUser = {
         userId: this.authService.getCurrentUser().id,
-        providerId: Providers.Google,
+        providerName: Providers.Google,
         providerUrl: credential.providerId,
         uId: user.uid
       } as LinkProvider;
