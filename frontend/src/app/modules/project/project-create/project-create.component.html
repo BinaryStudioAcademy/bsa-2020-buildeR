@@ -36,13 +36,16 @@
       <span class="required-field">Repository</span>
     </div>
     <div class="input-area">
-      <select form="projectCreatingForm" [(ngModel)]="newProject.repository" name="repository" #repository="ngModel"
-        required>
-        <option *ngFor="let repo of repositories" [value]="repo.name">{{repo.name}}</option>
-      </select>
-      <!-- <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.repository"
-        name="repositoryUrl" required autocomplete="off" #repositoryUrl="ngModel"> -->
-      <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
+      <ng-select [items]="repositories"
+           bindLabel="name"
+           bindValue="name"
+           form="projectCreatingForm"
+           [(ngModel)]="newProject.repository"
+           name="repository"
+           #repository="ngModel"
+           required>
+      </ng-select>
+       <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
         Repository is required
       </div>
     </div>

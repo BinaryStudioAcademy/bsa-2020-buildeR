@@ -19,6 +19,8 @@ namespace buildeR.DAL.Context
         public DbSet<TeamMember> TeamMembers { get; private set; }
         public DbSet<User> Users { get; private set; }
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }
+        public DbSet<NotificationSetting> NotificationSettings { get; private set; }
+
         public BuilderContext(DbContextOptions<BuilderContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -4,7 +4,9 @@ import { environment } from 'src/environments/environment';
 import { HttpService } from '../../core/services/http.service';
 import { User } from '../../shared/models/user/user';
 import { NewUser } from '../../shared/models/user/new-user';
+import { LinkProvider } from '../../shared/models/user/link-provider';
 import { ValidateUser } from '@shared/models/user/validate-user';
+import { HttpRequest } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,10 @@ import { ValidateUser } from '@shared/models/user/validate-user';
 export class UserService {
   public routePrefix = '/users';
   private userLogoUrl$ = new Subject<string>();
+  private userLogoUserName$ = new Subject<string>();
+
   userLogoUrl = this.userLogoUrl$.asObservable();
+  userLogoUserName = this.userLogoUserName$.asObservable();
 
   constructor(private httpService: HttpService) { }
 
@@ -47,7 +52,16 @@ export class UserService {
     this.userLogoUrl$.next(url);
   }
 
+  changeUserName(userName: string) {
+    this.userLogoUserName$.next(userName);
+  }
+
   validateUsername(user: ValidateUser): Observable<boolean> {
     return this.httpService.postRequest<boolean>(`${this.routePrefix}/validate-username`, user);
+  }
+
+  linkProvider(user: LinkProvider): Observable<User>
+  {
+    return this.httpService.postRequest<User>(`${this.routePrefix}/link-provider`, user);
   }
 }

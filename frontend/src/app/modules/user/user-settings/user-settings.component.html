@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
   <div class="scroll-container">
     <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
       <div class="group">
@@ -9,9 +9,6 @@
           <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="Name">
           <small>Use your real name so people can recognize you</small>
           <div *ngIf="settingsForm.controls['firstName'].errors">
-            <div class="error" *ngIf="settingsForm.controls['firstName'].errors.required">
-              First name is required
-            </div>
             <div class="error" *ngIf="settingsForm.controls['firstName'].errors.minlength">
               The minimum length is 2 characters
             </div>
@@ -30,9 +27,6 @@
         <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Name">
           <div *ngIf="settingsForm.controls['lastName'].errors">
-            <div class="error" *ngIf="settingsForm.controls['lastName'].errors.required">
-              Last name is required
-            </div>
             <div class="error" *ngIf="settingsForm.controls['lastName'].errors.minlength">
               The minimum length is 2 characters
             </div>
@@ -74,6 +68,9 @@
             <div class="error" *ngIf="settingsForm.controls['username'].errors.pattern">
               Username must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '<br>
             </div>
+            <div class="error" *ngIf="settingsForm.controls['username'].errors?.isUsernameExists">
+              Username has already been taken
+            </div>
           </div>
         </div>
         <div class="field">
@@ -86,7 +83,9 @@
             <div class="error" *ngIf="settingsForm.controls['email'].errors.required">
               Email is required
             </div>
-            <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern">
+            <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern
+            || settingsForm.controls['email'].errors.email
+            || settingsForm.controls['email'].errors.notValid">
               Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
               '<br>
             </div>

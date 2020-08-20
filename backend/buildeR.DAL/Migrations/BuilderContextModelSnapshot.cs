@@ -179,6 +179,32 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("App")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Email")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("NotificationSettings");
+                });
+
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
                 {
                     b.Property<int>("Id")
@@ -450,6 +476,15 @@ namespace buildeR.DAL.Migrations
                         .WithMany("BuildSteps")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.User", "User")
+                        .WithMany("NotificationSettings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
