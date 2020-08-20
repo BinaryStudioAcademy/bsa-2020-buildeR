@@ -26,7 +26,7 @@ export class ProjectCreateComponent implements OnInit {
   githubRepoSection = false;
   urlSection = false;
 
-  @ViewChild('repository', {static: true}) instance: NgbTypeahead;
+  @ViewChild('repository', {static: false}) instance: NgbTypeahead;
 
   repositoryInputFocus$ = new Subject<string>();
   repositoryInputClick$ = new Subject<string>();

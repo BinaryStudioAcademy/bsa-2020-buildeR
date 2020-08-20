@@ -26,7 +26,7 @@ export class ProjectTriggersComponent implements OnInit {
   runOnShedule = true;
   triggers: ProjectTriggerInfo[] = [];
 
-  @ViewChild('branch', {static: true}) branchInput: NgbTypeahead;
+  @ViewChild('branch', {static: false}) branchInput: NgbTypeahead;
 
   branchInputFocus$ = new Subject<string>();
   branchInputClick$ = new Subject<string>();

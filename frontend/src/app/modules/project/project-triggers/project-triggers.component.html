@@ -45,7 +45,6 @@
       <div class="trigger-options">
         <div class="mr-sm-2">
           <h5 class="text-over">Branch </h5>
-<<<<<<< HEAD
           <input
             type="text"
             class="form-control"
@@ -54,13 +53,6 @@
             (click)="branchInputClick$.next($any($event).target.value)"
             #branch="ngbTypeahead"
           />
-=======
-          <select class="form-control branch-select" [(ngModel)]="selectedBranch" name="selected" #selected="ngModel">
-            <ng-container *ngFor="let branch of branches">
-              <option [value]='branch'>{{branch}}</option>
-            </ng-container>
-          </select>
->>>>>>> e18734deab1aa7f8e95cfa216b35cf79e4433eb3
         </div>
         <div class="mr-sm-2">
           <h5 class="text-over">Set up period of builds:</h5>

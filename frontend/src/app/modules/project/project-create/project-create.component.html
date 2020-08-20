@@ -89,7 +89,7 @@
           Github to your buildeR account
         </p>
         <p>
-          You can link it in user settings
+          You can link it in <a routerLink="/portal/user">user settings</a>
         </p>
       </div>
       <form (ngSubmit)="save()" #projectCreatingGithubForm="ngForm"
@@ -139,7 +139,7 @@
             <input
               id="typeahead-focus"
               type="text"
-              class="form-control"
+              class="form-control form-control-sm"
               [(ngModel)]="newProject.repository"
               [ngbTypeahead]="search"
               (focus)="repositoryInputFocus$.next($any($event).target.value)"
