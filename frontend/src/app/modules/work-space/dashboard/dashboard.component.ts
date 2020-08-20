@@ -92,6 +92,7 @@ export class DashboardComponent extends BaseComponent
   openCreateProjectModal() {
       const modalRef = this.modalService.open(ProjectCreateComponent);
       modalRef.result
-      .then(() => this.getUserProjects(this.currentUser.id));
+      .then(() => this.getUserProjects(this.currentUser.id))
+      .catch(() => {});
   }
 }
