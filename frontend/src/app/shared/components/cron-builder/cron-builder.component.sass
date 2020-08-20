@@ -1,8 +1,17 @@
 .cron-wr
-  display: flex
+  display: grid
+  grid-template-columns: 2
 
-  button
-    align-self: center
-    outline: none
-    font-weight: bold
-    margin-left: 10px
+button
+  align-self: center
+  outline: none
+  font-weight: bold
+  margin-left: 10px
+
+.fisrt
+  grid-column-end: 1
+  justify-self: start
+
+.btn-wr
+  grid-column-end: 2
+  justify-self: end

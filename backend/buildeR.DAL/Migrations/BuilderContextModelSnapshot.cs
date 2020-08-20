@@ -320,33 +320,6 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("ProjectTriggers");
                 });
 
-            modelBuilder.Entity("buildeR.DAL.Entities.SocialNetwork", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ProviderName")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SocialNetworks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ProviderName = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ProviderName = 1
-                        });
-                });
-
             modelBuilder.Entity("buildeR.DAL.Entities.TeamMember", b =>
                 {
                     b.Property<int>("Id")
@@ -419,7 +392,7 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("SocialNetworkId")
+                    b.Property<int>("ProviderName")
                         .HasColumnType("int");
 
                     b.Property<string>("SocialNetworkUrl")
@@ -432,8 +405,6 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SocialNetworkId");
 
                     b.HasIndex("UserId");
 
@@ -451,7 +422,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildHistories")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -475,7 +446,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildSteps")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -517,7 +488,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectGroups")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -526,7 +497,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectTriggers")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -547,12 +518,6 @@ namespace buildeR.DAL.Migrations
 
             modelBuilder.Entity("buildeR.DAL.Entities.UserSocialNetwork", b =>
                 {
-                    b.HasOne("buildeR.DAL.Entities.SocialNetwork", "SocialNetwork")
-                        .WithMany("UserSocialNetworks")
-                        .HasForeignKey("SocialNetworkId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("buildeR.DAL.Entities.User", "User")
                         .WithMany("UserSocialNetworks")
                         .HasForeignKey("UserId")
