@@ -12,6 +12,7 @@ namespace buildeR.BLL.Interfaces
         Task<UserDTO> Register(NewUserDTO creatingUser);
         Task<UserDTO> Update(UserDTO userDTO);
         Task<bool> ValidateUsername(ValidateUserDTO user);
+        Task<UserDTO> LinkProvider(LinkProviderDTO userLink);
         Task Delete(int id);
     }
 }

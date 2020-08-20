@@ -47,11 +47,29 @@ namespace buildeR.BLL.Services
         {
             SetUpHttpClient(providerToken);
 
-            var endpoint = $"user/repos?visibility=all&affiliation=owner";
-            var response = await _client.GetAsync(endpoint);
-            var content = await response.Content.ReadAsStringAsync();
+            var allRepos = new List<GithubRepository>();
+            var lastLoadedRepos = new List<GithubRepository>();
 
-            return JsonConvert.DeserializeObject<IEnumerable<GithubRepository>>(content);
+            const int reposPerRequest = 100;
+            var pageNumber = 1;
+
+            var endpoint = $"user/repos?visibility=all&affiliation=owner&per_page={reposPerRequest}&page=";
+            
+            do
+            {
+                lastLoadedRepos = new List<GithubRepository>();
+
+                var response = await _client.GetAsync(endpoint + pageNumber);
+                var content = await response.Content.ReadAsStringAsync();
+
+                lastLoadedRepos.AddRange(JsonConvert.DeserializeObject<IEnumerable<GithubRepository>>(content));
+                allRepos.AddRange(lastLoadedRepos);
+
+                pageNumber++;
+            }
+            while (lastLoadedRepos.Count >= reposPerRequest);
+
+            return allRepos;
         }
 
         private void SetUpHttpClient(string token)
