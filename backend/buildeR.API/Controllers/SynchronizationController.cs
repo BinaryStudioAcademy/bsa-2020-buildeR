@@ -25,10 +25,16 @@ namespace buildeR.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet("repos/{userId:int}")]
-        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId, [FromHeader]string ProviderAuthorization)
+        [HttpGet("repos/")]
+        public async Task<IEnumerable<Repository>> GetUserRepositories([FromHeader]string ProviderAuthorization)
         {
-            return await _synchronizationService.GetUserRepositories(userId, ProviderAuthorization);
+            return await _synchronizationService.GetUserRepositories(ProviderAuthorization);
+        }
+
+        [HttpGet("{repoName}/branches")]
+        public async Task<IEnumerable<Branch>> GetRepositoryBranches(string repoName, [FromHeader]string ProviderAuthorization)
+        {
+            return await _synchronizationService.GetRepositoryBranches(repoName, ProviderAuthorization);
         }
 
         [HttpPost("hooks/{projectId}")]

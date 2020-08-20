@@ -21,11 +21,10 @@ export class SynchronizationService {
 
   getUserRepositories(): Observable<Repository[]> {
     const token = localStorage.getItem('github-access-token');
-    const userId = this.authService.getCurrentUser().id;
 
     this.httpService.setHeader('ProviderAuthorization', token);
 
-    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/${userId}`);
+    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/`);
   }
 
   registerWebhook(projectId: number): Observable<any> {
