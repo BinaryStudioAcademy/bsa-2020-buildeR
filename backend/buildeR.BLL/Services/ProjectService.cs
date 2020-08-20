@@ -29,7 +29,7 @@ namespace buildeR.BLL.Services
         {
             return base.GetAsync(id, isNoTracking);
         }
-
+        
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
            
@@ -111,6 +111,7 @@ namespace buildeR.BLL.Services
         }
         public async Task<ProjectDTO> CopyProject(ProjectDTO dto)
         {
+            var existingProject = await GetProjectWithBuildSteps(dto.Id);
             var newProject = new ProjectDTO
             {
                 Description = dto.Description,
@@ -126,23 +127,29 @@ namespace buildeR.BLL.Services
                 CancelAfter = dto.CancelAfter,
             };
 
-            var proj = Mapper.Map<Project>(newProject);
-            var createdProject = (await Context.AddAsync(proj)).Entity;
+            var createdProject = (await Context.AddAsync(Mapper.Map<Project>(newProject))).Entity;
             Context.SaveChanges();
             int id = createdProject.Id;
-            dto.BuildSteps.Select(x => _buildStepService.Create(new NewBuildStepDTO
+            existingProject.BuildSteps.Select(b => _buildStepService.Create(new NewBuildStepDTO
             {
                 ProjectId = id,
-                BuildStepName = x.BuildStepName,
-                BuildPluginId = x.BuildPluginId,
-                BuildPluginParameters = x.BuildPluginParameters,
-                LoggingVerbosity = x.LoggingVerbosity
+                BuildStepName = b.BuildStepName,
+                BuildPluginId = b.BuildPluginId,
+                BuildPluginParameters = b.BuildPluginParameters,
+                LoggingVerbosity = b.LoggingVerbosity
             }));
             var project = await Context.Projects
                                                 .Include(p => p.BuildSteps)
                                                 .Include(p => p.Owner)
                                                 .FirstOrDefaultAsync(p => p.Id == id);
 
+            return Mapper.Map<ProjectDTO>(project);
+        }
+        private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
+        {
+            var project = await Context.Projects.Include(p => p.BuildSteps)
+                                                .Include(p => p.Owner)
+                                                .FirstOrDefaultAsync(p => p.Id == id);
             return Mapper.Map<ProjectDTO>(project);
         }
     }

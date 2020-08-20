@@ -1,9 +1,14 @@
 <div class="modal-body">
   <form [formGroup]="copyForm" *ngIf="copyForm" (ngSubmit)="save()">
     <div class="input-area">
-      <span class="has-float-label">
-        <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Project name">
-      </span>
+      <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Project name"
+        required>
+      <div *ngIf="copyForm.controls['name'].errors">
+        <div class="error"
+          [hidden]="copyForm.controls['name'].valid && copyForm.controls['name'].untouched || !copyForm.controls['name'].errors?.required">
+          Name is required
+        </div>
+      </div>
     </div>
     <div class="input-area">
       <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description"

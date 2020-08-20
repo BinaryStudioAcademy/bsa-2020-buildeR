@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from 'src/app/shared/models/project/project';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -17,7 +17,8 @@ export class ModalCopyProjectComponent implements OnInit {
   ngOnInit(): void {
     this.projectService.getProjectById(this.id).subscribe((res) => {
       this.project = res; this.copyForm = new FormGroup({
-        name: new FormControl(`${this.project.name}` + `-Copy`),
+        name: new FormControl(`${this.project.name}` + `-Copy`,
+          [Validators.required]),
         description: new FormControl(this.project.description)
       });
     });
