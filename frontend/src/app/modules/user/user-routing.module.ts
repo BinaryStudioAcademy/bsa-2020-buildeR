@@ -5,6 +5,7 @@ import { UserComponent } from './user.component';
 import { CommonModule } from '@angular/common';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserResolverService } from '../../core/resolvers/user.resolver';
+import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 
 
 @NgModule({
@@ -20,7 +21,15 @@ import { UserResolverService } from '../../core/resolvers/user.resolver';
       resolve: {
         user: UserResolverService
       }
-    }]
+    },
+    {
+      path: 'notificationsettings',
+      component: NotificationSettingComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    },
+  ]
   }])],
   exports: [RouterModule]
 })
