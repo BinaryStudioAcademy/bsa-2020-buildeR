@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-project-settings',
@@ -44,6 +45,7 @@ export class ProjectSettingsComponent implements OnInit {
 
 
   reset() {
+    this.projectForm.reset(this.project);
   }
   save(project: Project) {
     this.project = Object.assign(this.project, project);
