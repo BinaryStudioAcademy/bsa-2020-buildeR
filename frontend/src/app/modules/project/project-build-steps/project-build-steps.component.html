@@ -1,20 +1,28 @@
 <div class="container">
-    <div class="row" *ngFor="let buildStep of buildSteps; let i = index">
-        <div class="col-2">Build step #{{i+1}}</div>
-        <div class="col-8">
-            <div>{{buildStep.buildStepName}}</div>
+    <div class="container" *ngFor="let buildStep of buildSteps; let i = index">
+        <div class="row">
+            <div class="col-2">Build step #{{i+1}}</div>
+            <div class="col-8">
+                <div>{{buildStep.buildStepName}}</div>
+            </div>
+            <div class="col-2"><button class="btn" (click)="removeBuildStep(buildStep)"><i class="fa fa-close"></i></button>
+            </div>
         </div>
-        <div class="col-2"><button class="btn" (click)="removeBuildStep(buildStep)"><i class="fa fa-close"></i></button>
+        <div class="row">
+            <hr class="w-100">
         </div>
     </div>
 
     <div class="row" hidden="true" [hidden]="!isAdding">
-        <div class="col-8">
-            <ng-select class="border rounded py-2" aria-placeholder="Select build step" [items]="emptyBuildSteps" bindLabel="buildStepName" [(ngModel)]="newBuildStep">
-            </ng-select>
+        <div class="col-6">
+            <select required class="form-control" [(ngModel)]="newBuildStep">
+        <ng-container *ngFor="let step of emptyBuildSteps">
+          <option [ngValue]='step'>{{step.buildStepName}}</option>
+        </ng-container>
+      </select>
         </div>
-        <div class="col-2"><button class="btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
-        <div class="col-2"><button class="btn btn-success" (click)="saveBuildStep()">Save</button></div>
+        <div class="col-3"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
+        <div class="col-3"><button class="btn operation-btn btn-success" (click)="saveBuildStep()">Save</button></div>
     </div>
 
     <div class="row">
