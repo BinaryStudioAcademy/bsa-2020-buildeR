@@ -15,7 +15,7 @@ namespace buildeR.DAL.Context.EntityConfigurations
 
             entity.HasOne(e => e.Project)
                 .WithMany(g => g.ProjectGroups)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

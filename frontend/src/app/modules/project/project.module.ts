@@ -9,6 +9,7 @@ import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.co
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
+import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-project.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +19,10 @@ import { ProjectBuildHistoryComponent } from './project-build-history/project-bu
     LoggingTerminalComponent,
     ProjectDetailsComponent,
     ProjectTriggersComponent,
-    ProjectBuildHistoryComponent
+    ProjectBuildHistoryComponent,
+    ModalCopyProjectComponent
   ],
   imports: [ProjectRoutingModule, SharedModule],
+  exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

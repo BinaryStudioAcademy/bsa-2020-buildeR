@@ -10,7 +10,7 @@ import { HttpResponse } from '@angular/common/http';
 export class ProjectService {
   public routePrefix = '/projects';
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   public getProjectsByUser(
     userId: number
@@ -40,7 +40,17 @@ export class ProjectService {
     );
   }
 
-  public changeFavoriteState(projectId: number){
+  public changeFavoriteState(projectId: number) {
     return this.httpService.postRequest(`${this.routePrefix}/markFavorite/${projectId}`, null);
+  }
+
+  public deleteProject(projectId: number): Observable<any> {
+    return this.httpService.deleteFullRequest<ProjectInfo>(`${this.routePrefix}/` + projectId);
+  }
+  public copyProject(project: Project): Observable<Project> {
+    return this.httpService.postRequest<Project>(
+      `${this.routePrefix}/copy`,
+      project
+    );
   }
 }
