@@ -67,7 +67,9 @@
 
       p
         padding-left: 0.5rem
+        padding-right: 2rem
         margin: 0
+        min-height: 1.5rem
 
         &:hover
           background-color: #444
@@ -101,6 +103,23 @@
         &.WRN
           color: orange
 
+  .log-tail
+    position: sticky
+    float: right
+    width: 0
+    margin-right: 0.7rem
+    margin-top: 1rem
+    text-align: right
+    background-color: black
+    z-index: 6
+    top: 6rem
 
+    .tail-body
+      position: absolute
+      left: -1.5rem
 
+      a
+        display: inline-block
+        cursor: pointer
+        margin-bottom: 0.5rem
 
