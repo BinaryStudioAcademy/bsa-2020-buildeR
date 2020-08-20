@@ -1,6 +1,6 @@
 .group
   display: grid
-  grid-template-columns: 2
+  grid-template-columns: 3
   grid-template-rows: 6
 
 .container-fluid
@@ -13,7 +13,7 @@
   width: 100%
   position: absolute
   padding-top: 35px
-  height: calc(100% - 66px - 156px)
+  height: calc(100% - 66px - 200px)
   overflow: auto
 
 .input-area
@@ -80,5 +80,24 @@ textarea
     margin-left: 0
     margin-right: 0
   .scroll-container
-    height: calc(100% - 66px - 123px)
+    height: calc(100% - 66px - 150px)
 
+.btn-secondary
+  margin: 5px
+  flex-direction: row
+  display: flex
+  position: relative
+  justify-content: center
+  align-items: center
+
+.icon
+  margin-right: 5px
+
+.link-buttons
+  display: flex
+  position: absolute
+  justify-content: flex-end
+  align-items: flex-end
+  flex-direction: column
+  right: 180px
+  margin: 5px
