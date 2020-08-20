@@ -1,6 +1,6 @@
 <div class="d-flex bd-highlight" mb-3 id="wrapper">
   <!-- Sidebar -->
-  <div id="sidebar-wrapper-test">
+  <div id="sidebar-wrapper">
       <div class="avatar-container container">
         <div class="avatar-wrapper" (click)="open()">
           <input hidden class="file-hide" #file accept="image/*" type="file" >
@@ -14,54 +14,27 @@
           <h1 class ="nickname"> @{{currentUser.username}}</h1>
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
         </div>
+        <div class="link-buttons">
+          <button class="btn btn-link" [disabled]="isProviderAdded(0)" (click)="linkWithGithub()">
+            <div class="icon">
+              <i class="fa fa-github" aria-hidden="true"></i>
+            </div>
+            Link with Github
+          </button>
+          <button class="btn btn-link" [disabled]="isProviderAdded(1)" (click)="linkWithGoogle()">
+            <div class="icon">
+              <i class="fa fa-google" aria-hidden="true"></i>
+            </div>
+            Link with Google
+          </button>
+        </div>
       </div>
-    <ul class="list-group list-group-horizontal container">
-        <a
-          routerLink="/portal/dashboard/user"
-          class="list-group-item active"
-          (click)="setStyleActiveElement($event)"
-        ><p>Profile</p></a>
-        <a
-          [routerLink]="['/']"
-          class="list-group-item"
-          (click)="setStyleActiveElement($event)"
-        ><p>Project settings</p></a>
-        <a
-          [routerLink]="['/']"
-          class="list-group-item"
-          (click)="setStyleActiveElement($event)"
-        ><p>New settings</p></a>
-    </ul>
+    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
   </div>
-
-
-<!--  <div class="bg-light border-right" id="sidebar-wrapper">-->
-<!--    <div class="sidebar-heading"><h2 class="display-4">Settings</h2></div>-->
-<!--    <div class="list-group list-group-flush">-->
-<!--      <a-->
-<!--        routerLink="/portal/dashboard/user"-->
-<!--        class="list-group-item list-group-item-action bg-light active"-->
-<!--        (click)="setStyleActiveElement($event)"-->
-<!--        >Profile</a-->
-<!--      >-->
-<!--      <a-->
-<!--        [routerLink]="['/']"-->
-<!--        class="list-group-item list-group-item-action bg-light"-->
-<!--        (click)="setStyleActiveElement($event)"-->
-<!--        >Project settings</a-->
-<!--      >-->
-<!--      <a-->
-<!--        [routerLink]="['/']"-->
-<!--        class="list-group-item list-group-item-action bg-light"-->
-<!--        (click)="setStyleActiveElement($event)"-->
-<!--        >New settings</a-->
-<!--      >-->
-<!--    </div>-->
-<!--  </div>-->
   <!-- /#sidebar-wrapper -->
 
   <!-- Page Content -->
-  <div class="container" id="page-content-wrapper">
+  <div class="container-fluid" id="page-content-wrapper">
     <router-outlet></router-outlet>
   </div>
   <!-- /#page-content-wrapper -->

@@ -39,7 +39,7 @@ export class RegisterDialogService {
       providerId: Providers.Github,
       uId: credential.user.uid,
       providerUrl: credential.credential.providerId,
-      accessToken: credential.credential['accessToken']
+      accessToken: credential.credential[`accessToken`]
     } as NewUser;
 
     const name: string = credential.additionalUserInfo.profile[`name`];
