@@ -76,7 +76,7 @@ namespace buildeR.BLL.Services
             await base.RemoveAsync(id);
         }
 
-        public async Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildSteps()
+        public async Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildStepsAsync()
         {
             var buildPlugins = await Context.Set<BuildPlugin>().ToListAsync();
             var pluginCommands = await Context.Set<PluginCommand>().ToListAsync();
@@ -95,13 +95,41 @@ namespace buildeR.BLL.Services
                 );
         }
 
-        public async Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProjectId(int projectId)
+        public async Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProjectIdAsync(int projectId)
         {
             return await Context
                 .BuildSteps
                 .Where(buildStep => buildStep.ProjectId == projectId)
+                .OrderBy(buildStep => buildStep.Index)
                 .ProjectTo<BuildStepDTO>(Mapper.ConfigurationProvider)
                 .ToListAsync();
+        }
+
+        public async Task UpdateIndexesOfBuildStepsAsync(int projectId, int newIndex, int oldIndex)
+        {
+            var movedBuildStep = await Context
+                .BuildSteps
+                .AsNoTracking()
+                .FirstOrDefaultAsync(buildStep => buildStep.ProjectId == projectId && buildStep.Index == oldIndex);
+
+            movedBuildStep.Index = newIndex;
+            Context.Entry(movedBuildStep).State = EntityState.Modified;
+
+            var buildStepsToIncreaseIndex = await Context
+                .BuildSteps
+                .AsNoTracking()
+                .Where(buildStep => buildStep.ProjectId == projectId &&
+                                    buildStep.Index >= newIndex &&
+                                    buildStep.Index < oldIndex)
+                .ToListAsync();
+
+            foreach (var buildStep in buildStepsToIncreaseIndex)
+            {
+                ++buildStep.Index;
+                Context.Entry(buildStep).State = EntityState.Modified;
+            }
+
+            await Context.SaveChangesAsync();
         }
     }
 }

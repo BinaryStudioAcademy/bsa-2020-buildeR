@@ -14,7 +14,8 @@ namespace buildeR.BLL.Interfaces
         Task Update(BuildStepDTO buildStep);
         Task Delete(int id);
 
-        Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildSteps();
-        Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProjectId(int projectId);
+        Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildStepsAsync();
+        Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProjectIdAsync(int projectId);
+        Task UpdateIndexesOfBuildStepsAsync(int projectId, int newIndex, int oldIndex);
     }
 }
