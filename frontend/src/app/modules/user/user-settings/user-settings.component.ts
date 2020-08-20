@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import { User } from '@shared/models/user/user';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {ToastrNotificationsService} from '../../../core/services/toastr-notifications.service';
@@ -13,7 +13,7 @@ import { emailDotValidator } from '@core/validators/email-dot-validator';
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.sass']
 })
-export class UserSettingsComponent implements OnInit, OnDestroy {
+export class UserSettingsComponent implements OnInit {
 
 // hardcoded date for test
 
@@ -29,7 +29,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    document.body.style.overflow = 'hidden';
 
     this.route.data.subscribe( data => this.details = data.user);
     this.settingsForm = new FormGroup({
@@ -90,11 +89,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  ngOnDestroy(): void {
-    document.body.style.overflow = 'scroll';
-  }
-
 
   onSubmit(user: User) {
     user.id = this.details.id;
