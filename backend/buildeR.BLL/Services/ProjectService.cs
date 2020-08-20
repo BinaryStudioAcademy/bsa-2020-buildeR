@@ -132,13 +132,14 @@ namespace buildeR.BLL.Services
             var createdProject = (await Context.AddAsync(Mapper.Map<Project>(newProject))).Entity;
             Context.SaveChanges();
             int id = createdProject.Id;
-            existingProject.BuildSteps.Select(b => _buildStepService.Create(new NewBuildStepDTO
+            existingProject.BuildSteps.Select(buildStep => _buildStepService.Create(new NewBuildStepDTO
             {
                 ProjectId = id,
-                BuildStepName = b.BuildStepName,
-                BuildPluginId = b.BuildPluginId,
-                BuildPluginParameters = b.BuildPluginParameters,
-                LoggingVerbosity = b.LoggingVerbosity
+                BuildStepName = buildStep.BuildStepName,
+                PluginCommandId = buildStep.PluginCommand.PluginId,
+                Index =  buildStep.Index,
+                BuildPluginParameters = buildStep.Parameters.ToList(),
+                LoggingVerbosity = (int)buildStep.LoggingVerbosity
             }));
             var project = await Context.Projects
                                                 .Include(p => p.BuildSteps)
