@@ -13,6 +13,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class ProjectSettingsComponent implements OnInit {
   isLoading = false;
   projectId: number;
+  branches: string [] = ['master', 'dev'];
   public projectForm: FormGroup;
   @Input() project: Project = {} as Project;
   constructor(

@@ -42,6 +42,10 @@
   grid-column-end: 1
   justify-self: end
 
+.text-near
+    margin-left: 10px
+    margin-top: -15px
+
 input
   width: 300px
 
@@ -69,7 +73,22 @@ textarea
 
 h2
   color: #03BBD5
-  font-weight: bolder
+
+.custom-switch .custom-control-label::before
+    left: -2.25rem
+    width: 2.75rem
+    height: 1.35rem
+    pointer-events: all
+    border-radius: 0.5rem
+
+.custom-switch .custom-control-label::after
+    transition: none
+    height: 1.14rem
+    width: 1.15rem
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::after
+    background-color: #fff
+    transform: translateX(1.35rem)
 
 .save-button-container
   grid-column-start: 1
@@ -98,16 +117,21 @@ h2
 .branch
   grid-column-start: 3
   grid-column-end: 4
+  padding-right: 5rem
 
 .isOn
  grid-column-start: 4
  grid-column-end: 5
+ padding-right: 3rem
+
+select.form-control
+  width: 130%
 
 .addSwitch
   padding-top: 25px
 
 .add-cron
-
+ margin-left: 30px
 
 .group-jobs
   display: grid
@@ -118,7 +142,7 @@ h2
   margin-top:28px
 
 .form-control-ev
-  width: 90%
+  width: 80%
 
 
 @media screen and (max-width: 675px)

@@ -60,9 +60,11 @@
         </div>
         <div class='branch'>
           <label>Branch</label>
-          <div class="input-area">
-            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
-          </div>
+          <select class="form-control">
+            <ng-container *ngFor="let branch of branches">
+              <option [value]='branch'>{{branch}}</option>
+            </ng-container>
+          </select>
         </div>
         <div class='isOn'>
           <div class="custom-control custom-switch addSwitch">
@@ -79,33 +81,21 @@
     <h2 class="small-title">
       Cron Jobs
     </h2>
-    <form (ngSubmit)="save()" [formGroup]="projectForm">
-      <div class="group-jobs">
-
-        <div class='name'>
-          <label>Name</label>
-          <div class="input-area">
-            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
-          </div>
-        </div>
-        <div class='value'>
-          <label>Value</label>
-          <div class="input-area">
-            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
-          </div>
-        </div>
-        <div class='branch'>
-          <label>Branch</label>
-          <div class="input-area">
-            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
-          </div>
-        </div>
-        <div class='isOn'>
-          <button class="btn btn-info add">Add</button>
-        </div>
-          </div>
-
-        </form>
+    <div class="input-area">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="pushedBranches" name="pushedBranches" />
+        <label class="custom-control-label" for="pushedBranches"></label>
+        <p class="text-near"> Build pushed branches</p>
+      </div>
+    </div>
+    <div class="input-area">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="pushedRequests" name="pushedRequests" />
+        <label class="custom-control-label" for="pushedRequests"></label>
+        <p class="text-near"> Build pushed pull requests</p>
+      </div>
+    </div>
+      <app-project-triggers></app-project-triggers>
       </div>
 
     </div>
