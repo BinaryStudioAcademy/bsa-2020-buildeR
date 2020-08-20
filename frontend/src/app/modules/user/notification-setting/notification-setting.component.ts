@@ -32,6 +32,8 @@ export class NotificationSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSettings(this.user.id);
+    this.emailChecked = this.allEmailChecked();
+    this.appChecked = this.allAppChecked();
   }
   getSettings(userId: number) {
     this.settingService.getNotificationSettingByUserId(userId)
@@ -50,10 +52,16 @@ export class NotificationSettingComponent implements OnInit {
       (error) => this.toastrService.showError(error.message, error.name)
     );
   }
-
+  allEmailChecked(): boolean {
+    return this.settings.every(x => x.email === true);
+  }
+  allAppChecked(): boolean {
+    return this.settings.every(x => x.app === true);
+  }
   onToggle(change: boolean) {
     change = !change;
-    console.log(this.settings);
+    this.emailChecked = this.allEmailChecked();
+    this.appChecked = this.allAppChecked();
   }
 
   onToggleApp() {

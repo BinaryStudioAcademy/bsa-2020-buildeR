@@ -1,37 +1,60 @@
-<div class="custom-control custom-switch">
-  <input type="checkbox" class="custom-control-input" id="app" [(ngModel)]="appChecked" (change)="onToggleApp()">
-  <label class="custom-control-label" for="app">Enable app notifications</label>
+<div class="container line-bottom mb-3 pb-3">
+  <div class="setting-container enable-disable-all-wr">
+    <div class="description p-2 mr-5">
+      <span *ngIf="appChecked; else elseApp">Disable app notifications</span>
+      <ng-template #elseApp>
+        <span>Enable app notifications</span>
+      </ng-template>
+    </div>
+    <div class="custom-control custom-switch m-2">
+      <input type="checkbox" class="custom-control-input" id="allApp" [(ngModel)]="appChecked" (change)="onToggleApp()">
+      <label class="custom-control-label" for="allApp"></label>
+    </div>
+    <div class="description p-2 mr-5">
+      <span *ngIf="emailChecked; else elseEmail">Disable email notifications</span>
+      <ng-template #elseEmail>
+        <span>Enable email notifications</span>
+      </ng-template>
+    </div>
+    <div class="custom-control custom-switch  m-2">
+      <input type="checkbox" class="custom-control-input" id="allEmail" [(ngModel)]="emailChecked"
+        (change)="onToggleEmail()">
+      <label class="custom-control-label" for="allEmail"></label>
+    </div>
+  </div>
 </div>
-<div class="custom-control custom-switch">
-  <input type="checkbox" class="custom-control-input" id="email1" [(ngModel)]="emailChecked" (change)="onToggleEmail()">
-  <label class="custom-control-label" for="email1">Enable email notifications</label>
-</div>
-<div class="setting-container">
-    <div class="setting-text">
+<div class="container line-bottom">
+  <div class="setting-container">
+    <div class="description p-2 titel">
       <span>Resive updates</span>
     </div>
-    <div class="setting-app mr-2">
-      <span>App</span>
-    </div>
-    <div class="setting-email">
+    <div class="option p-2 titel row">
+      <span class="mr-5">App</span>
       <span>Email</span>
     </div>
-    <div class="line">
-    </div>
-  <ng-container *ngFor="let setting of settings">
-    <div class="setting-text">
-      <span>{{setting.description}}</span>
-    </div>
-    <div class="custom-control custom-switch setting-app">
-      <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}app" [(ngModel)]="setting.app"
-        (change)="onToggle(setting.app)">
-      <label class="custom-control-label" for="{{setting.notificationType}}app"></label>
-    </div>
-    <div class="custom-control custom-switch setting-email">
-      <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}email" [(ngModel)]="setting.email"
-        (change)="onToggle(setting.email)">
-      <label class="custom-control-label" for="{{setting.notificationType}}email"></label>
-    </div>
-  </ng-container>
+  </div>
 </div>
-<button class="btn btn-success" (click)="save()">Save</button>
+<ng-container *ngFor="let setting of settings">
+  <div class="container line-bottom">
+    <div class="setting-container">
+      <div class="description p-2">
+        <span>{{setting.description}}</span>
+      </div>
+      <div class="option p-2 row">
+        <div class="custom-control custom-switch mr-5">
+          <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}app"
+            [(ngModel)]="setting.app" (change)="onToggle(setting.app)">
+          <label class="custom-control-label" for="{{setting.notificationType}}app"></label>
+        </div>
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}email"
+            [(ngModel)]="setting.email" (change)="onToggle(setting.email)">
+          <label class="custom-control-label" for="{{setting.notificationType}}email"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div class="container mt-3 grid">
+  <button class="btn btn-success btn-position" (click)="save()">Save</button>
+</div>
