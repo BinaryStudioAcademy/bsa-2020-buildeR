@@ -1,32 +1,103 @@
-<div class="settings">
-  <div class="settings-section">
-    <h2 class="small-title">
-      General
+<div class="settings-wrp scrollable">
+
+  <div class="settings">
+    <div class="settings-section border-bottom">
+      <h2 class="small-title">
+        General
     </h2>
-    <form (ngSubmit)="save()" #projectSettingForm="ngForm">
+    <form (ngSubmit)="save(projectForm.value)" [formGroup]="projectForm">
       <div class="group">
         <div class="field">
           <span>Project name</span>
         </div>
         <div class="input-area">
-          <input type="text" class="form-control form-control-sm" [(ngModel)]="tempProjectName" name="name" required
-            autocomplete="off" #name="ngModel">
-            <div class="error" [hidden]="!name.errors?.required || name.untouched">
-              Name is required
-            </div>
+          <input type="text" class="form-control form-control-sm" formControlName="name">
+        </div>
+        <div class="field">
+          <span>Public repository</span>
+        </div>
+        <div class="input-area">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="isPublicSwitch" formControlName="isPublic" />
+            <label class="custom-control-label" for="isPublicSwitch"></label>
+          </div>
         </div>
         <div class="field">
           <span>Description</span>
         </div>
         <div class="input-area">
-          <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="tempProjectDescription" #description="ngModel">
+          <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description">
           </textarea>
         </div>
       </div>
-      <div class="btn-wp">
-        <button type="submit" class="btn btn-success" [disabled]="projectSettingForm.invalid">Save</button>
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success" [disabled]="projectForm.errors">Save</button>
         <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
       </div>
     </form>
+
+    <br />
   </div>
-</div>
+  <div class="settings-section border-bottom">
+    <h2 class="small-title">
+      Enviroment Variables
+    </h2>
+    <p>Customize your build using enviroment variables. </p>
+    <form [formGroup]="projectForm">
+      <div class="group-ev">
+
+        <div class='name'>
+          <label>Name</label>
+          <div class="input-area">
+            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
+          </div>
+        </div>
+        <div class='value'>
+          <label>Value</label>
+          <div class="input-area">
+            <input type="text" class="form-control form-control form-control-ev" formControlName="name">
+          </div>
+        </div>
+        <div class='branch'>
+          <label>Branch</label>
+          <select class="form-control">
+            <ng-container *ngFor="let branch of branches">
+              <option [value]='branch'>{{branch}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class='isOn'>
+          <div class="custom-control custom-switch addSwitch">
+            <input type="checkbox" class="custom-control-input" id="isOn" name="isOn" />
+            <label class="custom-control-label" for="isOn"></label>
+            <button class="btn btn-info add-cron">Add</button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="settings-section border-bottom">
+    <h2 class="small-title">
+      Cron Jobs
+    </h2>
+    <div class="input-area">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="pushedBranches" name="pushedBranches" />
+        <label class="custom-control-label" for="pushedBranches"></label>
+        <p class="text-near"> Build pushed branches</p>
+      </div>
+    </div>
+    <div class="input-area">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="pushedRequests" name="pushedRequests" />
+        <label class="custom-control-label" for="pushedRequests"></label>
+        <p class="text-near"> Build pushed pull requests</p>
+      </div>
+    </div>
+      <app-project-triggers></app-project-triggers>
+      </div>
+
+    </div>
+
+  </div>
