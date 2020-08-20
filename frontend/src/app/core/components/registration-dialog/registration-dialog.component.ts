@@ -2,14 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { UserService } from '@core/services/user.service';
+import { emailDotValidator } from '@core/validators/email-dot-validator';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewUser } from '@shared/models/user/new-user';
-import { switchMap, map } from 'rxjs/operators';
-import { timer } from 'rxjs';
-import { User } from 'firebase';
-import { ValidateUser } from '@shared/models/user/validate-user';
-import { usernameAsyncValidator } from '@core/validators/custom-async-validator';
-import { emailDotValidator } from '@core/validators/email-dot-validator';
+import { usernameAsyncValidator } from '../../validators/custom-async-validator';
 
 @Component({
   selector: 'app-registration-dialog',
@@ -86,19 +82,5 @@ export class RegistrationDialogComponent implements OnInit {
     this.activeModal.close();
     this.authService.cancelRegistration();
   }
-
-  usernameValidator(time: number = 500) {
-    return (input: FormControl) => {
-      const user = {id: 0, username: input.value} as ValidateUser;
-      return timer(time).pipe(
-        switchMap(() => this.userService.validateUsername(user)),
-        map(res => {
-          return res ? null : { isExists: true };
-        })
-      );
-    };
-  }
-
-
 
 }

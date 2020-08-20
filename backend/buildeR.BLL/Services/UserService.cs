@@ -30,7 +30,7 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> GetUserById(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.Include(u => u.UserSocialNetworks).FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 throw new NotFoundException("user", id);
@@ -61,10 +61,11 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> Register(NewUserDTO creatingUser)
         {
+
             var userSN = new NewUserSocialNetworkDTO()
             {
                 UId = creatingUser.UId,
-                SocialNetworkId = (int)creatingUser.ProviderId+1,
+                ProviderName = creatingUser.ProviderName,
                 SocialNetworkUrl = creatingUser.ProviderUrl,
             };
 
@@ -83,7 +84,7 @@ namespace buildeR.BLL.Services
             var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
             await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, emailModel.Subject, emailModel.Title, emailModel.Body);
 
-            return userDto;
+            return _mapper.Map<UserDTO>(user);
         }
 
         public async Task Delete(int id)
@@ -119,6 +120,34 @@ namespace buildeR.BLL.Services
             else
             {
                 return await _context.Users.AnyAsync(x => x.Username.ToLower() == user.Username.ToLower());
+            }
+        }
+
+        public async Task<UserDTO> LinkProvider(LinkProviderDTO userLink)
+        {
+            var isUserExist = await _context.Users.AnyAsync(u => u.Id == userLink.UserId);
+
+            if (isUserExist)
+            {
+
+                var userSN = new NewUserSocialNetworkDTO()
+                {
+                    UId = userLink.UId,
+                    ProviderName = userLink.ProviderName,
+                    SocialNetworkUrl = userLink.ProviderUrl,
+                };
+
+                userSN.UserId = userLink.UserId;
+                var userSNEntity = _mapper.Map<UserSocialNetwork>(userSN);
+                _context.Add(userSNEntity);
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userLink.UserId);
+                return _mapper.Map<UserDTO>(updatedUser);
+            }
+            else
+            {
+                throw new NotFoundException("user", userLink.UserId);
             }
         }
     }

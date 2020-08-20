@@ -1,3 +1,4 @@
+import { UserSocialNetwork } from './user-social-network';
 
 export interface User {
   id: number;
@@ -10,4 +11,5 @@ export interface User {
   location: string;
   avatarUrl: string;
   createdAt: Date;
+  userSocialNetworks: UserSocialNetwork[];
 }

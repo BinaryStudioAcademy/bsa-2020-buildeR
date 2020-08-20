@@ -73,6 +73,12 @@ namespace buildeR.BLL.Services
             TriggerKey triggerKey = new TriggerKey(quartzDTO.Id, quartzDTO.Group);
             await _scheduler.UnscheduleJob(triggerKey);
         }
+        public async Task DeleteAllSheduleJob(string projectId)
+        {
+            var groupMatcher = GroupMatcher<JobKey>.GroupContains(projectId);
+            var jobKeys = await _scheduler.GetJobKeys(groupMatcher);
+            await _scheduler.DeleteJobs(jobKeys);
+        }
         private IJobDetail CreateJob(QuartzDTO quartzDTO)
         {
             return JobBuilder
