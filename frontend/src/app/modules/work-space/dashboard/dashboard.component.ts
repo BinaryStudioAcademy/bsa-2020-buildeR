@@ -9,6 +9,8 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { SynchronizedUser } from '@core/models/SynchronizedUser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
+import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 
 @Component({
@@ -89,10 +91,49 @@ export class DashboardComponent extends BaseComponent
       );
   }
 
+  deleteProject(projectId: number) {
+    const modalRef = this.modalService.open(ModalContentComponent);
+    let data = {
+      title: 'Are you sure?',
+      message: 'You are going to delete project.',
+      text: 'Press "yes" button to confirm deleting project or "no" button to come back.'
+    };
+    modalRef.componentInstance.content = data;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.projectService.deleteProject(projectId).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+            this.userProjects = this.userProjects.filter(proj => proj.id !== projectId);
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  copyProject(id: number) {
+    const modalRef = this.modalService.open(ModalCopyProjectComponent);
+    modalRef.componentInstance.id = id;
+    modalRef.result
+      .then((result) => {
+        if (result.isFavorite) {
+          this.starredProjects.push(result);
+          this.userProjects.push(result);
+        }
+        else if (result) {
+          this.userProjects.push(result);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   openCreateProjectModal() {
-      const modalRef = this.modalService.open(ProjectCreateComponent);
-      modalRef.result
+    const modalRef = this.modalService.open(ProjectCreateComponent);
+    modalRef.result
       .then(() => this.getUserProjects(this.currentUser.id))
-      .catch(() => {});
+      .catch(() => { });
   }
 }

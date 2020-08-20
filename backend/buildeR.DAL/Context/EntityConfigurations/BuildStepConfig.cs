@@ -11,7 +11,7 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Project)
                 .WithMany(p => p.BuildSteps)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.PluginCommand)
                 .WithMany(p => p.BuildSteps)
