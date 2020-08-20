@@ -2,7 +2,11 @@
   <form [formGroup]="helpForm">
     <div class="header-main">
       <h2 class="first-message">How can we help,
-        <strong>{{currentUser.firstName}}</strong>?
+        <strong *ngIf="currentUser.firstName.length >= 0; else elseBlock">{{currentUser.firstName}}</strong>
+        <ng-template #elseBlock>
+          <strong>{{currentUser.username}}</strong>
+        </ng-template>
+        ?
       </h2>
       <h2 class="second-message">
         Describe your problem and we will help you solve it

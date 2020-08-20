@@ -5,6 +5,7 @@ import {AuthenticationService} from "../../../core/services/authentication.servi
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserHelp} from "@shared/models/user/user-help";
 import { emailDotValidator } from '@core/validators/email-dot-validator';
+import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
 
 @Component({
   selector: 'app-help',
@@ -20,7 +21,8 @@ export class HelpComponent extends BaseComponent
   public helpForm: FormGroup;
 
   constructor(
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private toastrService: ToastrNotificationsService
   ) {
     super();
   }
