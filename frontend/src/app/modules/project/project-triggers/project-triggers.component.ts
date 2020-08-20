@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { NewProjectTrigger} from '@shared/models/project/project-trigger/new-project-trigger';
 import { UpdateTriggerCron } from '@shared/models/project/project-trigger/update-trigger-cron';
 import { ProjectTrigger } from '@shared/models/project/project-trigger/project-trigger';
@@ -26,15 +26,14 @@ export class ProjectTriggersComponent implements OnInit {
   runOnShedule = true;
   triggers: ProjectTriggerInfo[] = [];
 
-  model: any;
-  @ViewChild('branch', {static: true}) instance: NgbTypeahead;
+  @ViewChild('branch', {static: true}) branchInput: NgbTypeahead;
 
   branchInputFocus$ = new Subject<string>();
   branchInputClick$ = new Subject<string>();
 
   search = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const clicksWithClosedPopup$ = this.branchInputClick$.pipe(filter(() => !this.instance.isPopupOpen()));
+    const clicksWithClosedPopup$ = this.branchInputClick$.pipe(filter(() => !this.branchInput.isPopupOpen()));
     const inputFocus$ = this.branchInputFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
@@ -53,18 +52,13 @@ export class ProjectTriggersComponent implements OnInit {
     { }
 
   ngOnInit(): void {
-    this.route.parent.params
-    .subscribe(
-      (params) => this.projectSerivce.getProjectById(params.projectId)
-            .subscribe(p => {
-              this.project = p;
-              this.getTriggers();
-              this.syncService.getRepositoryBranches(p.repository)
-              .subscribe(branches => {
-                this.branches = branches;
-                console.log(branches);
-              });
-            }));
+    this.projectSerivce.getProjectById(this.route.parent.snapshot.params.projectId)
+            .subscribe(project => {
+              this.project = project;
+              this.syncService.getRepositoryBranches(project.repository)
+                .subscribe(branches => this.branches = branches);
+            });
+    console.log(this.branchInput);
   }
 
   getTriggers() {

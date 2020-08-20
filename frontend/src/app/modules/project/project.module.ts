@@ -9,6 +9,7 @@ import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.co
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [

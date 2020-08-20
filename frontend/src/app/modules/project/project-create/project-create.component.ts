@@ -21,6 +21,9 @@ export class ProjectCreateComponent implements OnInit {
   user: User = this.authService.getCurrentUser();
   repositories: Repository[];
 
+  githubRepoSection = false;
+  urlSection = false;
+
   @ViewChild('repository', {static: true}) instance: NgbTypeahead;
 
   repositoryInputFocus$ = new Subject<string>();
@@ -52,6 +55,7 @@ export class ProjectCreateComponent implements OnInit {
         this.repositories = repos;
       });
   }
+
   defaultValues() {
     this.newProject = {
       name: '',
@@ -61,6 +65,7 @@ export class ProjectCreateComponent implements OnInit {
       ownerId: this.user.id,
     };
   }
+
   save() {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
@@ -79,5 +84,19 @@ export class ProjectCreateComponent implements OnInit {
   }
   onToggle(change: boolean) {
     change = !change;
+  }
+
+  isGithubAccessable() {
+    return localStorage.getItem('github-access-token');
+  }
+
+  githubRadioClicked() {
+    this.githubRepoSection = true;
+    this.urlSection = false;
+  }
+
+  urlRadioClicked() {
+    this.urlSection = true;
+    this.githubRepoSection = false;
   }
 }

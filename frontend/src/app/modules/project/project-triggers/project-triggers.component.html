@@ -10,9 +10,9 @@
         <div class="mr-sm-2">
           <h5 class="text">Branch </h5>
           <select class="form-control" [(ngModel)]="trigger.branchHash">
-            <ng-container *ngFor="let branch of branches">
+            <!-- <ng-container *ngFor="let branch of branches">
               <option [value]='branch.name' [selected]="trigger.branchHash == branch.name">{{branch.name}}</option>
-            </ng-container>
+            </ng-container> -->
           </select>
         </div>
         <div class="mr-sm-2">
@@ -46,10 +46,8 @@
         <div class="mr-sm-2">
           <h5 class="text-over">Branch </h5>
           <input
-            id="typeahead-focus"
             type="text"
             class="form-control"
-            [(ngModel)]="model"
             [ngbTypeahead]="search"
             (focus)="branchInputFocus$.next($any($event).target.value)"
             (click)="branchInputClick$.next($any($event).target.value)"
