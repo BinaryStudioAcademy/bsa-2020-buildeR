@@ -55,13 +55,30 @@ textarea
   grid-column-start: 1
   grid-column-end: 2
   width: 300px
-  margin: 0 10px
-  padding-bottom: 25px
   display: flex
   justify-content: center
   justify-self: start
   button
     width: 100px
+
+.icon
+  margin-right: 5px
+
+.btn-secondary
+  margin: 5px
+  flex-direction: row
+  display: flex
+  position: relative
+  justify-content: center
+  align-items: center
+
+.link-buttons
+  display: flex
+  position: relative
+  justify-content: flex-end
+  align-items: flex-end
+  flex-direction: row
+  margin: 5px
 
 @media screen and (max-width: 675px)
   .field
@@ -81,23 +98,3 @@ textarea
     margin-right: 0
   .scroll-container
     height: calc(100% - 66px - 150px)
-
-.btn-secondary
-  margin: 5px
-  flex-direction: row
-  display: flex
-  position: relative
-  justify-content: center
-  align-items: center
-
-.icon
-  margin-right: 5px
-
-.link-buttons
-  display: flex
-  position: absolute
-  justify-content: flex-end
-  align-items: flex-end
-  flex-direction: column
-  right: 180px
-  margin: 5px

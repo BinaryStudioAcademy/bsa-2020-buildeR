@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
@@ -9,7 +9,6 @@ import { ToastrNotificationsService } from '../../../core/services/toastr-notifi
 import { UserService } from '../../../core/services/user.service';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
-
 
 @Component({
   selector: 'app-user-settings',
@@ -58,12 +57,6 @@ export class UserSettingsComponent implements OnInit {
           Validators.email,
           Validators.pattern(`^[a-zA-Z].*`),
           emailDotValidator()
-        ]),
-      location: new FormControl(this.details.location,
-        [
-          Validators.minLength(2),
-          Validators.maxLength(30),
-          Validators.pattern('^(?![-\'])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s,]+(?<![-\'])$')
         ]),
       username: new FormControl(this.details.username,
         [
