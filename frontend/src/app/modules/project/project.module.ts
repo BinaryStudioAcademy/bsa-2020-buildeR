@@ -21,5 +21,6 @@ import { ProjectBuildHistoryComponent } from './project-build-history/project-bu
     ProjectBuildHistoryComponent
   ],
   imports: [ProjectRoutingModule, SharedModule],
+  exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

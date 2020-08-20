@@ -14,20 +14,6 @@
           <h1 class ="nickname"> @{{currentUser.username}}</h1>
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
         </div>
-        <div class="link-buttons">
-          <button class="btn btn-link" [disabled]="isProviderAdded(0)" (click)="linkWithGithub()">
-            <div class="icon">
-              <i class="fa fa-github" aria-hidden="true"></i>
-            </div>
-            Link with Github
-          </button>
-          <button class="btn btn-link" [disabled]="isProviderAdded(1)" (click)="linkWithGoogle()">
-            <div class="icon">
-              <i class="fa fa-google" aria-hidden="true"></i>
-            </div>
-            Link with Google
-          </button>
-        </div>
       </div>
     <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
   </div>

@@ -92,30 +92,11 @@
           </div>
         </div>
         <div class="field">
-          Location
-        </div>
-        <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="location"
-            placeholder="Kharkiv, Ukraine">
-          <div *ngIf="settingsForm.controls['location'].errors">
-            <div class="error" *ngIf="settingsForm.controls['location'].errors.minlength">
-              The minimum length is 2 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['location'].errors.maxlength">
-              The maximum length is 30 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['location'].errors.pattern">
-              Location must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '<br>
-            </div>
-          </div>
-        </div>
-        <div class="field">
           Bio
         </div>
         <div class="input-area">
           <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio"
             placeholder="Tell us something about yourself">
-
                </textarea>
           <div *ngIf="settingsForm.controls['bio'].errors">
             <div class="error" *ngIf="settingsForm.controls['bio'].errors.maxlength">
@@ -133,5 +114,19 @@
         </div>
       </div>
     </form>
+    <div class="link-buttons">
+      <button class="btn btn-secondary" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+        <div class="icon">
+          <i class="fa fa-github" aria-hidden="true"></i>
+        </div>
+        Link with Github
+      </button>
+      <button class="btn btn-secondary" [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
+        <div class="icon">
+          <i class="fa fa-google" aria-hidden="true"></i>
+        </div>
+        Link with Google
+      </button>
+    </div>
   </div>
 </div>
