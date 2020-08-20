@@ -108,7 +108,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     const buildStep = {} as BuildStep;
 
     buildStep.pluginCommand = this.newBuildStep.pluginCommand;
-    buildStep.index = this.buildSteps.length + 1;
+    buildStep.index = this.buildSteps.length;
     buildStep.buildStepName = this.newBuildStep.buildStepName;
     buildStep.pluginCommandId = this.newBuildStep.pluginCommand.id;
     buildStep.projectId = this.projectId;
