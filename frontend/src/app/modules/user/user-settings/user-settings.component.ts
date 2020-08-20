@@ -1,14 +1,14 @@
-import {Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
+import { emailDotValidator } from '@core/validators/email-dot-validator';
+import { Providers } from '@shared/models/providers';
 import { User } from '@shared/models/user/user';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from '../../../core/services/toastr-notifications.service';
 import { UserService } from '../../../core/services/user.service';
-import { ActivatedRoute } from '@angular/router';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
-import { emailDotValidator } from '@core/validators/email-dot-validator';
-import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
-import { Providers } from '@shared/models/providers';
-
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 
 @Component({
   selector: 'app-user-settings',
@@ -24,7 +24,8 @@ export class UserSettingsComponent implements OnInit {
 
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
-
+  googleClick = false;
+  githubClick = false;
 
   constructor(
     private settingsService: UserService,
@@ -57,12 +58,6 @@ export class UserSettingsComponent implements OnInit {
           Validators.pattern(`^[a-zA-Z].*`),
           emailDotValidator()
         ]),
-      location: new FormControl(this.details.location,
-        [
-          Validators.minLength(2),
-          Validators.maxLength(30),
-          Validators.pattern('^(?![-\'])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s,]+(?<![-\'])$')
-        ]),
       username: new FormControl(this.details.username,
         [
           Validators.required,
@@ -83,7 +78,7 @@ export class UserSettingsComponent implements OnInit {
 
     this.settingsForm.valueChanges.subscribe(changesSettigsForm => {
       this.isChanged = false;
-      this.changedUser = <User>changesSettigsForm;
+      this.changedUser = (changesSettigsForm as User);
       if (this.details.lastName === this.changedUser.lastName &&
         this.details.firstName === this.changedUser.firstName &&
         this.details.email === this.changedUser.email &&
@@ -131,5 +126,37 @@ export class UserSettingsComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  linkWithGithub() {
+    this.fbr.linkWithGithub().then((result) => {
+      if (result === 'ok') {
+        this.githubClick = true;
+      }
+      this.showLinkMessage(result, 'Github');
+    });
+  }
+
+  linkWithGoogle() {
+    this.fbr.linkWithGoogle().then((result) => {
+      if (result === 'ok') {
+        this.googleClick = true;
+      }
+      this.showLinkMessage(result, 'Google');
+    });
+  }
+
+  showLinkMessage(result: string, provider: string) {
+    if (result === 'ok') {
+      this.toastrService.showSuccess(provider + ' account is successfully added!');
+    }
+    else {
+      this.toastrService.showError(result);
+    }
+  }
+
+  isProviderAdded(provider: Providers) {
+    const check = (item: UserSocialNetwork) => item.providerName === provider;
+    return this.details.userSocialNetworks.some(check);
   }
 }
