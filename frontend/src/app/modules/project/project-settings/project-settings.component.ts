@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ThrowStmt } from '@angular/compiler';
+import { EnviromentVariable } from '@shared/models/enviroment-variable';
+import { env } from 'process';
 
 @Component({
   selector: 'app-project-settings',
@@ -15,7 +16,10 @@ export class ProjectSettingsComponent implements OnInit {
   isLoading = false;
   projectId: number;
   branches: string [] = ['master', 'dev'];
+  public envVarsForm: FormGroup;
   public projectForm: FormGroup;
+  envVar: EnviromentVariable = {} as EnviromentVariable;
+  envVariables: EnviromentVariable[] = [];
   @Input() project: Project = {} as Project;
   constructor(
     private projectService: ProjectService,
@@ -41,8 +45,20 @@ export class ProjectSettingsComponent implements OnInit {
             Validators.required
           ])
     });
-  }
 
+    this.envVarsForm = new FormGroup({
+      name: new FormControl(this.envVar.name,
+        [
+          Validators.required
+        ]),
+      value: new FormControl(this.envVar.value,
+        [
+          Validators.required
+        ]),
+        branch: new FormControl(this.envVar.branch),
+      isEnabled: new FormControl(this.envVar.isEnabled)
+    });
+  }
 
   reset() {
     this.projectForm.reset(this.project);
@@ -55,5 +71,26 @@ export class ProjectSettingsComponent implements OnInit {
     }, (err) => {
       this.toastrService.showError(err);
     });
+  }
+
+  addEnvVar(envVar: EnviromentVariable){
+    if (envVar.isEnabled == null){
+      envVar.isEnabled = false;
+    }
+    console.log(envVar);
+    this.envVariables.push(envVar);
+  }
+
+  switchVar(envVar: EnviromentVariable){
+    if (envVar.isEnabled === false) {
+    envVar.isEnabled = true;
+    }
+    envVar.isEnabled = false;
+
+  }
+
+  remvove(envVar: EnviromentVariable){
+    const index = this.envVariables.lastIndexOf(envVar);
+    this.envVariables.splice(index, 1);
   }
 }

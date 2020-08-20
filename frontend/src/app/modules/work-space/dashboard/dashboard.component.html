@@ -141,7 +141,7 @@
         Active projects
       </span>
       <div class="ml-auto">
-        <button class="btn btn-info" [routerLink]="'../projects/create'">
+        <button class="btn btn-info" (click)="openCreateProjectModal()">
           <i class="fa fa-plus"></i>
         </button>
       </div>
@@ -283,7 +283,7 @@
         </div>
         <span class="my-3">It seems that you don't have active projects. Maybe it's time to add
           the first one?</span>
-        <button class="btn btn-success" [routerLink]="'../projects/create'">
+        <button class="btn btn-success" (click)="openCreateProjectModal()">
           Add first project
         </button>
       </div>

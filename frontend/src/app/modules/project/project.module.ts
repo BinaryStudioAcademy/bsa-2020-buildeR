@@ -23,5 +23,6 @@ import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-proje
     ModalCopyProjectComponent
   ],
   imports: [ProjectRoutingModule, SharedModule],
+  exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

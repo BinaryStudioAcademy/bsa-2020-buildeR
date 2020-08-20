@@ -1,24 +1,17 @@
 <div class="container line-bottom mb-3 pb-3">
   <div class="setting-container enable-disable-all-wr">
     <div class="description p-2 mr-5">
-      <span *ngIf="appChecked; else elseApp">Disable app notifications</span>
-      <ng-template #elseApp>
-        <span>Enable app notifications</span>
-      </ng-template>
+      <span>App notifications</span>
     </div>
     <div class="custom-control custom-switch m-2">
-      <input type="checkbox" class="custom-control-input" id="allApp" [(ngModel)]="appChecked" (change)="onToggleApp()">
+      <input type="checkbox" class="custom-control-input" id="allApp" [(ngModel)]="appChecked">
       <label class="custom-control-label" for="allApp"></label>
     </div>
     <div class="description p-2 mr-5">
-      <span *ngIf="emailChecked; else elseEmail">Disable email notifications</span>
-      <ng-template #elseEmail>
-        <span>Enable email notifications</span>
-      </ng-template>
+      <span>Email notifications</span>
     </div>
     <div class="custom-control custom-switch  m-2">
-      <input type="checkbox" class="custom-control-input" id="allEmail" [(ngModel)]="emailChecked"
-        (change)="onToggleEmail()">
+      <input type="checkbox" class="custom-control-input" id="allEmail" [(ngModel)]="emailChecked">
       <label class="custom-control-label" for="allEmail"></label>
     </div>
   </div>
@@ -43,12 +36,12 @@
       <div class="option p-2 row">
         <div class="custom-control custom-switch mr-5">
           <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}app"
-            [(ngModel)]="setting.app" (change)="onToggle(setting.app)">
+            [(ngModel)]="setting.app" (change)="onToggle(setting.app)" [disabled] = '!appChecked'>
           <label class="custom-control-label" for="{{setting.notificationType}}app"></label>
         </div>
         <div class="custom-control custom-switch">
           <input type="checkbox" class="custom-control-input" id="{{setting.notificationType}}email"
-            [(ngModel)]="setting.email" (change)="onToggle(setting.email)">
+            [(ngModel)]="setting.email" (change)="onToggle(setting.email)" [disabled] = '!emailChecked'>
           <label class="custom-control-label" for="{{setting.notificationType}}email"></label>
         </div>
       </div>
