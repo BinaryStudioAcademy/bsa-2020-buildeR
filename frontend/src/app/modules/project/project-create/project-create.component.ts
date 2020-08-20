@@ -26,6 +26,8 @@ export class ProjectCreateComponent implements OnInit {
   githubRepoSection = false;
   urlSection = false;
 
+  isPrivateRepoChoosed = false;
+
   @ViewChild('repository', {static: false}) instance: NgbTypeahead;
 
   repositoryInputFocus$ = new Subject<string>();
@@ -37,8 +39,8 @@ export class ProjectCreateComponent implements OnInit {
     const inputFocus$ = this.repositoryInputFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.repositories.map((r) => r.name).slice(0, 8)
-        : this.repositories.map((r) => r.name).filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 8))
+      map(term => (term === '' ? this.repositories.slice(0, 5)
+        : this.repositories.filter(r => r.name.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 5))
     );
   }
 
@@ -84,8 +86,9 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
-    this.newProject = this.projectForm.value as NewProject;
+    //this.newProject = this.projectForm.value as NewProject;
     this.newProject.ownerId = this.user.id;
+    this.newProject.repository = this.newProject.repository['name'];
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
@@ -119,4 +122,6 @@ export class ProjectCreateComponent implements OnInit {
     this.urlSection = true;
     this.githubRepoSection = false;
   }
+
+  repoListResultFormatter = (repo: Repository) => repo.name;
 }
