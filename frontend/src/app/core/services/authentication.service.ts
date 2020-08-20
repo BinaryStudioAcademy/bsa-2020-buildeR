@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
 import { UserService } from './user.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +13,13 @@ import { UserService } from './user.service';
 export class AuthenticationService {
   private currentUser: User;
   private firebaseUser: firebase.User;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
     private router: Router
-  ) {
-    this.angularAuth.authState.subscribe(this.configureAuthState);
-  }
+  ) { }
 
   configureAuthState = (user: firebase.User) => {
     if (user) {
@@ -31,6 +32,10 @@ export class AuthenticationService {
     this.clearAuth();
   }
 
+  getAngularAuth() {
+    return this.angularAuth;
+  }
+
   async loadCurrentUser(force?: boolean) {
     if (!this.currentUser || force) {
       this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
@@ -41,9 +46,18 @@ export class AuthenticationService {
 
   registerUser(newUser: NewUser) {
     this.userService.register(newUser).subscribe(
-      user => {
-        this.currentUser = user;
-        this.router.navigate(['/portal']);
+      userResult => {
+        this.angularAuth.authState
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe((user) => {
+            this.configureAuthState(user);
+            if (user) {
+              if (user.uid === userResult.userSocialNetworks[0].uId) {
+                this.currentUser = userResult;
+                this.router.navigate(['/portal']);
+              }
+            }
+          });
       });
   }
 
