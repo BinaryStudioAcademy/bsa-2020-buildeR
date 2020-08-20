@@ -36,16 +36,20 @@
       <span class="required-field">Repository</span>
     </div>
     <div class="input-area">
-      <ng-select [items]="repositories"
-           bindLabel="name"
-           bindValue="name"
-           form="projectCreatingForm"
-           [(ngModel)]="newProject.repository"
-           name="repository"
-           #repository="ngModel"
-           required>
-      </ng-select>
-       <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
+      <input
+        id="typeahead-focus"
+        type="text"
+        class="form-control"
+        [(ngModel)]="newProject.repository"
+        [ngbTypeahead]="search"
+        (focus)="repositoryInputFocus$.next($any($event).target.value)"
+        (click)="repositoryInputClick$.next($any($event).target.value)"
+        #repository="ngbTypeahead"
+        name="repositoryInput"
+        #repositoryInput="ngModel"
+        required
+      />
+       <div class="error" [hidden]="!repositoryInput.errors?.required || repositoryInput.untouched">
         Repository is required
       </div>
     </div>
