@@ -21,7 +21,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Globalization;
 using buildeR.Common.DTO;
 using Microsoft.Extensions.Configuration;
 using Scriban;
@@ -127,15 +126,17 @@ namespace buildeR.Processor.Services
         private string GenerateDockerFileContent(IEnumerable<ExecutiveBuildStepDTO> buildSteps, string repositoryUrl)
         {
             string dockerfile = "";
+
+            // Base template for generating dockerfile
             var template = Template.Parse(
-                @"FROM {{ this.build_plugin.docker_image }}:lts
-                  WORKDIR /src/{{ this.work_directory }}
-                  COPY . .
-                  RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }}");
+                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.name }}\r\n" +
+                 "WORKDIR \"/src\"\r\n" +
+                 "COPY . .\r\n" +
+                 "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
+                 "CMD {{ this.build_plugin.runner }} {{ this.plugin_command.name }}\r\n\r\n");
 
-            var bs = buildSteps.FirstOrDefault();
-            dockerfile += template.Render(bs);
-
+            foreach (var step in buildSteps)
+                dockerfile += template.Render(step);
 
             return dockerfile;
 
