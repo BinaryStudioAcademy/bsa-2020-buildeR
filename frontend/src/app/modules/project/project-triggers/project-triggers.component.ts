@@ -16,7 +16,7 @@ export class ProjectTriggersComponent implements OnInit {
   projectId: number;
   branches: string [] = ['master', 'dev'];
   selectedBranch: string;
-  runOnShedule = true;
+  runOnShedule = false;
   triggers: ProjectTriggerInfo[] = [];
   constructor(
     private triggerService: TriggerService,
