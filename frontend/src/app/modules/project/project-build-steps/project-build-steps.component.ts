@@ -151,6 +151,23 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.buildSteps, event.previousIndex, event.currentIndex);
+    this.increaseIndexesOfBuildStepsFrom(this.projectId, event.currentIndex, event.previousIndex);
+  }
+
+  increaseIndexesOfBuildStepsFrom(projectId: number, newIndex: number, oldIndex: number) {
+    this.isLoading = true;
+    this.buildStepService
+      .udpateIndexesOfBuildSteps(projectId, newIndex, oldIndex)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => {
+          this.isLoading = false;
+          moveItemInArray(this.buildSteps, oldIndex, newIndex);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
   }
 }
