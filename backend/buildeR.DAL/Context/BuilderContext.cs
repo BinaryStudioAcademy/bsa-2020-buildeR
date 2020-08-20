@@ -15,7 +15,6 @@ namespace buildeR.DAL.Context
         public DbSet<Project> Projects { get; private set; }
         public DbSet<ProjectGroup> ProjectGroups { get; private set; }
         public DbSet<ProjectTrigger> ProjectTriggers { get; private set; }
-        public DbSet<SocialNetwork> SocialNetworks { get; private set; }
         public DbSet<TeamMember> TeamMembers { get; private set; }
         public DbSet<User> Users { get; private set; }
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }

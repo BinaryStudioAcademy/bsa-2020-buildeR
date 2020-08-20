@@ -13,7 +13,7 @@ namespace buildeR.Common.DTO.User
         public string LastName { get; set; }
         public string AvatarUrl { get; set; }
         public string UId { get; set; }
-        public Provider ProviderId { get; set; }
+        public Provider ProviderName { get; set; }
         public string ProviderUrl { get; set; }
         public string AccessToken { get; set; }
     }

@@ -1,5 +1,4 @@
-﻿using buildeR.Common.DTO.SocialNetwork;
-using buildeR.Common.DTO.User;
+﻿using buildeR.Common.Enums;
 
 namespace buildeR.Common.DTO.UserSocialNetwork
 {
@@ -7,10 +6,8 @@ namespace buildeR.Common.DTO.UserSocialNetwork
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public int SocialNetworkId { get; set; }
+        public Provider ProviderName { get; set; }
         public string SocialNetworkUrl { get; set; }
         public string UId { get; set; }
-
-        public SocialNetworkDTO SocialNetwork { get; set; }
     }
 }
