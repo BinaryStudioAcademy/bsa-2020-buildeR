@@ -2,6 +2,6 @@ import { Providers } from '../providers';
 
 export interface UserSocialNetwork {
     id: number;
-    socialNetworkId: number;
+    providerName: Providers;
     uId: string;
 }

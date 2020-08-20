@@ -36,7 +36,6 @@ namespace buildeR.DAL.Context
             //var buildPlugins = GenerateRandomBuildPlugins();
             //var groups = GenerateRandomGroups();
             //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
-            var socialNetworks = GenerateSocialNetworks();
             //var users = GenerateRandomUsers();
             //var userSocialNetworks = GenerateRandomUserSocialNetworks(users, socialNetworks);
             //var projects = GenerateRandomProjects(users);
@@ -51,7 +50,6 @@ namespace buildeR.DAL.Context
             //modelBuilder.Entity<BuildPlugin>().HasData(buildPlugins);
             //modelBuilder.Entity<Group>().HasData(groups);
             //modelBuilder.Entity<PluginCommand>().HasData(pluginCommands);
-            modelBuilder.Entity<SocialNetwork>().HasData(socialNetworks);
             //modelBuilder.Entity<User>().HasData(users);
             //modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
             //modelBuilder.Entity<Project>().HasData(projects);
@@ -100,15 +98,6 @@ namespace buildeR.DAL.Context
             return pluginCommandFake.Generate(PLUGIN_COMMAND_COUNT);
         }
 
-        public static ICollection<SocialNetwork> GenerateSocialNetworks()
-        {
-            return new List<SocialNetwork>()
-            {
-                new SocialNetwork { Id = 1, ProviderName = Provider.GitHub },
-                new SocialNetwork { Id = 2, ProviderName = Provider.Google }
-            };
-        }
-
         public static ICollection<User> GenerateRandomUsers()
         {
             int userId = 1;
@@ -126,18 +115,18 @@ namespace buildeR.DAL.Context
             return userFake.Generate(USER_COUNT);
         }
 
-        public static ICollection<UserSocialNetwork> GenerateRandomUserSocialNetworks(this ICollection<User> users, ICollection<SocialNetwork> socialNetworks)
-        {
-            int userSNId = 1;
+        //public static ICollection<UserSocialNetwork> GenerateRandomUserSocialNetworks(this ICollection<User> users, ICollection<SocialNetwork> socialNetworks)
+        //{
+        //    int userSNId = 1;
 
-            var userSNFake = new Faker<UserSocialNetwork>()
-                .RuleFor(usn => usn.Id, _ => userSNId++)
-                .RuleFor(usn => usn.UserId, f => f.PickRandom(users).Id)
-                .RuleFor(usn => usn.SocialNetworkId, f => f.PickRandom(socialNetworks).Id)
-                .RuleFor(usn => usn.SocialNetworkUrl, f => f.Internet.Url());
+        //    var userSNFake = new Faker<UserSocialNetwork>()
+        //        .RuleFor(usn => usn.Id, _ => userSNId++)
+        //        .RuleFor(usn => usn.UserId, f => f.PickRandom(users).Id)
+        //        .RuleFor(usn => usn.SocialNetworkId, f => f.PickRandom(socialNetworks).Id)
+        //        .RuleFor(usn => usn.SocialNetworkUrl, f => f.Internet.Url());
 
-            return userSNFake.Generate(USER_SN_COUNT);
-        }
+        //    return userSNFake.Generate(USER_SN_COUNT);
+        //}
 
         public static ICollection<Project> GenerateRandomProjects(this ICollection<User> users)
         {
