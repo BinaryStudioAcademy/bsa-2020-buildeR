@@ -9,7 +9,7 @@ namespace buildeR.Common.DTO.User
     {
         public int UserId { get; set; }
         public string UId { get; set; }
-        public Provider ProviderId { get; set; }
+        public Provider ProviderName { get; set; }
         public string ProviderUrl { get; set; }
     }
 }

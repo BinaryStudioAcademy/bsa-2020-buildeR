@@ -8,15 +8,11 @@ import { LinkProvider } from '@shared/models/user/link-provider';
 import { auth } from 'firebase/app';
 import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
 import { AuthenticationService } from './authentication.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseSignInService {
-
-  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private userService: UserService,
@@ -92,15 +88,15 @@ export class FirebaseSignInService {
     );
   }
 
-  linkWithGithub() {
+  linkWithGithub(): Promise<string> {
     const githubProvider = new auth.GithubAuthProvider();
     const fireUser = this.authService.getFireUser();
-    fireUser.linkWithPopup(githubProvider).then((result) => {
+    return fireUser.linkWithPopup(githubProvider).then((result) => {
       const credential = result.credential;
       const user = result.user;
       const linkUser = {
         userId: this.authService.getCurrentUser().id,
-        providerId: Providers.Github,
+        providerName: Providers.Github,
         providerUrl: credential.providerId,
         uId: user.uid
       } as LinkProvider;
@@ -110,20 +106,27 @@ export class FirebaseSignInService {
             this.authService.setUser(resp);
           }
         });
+      return 'ok';
     }).catch((err) => {
       console.log(err);
+      switch (err.code) {
+        case 'auth/credential-already-in-use': {
+          return 'This account is already added to BuildeR!';
+        }
+        default: { return err.code; }
+      }
     });
   }
 
-  linkWithGoogle() {
+  linkWithGoogle(): Promise<string> {
     const googleProvider = new auth.GoogleAuthProvider();
     const fireUser = this.authService.getFireUser();
-    fireUser.linkWithPopup(googleProvider).then((result) => {
+    return fireUser.linkWithPopup(googleProvider).then((result) => {
       const credential = result.credential;
       const user = result.user;
       const linkUser = {
         userId: this.authService.getCurrentUser().id,
-        providerId: Providers.Google,
+        providerName: Providers.Google,
         providerUrl: credential.providerId,
         uId: user.uid
       } as LinkProvider;
@@ -133,8 +136,15 @@ export class FirebaseSignInService {
             this.authService.setUser(resp);
           }
         });
+      return 'ok';
     }).catch((err) => {
       console.log(err);
+      switch (err.code) {
+        case 'auth/credential-already-in-use': {
+          return 'This account is already added to BuildeR!';
+        }
+        default: return err.code;
+      }
     });
   }
 
@@ -143,14 +153,11 @@ export class FirebaseSignInService {
       .subscribe((resp) => {
         if (resp) {
           this.authService.getAngularAuth().authState
-            .pipe(takeUntil(this.unsubscribe$))
             .subscribe((user) => {
               this.authService.configureAuthState(user);
-              if (user) {
-                if (user.uid === resp.userSocialNetworks[0].uId) {
-                  this.authService.setUser(resp);
-                  this.router.navigate([redirectUrl ?? '/portal']);
-                }
+              if (user && user.uid === resp.userSocialNetworks[0].uId) {
+                this.authService.setUser(resp);
+                this.router.navigate([redirectUrl ?? '/portal']);
               }
             });
         }

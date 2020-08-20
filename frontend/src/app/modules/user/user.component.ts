@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from "../../shared/models/user/user";
-import { ActivatedRoute } from "@angular/router";
-import { ModalCropperService } from "../../core/services/modal-cropper.service";
-import { UserService } from "../../core/services/user.service";
+import { ActivatedRoute } from '@angular/router';
 import { TabRoute } from '@shared/models/tabs/tab-route';
-import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
-import { Providers } from '@shared/models/providers';
+import { ModalCropperService } from '../../core/services/modal-cropper.service';
+import { UserService } from '../../core/services/user.service';
+import { User } from '../../shared/models/user/user';
 
 @Component({
   selector: 'app-user',
@@ -26,8 +24,7 @@ export class UserComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cropper: ModalCropperService,
-    private userService: UserService,
-    private fbr: FirebaseSignInService) { }
+    private userService: UserService) { }
 
   ngOnInit(): void {
     this.route.data.subscribe(data => this.currentUser = data.user);
@@ -49,22 +46,4 @@ export class UserComponent implements OnInit {
       console.log('Image didn`t change');
     }
   }
-
-  linkWithGithub() {
-    this.fbr.linkWithGithub();
-  }
-
-  linkWithGoogle() {
-    this.fbr.linkWithGoogle();
-  }
-
-  isProviderAdded(provider: Providers) {
-    for (const item of this.currentUser.userSocialNetworks) {
-      if (item.socialNetworkId - 1 === Number(provider)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 }

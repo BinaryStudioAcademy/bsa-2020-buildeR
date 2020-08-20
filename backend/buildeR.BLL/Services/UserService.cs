@@ -61,10 +61,11 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> Register(NewUserDTO creatingUser)
         {
+
             var userSN = new NewUserSocialNetworkDTO()
             {
                 UId = creatingUser.UId,
-                SocialNetworkId = (int)creatingUser.ProviderId+1,
+                ProviderName = creatingUser.ProviderName,
                 SocialNetworkUrl = creatingUser.ProviderUrl,
             };
 
@@ -128,10 +129,11 @@ namespace buildeR.BLL.Services
 
             if (isUserExist)
             {
+
                 var userSN = new NewUserSocialNetworkDTO()
                 {
                     UId = userLink.UId,
-                    SocialNetworkId = (int)userLink.ProviderId + 1,
+                    ProviderName = userLink.ProviderName,
                     SocialNetworkUrl = userLink.ProviderUrl,
                 };
 
