@@ -1,9 +1,72 @@
-form
+.project-form
   padding: 10px
   margin: 0px auto
   display: flex
   flex-direction: column
   align-items: center
+  justify-content: flex-start
+
+h3
+  color: #17a2b8
+
+.radio-wr
+  width: 100%
+
+.radio-label
+  box-shadow: none !important
+  padding: 0
+  margin: 0 !important
+  max-width: 30px !important
+
+.radio
+  max-width: 30px
+
+.connect-with
+  margin-top: 4px
+  margin-bottom: 4px
+
+.connect-with-inactive
+  .connect-with-title-wr
+  color: var(--gray)
+
+.connect-with-divider
+  min-height: 2px
+  width: 100%
+  margin-top: 8px
+  background-color: var(--light)
+
+.connect-with-title-wr
+  display: flex
+  align-items: center
+
+.connect-with-title
+  margin: 0 0 5px 15px
+  font-size: 1.15em
+  cursor: pointer
+
+.dropdown-item
+  padding: 0 !important
+
+.repo-in-list-wr
+  display: flex
+  align-items: center
+  margin-left: -15px
+
+.repo-access-img-wr
+  width: 20px
+  margin-top: -5px
+  margin-right: 10px
+  display: inline-block
+
+.additional-info-wr
+  p
+    margin: 0
+    margin-left: 10px
+    font-size: .75em
+
+.github-form
+  max-width: 100%
+  padding: 10px
 
 .group
     display: grid
@@ -16,40 +79,26 @@ form
   justify-self: start
   margin: 0 10px 20px
 
-datalist
-  max-height: 100px
-  overflow-x: hidden
-
-ng-select
-  height: calc(1.5em + 0.5rem - 3px)
-  width: 300px
-  border: 1px solid #ced4da
-  border-radius: 0.2rem
-  outline: none
-  ::ng-deep ng-dropdown-panel
-    background: white !important
-    width: 300px
-    border: 1px solid #ced4da
-    border-radius: 0.2rem
-    .ng-option
-      padding: 5px
-      border-bottom: 1px solid #ced4da
-
 input
-  width: 300px
+  width: 280px
 
 textarea
-  width: 300px
+  width: 280px
 
 .field
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+  .label-wr
+  width: 100%
+  display: flex
+  justify-content: flex-start
+  span
+    display: block
 
 .required-field::after
     content: "*"
     color: red
-
 
 .small-title
   margin-top: 0

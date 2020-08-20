@@ -61,6 +61,7 @@ export class AuthenticationService {
   logout() {
     this.clearAuth();
     this.router.navigate(['/']);
+    localStorage.removeItem('github-access-token');
     return this.angularAuth.signOut();
   }
 
