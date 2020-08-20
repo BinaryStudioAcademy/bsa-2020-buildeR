@@ -1,62 +1,60 @@
-<form (ngSubmit)="save()" #projectCreatingForm="ngForm">
+<div class="modal-header">
   <h2 class="small-title">
     Create Project
   </h2>
-  <div class="group">
-    <div class="field">
-      <span class="required-field">Project name</span>
-    </div>
-    <div class="input-area">
-      <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.name" name="name" required
-        autocomplete="off" #name="ngModel" placeholder="My first project" />
-      <div class="error" [hidden]="!name.errors?.required || name.untouched">
-        Name is required
+</div>
+<div class="modal-body">
+  <form (ngSubmit)="save()" #projectCreatingForm="ngForm">
+    <div class="group">
+      <div class="field">
+        <span class="required-field">Project name</span>
       </div>
-    </div>
-    <div class="field">
-      <span>Description</span>
-    </div>
-    <div class="input-area">
-      <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="newProject.description"
-        name="description" autocomplete="off" #description="ngModel" placeholder="Some description for project">
-      </textarea>
-    </div>
-    <div class="field">
-      <span>Public repository</span>
-    </div>
-    <div class="input-area">
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="isPublicSwitch" [(ngModel)]="newProject.isPublic"
-          (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel" />
-        <label class="custom-control-label" for="isPublicSwitch"></label>
+      <div class="input-area">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.name" name="name" required
+          autocomplete="off" #name="ngModel" placeholder="My first project" />
+        <div class="error" [hidden]="!name.errors?.required || name.untouched">
+          Name is required
+        </div>
+      </div>
+      <div class="field">
+        <span>Description</span>
+      </div>
+      <div class="input-area">
+        <textarea type="text" rows="3" class="form-control form-control-sm" [(ngModel)]="newProject.description"
+          name="description" autocomplete="off" #description="ngModel" placeholder="Some description for project">
+        </textarea>
+      </div>
+      <div class="field">
+        <span>Public repository</span>
+      </div>
+      <div class="input-area">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="isPublicSwitch" [(ngModel)]="newProject.isPublic"
+            (change)="onToggle(newProject.isPublic)" name="isPublic" #isPublic="ngModel" />
+          <label class="custom-control-label" for="isPublicSwitch"></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="required-field">Repository</span>
+      </div>
+      <div class="input-area">
+        <ng-select [items]="repositories" bindLabel="name" bindValue="name" form="projectCreatingForm"
+          [(ngModel)]="newProject.repository" name="repository" #repository="ngModel" required>
+        </ng-select>
+        <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
+          Repository is required
+        </div>
       </div>
     </div>
 
-    <div class="field">
-      <span class="required-field">Repository</span>
+    <div class="btn-wp">
+      <button type="submit" class="btn btn-success" [disabled]="projectCreatingForm.invalid">
+        Create
+      </button>
+      <button type="button" class="btn btn-danger" (click)="cancel()">
+        Cancel
+      </button>
     </div>
-    <div class="input-area">
-      <ng-select [items]="repositories"
-           bindLabel="name"
-           bindValue="name"
-           form="projectCreatingForm"
-           [(ngModel)]="newProject.repository"
-           name="repository"
-           #repository="ngModel"
-           required>
-      </ng-select>
-       <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
-        Repository is required
-      </div>
-    </div>
-  </div>
-
-  <div class="btn-wp">
-    <button type="submit" class="btn btn-success" [disabled]="projectCreatingForm.invalid">
-      Create
-    </button>
-    <button type="button" class="btn btn-danger" (click)="cancel()">
-      Cancel
-    </button>
-  </div>
-</form>
+  </form>
+</div>

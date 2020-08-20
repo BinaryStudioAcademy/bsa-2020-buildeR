@@ -22,5 +22,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ProjectBuildHistoryComponent
   ],
   imports: [ProjectRoutingModule, SharedModule, NgSelectModule],
+  exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

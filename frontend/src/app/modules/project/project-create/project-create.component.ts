@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { NewProject } from '@shared/models/project/new-project';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { Router } from '@angular/router';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '../../../shared/models/user/user';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { Repository } from '@core/models/Repository';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-project-create',
@@ -19,11 +19,11 @@ export class ProjectCreateComponent implements OnInit {
   repositories: Repository[];
 
   constructor(
-    private router: Router,
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
-    private syncService: SynchronizationService
+    private syncService: SynchronizationService,
+    public activeModal: NgbActiveModal
   ) {}
 
   ngOnInit(): void {
@@ -47,17 +47,18 @@ export class ProjectCreateComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
-        this.router.navigate(['portal']);
+        this.activeModal.close("Saved");
         this.syncService.registerWebhook(resp.id)
           .subscribe(() => resp.id);
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);
-      }
+        this.activeModal.dismiss("Error on save");
+      },
     );
   }
   cancel() {
-    this.router.navigate(['portal']);
+    this.activeModal.dismiss("Canceled");
   }
   onToggle(change: boolean) {
     change = !change;
