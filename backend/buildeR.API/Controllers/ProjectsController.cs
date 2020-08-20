@@ -54,8 +54,7 @@ namespace buildeR.API.Controllers
         [HttpPost("copy")]
         public async Task<ProjectDTO> CopyProject(ProjectDTO projectDTO)
         {
-            var project = await _projectService.CopyProject(projectDTO);
-            return project;
+            return await _projectService.CopyProject(projectDTO);
         }
 
         [HttpPost("{projectId}/build")]
