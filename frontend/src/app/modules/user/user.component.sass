@@ -13,58 +13,17 @@
 #page-content-wrapper
   padding: 0
   z-index: 0
-  height: 100vh
+  min-height: 100%
   width: 100%
-
-
-.active
-  background-color: white !important
-  color: #3eaaaf !important
-  p::after
-      content: ""
-      color: #3eaaaf
-      display: block
-      position: absolute
-      bottom: -7px
-      width: 100%
-      height: 2px
-      background-color: #3eaaaf
+  margin-left: 0
+  margin-right: 0
 
 #wrapper
-  min-height: 100vh
+  min-height: 100%
   flex-direction: column
 
-#sidebar-wrapper-test
+#sidebar-wrapper
   width: 100%
-  margin-bottom: 35px
-
-.list-group-horizontal
-  width: 100%
-  border-bottom: 2px solid #f1f1f1
-  margin-top: 15px
-  .list-group-item
-    padding: 5px 15px
-    display: flex
-    color: #666
-    justify-content: start
-    border-style: none
-    text-decoration: none
-    &:hover
-      color: #3eaaaf
-      background-color: white
-    p
-      position: relative
-      margin: 0
-      padding: 0
-    p:hover::after
-      content: ""
-      color: #3eaaaf
-      display: block
-      position: absolute
-      bottom: -7px
-      width: 100%
-      height: 2px
-      background-color: #3eaaaf
 
 // styles for avatar
 .avatar-style
@@ -80,8 +39,8 @@
   margin-top: 15px
   position: relative
   display: flex
-  align-items: start
-  justify-content: start
+  align-items: flex-start
+  justify-content: flex-start
   .account-details
     margin-left: 20px
     h1

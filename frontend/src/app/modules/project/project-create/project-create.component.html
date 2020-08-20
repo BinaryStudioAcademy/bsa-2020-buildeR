@@ -36,13 +36,20 @@
       <span class="required-field">Repository</span>
     </div>
     <div class="input-area">
-      <select form="projectCreatingForm" [(ngModel)]="newProject.repository" name="repository" #repository="ngModel"
-        required>
-        <option *ngFor="let repo of repositories" [value]="repo.name">{{repo.name}}</option>
-      </select>
-      <!-- <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.repository"
-        name="repositoryUrl" required autocomplete="off" #repositoryUrl="ngModel"> -->
-      <div class="error" [hidden]="!repository.errors?.required || repository.untouched">
+      <input
+        id="typeahead-focus"
+        type="text"
+        class="form-control"
+        [(ngModel)]="newProject.repository"
+        [ngbTypeahead]="search"
+        (focus)="repositoryInputFocus$.next($any($event).target.value)"
+        (click)="repositoryInputClick$.next($any($event).target.value)"
+        #repository="ngbTypeahead"
+        name="repositoryInput"
+        #repositoryInput="ngModel"
+        required
+      />
+       <div class="error" [hidden]="!repositoryInput.errors?.required || repositoryInput.untouched">
         Repository is required
       </div>
     </div>

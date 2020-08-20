@@ -1,7 +1,8 @@
 nav.navbar
-  position: sticky
+  position: fixed
   top: 0
   left: 0
+  right: 0
   z-index: 10
 
 div.navbar-collapse
@@ -60,11 +61,14 @@ button
 
 .container
   display: flex
-  justify-content: start
+  justify-content: flex-start
 
 .dropdown-menu
   a
     cursor: pointer
+
+.work-wrapper
+  margin-top: 71px
 
 @media screen and (max-width: 500px)
   .container

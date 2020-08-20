@@ -3,7 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
+import { Subject } from 'rxjs';
 import { UserService } from './user.service';
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +13,13 @@ import { UserService } from './user.service';
 export class AuthenticationService {
   private currentUser: User;
   private firebaseUser: firebase.User;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
     private router: Router
-  ) {
-    this.angularAuth.authState.subscribe(this.configureAuthState);
-  }
+  ) { }
 
   configureAuthState = (user: firebase.User) => {
     if (user) {
@@ -31,6 +32,10 @@ export class AuthenticationService {
     this.clearAuth();
   }
 
+  getAngularAuth() {
+    return this.angularAuth;
+  }
+
   async loadCurrentUser(force?: boolean) {
     if (!this.currentUser || force) {
       this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
@@ -41,9 +46,15 @@ export class AuthenticationService {
 
   registerUser(newUser: NewUser) {
     this.userService.register(newUser).subscribe(
-      user => {
-        this.currentUser = user;
-        this.router.navigate(['/portal']);
+      userResult => {
+        this.angularAuth.authState
+          .subscribe((user) => {
+            this.configureAuthState(user);
+            if (user && user.uid === userResult.userSocialNetworks[0].uId) {
+              this.currentUser = userResult;
+              this.router.navigate(['/portal']);
+            }
+          });
       });
   }
 
@@ -63,8 +74,13 @@ export class AuthenticationService {
   }
 
   refreshToken() {
-    return this.firebaseUser.getIdToken().then((theToken) => {
-      localStorage.setItem('jwt', theToken);
+    auth().onAuthStateChanged((user) => {
+      if (user) {
+        user.getIdToken().then((jwt) => {
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('jwt', jwt);
+        });
+      }
     });
   }
 
@@ -97,6 +113,7 @@ export class AuthenticationService {
   clearAuth() {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
+    localStorage.removeItem('github-access-token');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
   }

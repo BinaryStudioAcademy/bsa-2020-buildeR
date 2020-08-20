@@ -1,14 +1,11 @@
+
 .group
-    display: grid
-    grid-template-columns: 2
-    grid-template-rows: 6
+  display: grid
+  grid-template-columns: 3
+  grid-template-rows: 6
 
-::ng-deep body, html
-  height: 100%
+.container-fluid
   width: 100%
-  overflow: hidden
-
-.container
   height: 100%
   position: relative
   display: flex
@@ -17,8 +14,7 @@
 .scroll-container
   width: 100%
   position: absolute
-  height: calc(100% - 83px - 178px)
-  overflow: auto
+  padding-top: 35px
 
 .input-area
   grid-column-start: 1
@@ -59,16 +55,32 @@ textarea
   grid-column-start: 1
   grid-column-end: 2
   width: 300px
-  margin: 0 10px
   display: flex
   justify-content: center
   justify-self: start
   button
     width: 100px
 
+.icon
+  margin-right: 5px
+
+.btn-secondary
+  margin: 5px
+  flex-direction: row
+  display: flex
+  position: relative
+  justify-content: center
+  align-items: center
+
+.link-buttons
+  display: flex
+  position: relative
+  justify-content: flex-end
+  align-items: flex-end
+  flex-direction: row
+  margin: 5px
+
 @media screen and (max-width: 675px)
-  .container
-    max-width: 100%
   .field
     grid-column-start: 1
     grid-column-end: 2
@@ -84,5 +96,5 @@ textarea
     justify-self: center
     margin-left: 0
     margin-right: 0
-
-
+  .scroll-container
+    height: calc(100% - 66px - 150px)

@@ -11,10 +11,6 @@ namespace buildeR.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<UserSocialNetwork> entity)
         {
-            entity.HasOne(e => e.SocialNetwork)
-                .WithMany(sn => sn.UserSocialNetworks)
-                .OnDelete(DeleteBehavior.NoAction);
-
             entity.HasOne(e => e.User)
                 .WithMany(sn => sn.UserSocialNetworks)
                 .OnDelete(DeleteBehavior.NoAction);

@@ -23,7 +23,7 @@ export class RegisterDialogService {
       avatarUrl: credential.user.photoURL,
       firstName: credential.additionalUserInfo.profile[`given_name`],
       lastName: credential.additionalUserInfo.profile[`family_name`],
-      providerId: Providers.Google,
+      providerName: Providers.Google,
       uId: credential.user.uid,
       providerUrl: credential.credential.providerId,
     } as NewUser;
@@ -36,10 +36,10 @@ export class RegisterDialogService {
       email: credential.user.email,
       username: credential.additionalUserInfo.username,
       avatarUrl: credential.user.photoURL,
-      providerId: Providers.Github,
+      providerName: Providers.Github,
       uId: credential.user.uid,
       providerUrl: credential.credential.providerId,
-      accessToken: credential.credential['accessToken']
+      accessToken: credential.credential[`accessToken`]
     } as NewUser;
 
     const name: string = credential.additionalUserInfo.profile[`name`];

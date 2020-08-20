@@ -2,16 +2,16 @@
   box-sizing: content-box
 
 .build-container
-  padding: 0
+  padding: 0 10%
   margin: 0
   list-style: none
   display: flex
   flex-direction: column
   gap: 1.5rem
-  font-size: 1.5rem
+  font-size: 1.1rem
 
   li
-    height: 10vh
+    height: 8vh
     border-radius: 2px
     border: 1px solid #eaeaea
     padding: 0.2rem
@@ -58,14 +58,16 @@
           width: 15rem
 
 @media (max-width:1000px)
+
+  .build-container
+    padding: 0
+
   ul.build-container
 
     li
-      height: 20vh
-
+      height: 12vh
 @media (max-width:500px)
   ul.build-container
-    font-size: 1rem
 
     li
       height: 15vh
