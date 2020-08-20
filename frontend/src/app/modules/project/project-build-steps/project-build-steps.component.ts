@@ -8,6 +8,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { takeUntil } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
 @Component({
@@ -147,5 +148,9 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.toastrService.showError(error);
         }
       );
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.buildSteps, event.previousIndex, event.currentIndex);
   }
 }

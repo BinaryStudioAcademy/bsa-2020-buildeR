@@ -1,15 +1,14 @@
 <div class="container">
-    <div class="container" *ngFor="let buildStep of buildSteps; let i = index">
-        <div class="row">
-            <div class="col-2">Build step #{{i+1}}</div>
+    <div cdkDropList class="project-build-step-list row container" (cdkDropListDropped)="drop($event)">
+        <div class="project-build-step row" *ngFor="let buildStep of buildSteps; let i = index" cdkDrag>
+            <div class="col-2">
+                Build step #{{i+1}}
+            </div>
             <div class="col-8">
-                <div>{{buildStep.buildStepName}}</div>
+                {{buildStep.buildStepName}}
             </div>
             <div class="col-2"><button class="btn" (click)="removeBuildStep(buildStep)"><i class="fa fa-close"></i></button>
             </div>
-        </div>
-        <div class="row">
-            <hr class="w-100">
         </div>
     </div>
 
