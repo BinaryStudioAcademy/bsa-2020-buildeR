@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="container">
+  <form [formGroup]="helpForm">
+    <h1>How can we help,
+      <strong>{{currentUser.firstName}}</strong>?
+    </h1>
+    <div class="group">
+      <div class="field">
+        <span>Email</span>
+      </div>
+      <div class="input-area">
+        <input type="email" class="form-control form-control-sm" formControlName="email"
+               placeholder="example@mail.com">
+        <div *ngIf="helpForm.controls['email'].errors">
+          <div class="error" *ngIf="helpForm.controls['email'].errors.required">
+            Email is required
+          </div>
+          <div class="error" *ngIf="helpForm.controls['email'].errors.pattern
+            || helpForm.controls['email'].errors.email
+            || helpForm.controls['email'].errors.notValid">
+            Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
+            '<br>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <span>Subject</span>
+      </div>
+      <div class="input-area">
+        <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Subject">
+      </div>
+      <div class="field">
+        Description
+      </div>
+      <div class="input-area">
+          <textarea type="text" rows="6" class="form-control form-control-sm" formControlName="description"
+                    placeholder="Description">
+          </textarea>
+        <small>Let us know what's happening and how this is effecting you.</small>
+      </div>
+      <div class="save-button-container">
+        <button type="submit" class="btn btn-primary"
+                [disabled]="helpForm.invalid || !helpForm.dirty">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
