@@ -1,9 +1,3 @@
-.settings-wrp
-  overflow-y: scroll
-  overflow-x: hidden
-  height: 380px
-
-
 .group
     display: grid
     grid-template-columns: 2
@@ -19,12 +13,6 @@
   position: relative
   display: flex
   justify-content: center
-
-.scroll-container
-  width: 100%
-  position: absolute
-  height: calc(100% - 83px - 178px)
-  overflow: auto
 
 .input-area
   grid-column-start: 1
@@ -144,6 +132,17 @@ select.form-control
 .form-control-ev
   width: 80%
 
+.text
+  font-size: 16px
+  color: #666
+  font-weight: 600
+
+.env-var-switch
+  margin-left: 30px
+  padding-bottom: 10px
+
+.tab
+  display: table
 
 @media screen and (max-width: 675px)
   .container
@@ -175,6 +174,8 @@ select.form-control
   .branch
     grid-column-start: 1
     grid-column-end: 2
+  .branch select
+    width: 100%
   .isOn
     grid-column-start: 1
     grid-column-end: 2
