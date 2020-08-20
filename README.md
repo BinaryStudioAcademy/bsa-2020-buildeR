@@ -19,6 +19,7 @@ By default, apps run on the following ports:
 | Vault | 8200 |
 | Elasticsearch | 9200 |
 | Kibana | 5601 |
+| kafka | 9092 or 29092 as internal |
 
 #### Docker:
 1. Make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/install).
@@ -36,7 +37,13 @@ This is a list of the required environment variables:
 VAULT_TOKEN_ID is an authentication token, given by vault server. VAULT_ADDRESS is an address of vault server (example: http://localhost:8200).
 
 #### RabbitMQ:
-1. **RABBIT_MQ_HOST_NAME** - for hostname, **RABBIT_MQ_USERNAME** - for username, **RABBIT_MQ_PASSWORD** - for user password
+1. Enviroment keys:
+**RABBIT_MQ_HOST_NAME** - for hostname,
+**RABBIT_MQ_USERNAME** - for username,
+**RABBIT_MQ_PASSWORD** - for user password
 
-## SendGrid
-1. Environment variables: SENDGRID_API_KEY, SENDGRID_EMAIL, SENDGRID_Name
+#### SendGrid
+1. Enviroment keys:
+**SENDGRID_API_KEY** - send grid api key
+**SENDGRID_EMAIL** - email sender
+**SENDGRID_Name** - sender name
