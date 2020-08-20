@@ -2,7 +2,7 @@
 
   <div class="settings">
     <div class="settings-section border-bottom">
-      <h2 class="small-title">
+      <h2>
         General
       </h2>
       <form (ngSubmit)="save(projectForm.value)" [formGroup]="projectForm">
@@ -17,7 +17,7 @@
             <span>Public repository</span>
           </div>
           <div class="input-area">
-            <div class="custom-control custom-switch">
+            <div class="custom-control custom-switch general-switch">
               <input type="checkbox" class="custom-control-input" id="isPublicSwitch" formControlName="isPublic" />
               <label class="custom-control-label" for="isPublicSwitch"></label>
             </div>
@@ -61,19 +61,19 @@
       <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
           <div class="group-ev">
           <div class='name'>
-            <label>Name</label>
+            <h5 class="text-over">Name</h5>
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev" formControlName="name">
             </div>
           </div>
           <div class='value'>
-            <label>Value</label>
+            <h5 class="text-over">Value</h5>
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev" formControlName="value">
             </div>
           </div>
           <div class='branch'>
-            <label>Branch</label>
+            <h5 class="text-over">Branch</h5>
             <select class="form-control" formControlName="branch">
               <ng-container *ngFor="let branch of branches">
                 <option [value]='branch'>{{branch}}</option>
