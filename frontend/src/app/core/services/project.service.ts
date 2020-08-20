@@ -47,4 +47,10 @@ export class ProjectService {
   public deleteProject(projectId: number): Observable<any> {
     return this.httpService.deleteFullRequest<ProjectInfo>(`${this.routePrefix}/` + projectId);
   }
+  public copyProject(project: Project): Observable<Project> {
+    return this.httpService.postRequest<Project>(
+      `${this.routePrefix}/copy`,
+      project
+    );
+  }
 }

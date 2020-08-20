@@ -52,6 +52,12 @@ namespace buildeR.API.Controllers
         {
             await _projectService.DeleteProject(id);
         }
+        [HttpPost("copy")]
+        public async Task<ProjectDTO> CopyProject(ProjectDTO projectDTO)
+        {
+            var project = await _projectService.CopyProject(projectDTO);
+            return project;
+        }
 
         [HttpPost("{projectId}/build")]
         public async Task<IActionResult> BuildProject(int projectId)

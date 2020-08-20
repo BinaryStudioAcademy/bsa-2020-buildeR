@@ -10,6 +10,7 @@ import { SynchronizationService } from '@core/services/synchronization.service';
 import { SynchronizedUser } from '@core/models/SynchronizedUser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
+import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -104,6 +105,20 @@ export class DashboardComponent extends BaseComponent
             this.userProjects = this.userProjects.filter(proj => proj.id !== projectId);
             this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
           });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  copyProject(id: number) {
+    const modalRef = this.modalService.open(ModalCopyProjectComponent);
+    modalRef.componentInstance.id = id;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.userProjects.push(result);
         }
       })
       .catch((error) => {

@@ -1,0 +1,18 @@
+<div class="modal-body">
+  <form [formGroup]="copyForm" *ngIf="copyForm" (ngSubmit)="save()">
+    <div class="input-area">
+      <span class="has-float-label">
+        <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="Project name">
+      </span>
+    </div>
+    <div class="input-area">
+      <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description"
+        placeholder="Description">
+              </textarea>
+    </div>
+    <div class="buttons">
+      <button type="submit" class="btn btn-success" [disabled]="copyForm.invalid">Save</button>
+      <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

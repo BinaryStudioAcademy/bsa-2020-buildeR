@@ -21,9 +21,11 @@ namespace buildeR.BLL.Services
     public sealed class ProjectService : BaseCrudService<Project, ProjectDTO, NewProjectDTO>, IProjectService
     {
         private readonly IQuartzService _quartzService;
-        public ProjectService(BuilderContext context, IMapper mapper, IQuartzService quartzService) : base(context, mapper)
+        private readonly IBuildStepService _buildStepService;
+        public ProjectService(BuilderContext context, IMapper mapper, IQuartzService quartzService, IBuildStepService buildStepService) : base(context, mapper)
         {
             _quartzService = quartzService;
+            _buildStepService = buildStepService;
         }
 
         public override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
@@ -69,12 +71,6 @@ namespace buildeR.BLL.Services
 
         public async Task DeleteProject(int id)
         {
-            //var triggers = await _triggerService.GetAllByProjectId(id);
-            //foreach(var trigger in triggers)
-            //{
-            //    await _triggerService.DeleteTrigger(trigger.Id);
-            //}
-            //string projectId = Convert.ToString(id);
             await _quartzService.DeleteAllSheduleJob(id.ToString());
             var project = await GetAsync(id);
             if (project == null)
@@ -115,6 +111,42 @@ namespace buildeR.BLL.Services
 
             Context.Entry(project).State = EntityState.Modified;
             await Context.SaveChangesAsync();
+        }
+        public async Task<ProjectDTO> CopyProject(ProjectDTO dto)
+        {
+            var newProject = new ProjectDTO
+            {
+                Description = dto.Description,
+                Name = dto.Name,
+                OwnerId = dto.OwnerId,
+                IsPublic = dto.IsPublic,
+                IsFavorite = dto.IsFavorite,
+                Repository = dto.Repository,
+                CredentialsId = dto.CredentialsId,
+                IsAutoCancelBranchBuilds = dto.IsAutoCancelBranchBuilds,
+                IsCleanUpBeforeBuild = dto.IsCleanUpBeforeBuild,
+                IsAutoCancelPullRequestBuilds = dto.IsAutoCancelPullRequestBuilds,
+                CancelAfter = dto.CancelAfter,
+            };
+
+            var proj = Mapper.Map<Project>(newProject);
+            var createdProject = (await Context.AddAsync(proj)).Entity;
+            Context.SaveChanges();
+            int id = createdProject.Id;
+            dto.BuildSteps.Select(x => _buildStepService.Create(new NewBuildStepDTO
+            {
+                ProjectId = id,
+                BuildStepName = x.BuildStepName,
+                BuildPluginId = x.BuildPluginId,
+                BuildPluginParameters = x.BuildPluginParameters,
+                LoggingVerbosity = x.LoggingVerbosity
+            }));
+            var project = await Context.Projects
+                                                .Include(p => p.BuildSteps)
+                                                .Include(p => p.Owner)
+                                                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return Mapper.Map<ProjectDTO>(project);
         }
     }
 }
