@@ -18,7 +18,7 @@ export class BuildStepService {
     return this.httpService.getFullRequest<EmptyBuildStep[]>(`${this.routePrefix}/getEmptyBuildSteps`);
   }
 
-  getBuildStepsByProject(projectId: number): Observable<HttpResponse<BuildStep[]>>{
+  getBuildStepsByProject(projectId: number): Observable<HttpResponse<BuildStep[]>> {
     return this.httpService.getFullRequest<BuildStep[]>(`${this.routePrefix}/project/${projectId}`);
   }
 
@@ -26,7 +26,11 @@ export class BuildStepService {
     return this.httpService.postRequest<BuildStep>(`${this.routePrefix}`, buildStep);
   }
 
-  removeBuildStep(buildStep: BuildStep){
+  removeBuildStep(buildStep: BuildStep) {
     return this.httpService.deleteRequest(`${this.routePrefix}/${buildStep.id}`);
+  }
+
+  udpateIndexesOfBuildSteps(projectId: number, newIndex: number, oldIndex: number) {
+    return this.httpService.putRequest(`${this.routePrefix}/project/${projectId}/newIndex/${newIndex}/oldIndex/${oldIndex}`, null);
   }
 }
