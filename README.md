@@ -44,6 +44,6 @@ VAULT_TOKEN_ID is an authentication token, given by vault server. VAULT_ADDRESS 
 
 #### SendGrid
 1. Enviroment keys:
-**SENDGRID_API_KEY** - send grid api key
-**SENDGRID_EMAIL** - email sender
+**SENDGRID_API_KEY** - send grid api key,
+**SENDGRID_EMAIL** - email sender,
 **SENDGRID_Name** - sender name
