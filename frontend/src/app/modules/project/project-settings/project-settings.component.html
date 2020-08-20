@@ -5,7 +5,7 @@
       <h2 class="small-title">
         General
     </h2>
-    <form (ngSubmit)="save()" [formGroup]="projectForm">
+    <form (ngSubmit)="save(projectForm.value)" [formGroup]="projectForm">
       <div class="group">
         <div class="field">
           <span>Project name</span>
@@ -18,7 +18,7 @@
         </div>
         <div class="input-area">
           <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="isPublicSwitch" name="isPublic" />
+            <input type="checkbox" class="custom-control-input" id="isPublicSwitch" formControlName="isPublic" />
             <label class="custom-control-label" for="isPublicSwitch"></label>
           </div>
         </div>
@@ -43,7 +43,7 @@
       Enviroment Variables
     </h2>
     <p>Customize your build using enviroment variables. </p>
-    <form (ngSubmit)="save()" [formGroup]="projectForm">
+    <form [formGroup]="projectForm">
       <div class="group-ev">
 
         <div class='name'>

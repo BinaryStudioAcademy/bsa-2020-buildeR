@@ -42,7 +42,6 @@ namespace buildeR.API.Controllers
         [HttpPut]
         public async Task<ProjectDTO> UpdateProject([FromBody] ProjectDTO dto)
         {
-            dto.OwnerId = 1; // here will be userId from token or somthing else
             await _projectService.UpdateAsync(dto);
             return await _projectService.GetAsync(dto.Id);
         }

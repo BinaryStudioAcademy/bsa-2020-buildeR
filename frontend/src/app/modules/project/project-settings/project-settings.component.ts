@@ -25,6 +25,7 @@ export class ProjectSettingsComponent implements OnInit {
     route.parent.params.subscribe(
       (params) => this.projectId = params.projectId);
     this.route.parent.data.subscribe(data => this.project = data.project);
+    console.log(this.project);
   }
 
   ngOnInit(): void {
@@ -44,6 +45,13 @@ export class ProjectSettingsComponent implements OnInit {
 
   reset() {
   }
-  save() {
+  save(project: Project) {
+    this.project = Object.assign(this.project, project);
+    this.projectService.updateProject(this.project).subscribe(() =>
+    {
+      this.toastrService.showSuccess('Project successfully updated');
+    }, (err) => {
+      this.toastrService.showError(err);
+    });
   }
 }
