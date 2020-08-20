@@ -1,0 +1,33 @@
+<div class="container">
+    <div cdkDropList class="project-build-step-list row container" (cdkDropListDropped)="drop($event)">
+        <div class="project-build-step row" *ngFor="let buildStep of buildSteps; let i = index" cdkDrag>
+            <div class="col-2">
+                Build step #{{i+1}}
+            </div>
+            <div class="col-8">
+                {{buildStep.buildStepName}}
+            </div>
+            <div class="col-2">
+                <button class="btn" (click)="removeBuildStep(buildStep)">
+                  <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" hidden="true" [hidden]="!isAdding">
+        <div class="col-6">
+            <select required class="form-control" [(ngModel)]="newBuildStep">
+        <ng-container *ngFor="let step of emptyBuildSteps">
+          <option [ngValue]='step'>{{step.buildStepName}}</option>
+        </ng-container>
+      </select>
+        </div>
+        <div class="col-3"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
+        <div class="col-3"><button class="btn operation-btn btn-success" (click)="saveBuildStep()">Save</button></div>
+    </div>
+
+    <div class="row">
+        <button class="btn btn-info" [hidden]="isAdding" (click)="addBuildStep()">Add a build step</button>
+    </div>
+</div>

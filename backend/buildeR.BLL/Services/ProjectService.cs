@@ -89,13 +89,15 @@ namespace buildeR.BLL.Services
             if (project == null)
                 throw new NotFoundException("Project", projectId);
 
-            var executiveBuild = new ExecutiveBuildDTO();
+            var executiveBuild = new ExecutiveBuildDTO
+            {
+                ProjectId = project.Id,
+                RepositoryUrl = project.Repository,
+                BuildSteps = project.BuildSteps
+                    .Select(buildStep => Mapper.Map<BuildStepDTO>(buildStep))
+                    .OrderBy(buildStep => buildStep.Index)
+            };
 
-            executiveBuild.ProjectId = project.Id;
-            executiveBuild.RepositoryUrl = project.Repository;
-            executiveBuild.BuildSteps = project.BuildSteps
-                .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
-                .OrderBy(buildstep => buildstep.Index);
 
             return executiveBuild;
         }
@@ -130,13 +132,14 @@ namespace buildeR.BLL.Services
             var createdProject = (await Context.AddAsync(Mapper.Map<Project>(newProject))).Entity;
             Context.SaveChanges();
             int id = createdProject.Id;
-            existingProject.BuildSteps.Select(b => _buildStepService.Create(new NewBuildStepDTO
+            existingProject.BuildSteps.Select(buildStep => _buildStepService.Create(new NewBuildStepDTO
             {
                 ProjectId = id,
-                BuildStepName = b.BuildStepName,
-                BuildPluginId = b.BuildPluginId,
-                BuildPluginParameters = b.BuildPluginParameters,
-                LoggingVerbosity = b.LoggingVerbosity
+                BuildStepName = buildStep.BuildStepName,
+                PluginCommandId = buildStep.PluginCommand.PluginId,
+                Index =  buildStep.Index,
+                BuildPluginParameters = buildStep.Parameters.ToList(),
+                LoggingVerbosity = (int)buildStep.LoggingVerbosity
             }));
             var project = await Context.Projects
                                                 .Include(p => p.BuildSteps)

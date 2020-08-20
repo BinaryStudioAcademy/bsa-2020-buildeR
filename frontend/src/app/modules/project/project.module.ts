@@ -9,6 +9,9 @@ import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.co
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-project.component';
 
 @NgModule({
@@ -20,9 +23,10 @@ import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-proje
     ProjectDetailsComponent,
     ProjectTriggersComponent,
     ProjectBuildHistoryComponent,
-    ModalCopyProjectComponent
+    ModalCopyProjectComponent,
+    ProjectBuildStepsComponent
   ],
-  imports: [ProjectRoutingModule, SharedModule],
+  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule],
   exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }
