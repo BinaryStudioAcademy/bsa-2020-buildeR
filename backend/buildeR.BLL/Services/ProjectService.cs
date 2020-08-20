@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
-using buildeR.Common.DTO.BuildPluginParameter;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.Project;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

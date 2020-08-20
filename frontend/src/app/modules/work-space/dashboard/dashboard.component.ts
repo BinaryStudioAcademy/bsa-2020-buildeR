@@ -117,7 +117,11 @@ export class DashboardComponent extends BaseComponent
     modalRef.componentInstance.id = id;
     modalRef.result
       .then((result) => {
-        if (result) {
+        if (result.isFavorite) {
+          this.starredProjects.push(result);
+          this.userProjects.push(result);
+        }
+        else if (result) {
           this.userProjects.push(result);
         }
       })
