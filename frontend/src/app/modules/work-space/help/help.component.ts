@@ -4,6 +4,7 @@ import {User} from "../../../shared/models/user/user";
 import {AuthenticationService} from "../../../core/services/authentication.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserHelp} from "@shared/models/user/user-help";
+import { emailDotValidator } from '@core/validators/email-dot-validator';
 
 @Component({
   selector: 'app-help',
@@ -29,9 +30,29 @@ export class HelpComponent extends BaseComponent
     this.userHelp.email = this.currentUser.email;
 
     this.helpForm = new FormGroup({
-      email: new FormControl(this.userHelp.email),
-      subject: new FormControl(this.userHelp.subject),
-      description: new FormControl(this.userHelp.description)
+      email: new FormControl(this.userHelp.email,
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(`^[a-zA-Z].*`),
+          emailDotValidator()
+        ]
+        ),
+      subject: new FormControl(this.userHelp.subject,
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(200),
+          Validators.pattern('^[a-zA-Z].*')
+        ]),
+      description: new FormControl(this.userHelp.description,
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(1000),
+          Validators.pattern('^[a-zA-Z].*')
+        ]
+        ),
     });
 
   }

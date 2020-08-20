@@ -17,7 +17,7 @@
           <div class="error" *ngIf="helpForm.controls['email'].errors.pattern
             || helpForm.controls['email'].errors.email
             || helpForm.controls['email'].errors.notValid">
-            Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
+            Email must be like 'example12@gmail.com' and can't start or finish <br>with these characters ' - ', ' .
             '<br>
           </div>
         </div>
@@ -26,7 +26,23 @@
         <span>Subject</span>
       </div>
       <div class="input-area">
-        <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Subject">
+        <input type="text" class="form-control form-control-sm" formControlName="subject" placeholder="Subject"
+        placeholder="Subject">
+        <div *ngIf="helpForm.controls['subject'].errors">
+          <div class="error" *ngIf="helpForm.controls['subject'].errors.required">
+            Subject is required
+          </div>
+          <div class="error" *ngIf="helpForm.controls['subject'].errors.minlength">
+            The min length is 4 characters
+          </div>
+          <div class="error" *ngIf="helpForm.controls['subject'].errors.maxlength">
+            The max length is 200 characters
+          </div>
+          <div class="error" *ngIf="helpForm.controls['subject'].errors.pattern">
+            Subject must have only latin characters
+            '<br>
+          </div>
+        </div>
       </div>
       <div class="field">
         Description
@@ -36,6 +52,21 @@
                     placeholder="Description">
           </textarea>
         <small>Let us know what's happening and how this is effecting you.</small>
+        <div *ngIf="helpForm.controls['description'].errors">
+          <div class="error" *ngIf="helpForm.controls['description'].errors.required">
+            Description is required
+          </div>
+          <div class="error" *ngIf="helpForm.controls['description'].errors.minlength">
+            The min length is 4 characters
+          </div>
+          <div class="error" *ngIf="helpForm.controls['description'].errors.maxlength">
+            The max length is 1000 characters
+          </div>
+          <div class="error" *ngIf="helpForm.controls['description'].errors.pattern">
+            Description must have only latin characters
+            '<br>
+          </div>
+        </div>
       </div>
       <div class="save-button-container">
         <button type="submit" class="btn btn-primary"
