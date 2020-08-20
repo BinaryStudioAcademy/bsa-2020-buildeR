@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { WorkSpaceComponent } from './work-space/work-space.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
+import {HelpComponent} from "@modules/work-space/help/help.component";
 
 const routes = [
   {
@@ -17,6 +18,10 @@ const routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'help',
+        component: HelpComponent,
       },
       {
         path: 'user',
