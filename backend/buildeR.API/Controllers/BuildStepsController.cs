@@ -29,21 +29,33 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BuildStepDTO> Create(NewBuildStepDTO BuildStep)
+        public async Task<BuildStepDTO> Create(NewBuildStepDTO buildStep)
         {
-            return await _buildStepService.Create(BuildStep);
+            return await _buildStepService.Create(buildStep);
         }
 
         [HttpPut]
-        public async Task Update(BuildStepDTO BuildStep)
+        public async Task Update(BuildStepDTO buildStep)
         {
-            await _buildStepService.Update(BuildStep);
+            await _buildStepService.Update(buildStep);
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
             await _buildStepService.Delete(id);
+        }
+
+        [HttpGet("getEmptyBuildSteps")]
+        public async Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildSteps()
+        {
+            return await _buildStepService.GetEmptyBuildSteps();
+        }
+
+        [HttpGet("project/{projectId:int}")]
+        public async Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProject(int projectId)
+        {
+            return await _buildStepService.GetBuildStepsByProjectId(projectId);
         }
     }
 }
