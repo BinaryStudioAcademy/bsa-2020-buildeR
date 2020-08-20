@@ -1,8 +1,7 @@
 ﻿using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildStep;
-using System;
+
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Interfaces
@@ -14,5 +13,8 @@ namespace buildeR.BLL.Interfaces
         Task<BuildStepDTO> Create(NewBuildStepDTO buildStep);
         Task Update(BuildStepDTO buildStep);
         Task Delete(int id);
+
+        Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildSteps();
+        Task<IEnumerable<BuildStepDTO>> GetBuildStepsByProjectId(int projectId);
     }
 }
