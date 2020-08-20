@@ -9,7 +9,6 @@ import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.co
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -21,7 +20,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ProjectTriggersComponent,
     ProjectBuildHistoryComponent
   ],
-  imports: [ProjectRoutingModule, SharedModule, NgSelectModule],
+  imports: [ProjectRoutingModule, SharedModule],
   exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

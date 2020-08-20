@@ -9,7 +9,7 @@
       <div class="trigger-options mb-1">
         <div class="mr-sm-2">
           <h5 class="text">Branch </h5>
-          <select class="form-control" [(ngModel)]="trigger.branchHash">
+          <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
             <ng-container *ngFor="let branch of branches">
               <option [value]='branch' [selected]="trigger.branchHash == branch">{{branch}}</option>
             </ng-container>
@@ -45,7 +45,7 @@
       <div class="trigger-options">
         <div class="mr-sm-2">
           <h5 class="text-over">Branch </h5>
-          <select class="form-control" [(ngModel)]="selectedBranch" name="selected" #selected="ngModel">
+          <select class="form-control branch-select" [(ngModel)]="selectedBranch" name="selected" #selected="ngModel">
             <ng-container *ngFor="let branch of branches">
               <option [value]='branch'>{{branch}}</option>
             </ng-container>
