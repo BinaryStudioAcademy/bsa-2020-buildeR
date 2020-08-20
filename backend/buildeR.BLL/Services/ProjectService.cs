@@ -81,13 +81,15 @@ namespace buildeR.BLL.Services
             if (project == null)
                 throw new NotFoundException("Project", projectId);
 
-            var executiveBuild = new ExecutiveBuildDTO();
+            var executiveBuild = new ExecutiveBuildDTO
+            {
+                ProjectId = project.Id,
+                RepositoryUrl = project.Repository,
+                BuildSteps = project.BuildSteps
+                    .Select(buildStep => Mapper.Map<BuildStepDTO>(buildStep))
+                    .OrderBy(buildStep => buildStep.Index)
+            };
 
-            executiveBuild.ProjectId = project.Id;
-            executiveBuild.RepositoryUrl = project.Repository;
-            executiveBuild.BuildSteps = project.BuildSteps
-                .Select(buildstep => Mapper.Map<ExecutiveBuildStepDTO>(buildstep))
-                .OrderBy(buildstep => buildstep.Index);
 
             return executiveBuild;
         }
