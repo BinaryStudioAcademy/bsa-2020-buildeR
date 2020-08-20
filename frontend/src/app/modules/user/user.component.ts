@@ -18,7 +18,7 @@ export class UserComponent implements OnInit {
   tabRoutes: TabRoute[] = [
     { name: 'Profile', route: '' },
     { name: 'Project settings', route: '' },
-    { name: 'New settings', route: '' },
+    { name: 'Notification settings', route: 'notificationsettings' },
   ];
 
   constructor(
