@@ -25,6 +25,9 @@ import { NotificationSettingComponent } from './notification-setting/notificatio
     {
       path: 'notificationsettings',
       component: NotificationSettingComponent,
+      resolve: {
+        user: UserResolverService
+      }
     },
   ]
   }])],
