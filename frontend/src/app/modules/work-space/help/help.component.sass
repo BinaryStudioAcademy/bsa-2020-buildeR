@@ -2,7 +2,7 @@
   display: grid
   grid-template-columns: 2
   grid-template-rows: 6
-  //margin-bottom: 30px
+  margin-bottom: 30px
 
 .input-area
   grid-column-start: 1
@@ -20,8 +20,9 @@ textarea
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
-  &:last-of-type
-   align-self: center
+
+.label-rating
+  align-self: center
 
 .container-fluid
   width: 100%
@@ -47,7 +48,7 @@ textarea
   grid-column-end: 2
   width: 400px
   margin: 0 10px
-  padding-bottom: 25px
+  padding: 15px
   display: flex
   justify-content: center
   button
@@ -70,7 +71,7 @@ textarea
 
 .rating-container
   width: 300px !important
-  margin-left: 15px
+  margin-left: 10px
   grid-column-start: 1
   grid-column-end: 2
   &:focus

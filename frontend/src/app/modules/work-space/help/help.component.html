@@ -1,11 +1,10 @@
 <div class="container-fluid">
   <div class="header-main">
     <h2 class="first-message">How can we help,
-      <strong *ngIf="currentUser.firstName.length >= 0; else elseBlock">{{currentUser.firstName}}</strong>
+      <strong *ngIf="currentUser.firstName.length >= 0; else elseBlock">{{currentUser.firstName}}</strong>?
       <ng-template #elseBlock>
-        <strong>{{currentUser.username}}</strong>
+        <strong>{{currentUser.username}}</strong>?
       </ng-template>
-      ?
     </h2>
     <h2 class="second-message">
       Describe your problem and we will help you solve it
@@ -85,20 +84,20 @@
           </div>
         </div>
       </div>
-      <div class="save-button-container">
-        <button type="submit" class="btn btn-primary"
-                [disabled]="helpForm.invalid || !helpForm.dirty">Submit</button>
+      <div class="field label-rating">
+        <span>Rate us</span>
       </div>
-      <div class="field">
-        <span>You can leave us a review: </span>
-      </div>
-        <ngb-rating [(rate)]="currentRate" class="rating-container">
-          <ng-template let-fill="fill" let-index="index">
+      <ngb-rating [(rate)]="currentRate" class="rating-container">
+        <ng-template let-fill="fill" let-index="index">
             <span class="star" [class.filled]="fill === 100">
               &#9733;
             </span>
-          </ng-template>
-        </ngb-rating>
+        </ng-template>
+      </ngb-rating>
+      <div class="save-button-container">
+        <button type="submit" class="btn btn-success"
+                [disabled]="helpForm.invalid || !helpForm.dirty">Submit</button>
       </div>
+    </div>
   </form>
 </div>
