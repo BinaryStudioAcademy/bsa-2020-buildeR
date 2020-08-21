@@ -1,6 +1,7 @@
 ﻿using buildeR.BLL.Interfaces;
 using buildeR.BLL.RabbitMQ;
 using buildeR.BLL.Services.Abstract;
+using buildeR.Common.DTO.EnvironmentVariables;
 using buildeR.Common.DTO.Project;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,9 +16,13 @@ namespace buildeR.API.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly IBuildOperationsService _builder;
-        public ProjectsController(IProjectService projectService, IBuildOperationsService builder)
+        private readonly ISecretService _secretService;
+        public ProjectsController(IProjectService projectService,
+                                  IBuildOperationsService builder,
+                                  ISecretService secretService)
         {
             _builder = builder;
+            _secretService = secretService;
             _projectService = projectService;
         }
 
@@ -64,5 +69,23 @@ namespace buildeR.API.Controllers
         {
             await _projectService.ChangeFavoriteStateAsync(projectId);
         }
+
+        [HttpPost("envVar")]
+        public async Task<Dictionary<string,string>> AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        {
+            var secrets = await _secretService.ReadSecretsAsync("secret");
+            secrets.Add(variableDTO.Name, variableDTO.Value);
+            var res = await _secretService.CreateSecretsAsync(secrets, "projects/" + variableDTO.ProjectId.ToString());
+            return res;
+        }
+
+        //[HttpGet("envVar")]
+        //public async Task<IActionResult> AddEnviromentVariable()
+        //{
+        //    var secrets = await _secretService.GetSecretsDirectory("secret/projects/");
+
+        //    return Ok();
+        //}
+
     }
 }
