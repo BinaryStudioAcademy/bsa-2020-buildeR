@@ -32,8 +32,20 @@ h3
 .connect-with-divider
   min-height: 2px
   width: 100%
-  margin-top: 8px
+  margin-top: 10px
+  margin-bottom: 10px
   background-color: var(--light)
+
+.small-divider
+  width: 90%
+  margin: auto
+
+.vide-divider-first
+  width: 100%
+  margin-left: -15px
+
+.vide-divider-second
+  margin-right: -15px
 
 .connect-with-title-wr
   display: flex
@@ -73,11 +85,14 @@ h3
     grid-template-columns: 2
     grid-template-rows: 2
 
+.little-group
+  max-height: 30px
+
 .input-area
   grid-column-start: 1
   grid-column-end: 2
   justify-self: start
-  margin: 0 10px 20px
+  margin: 5px
 
 input
   width: 280px
@@ -89,6 +104,7 @@ textarea
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+  min-width: 120px
   .label-wr
   width: 100%
   display: flex
@@ -114,6 +130,9 @@ textarea
 
 .btn
   margin: 10px
+
+.main-form-wr
+  padding: 10px 0px 0px 15px
 
 @media screen and (max-width: 675px)
   .field

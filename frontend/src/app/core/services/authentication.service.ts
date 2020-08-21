@@ -61,7 +61,6 @@ export class AuthenticationService {
   logout() {
     this.clearAuth();
     this.router.navigate(['/']);
-    localStorage.removeItem('github-access-token');
     return this.angularAuth.signOut();
   }
 
@@ -112,6 +111,7 @@ export class AuthenticationService {
   }
 
   clearAuth() {
+    localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
     localStorage.removeItem('github-access-token');
