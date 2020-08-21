@@ -3,15 +3,18 @@
   height: 100%
   margin-top: 1rem
 
-
   .log-header
     background-color: #444
-    height: 3rem
+
+    .buttons-left
+      display: inline-block
+
+    .buttons-right
+      display: inline-block
+      float: right
 
     button, label
-      margin-top: 0.3rem
-      margin-right: 0.5rem
-      margin-left: 0.5rem
+      margin: 0.3rem 0.5rem
 
   .log-footer
     background-color: #444
@@ -110,7 +113,6 @@
     margin-right: 0.7rem
     margin-top: 1rem
     text-align: right
-    background-color: black
     z-index: 6
     top: 6rem
 
@@ -130,3 +132,9 @@
           transition: transform 0.1s
           transform: scale(1.2)
 
+@media (max-width: 550px)
+  .log-view
+    .log-header
+      .buttons-right
+          display: block
+          float: unset
