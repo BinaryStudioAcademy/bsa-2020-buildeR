@@ -78,6 +78,7 @@ export class ProjectSettingsComponent implements OnInit {
       envVar.branch = this.branches[0];
     }
     this.envVariables.push(envVar);
+    this.envVarsForm.reset();
   }
 
 
