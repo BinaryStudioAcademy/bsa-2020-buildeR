@@ -16,13 +16,13 @@ namespace buildeR.API.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly IBuildOperationsService _builder;
-        private readonly ISecretService _secretService;
+        private readonly IEnvironmentVariablesService _envService;
         public ProjectsController(IProjectService projectService,
                                   IBuildOperationsService builder,
-                                  ISecretService secretService)
+                                  IEnvironmentVariablesService envService)
         {
             _builder = builder;
-            _secretService = secretService;
+            _envService = envService;
             _projectService = projectService;
         }
 
@@ -78,19 +78,9 @@ namespace buildeR.API.Controllers
         [HttpPost("envVar")]
         public async Task<Dictionary<string,string>> AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
         {
-            var secrets = await _secretService.ReadSecretsAsync("secret");
-            secrets.Add(variableDTO.Name, variableDTO.Value);
-            var res = await _secretService.CreateSecretsAsync(secrets, "projects/" + variableDTO.ProjectId.ToString());
-            return res;
+            var secrets = await _envService.AddEnvironmenVariable(variableDTO);
+            return secrets;
         }
-
-        //[HttpGet("envVar")]
-        //public async Task<IActionResult> AddEnviromentVariable()
-        //{
-        //    var secrets = await _secretService.GetSecretsDirectory("secret/projects/");
-
-        //    return Ok();
-        //}
 
     }
 }

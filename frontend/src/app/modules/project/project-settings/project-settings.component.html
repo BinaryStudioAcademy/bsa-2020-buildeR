@@ -44,37 +44,30 @@
       </h2>
       <p>Customize your build using enviroment variables. </p>
 
-
         <!-- Show Env Vars  -->
         <div class="group-ev vars" *ngFor="let varibable of envVariables" >
-
           <div class="name">
-            Name:
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev"
             [ngModel]="varibable.name">
             </div>
-
           </div>
           <div class="value">
-            Value:
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev"
             [ngModel]="varibable.value">
             </div>
           </div>
             <div class="branch">
-              Branch:
-              <select class="form-control" [ngModel]="varibable.branch">
-
+              <select class="form-control form-control-ev" [ngModel]="varibable.branch">
                 <ng-container *ngFor="let branch of branches">
                   <option [value]='branch'>{{branch}}</option>
                 </ng-container>
               </select>
             </div>
-            <div class="isOn options-env-vars">
-              <button class="btn btn-danger add-cron" (click)="remvove(varibable)">Delete</button>
+            <div class="options-env-vars">
               <button class="btn btn-warning add-cron" (click)="edit(varibable)">Edit</button>
+              <button class="btn btn-danger add-cron" (click)="remvove(varibable)">Delete</button>
             </div>
         </div>
       <!-- Adding env vars -->

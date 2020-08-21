@@ -8,6 +8,6 @@ namespace buildeR.Common.DTO.EnvironmentVariables
     {
         public int ProjectId { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
+        public VariableValue Data { get; set; }
     }
 }
