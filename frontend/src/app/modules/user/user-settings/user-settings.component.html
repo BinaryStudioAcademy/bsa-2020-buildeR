@@ -1,30 +1,48 @@
 <div class="container-fluid">
   <div class="scroll-container">
     <div class="link-buttons">
-      <button class="btn btn-sm btn-github" [disabled]="isProviderAdded(0) || githubClick"
-        (click)="linkWithGithub()">
+      <button class="btn btn-sm btn-github" *ngIf="!(isProviderAdded(0) || githubClick) else linkedGithub"
+        [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
         <div class="icon">
           <i class="fa fa-github" aria-hidden="true"></i>
         </div>
-        <div class="button-text" *ngIf="!(isProviderAdded(0) || githubClick) else linkedGithub">
+        <div class="button-text">
           Link with Github
         </div>
-        <ng-template #linkedGithub>
-          <div class="button-text">Linked with Github</div>
-        </ng-template>
       </button>
-      <button class="btn btn-sm btn-google" [disabled]="isProviderAdded(1) || googleClick"
-        (click)="linkWithGoogle()">
+      <ng-template #linkedGithub>
+        <button class="btn btn-sm btn-github" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+          <div class="check-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="verticalLine"></div>
+          <div class="icon icon-link">
+            <i class="fa fa-github" aria-hidden="true"></i>
+          </div>
+          <div class="button-text">Linked with Github</div>
+        </button>
+      </ng-template>
+      <button class="btn btn-sm btn-google" *ngIf="!(isProviderAdded(1) || googleClick) else linkedGoogle"
+        [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
         <div class="icon">
           <i class="fa fa-google" aria-hidden="true"></i>
         </div>
-        <div class="button-text" *ngIf="!(isProviderAdded(1) || googleClick) else linkedGoogle">
-          Link with Github
+        <div class="button-text">
+          Link with Google
         </div>
-        <ng-template #linkedGoogle>
-          <div class="button-text">Linked with Google</div>
-        </ng-template>
       </button>
+      <ng-template #linkedGoogle>
+        <button class="btn btn-sm btn-google" [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
+          <div class="check-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="verticalLine"></div>
+          <div class="icon icon-link">
+            <i class="fa fa-google" aria-hidden="true"></i>
+          </div>
+          <div class="button-text">Linked with Google</div>
+        </button>
+      </ng-template>
     </div>
     <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
       <div class="group">
