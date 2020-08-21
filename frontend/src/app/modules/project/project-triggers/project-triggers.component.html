@@ -3,27 +3,6 @@
     <h2 class="title">
       Triggers
     </h2>
-    <!-- Show Triggers -->
-    <ng-container *ngFor="let trigger of triggers">
-      <div class="border my-2 p-2">
-      <div class="trigger-options mb-1">
-        <div class="mr-sm-2">
-          <h5 class="text">Branch </h5>
-          <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
-            <ng-container *ngFor="let branch of branches">
-              <option [value]='branch' [selected]="trigger.branchHash == branch.name">{{branch.name}}</option>
-            </ng-container>
-          </select>
-        </div>
-        <div class="mr-sm-2">
-          <h5 class="text">Period of builds:</h5>
-          <app-cron-builder
-          [triggerId]='trigger.id'
-          [cronInput]='trigger.cronExpression'
-          (updateEv)='updateTrigger($event)'
-          (deleteEv)='deleteTrigger($event)'>
-          </app-cron-builder>
-        </div>
     <div class="switch-wr">
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="runOnShedule"
@@ -37,7 +16,7 @@
         <div class="border my-2 p-2">
           <div class="mr-sm-2 branch-wr">
             <span class="mr-2">Branch </span>
-            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
+            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash" >
               <ng-container *ngFor="let branch of branches">
                 <option [value]='branch' [selected]="trigger.branchHash == branch.name">{{branch}}</option>
               </ng-container>
