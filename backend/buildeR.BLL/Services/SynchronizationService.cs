@@ -18,9 +18,16 @@ namespace buildeR.BLL.Services
             _githubClient = githubClient;
             _projectService = projectService;
         }
-        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId, string providerToken)
+
+        public async Task<IEnumerable<Branch>> GetRepositoryBranches(string repositoryName, string accessToken)
         {
-            var repos = await _githubClient.GetUserRepositories(userId, providerToken);
+            var branches = await _githubClient.GetRepositoryBranches(repositoryName, accessToken);
+            return branches.Select(b => new Branch { Name = b.Name });
+        }
+
+        public async Task<IEnumerable<Repository>> GetUserRepositories(string accessToken)
+        {
+            var repos = await _githubClient.GetUserRepositories(accessToken);
             return repos.Select(r => new Repository { Id = r.Id, Name = r.Name, Private = r.Private });
         }
 

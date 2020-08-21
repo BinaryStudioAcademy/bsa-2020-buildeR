@@ -422,7 +422,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildHistories")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -446,7 +446,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildSteps")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -488,7 +488,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectGroups")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -497,7 +497,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectTriggers")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

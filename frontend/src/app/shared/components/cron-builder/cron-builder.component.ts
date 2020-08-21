@@ -10,7 +10,9 @@ import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 
 export class CronBuilderComponent implements OnInit {
 
-  cronConfig: CronJobsConfig = {quartz: true };
+
+  cronConfig: CronJobsConfig = {quartz: true,
+    option: { minute: false } };
   cronResult: string;
   @Input() cronInput: string;
   @Input() triggerId: number;

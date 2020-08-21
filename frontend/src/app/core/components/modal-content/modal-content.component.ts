@@ -14,10 +14,10 @@ export class ModalContentComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  confirm(){
-    this.activeModal.close();
+  confirm() {
+    this.activeModal.close(true);
   }
-  decline(){
-    this.activeModal.dismiss();
+  decline() {
+    this.activeModal.dismiss(false);
   }
 }

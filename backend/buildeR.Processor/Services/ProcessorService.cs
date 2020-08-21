@@ -107,7 +107,7 @@ namespace buildeR.Processor.Services
 
                     await RunContainerAsync(containerId);
                     Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.BuildStepId);
+                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.Id);
 
                     await _dockerClient.Containers.WaitContainerAsync(containerId);
 
@@ -126,7 +126,7 @@ namespace buildeR.Processor.Services
 
         #region Docker
         #region Dockerfile
-        private string GenerateDockerFileContent(ExecutiveBuildStepDTO buildStep, string repositoryUrl)
+        private string GenerateDockerFileContent(BuildStepDTO buildStep, string repositoryUrl)
         {
             var repositoryName = new string(repositoryUrl.TakeLast(repositoryUrl.Length - repositoryUrl.LastIndexOf('/') - 1).ToArray());
             var workDir = buildStep.WorkDirectory;

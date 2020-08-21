@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NewProject } from '@shared/models/project/new-project';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { Router } from '@angular/router';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '../../../shared/models/user/user';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { Repository } from '@core/models/Repository';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
@@ -23,7 +23,12 @@ export class ProjectCreateComponent implements OnInit {
   repositories: Repository[];
   projectForm: FormGroup;
 
-  @ViewChild('repository', {static: true}) instance: NgbTypeahead;
+  githubRepoSection = false;
+  urlSection = false;
+
+  isPrivateRepoChoosed = false;
+
+  @ViewChild('repository', {static: false}) instance: NgbTypeahead;
 
   repositoryInputFocus$ = new Subject<string>();
   repositoryInputClick$ = new Subject<string>();
@@ -34,17 +39,17 @@ export class ProjectCreateComponent implements OnInit {
     const inputFocus$ = this.repositoryInputFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.repositories.map((r) => r.name).slice(0, 8)
-        : this.repositories.map((r) => r.name).filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 8))
+      map(term => (term === '' ? this.repositories.slice(0, 5)
+        : this.repositories.filter(r => r.name.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 5))
     );
   }
 
   constructor(
-    private router: Router,
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
-    private syncService: SynchronizationService
+    private syncService: SynchronizationService,
+    public activeModal: NgbActiveModal
   ) {}
 
   ngOnInit(): void {
@@ -67,9 +72,9 @@ export class ProjectCreateComponent implements OnInit {
     this.syncService.getUserRepositories()
       .subscribe(repos => {
         this.repositories = repos;
-        console.log(repos);
       });
   }
+
   defaultValues() {
     this.newProject = {
       name: '',
@@ -79,25 +84,44 @@ export class ProjectCreateComponent implements OnInit {
       ownerId: this.user.id,
     };
   }
+
   save() {
-    this.newProject = this.projectForm.value as NewProject;
+    //this.newProject = this.projectForm.value as NewProject;
     this.newProject.ownerId = this.user.id;
+    this.newProject.repository = this.newProject.repository['name'];
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
-        this.router.navigate(['portal']);
+        this.activeModal.close("Saved");
         this.syncService.registerWebhook(resp.id)
           .subscribe(() => resp.id);
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);
-      }
+        this.activeModal.dismiss("Error on save");
+      },
     );
   }
   cancel() {
-    this.router.navigate(['portal']);
+    this.activeModal.dismiss("Canceled");
   }
   onToggle(change: boolean) {
     change = !change;
   }
+
+  isGithubAccessable() {
+    return localStorage.getItem('github-access-token');
+  }
+
+  githubRadioClicked() {
+    this.githubRepoSection = true;
+    this.urlSection = false;
+  }
+
+  urlRadioClicked() {
+    this.urlSection = true;
+    this.githubRepoSection = false;
+  }
+
+  repoListResultFormatter = (repo: Repository) => repo.name;
 }
