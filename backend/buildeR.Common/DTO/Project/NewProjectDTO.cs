@@ -1,4 +1,6 @@
-﻿namespace buildeR.Common.DTO.Project
+﻿using buildeR.Common.DTO.Repository;
+
+namespace buildeR.Common.DTO.Project
 {
     public sealed class NewProjectDTO
     {
@@ -7,5 +9,6 @@
         public string Description { get; set; }
         public bool IsPublic { get; set; }
         public string Repository { get; set; }
+        public NewRepositoryDTO _Repository { get; set; }
     }
 }
