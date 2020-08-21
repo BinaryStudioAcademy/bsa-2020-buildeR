@@ -1,3 +1,4 @@
+
 <div class="trigger-wr">
   <div class="cl">
     <h2 class="title">
@@ -16,9 +17,9 @@
         <div class="border my-2 p-2">
           <div class="mr-sm-2 branch-wr">
             <span class="mr-2">Branch </span>
-            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash" >
+            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
               <ng-container *ngFor="let branch of branches">
-                <option [value]='branch' [selected]="trigger.branchHash == branch.name">{{branch}}</option>
+                <option [value]='branch' [selected]="trigger.branchHash == branch">{{branch}}</option>
               </ng-container>
             </select>
           </div>
@@ -41,14 +42,11 @@
       <div class="trigger-options pb-2">
         <div class="mr-2">
           <h5 class="text-over">Branch </h5>
-          <input
-            type="text"
-            class="form-control"
-            [ngbTypeahead]="search"
-            (focus)="branchInputFocus$.next($any($event).target.value)"
-            (click)="branchInputClick$.next($any($event).target.value)"
-            #branch="ngbTypeahead"
-          />
+          <select class="form-control branch-select" [(ngModel)]="selectedBranch" name="selected" #selected="ngModel">
+            <ng-container *ngFor="let branch of branches">
+              <option [value]='branch'>{{branch}}</option>
+            </ng-container>
+          </select>
         </div>
         <div class="mr-sm-2">
           <h5 class="text-over">Set up period of builds:</h5>
