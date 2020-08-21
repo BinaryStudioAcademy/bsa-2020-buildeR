@@ -6,6 +6,7 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/enviroment-variable';
 import { env } from 'process';
+import { variable } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-project-settings',
@@ -56,7 +57,6 @@ export class ProjectSettingsComponent implements OnInit {
           Validators.required
         ]),
         branch: new FormControl(this.envVar.branch),
-      isEnabled: new FormControl(this.envVar.isEnabled)
     });
   }
 
@@ -74,23 +74,19 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   addEnvVar(envVar: EnviromentVariable){
-    if (envVar.isEnabled == null){
-      envVar.isEnabled = false;
+    if (!envVar.branch){
+      envVar.branch = this.branches[0];
     }
-    console.log(envVar);
     this.envVariables.push(envVar);
   }
 
-  switchVar(envVar: EnviromentVariable){
-    if (envVar.isEnabled === false) {
-    envVar.isEnabled = true;
-    }
-    envVar.isEnabled = false;
-
-  }
 
   remvove(envVar: EnviromentVariable){
     const index = this.envVariables.lastIndexOf(envVar);
     this.envVariables.splice(index, 1);
+  }
+
+  edit(envVar: EnviromentVariable){
+    console.log(envVar);
   }
 }
