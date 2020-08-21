@@ -168,7 +168,7 @@ namespace buildeR.Processor.Services
 
             // Base template for generating dockerfile
             var template = Template.Parse(
-                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.name }}\r\n" +
+                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
