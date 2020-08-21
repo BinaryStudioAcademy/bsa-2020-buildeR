@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="helpForm">
+  <form [formGroup]="helpForm" (ngSubmit)="onSubmit(helpForm.value)">
     <div class="header-main">
       <h2 class="first-message">How can we help,
         <strong *ngIf="currentUser.firstName.length >= 0; else elseBlock">{{currentUser.firstName}}</strong>
@@ -89,6 +89,14 @@
         <button type="submit" class="btn btn-primary"
                 [disabled]="helpForm.invalid || !helpForm.dirty">Submit</button>
       </div>
+      <span>You can leave us a review: </span>
+      <ngb-rating [(rate)]="currentRate" class="rating-container">
+        <ng-template let-fill="fill" let-index="index">
+          <span class="star" [class.filled]="fill === 100">
+            &#9733;
+          </span>
+        </ng-template>
+      </ngb-rating>
     </div>
   </form>
 </div>

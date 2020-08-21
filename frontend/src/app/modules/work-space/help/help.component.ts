@@ -17,6 +17,7 @@ export class HelpComponent extends BaseComponent
 
   currentUser: User = {} as User;
   userHelp: UserHelp = {} as UserHelp;
+  currentRate: number = 0;
 
   public helpForm: FormGroup;
 
@@ -57,6 +58,10 @@ export class HelpComponent extends BaseComponent
         ),
     });
 
+  }
+
+  onSubmit(letter: UserHelp): void {
+    this.toastrService.showSuccess("Your letter was delivered! Thanks!")
   }
 
 }
