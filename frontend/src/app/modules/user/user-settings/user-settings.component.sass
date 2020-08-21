@@ -14,7 +14,7 @@
 .scroll-container
   width: 100%
   position: absolute
-  padding-top: 35px
+  overflow-x: hidden
 
 .input-area
   grid-column-start: 1
@@ -60,25 +60,35 @@ textarea
   justify-self: start
   button
     width: 100px
+  margin-bottom: 10px
 
 .icon
   margin-right: 5px
 
-.btn-secondary
+.btn-google, .btn-github
   margin: 5px
   flex-direction: row
   display: flex
   position: relative
   justify-content: center
   align-items: center
+  color: #fff
 
 .link-buttons
   display: flex
   position: relative
-  justify-content: flex-end
-  align-items: flex-end
+  justify-content: center
+  align-items: center
   flex-direction: row
   margin: 5px
+  left: 65px
+  margin-bottom: 10px
+
+.btn-google
+  background-color: #cb4023
+
+.btn-github
+  background-color: #333333
 
 @media screen and (max-width: 675px)
   .field
@@ -97,5 +107,4 @@ textarea
     margin-left: 0
     margin-right: 0
   .link-buttons
-    justify-content: center
-    align-items: center
+    left: 0
