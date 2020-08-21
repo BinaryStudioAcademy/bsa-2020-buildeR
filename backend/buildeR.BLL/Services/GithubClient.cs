@@ -34,16 +34,19 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<GithubUser>(content);
         }
-
-        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(int userId, string repositoryName, string providerToken)
+        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryName, string providerToken)
         {
             SetUpHttpClient(providerToken);
 
-            throw new NotImplementedException();
-            //todo
-        }
+            var user = await GetUserFromToken(providerToken);
 
-        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(int userId, string providerToken)
+            var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
+        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string providerToken)
         {
             SetUpHttpClient(providerToken);
 
@@ -71,26 +74,24 @@ namespace buildeR.BLL.Services
 
             return allRepos;
         }
-
-        private void SetUpHttpClient(string token)
-        {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
-        }
-
         public async Task CreateWebhook(string repositoryName, string callback, string providerToken)
         {
             var user = await GetUserFromToken(providerToken);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
-            
+
             var hook = new NewGithubWebhookDTO();
             hook.events.Add("push");
             hook.config.url = callback;
 
-            var serializedHook = JsonConvert.SerializeObject(hook); 
+            var serializedHook = JsonConvert.SerializeObject(hook);
             var content = new StringContent(serializedHook, Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync(endpoint, content);
+        }
+        private void SetUpHttpClient(string token)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
         }
     }
 }
