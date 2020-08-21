@@ -106,6 +106,15 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     const { Timestamp, Message } = log;
     return `[${this.step++} ${Timestamp} INF] ${Message}`;
   }
+
+  scrollTop(el: HTMLElement) {
+    el.scrollIntoView(true);
+    window.scrollBy(0, -75);
+  }
+
+  scrollBottom(el: HTMLElement) {
+    el.scrollIntoView(true);
+  }
 }
 
 class Log {
