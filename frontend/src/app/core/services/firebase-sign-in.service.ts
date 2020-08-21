@@ -90,9 +90,12 @@ export class FirebaseSignInService {
 
   linkWithGithub(): Promise<string> {
     const githubProvider = new auth.GithubAuthProvider();
+    githubProvider.addScope('admin:hooks');
+    githubProvider.addScope('repo');
     const fireUser = this.authService.getFireUser();
     return fireUser.linkWithPopup(githubProvider).then((result) => {
       const credential = result.credential;
+      localStorage.setItem('github-access-token', credential[`accessToken`]);
       const user = result.user;
       const linkUser = {
         userId: this.authService.getCurrentUser().id,
