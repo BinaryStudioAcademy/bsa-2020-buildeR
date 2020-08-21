@@ -3,9 +3,10 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { UserService } from './user.service';
 import { auth } from 'firebase/app';
+import { filter, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -73,15 +74,25 @@ export class AuthenticationService {
     return localStorage.getItem('jwt');
   }
 
-  refreshToken() {
-    auth().onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdToken().then((jwt) => {
-          localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('jwt', jwt);
-        });
-      }
-    });
+  getIdToken() {
+    return this.angularAuth.idToken;
+  }
+
+  // refreshToken() {
+  //   auth().onAuthStateChanged((user) => {
+  //     if (user) {
+  //       user.getIdToken().then((jwt) => {
+  //         localStorage.setItem('user', JSON.stringify(user));
+  //         localStorage.setItem('jwt', jwt);
+  //       });
+  //     }
+  //   });
+  // }
+  public refreshToken(): Observable<string> {
+    return this.angularAuth.authState.pipe(
+      filter((user) => Boolean(user)),
+      mergeMap(async (user) => await user.getIdToken(true))
+    );
   }
 
   getCurrentUser() {

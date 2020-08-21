@@ -8,83 +8,132 @@ import { switchMap, catchError, filter, take, finalize } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class TokenInterceptorService implements HttpInterceptor {
+  constructor(private authService: AuthenticationService) { }
+  // private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  // private refreshTokenInProgress = false;
 
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  private refreshTokenInProgress = false;
 
-  constructor(private auth: AuthenticationService) { }
+  // intercept(
+  //   request: HttpRequest<any>,
+  //   next: HttpHandler
+  // ): Observable<HttpEvent<any>> {
+  //   if (!this.authService.isAuthorized()) {
+  //     return next.handle(request);
+  //   }
+
+  //   const token = this.authService.getToken();
+  //   if (token) {
+  //     const header = 'Bearer ' + token;
+  //     const reqWithAuth = request.clone({ headers: request.headers.set('Authorization', header) });
+  //     return next.handle(reqWithAuth);
+  //   }
+
+  //   return next.handle(request).pipe(
+  //     catchError((error: HttpErrorResponse) => {
+  //       if (
+  //         request.url.includes('refreshtoken') ||
+  //         request.url.includes('login')
+  //       ) {
+
+  //         if (request.url.includes('refreshtoken')) {
+  //           this.authService.logout();
+  //         }
+
+  //         return throwError(error);
+  //       }
+
+  //       if (error && error.status === 401) {
+  //         if (this.refreshTokenInProgress) {
+  //           return this.refreshTokenSubject.pipe(
+  //             filter(result => result !== null),
+  //             take(1),
+  //             switchMap(() => next.handle(this.addAuthenticationToken(request)))
+  //           );
+  //         } else {
+  //           this.refreshTokenInProgress = true;
+
+  //           this.refreshTokenSubject.next(null);
+
+  //           return this.refreshAccessToken().pipe(
+  //             switchMap((success: boolean) => {
+  //               this.refreshTokenSubject.next(success);
+  //               return next.handle(this.addAuthenticationToken(request));
+  //             }),
+  //             finalize(() => (this.refreshTokenInProgress = false))
+  //           );
+  //         }
+  //       } else {
+  //         return throwError(error);
+  //       }
+  //     })
+  //   ) as Observable<HttpEvent<any>>;
+  // }
+
+  // private refreshAccessToken(): Observable<any> {
+  //   return of(this.authService.refreshToken());
+  // }
+
+  // addAuthenticationToken(request) {
+  //   const accessToken = this.authService.getToken();
+
+  //   if (!accessToken) {
+  //     return request;
+  //   }
+
+  //   return request.clone({
+  //     setHeaders: {
+  //       Authorization: this.authService.getToken()
+  //     }
+  //   });
+  // }
+
+  //authRequest: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+   authRequest = null;
 
   intercept(
-    request: HttpRequest<any>,
+    req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (!this.auth.isAuthorized()) {
-      return next.handle(request);
+    if (!this.authService.isAuthorized) {
+      return next.handle(req);
     }
 
-    const token = this.auth.getToken();
-    if (token) {
-      const header = 'Bearer ' + token;
-      const reqWithAuth = request.clone({ headers: request.headers.set('Authorization', header) });
-      return next.handle(reqWithAuth);
+    if (!this.authRequest) {
+      this.authRequest = this.authService.getIdToken();
     }
-
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (
-          request.url.includes('refreshtoken') ||
-          request.url.includes('login')
-        ) {
-
-          if (request.url.includes('refreshtoken')) {
-            this.auth.logout();
+    return this.authRequest.pipe(
+      switchMap((token: string) => {
+        this.authRequest = null;
+        const authReq = req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return next.handle(authReq);
+      }),
+      catchError((error) => {
+        if (error.status === 401) {
+          if (!this.authRequest) {
+            this.authRequest = from(this.authService.refreshToken());
+            if (!this.authRequest) {
+              return throwError(error);
+            }
           }
-
-          return throwError(error);
-        }
-
-        if (error && error.status === 401) {
-          if (this.refreshTokenInProgress) {
-            return this.refreshTokenSubject.pipe(
-              filter(result => result !== null),
-              take(1),
-              switchMap(() => next.handle(this.addAuthenticationToken(request)))
-            );
-          } else {
-            this.refreshTokenInProgress = true;
-
-            this.refreshTokenSubject.next(null);
-
-            return this.refreshAccessToken().pipe(
-              switchMap((success: boolean) => {
-                this.refreshTokenSubject.next(success);
-                return next.handle(this.addAuthenticationToken(request));
-              }),
-              finalize(() => (this.refreshTokenInProgress = false))
-            );
-          }
+          return this.authRequest.pipe(
+            switchMap((newToken: string) => {
+              this.authRequest = null;
+              const authReqRepeat = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newToken}`,
+                },
+              });
+              return next.handle(authReqRepeat);
+            })
+          );
         } else {
           return throwError(error);
         }
       })
-    ) as Observable<HttpEvent<any>>;
-  }
-
-  private refreshAccessToken(): Observable<any> {
-    return of(this.auth.refreshToken());
-  }
-
-  addAuthenticationToken(request) {
-    const accessToken = this.auth.getToken();
-
-    if (!accessToken) {
-      return request;
-    }
-
-    return request.clone({
-      setHeaders: {
-        Authorization: this.auth.getToken()
-      }
-    });
+    );
   }
 }
