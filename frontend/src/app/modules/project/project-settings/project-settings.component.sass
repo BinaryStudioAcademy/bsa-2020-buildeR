@@ -31,8 +31,7 @@
   color: #666
 
 .text-near
-  margin-left: 15px
-  margin-top: -10px
+  margin-top: -12px
 
 input
   width: 300px
@@ -66,23 +65,10 @@ h2
   font-size: 1.5rem
 
 .custom-switch .custom-control-label::before
-    left: -2.25rem
-    width: 2.75rem
-    height: 1.35rem
-    pointer-events: all
-    border-radius: 0.5rem
-    margin: 10px 0
-
+  margin-top: 12px
 
 .custom-switch .custom-control-label::after
-    transition: none
-    height: 1.14rem
-    width: 1.15rem
-    margin: 9.7px 1px
-
-.custom-switch .custom-control-input:checked ~ .custom-control-label::after
-    background-color: #fff
-    transform: translateX(1.35rem)
+  margin-top: 12px
 
 .save-button-container
   grid-column-start: 1
@@ -100,6 +86,23 @@ h2
   grid-template-columns: 5
   grid-template-rows: 2
 
+.vars
+  background-color: #EAE4E4
+
+.vars input
+  background-color: #F0ECEC
+
+.vars select
+  background-color: #F0ECEC
+
+.options-env-vars
+  grid-column-start: 4
+  grid-column-end: 5
+  justify-self: end
+
+.padd
+  padding-top:20px
+
 .name
   grid-column-start: 1
   grid-column-end: 2
@@ -116,7 +119,9 @@ h2
 .isOn
  grid-column-start: 4
  grid-column-end: 5
- padding-right: 3rem
+
+.isOn button
+  margin-top: 28px
 
 select.form-control
   width: 130%
@@ -182,7 +187,11 @@ select.form-control
     grid-column-start: 1
     grid-column-end: 2
   .branch select
-    width: 100%
+    width: 95%
   .isOn
     grid-column-start: 1
     grid-column-end: 2
+  .form-control-ev
+    margin-left: 0
+  .options-env-vars
+    justify-self: start
