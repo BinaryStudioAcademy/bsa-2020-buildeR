@@ -162,7 +162,7 @@ namespace buildeR.Processor.Services
         #endregion
 
         #region Dockerfile
-        private string GenerateDockerFileContent(IEnumerable<ExecutiveBuildStepDTO> buildSteps, string repositoryUrl)
+        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl)
         {
             string dockerfile = "";
 

@@ -11,5 +11,6 @@ namespace buildeR.BLL.Interfaces
         Task<QuartzInfoDTO> AddScheduleJob(QuartzDTO quartzDTO);
         Task<QuartzInfoDTO> UpdateScheduleJob(QuartzDTO quartzDTO);
         Task DeletScheduleJob(QuartzDTO quartzDTO);
+        Task DeleteAllSheduleJob(string projectId);
     }
 }

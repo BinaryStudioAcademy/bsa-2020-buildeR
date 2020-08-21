@@ -25,6 +25,7 @@ export class ProjectComponent implements OnInit {
   tabRoutes: TabRoute[] = [
     { name: 'Current', route: 'details' },
     { name: 'Build History', route: 'history' },
+    { name: 'Build Steps', route: 'steps' },
     { name: 'Settings', route: 'settings' },
   ];
 

@@ -16,5 +16,7 @@ namespace buildeR.BLL.Services.Abstract
         Task DeleteProject(int id);
         Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId);
         Task ChangeFavoriteStateAsync(int projectId);
+
+        Task<ProjectDTO> CopyProject(ProjectDTO dto);
     }
 }

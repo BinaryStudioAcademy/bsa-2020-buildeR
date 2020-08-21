@@ -42,7 +42,6 @@ namespace buildeR.API.Controllers
         [HttpPut]
         public async Task<ProjectDTO> UpdateProject([FromBody] ProjectDTO dto)
         {
-            dto.OwnerId = 1; // here will be userId from token or somthing else
             await _projectService.UpdateAsync(dto);
             return await _projectService.GetAsync(dto.Id);
         }
@@ -51,6 +50,11 @@ namespace buildeR.API.Controllers
         public async Task DeleteProject(int id)
         {
             await _projectService.DeleteProject(id);
+        }
+        [HttpPost("copy")]
+        public async Task<ProjectDTO> CopyProject(ProjectDTO projectDTO)
+        {
+            return await _projectService.CopyProject(projectDTO);
         }
 
         [HttpPost("{projectId}/build")]

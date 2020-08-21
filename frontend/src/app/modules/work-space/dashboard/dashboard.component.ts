@@ -8,6 +8,10 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { SynchronizedUser } from '@core/models/SynchronizedUser';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
+import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
+import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +20,7 @@ import { SynchronizedUser } from '@core/models/SynchronizedUser';
 })
 export class DashboardComponent extends BaseComponent
   implements OnInit, OnDestroy {
-  userProjects: ProjectInfo[];
+  activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
@@ -27,17 +31,16 @@ export class DashboardComponent extends BaseComponent
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
-    private githubService: SynchronizationService
+    private githubService: SynchronizationService,
+    private modalService: NgbModal
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.loadingProjects = true;
-    this.currentUser = this.authService.getCurrentUser();    
+    this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
-    this.githubService.getSynchronizedUser()
-      .subscribe((user) => this.currentGithubUser = user);
   }
 
   getUserProjects(userId: number) {
@@ -48,8 +51,8 @@ export class DashboardComponent extends BaseComponent
       .subscribe(
         (resp) => {
           this.loadingProjects = false;
-          this.cachedUserProjects = this.userProjects = resp.body;
-          this.starredProjects = this.userProjects.filter(project => project.isFavorite);
+          this.activeProjects = resp.body.filter(project => !project.isFavorite);
+          this.starredProjects = resp.body.filter(project => project.isFavorite);
         },
         (error) => {
           this.loadingProjects = false;
@@ -76,13 +79,61 @@ export class DashboardComponent extends BaseComponent
         () => {
           project.isFavorite = !project.isFavorite;
           if (project.isFavorite) {
+            this.activeProjects = this.activeProjects.filter(proj => proj.id !== project.id);
             this.starredProjects.push(project);
           }
           else {
+            this.activeProjects.push(project);
             this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
           }
         },
         (error) => this.toastrService.showError(error)
       );
+  }
+
+  deleteProject(projectId: number) {
+    const modalRef = this.modalService.open(ModalContentComponent);
+    const data = {
+      title: 'Are you sure?',
+      message: 'You are going to delete project.',
+      text: 'Press "yes" button to confirm deleting project or "no" button to come back.'
+    };
+    modalRef.componentInstance.content = data;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.projectService.deleteProject(projectId).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+            this.activeProjects = this.activeProjects.filter(proj => proj.id !== projectId);
+            this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  copyProject(id: number) {
+    const modalRef = this.modalService.open(ModalCopyProjectComponent);
+    modalRef.componentInstance.id = id;
+    modalRef.result
+      .then((result) => {
+        if (result.isFavorite) {
+          this.starredProjects.push(result);
+          this.activeProjects.push(result);
+        }
+        else if (result) {
+          this.activeProjects.push(result);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  openCreateProjectModal() {
+    const modalRef = this.modalService.open(ProjectCreateComponent);
+    modalRef.result
+      .then(() => this.getUserProjects(this.currentUser.id))
+      .catch(() => { });
   }
 }

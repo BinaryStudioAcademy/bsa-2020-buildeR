@@ -3,9 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { UserService } from './user.service';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { UserService } from './user.service';
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -48,14 +48,11 @@ export class AuthenticationService {
     this.userService.register(newUser).subscribe(
       userResult => {
         this.angularAuth.authState
-          .pipe(takeUntil(this.unsubscribe$))
           .subscribe((user) => {
             this.configureAuthState(user);
-            if (user) {
-              if (user.uid === userResult.userSocialNetworks[0].uId) {
-                this.currentUser = userResult;
-                this.router.navigate(['/portal']);
-              }
+            if (user && user.uid === userResult.userSocialNetworks[0].uId) {
+              this.currentUser = userResult;
+              this.router.navigate(['/portal']);
             }
           });
       });
@@ -64,6 +61,7 @@ export class AuthenticationService {
   logout() {
     this.clearAuth();
     this.router.navigate(['/']);
+    localStorage.removeItem('github-access-token');
     return this.angularAuth.signOut();
   }
 
@@ -77,8 +75,13 @@ export class AuthenticationService {
   }
 
   refreshToken() {
-    return this.firebaseUser.getIdToken().then((theToken) => {
-      localStorage.setItem('jwt', theToken);
+    auth().onAuthStateChanged((user) => {
+      if (user) {
+        user.getIdToken().then((jwt) => {
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('jwt', jwt);
+        });
+      }
     });
   }
 
@@ -111,6 +114,7 @@ export class AuthenticationService {
   clearAuth() {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
+    localStorage.removeItem('github-access-token');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
   }

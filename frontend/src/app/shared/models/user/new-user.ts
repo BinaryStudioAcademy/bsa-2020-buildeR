@@ -8,7 +8,7 @@ export interface NewUser {
   lastName: string;
   avatarUrl: string;
   uId: string;
-  providerId: Providers;
+  providerName: Providers;
   providerUrl: string;
   accessToken: string;
 }
