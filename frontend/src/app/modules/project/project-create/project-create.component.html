@@ -80,7 +80,7 @@
       <div class="connect-with" [class.connect-with-inactive]="!isGithubAccessable()">
         <div class="connect-with-title-wr">
           <label ngbButtonLabel class="radio-label">
-            <input ngbButton type="radio" class="radio" [value]="1"
+            <input ngbButton type="radio" class="radio" [value]="1" [checked]="githubRepoSection"
             [disabled]="!isGithubAccessable()" (click)="githubRadioClicked()"
             name="githubRepoButton">
           </label>
@@ -193,7 +193,7 @@
         <div class="connect-with-title-wr">
           <label ngbButtonLabel class="radio-label">
             <input ngbButton type="radio" class="radio" value="middle"
-            (click)="urlRadioClicked()">
+            [checked]="urlSection" (click)="urlRadioClicked()">
           </label>
           <p class="connect-with-title" (click)="urlRadioClicked()">
             With URL
