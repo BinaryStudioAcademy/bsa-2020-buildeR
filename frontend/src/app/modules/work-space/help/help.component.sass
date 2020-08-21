@@ -2,6 +2,7 @@
   display: grid
   grid-template-columns: 2
   grid-template-rows: 6
+  //margin-bottom: 30px
 
 .input-area
   grid-column-start: 1
@@ -19,9 +20,13 @@ textarea
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
+  &:last-of-type
+   align-self: center
 
-.container
+.container-fluid
+  width: 100%
   display: flex
+  flex-direction: column
   justify-content: center
   .header-main
     text-align: center
@@ -55,7 +60,7 @@ textarea
   color: red
   font-size: .75em
 
-// style for rating bar
+// style for gg bar
 .star
   font-size: 1.5rem
   color: #b0c4de
@@ -64,15 +69,44 @@ textarea
   color: #fff285
 
 .rating-container
+  width: 300px !important
   margin-left: 15px
   grid-column-start: 1
   grid-column-end: 2
   &:focus
     outline: none
 
-span
-  grid-column-start: 0
-  grid-column-end: 1
-  justify-self: end
-  align-self: center
 
+@media screen and (max-width: 700px)
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  input
+    width: 300px
+  textarea
+    width: 300px
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    width: 300px
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+  .rating-container
+    justify-self: center
+    margin-left: 0
+  .header-main
+    padding: 30px 0px !important
+    .first-message
+      font-size: 25px !important
+      margin-bottom: 30px !important
+    .second-message
+      font-size: 20px !important
