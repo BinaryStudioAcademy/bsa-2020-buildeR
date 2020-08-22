@@ -79,12 +79,12 @@ namespace buildeR.BLL.Services
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
             var project = await Context.Projects
-                                                .Include(p => p.BuildSteps)
-                                                    .ThenInclude(s => s.PluginCommand)
-                                                        .ThenInclude(c => c.Plugin)
-                                                .Include(p => p.BuildSteps)
-                                                    .ThenInclude(s => s.BuildPluginParameters)
-                                                .FirstOrDefaultAsync(p => p.Id == projectId);
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.PluginCommand)
+                                            .ThenInclude(c => c.Plugin)
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.BuildPluginParameters)
+                                    .FirstOrDefaultAsync(p => p.Id == projectId);
 
             if (project == null)
                 throw new NotFoundException("Project", projectId);
