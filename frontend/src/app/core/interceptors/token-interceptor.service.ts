@@ -88,7 +88,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   // }
 
   //authRequest: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-   authRequest = null;
+  authRequest = null;
 
   intercept(
     req: HttpRequest<any>,
@@ -98,42 +98,43 @@ export class TokenInterceptorService implements HttpInterceptor {
       return next.handle(req);
     }
 
-    if (!this.authRequest) {
-      this.authRequest = this.authService.getIdToken();
+    const jwt = this.authService.getToken();
+    if (jwt) {
+      const header = 'Bearer ' + jwt;
+      const reqWithAuth = req.clone({ headers: req.headers.set('Authorization', header) });
+      return next.handle(reqWithAuth);
     }
-    return this.authRequest.pipe(
-      switchMap((token: string) => {
-        this.authRequest = null;
-        const authReq = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return next.handle(authReq);
-      }),
-      catchError((error) => {
-        if (error.status === 401) {
-          if (!this.authRequest) {
-            this.authRequest = from(this.authService.refreshToken());
-            if (!this.authRequest) {
-              return throwError(error);
-            }
-          }
-          return this.authRequest.pipe(
-            switchMap((newToken: string) => {
-              this.authRequest = null;
-              const authReqRepeat = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken}`,
-                },
-              });
-              return next.handle(authReqRepeat);
-            })
-          );
-        } else {
-          return throwError(error);
-        }
-      })
-    );
+
+    // if (!this.authRequest) {
+    //   this.authRequest = this.authService.getIdToken();
+    // }
+    // return this.authRequest.pipe(
+    //   switchMap((token: string) => {
+    //     this.authRequest = null;
+    //     const header = 'Bearer ' + token;
+    //     const authReq = req.clone({ headers: req.headers.set('Authorization', header) });
+    //     return next.handle(authReq);
+    //   }),
+    //   catchError((error) => {
+    //     if (error.status === 401) {
+    //       if (!this.authRequest) {
+    //         this.authRequest = from(this.authService.refreshToken());
+    //         if (!this.authRequest) {
+    //           return throwError(error);
+    //         }
+    //       }
+    //       return this.authRequest.pipe(
+    //         switchMap((newToken: string) => {
+    //           this.authRequest = null;
+    //           const header = 'Bearer ' + newToken;
+    //           const authReqRepeat = req.clone({ headers: req.headers.set('Authorization', header) });
+    //           return next.handle(authReqRepeat);
+    //         })
+    //       );
+    //     } else {
+    //       return throwError(error);
+    //     }
+    //   })
+    // );
   }
 }
