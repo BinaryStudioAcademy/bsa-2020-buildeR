@@ -156,7 +156,9 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.increaseIndexesOfBuildStepsFrom(this.projectId, event.currentIndex, event.previousIndex);
+    if (event.currentIndex !== event.previousIndex) {
+      this.increaseIndexesOfBuildStepsFrom(this.projectId, event.currentIndex, event.previousIndex);
+    }
   }
 
   increaseIndexesOfBuildStepsFrom(projectId: number, newIndex: number, oldIndex: number) {
