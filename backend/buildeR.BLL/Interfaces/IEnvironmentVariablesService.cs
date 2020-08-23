@@ -10,7 +10,8 @@ namespace buildeR.BLL.Interfaces
     {
         Task<Dictionary<string, string>> AddEnvironmenVariable(EnvironmentVariableDTO variableDTO);
         Task DeleteEnvironmentVariable();
-        Task GetEnvironmentVariables(string projectId);
+        Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(string projectId);
+
 
     }
 }

@@ -24,18 +24,18 @@ namespace buildeR.BLL.Services
             try
             {
                 var res = await _secretService.ReadSecretsAsync(path);
-                if (res.ContainsKey(variableDTO.Name))
+                if (res.ContainsKey(variableDTO.Id))
                 {
                     return await UpdateEnvironmentVariable(variableDTO, res);
                 }
-                res.Add(variableDTO.Name, value);
+                res.Add(variableDTO.Id, value);
                 await _secretService.CreateSecretsAsync(res, path);
                 return res;
             }
             catch(Exception e)
             {
                 var res = new Dictionary<string, string>();
-                res.Add(variableDTO.Name, value);
+                res.Add(variableDTO.Id, value);
                 await _secretService.CreateSecretsAsync(res, path);
                 return res;
             }
@@ -44,7 +44,7 @@ namespace buildeR.BLL.Services
         public async Task<Dictionary<string, string>> UpdateEnvironmentVariable(EnvironmentVariableDTO variableDTO,
                                                                           Dictionary<string, string> dict)
         {
-            dict[variableDTO.Name] = JsonConvert.SerializeObject(variableDTO.Data);
+            dict[variableDTO.Id] = JsonConvert.SerializeObject(variableDTO.Data);
             await _secretService.CreateSecretsAsync(dict, variableDTO.ProjectId.ToString());
             return dict;
         }
@@ -54,9 +54,19 @@ namespace buildeR.BLL.Services
             throw new NotImplementedException();
         }
 
-        public async Task GetEnvironmentVariables(string projectId)
+        public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(string projectId)
         {
-            var res = await _secretService.ReadSecretsAsync(projectId);
+            var dict = await _secretService.ReadSecretsAsync(projectId);
+            List<EnvironmentVariableDTO> res = new List<EnvironmentVariableDTO>();
+            foreach (var item in dict)
+            {
+                EnvironmentVariableDTO dto = new EnvironmentVariableDTO();
+                dto.ProjectId = Convert.ToInt32(projectId);
+                dto.Id = item.Key;
+                dto.Data = JsonConvert.DeserializeObject<VariableValue>(item.Value);
+                res.Add(dto);
+            }
+            return res;
         }
     }
 }

@@ -6,6 +6,7 @@ using buildeR.Common.DTO.Project;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.API.Controllers
@@ -80,6 +81,12 @@ namespace buildeR.API.Controllers
         {
             var secrets = await _envService.AddEnvironmenVariable(variableDTO);
             return secrets;
+        }
+
+        [HttpGet("envVar/{id}")]
+        public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(int id)
+        {
+            return await _envService.GetEnvironmentVariables(id.ToString());
         }
 
     }

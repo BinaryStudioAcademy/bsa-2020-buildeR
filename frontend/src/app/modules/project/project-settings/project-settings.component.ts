@@ -4,9 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { EnviromentVariable } from '@shared/models/enviroment-variable';
+import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
+import { VariableValue } from '@shared/models/environment-variable/variable-value';
+import { enableDebugTools } from '@angular/platform-browser';
 import { env } from 'process';
-import { variable } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-project-settings',
@@ -19,7 +20,7 @@ export class ProjectSettingsComponent implements OnInit {
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
   public projectForm: FormGroup;
-  envVar: EnviromentVariable = {} as EnviromentVariable;
+  envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
   @Input() project: Project = {} as Project;
   constructor(
@@ -48,15 +49,15 @@ export class ProjectSettingsComponent implements OnInit {
     });
 
     this.envVarsForm = new FormGroup({
-      name: new FormControl(this.envVar.name,
+      name: new FormControl(this.envVar.data.name,
         [
           Validators.required
         ]),
-      value: new FormControl(this.envVar.value,
+      value: new FormControl(this.envVar.data.value,
         [
           Validators.required
         ]),
-        branch: new FormControl(this.envVar.branch),
+        isSecret: new FormControl(this.envVar.data.isSecret)
     });
   }
 
@@ -73,11 +74,11 @@ export class ProjectSettingsComponent implements OnInit {
     });
   }
 
-  addEnvVar(envVar: EnviromentVariable){
-    if (!envVar.branch){
-      envVar.branch = this.branches[0];
-    }
-    this.envVariables.push(envVar);
+  addEnvVar(envValue: VariableValue){
+    this.envVar.projectId = this.project.id;
+    this.envVar.data = envValue;
+    console.log(this.envVar);
+    this.envVariables.push(this.envVar);
     this.envVarsForm.reset();
   }
 
