@@ -94,9 +94,9 @@ export class DashboardComponent extends BaseComponent
   deleteProject(projectId: number) {
     const modalRef = this.modalService.open(ModalContentComponent);
     const data = {
-      title: 'Are you sure?',
-      message: 'You are going to delete project.',
-      text: 'Press "yes" button to confirm deleting project or "no" button to come back.'
+      title: 'Project deletion',
+      message: 'Are you sure you want to delete this project?',
+      text: 'All information associated to this project will be permanently deleted. This operation can not be undone.'
     };
     modalRef.componentInstance.content = data;
     modalRef.result
@@ -120,7 +120,6 @@ export class DashboardComponent extends BaseComponent
       .then((result) => {
         if (result.isFavorite) {
           this.starredProjects.push(result);
-          this.activeProjects.push(result);
         }
         else if (result) {
           this.activeProjects.push(result);

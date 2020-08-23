@@ -33,6 +33,43 @@ namespace buildeR.DAL.Context
         }
         public static void Seed(this ModelBuilder modelBuilder)
         {
+
+            var dotnetBuildPlugin = new BuildPlugin()
+            {
+                Id = 1,
+                Command = "dotnet",
+                PluginName = ".NET Core",
+                DockerImageName = "mcr.microsoft.com/dotnet/core/sdk"
+            };
+            var nodeBuildPlugin = new BuildPlugin()
+            {
+                Id = 2,
+                Command = "npm",
+                PluginName = "Node.js",
+                DockerImageName = "node"
+            };
+
+            var dotnetBuildCommand = new PluginCommand()
+            {
+                Id = 1,
+                Name = "build",
+                PluginId = dotnetBuildPlugin.Id
+            };
+
+            var dotnetRestoreCommand = new PluginCommand()
+            {
+                Id = 2,
+                Name = "restore",
+                PluginId = dotnetBuildPlugin.Id
+            };
+
+            var npmInstallCommand = new PluginCommand()
+            {
+                Id = 3,
+                Name = "install",
+                PluginId = nodeBuildPlugin.Id
+            };
+
             //var buildPlugins = GenerateRandomBuildPlugins();
             //var groups = GenerateRandomGroups();
             //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
@@ -47,9 +84,9 @@ namespace buildeR.DAL.Context
             //var teamMembers = GenerateRandomTeamMembers(groups, users);
             //var notifications = GenerateRandomNotifications();
 
-            //modelBuilder.Entity<BuildPlugin>().HasData(buildPlugins);
+            modelBuilder.Entity<BuildPlugin>().HasData(dotnetBuildPlugin, nodeBuildPlugin);
             //modelBuilder.Entity<Group>().HasData(groups);
-            //modelBuilder.Entity<PluginCommand>().HasData(pluginCommands);
+            modelBuilder.Entity<PluginCommand>().HasData(dotnetRestoreCommand, dotnetBuildCommand, npmInstallCommand);
             //modelBuilder.Entity<User>().HasData(users);
             //modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
             //modelBuilder.Entity<Project>().HasData(projects);

@@ -11,6 +11,7 @@ import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { NewRepository } from '@core/models/NewRepository';
 
 @Component({
   selector: 'app-project-create',
@@ -82,13 +83,14 @@ export class ProjectCreateComponent implements OnInit {
       isPublic: true,
       repository: '',
       ownerId: this.user.id,
+      _repository: {} as NewRepository
     };
   }
 
   save() {
-    //this.newProject = this.projectForm.value as NewProject;
+    // this.newProject = this.projectForm.value as NewProject;
     this.newProject.ownerId = this.user.id;
-    this.newProject.repository = this.newProject.repository['name'];
+    this.newProject.repository = this.newProject._repository.name;
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');

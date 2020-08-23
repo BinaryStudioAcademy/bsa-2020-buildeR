@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200821054641_AddRepositoryEntity")]
+    partial class AddRepositoryEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,22 +80,6 @@ namespace buildeR.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BuildPlugins");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Command = "dotnet",
-                            DockerImageName = "mcr.microsoft.com/dotnet/core/sdk",
-                            PluginName = ".NET Core"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Command = "npm",
-                            DockerImageName = "node",
-                            PluginName = "Node.js"
-                        });
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.BuildPluginParameter", b =>
@@ -242,26 +228,6 @@ namespace buildeR.DAL.Migrations
                     b.HasIndex("PluginId");
 
                     b.ToTable("PluginCommands");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2,
-                            Name = "restore",
-                            PluginId = 1
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "build",
-                            PluginId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "install",
-                            PluginId = 2
-                        });
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.Project", b =>

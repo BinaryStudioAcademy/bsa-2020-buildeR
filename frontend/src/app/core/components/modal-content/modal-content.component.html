@@ -1,12 +1,15 @@
 <div class="modal-header">
   <h4 class="modal-title pull-left">{{content.title}}</h4>
+  <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="decline()">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
+
 <div class="modal-body">
-  <!-- <img src="#"> -->
-  <h3>{{content.message}}</h3>
-  <h5>{{content.text}}</h5>
+  <h5>{{content.message}}</h5>
+  <div>{{content.text}}</div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
-  <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+  <button type="button" class="btn btn-danger" (click)="confirm()">Yes</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="decline()">No</button>
 </div>

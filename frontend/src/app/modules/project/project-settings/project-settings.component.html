@@ -38,7 +38,7 @@
 
       <br />
     </div>
-    <div class="settings-section border-bottom">
+    <div class="settings-section border-bottom padd">
       <h2 class="small-title">
         Enviroment Variables
       </h2>
@@ -46,53 +46,73 @@
 
 
         <!-- Show Env Vars  -->
-        <ng-container *ngFor="let varibable of envVariables" >
-          <div class="container tab">
+        <div class="group-ev vars" *ngFor="let varibable of envVariables" >
 
-            Name: <span class="mr-sm-2 text">  {{varibable.name}} </span> | Value: <span class="mr-sm-2 text">  {{varibable.value}} </span> | Branch: <span class="mr-sm-2 text">  {{varibable.branch}} </span>
-            <div class="custom-control custom-switch addSwitch env-var-switch">
-             <input type="checkbox" class="custom-control-input" id="isEnabledEnv"/>
-             <label class="custom-control-label" for="isEnabledEnv" (ngModel)="varibable.isEnabled"></label>
-             <button class="btn btn-danger add-cron" (click)="remvove(varibable)">Delete</button>
+          <div class="name">
+            Name:
+            <div class="input-area">
+              <input type="text" class="form-control form-control form-control-ev"
+            [ngModel]="varibable.name">
             </div>
+
+          </div>
+          <div class="value">
+            Value:
+            <div class="input-area">
+              <input type="text" class="form-control form-control form-control-ev"
+            [ngModel]="varibable.value">
             </div>
-          </ng-container>
+          </div>
+            <div class="branch">
+              Branch:
+              <select class="form-control" [ngModel]="varibable.branch">
+
+                <ng-container *ngFor="let branch of branches">
+                  <option [value]='branch'>{{branch}}</option>
+                </ng-container>
+              </select>
+            </div>
+            <div class="isOn options-env-vars">
+              <button class="btn btn-danger add-cron" (click)="remvove(varibable)">Delete</button>
+              <button class="btn btn-warning add-cron" (click)="edit(varibable)">Edit</button>
+            </div>
+        </div>
       <!-- Adding env vars -->
       <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
           <div class="group-ev">
           <div class='name'>
             <h5 class="text-over">Name</h5>
             <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="name">
+              <input type="text" class="form-control form-control form-control-ev" formControlName="name"
+              placeholder="Name">
             </div>
           </div>
           <div class='value'>
             <h5 class="text-over">Value</h5>
             <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="value">
+              <input type="text" class="form-control form-control form-control-ev" formControlName="value"
+              placeholder="Value">
             </div>
           </div>
           <div class='branch'>
             <h5 class="text-over">Branch</h5>
             <select class="form-control" formControlName="branch">
+
               <ng-container *ngFor="let branch of branches">
                 <option [value]='branch'>{{branch}}</option>
               </ng-container>
             </select>
           </div>
           <div class='isOn'>
-            <div class="custom-control custom-switch addSwitch">
-              <input type="checkbox" class="custom-control-input" id="isEnabled" formControlName="isEnabled" />
-              <label class="custom-control-label" for="isEnabled"></label>
-              <button class="btn btn-info add-cron" type="submit">Add</button>
-            </div>
+              <button class="btn btn-info add-cron" type="submit"[disabled]="envVarsForm.invalid">Add</button>
           </div>
         </div>
 
       </form>
     </div>
-    <div class="settings-section border-bottom">
-      <h2 class="small-title">
+    <div class="settings-section border-bottom padd">
+      <app-project-triggers></app-project-triggers>
+      <h2 class="small-title padd">
         Cron Jobs
       </h2>
       <div class="input-area">
@@ -109,7 +129,6 @@
           <p class="text-near"> Build pushed pull requests</p>
         </div>
       </div>
-      <app-project-triggers></app-project-triggers>
     </div>
 
   </div>
