@@ -31,7 +31,7 @@
   color: #666
 
 .text-near
-  margin-top: -12px
+  margin-top: -10px
 
 input
   width: 300px
@@ -129,8 +129,8 @@ select.form-control
 .addSwitch
   padding-top: 25px
 
-.add-cron
- margin-left: 30px
+//.add-cron
+// margin-left: 30px
 
 .group-jobs
   display: grid
@@ -155,6 +155,10 @@ select.form-control
 
 .tab
   display: table
+
+.settings-section:last-of-type
+  .input-area
+    margin: 0px
 
 @media screen and (max-width: 675px)
   .container
@@ -193,6 +197,8 @@ select.form-control
   .isOn
     grid-column-start: 1
     grid-column-end: 2
+    button
+      margin: 28px 0px 5px 0px
   .form-control-ev
     margin-left: 0
   .options-env-vars
