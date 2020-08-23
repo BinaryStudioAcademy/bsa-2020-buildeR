@@ -17,15 +17,15 @@ namespace buildeR.API.Controllers
         }
 
         [HttpGet("GetByUserId/{userId}")]
-        public async Task<IEnumerable<NotificationSettingDTO>> GetByUserId(int userId)
+        public async Task<NotificationSettingDTO> GetByUserId(int userId)
         {
             return await _service.GetNotificationSettingByUserId(userId);
         }
 
-        [HttpPut("UpdateRange")]
-        public async Task<IEnumerable<NotificationSettingDTO>> Put([FromBody] IEnumerable<NotificationSettingDTO> settingDTOs)
+        [HttpPut]
+        public async Task Put([FromBody] NotificationSettingDTO dto)
         {
-            return await _service.UpdateRange(settingDTOs);
+            await _service.Update(dto);
         }
         [HttpGet]
         public async Task<IEnumerable<NotificationSettingDTO>> GetAll()
@@ -37,14 +37,9 @@ namespace buildeR.API.Controllers
         {
             return await _service.GetById(id);
         }
-        [HttpPut]
-        public async Task Put([FromBody] NotificationSettingDTO dto)
-        {
-            await _service.Update(dto);
-        }
 
         [HttpPost]
-        public async Task<NotificationSettingDTO> Post([FromBody] NewNotificationSettingDTO  newNotification)
+        public async Task<NotificationSettingDTO> Post([FromBody] NewNotificationSettingDTO newNotification)
         {
             return await _service.Create(newNotification);
         }
