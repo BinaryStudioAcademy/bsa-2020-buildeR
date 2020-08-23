@@ -5,6 +5,7 @@ using buildeR.Kafka;
 using buildeR.RabbitMq.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Scriban;
 using Serilog;
@@ -26,7 +27,6 @@ namespace buildeR.Processor.Services
         private readonly IConsumer _consumer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
-
         public ProcessorService(IConfiguration config, IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
@@ -117,15 +117,20 @@ namespace buildeR.Processor.Services
         public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
         {
             // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
-            // (also applied to "Removing intermediate container). And skip checking for empty string
-            if (outLine.Data != null && ((outLine.Data.StartsWith("Step") && outLine.Data.Contains("FROM")) || outLine.Data.StartsWith("Removing intermediate container") || outLine.Data.StartsWith("Sending build context")))
+            // (also applied to "Removing intermediate container" and "Sending build context"). Skip checking empty strings
+            if (outLine.Data != null &&
+              ((outLine.Data.StartsWith("Step") && outLine.Data.Contains("FROM")) ||
+                outLine.Data.StartsWith("Removing intermediate container") ||
+                outLine.Data.StartsWith("Sending build context")))
             {
                 areDockerLogs = true;
                 startLogging = 2;
             }
-            // We begin logging again after logs with string that starts with Step and contains RUN. Usually RUN starts process, which we need logs to take from
+            // We begin logging again after logs that starts with Step and contains RUN. Usually RUN starts process, which we need logs to take from
             // TODO: We can add checking 'contains' from list, that will have all starter commands like RUN, CMD, etc.
-            else if (outLine.Data != null && (outLine.Data.StartsWith("Step") && outLine.Data.Contains("RUN")))
+            else if (outLine.Data != null &&
+                    (outLine.Data.StartsWith("Step") &&
+                     outLine.Data.Contains("RUN")))
             {
                 areDockerLogs = false;
 
@@ -144,8 +149,6 @@ namespace buildeR.Processor.Services
             if (!areDockerLogs)
                 startLogging--;
 
-
-
             if (!areDockerLogs && startLogging < 0)
             {
                 var log = new ProjectLog()
@@ -155,6 +158,7 @@ namespace buildeR.Processor.Services
                     BuildId = projectId,
                     BuildStep = 1
                 };
+                Log.Information("{BuildId} {BuildStep} {Message} {Timestamp}", log.BuildId, log.BuildStep, log.Message, log.Timestamp);
                 await _kafkaProducer.SendLog(log);
             }
         }
@@ -202,7 +206,14 @@ namespace buildeR.Processor.Services
         {
             string dockerfile = "";
 
-            // Base template for generating dockerfile
+            /* Base template for generating dockerfile
+            FROM {{ docker_image }}:latest AS {{ step_name }}
+            WORKDIR /src
+            COPY . .
+            WORKDIR /src/{{ work_directory }}
+            ENV {{ key }}={{ value }} // if any
+            RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
+            */
             var template = Template.Parse(
                  "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
