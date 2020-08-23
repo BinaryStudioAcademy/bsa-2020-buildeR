@@ -42,11 +42,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.project = this.route.snapshot.data.project as Project;
     this.getProject(this.projectId);
     this.getProjectBuildSteps(this.projectId);
     this.getEmptyBuildSteps();
-    this.isLoading = false;
   }
 
   getProject(projectId: number) {
@@ -55,9 +55,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .getProjectById(projectId)
       .subscribe(
         (data) => {
+          this.isLoading = false;
           this.project = data;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error.message, error.name);
         }
       );
@@ -70,9 +72,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.emptyBuildSteps = resp.body;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
@@ -85,9 +89,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.buildSteps = resp.body;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
@@ -122,14 +128,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.buildSteps.push(resp);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 
   removeBuildStep(buildStep: BuildStep) {
@@ -139,14 +145,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => {
+          this.isLoading = false;
           this.buildSteps = this.buildSteps.filter(step => buildStep.id !== step.id);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -160,13 +166,13 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => {
+          this.isLoading = false;
           moveItemInArray(this.buildSteps, oldIndex, newIndex);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 }
