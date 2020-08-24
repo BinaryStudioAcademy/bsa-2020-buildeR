@@ -5,9 +5,11 @@ using buildeR.Kafka;
 using buildeR.RabbitMq.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Scriban;
 using Serilog;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +27,6 @@ namespace buildeR.Processor.Services
         private readonly IConsumer _consumer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
-
         public ProcessorService(IConfiguration config, IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
@@ -111,16 +112,55 @@ namespace buildeR.Processor.Services
             process.WaitForExit();
         }
 
+        private bool areDockerLogs = true;
+        private int startLogging = 2;
         public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
         {
-            var log = new ProjectLog()
+            // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
+            // (also applied to "Removing intermediate container" and "Sending build context"). Skip checking empty strings
+            if (outLine.Data != null &&
+              ((outLine.Data.StartsWith("Step") && outLine.Data.Contains("FROM")) ||
+                outLine.Data.StartsWith("Removing intermediate container") ||
+                outLine.Data.StartsWith("Sending build context")))
             {
-                Timestamp = DateTime.Now,
-                Message = outLine.Data,
-                BuildId = projectId,
-                BuildStep = 1
-            };
-            await _kafkaProducer.SendLog(log);
+                areDockerLogs = true;
+                startLogging = 2;
+            }
+            // We begin logging again after logs that starts with Step and contains RUN. Usually RUN starts process, which we need logs to take from
+            // TODO: We can add checking 'contains' from list, that will have all starter commands like RUN, CMD, etc.
+            else if (outLine.Data != null &&
+                    (outLine.Data.StartsWith("Step") &&
+                     outLine.Data.Contains("RUN")))
+            {
+                areDockerLogs = false;
+
+                // Add one specific string to divide different build steps
+                var log = new ProjectLog()
+                {
+                    Timestamp = DateTime.Now,
+                    Message = $">>> Here starts a new step",
+                    BuildId = projectId,
+                    BuildStep = 1
+                };
+                await _kafkaProducer.SendLog(log);
+            }
+
+            // This function is needed to get rid of first two lines before actual logs of our process
+            if (!areDockerLogs)
+                startLogging--;
+
+            if (!areDockerLogs && startLogging < 0)
+            {
+                var log = new ProjectLog()
+                {
+                    Timestamp = DateTime.Now,
+                    Message = outLine.Data,
+                    BuildId = projectId,
+                    BuildStep = 1
+                };
+                Log.Information("{BuildId} {BuildStep} {Message} {Timestamp}", log.BuildId, log.BuildStep, log.Message, log.Timestamp);
+                await _kafkaProducer.SendLog(log);
+            }
         }
 
         #endregion
@@ -166,13 +206,21 @@ namespace buildeR.Processor.Services
         {
             string dockerfile = "";
 
-            // Base template for generating dockerfile
+            /* Base template for generating dockerfile
+            FROM {{ docker_image }}:latest AS {{ step_name }}
+            WORKDIR /src
+            COPY . .
+            WORKDIR /src/{{ work_directory }}
+            ENV {{ key }}={{ value }} // if any
+            RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
+            */
             var template = Template.Parse(
                  "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
-                 "RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }}\r\n\r\n");
+                 "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
+                 "RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }} {{ for arg in this.plugin_command.args }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
 
             foreach (var step in buildSteps)
                 dockerfile += template.Render(step);
