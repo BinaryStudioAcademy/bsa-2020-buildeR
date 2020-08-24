@@ -9,6 +9,7 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,10 +20,16 @@ namespace buildeR.BLL.Services
     {
         private readonly IQuartzService _quartzService;
         private readonly IBuildStepService _buildStepService;
-        public ProjectService(BuilderContext context, IMapper mapper, IQuartzService quartzService, IBuildStepService buildStepService) : base(context, mapper)
+        private readonly ISynchronizationHelper _synchronizationHelper;
+        public ProjectService(BuilderContext context,
+                              IMapper mapper,
+                              IQuartzService quartzService, 
+                              IBuildStepService buildStepService,
+                              ISynchronizationHelper synchronizationHelper) : base(context, mapper)
         {
             _quartzService = quartzService;
             _buildStepService = buildStepService;
+            _synchronizationHelper = synchronizationHelper;
         }
 
         public override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
@@ -54,7 +61,14 @@ namespace buildeR.BLL.Services
         }
         public async Task<ProjectDTO> CreateProject(NewProjectDTO dto)
         {
-            return await base.AddAsync(dto);
+            var createdProject =  await base.AddAsync(dto);
+            if(createdProject._Repository.CreatedByLink)
+            {
+                createdProject._Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(createdProject._Repository.Url);
+                createdProject._Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(createdProject._Repository.Url);
+                await UpdateProject(createdProject, createdProject.OwnerId);
+            }
+            return createdProject;
         }
         public async Task UpdateProject(ProjectDTO dto, int userId)
         {

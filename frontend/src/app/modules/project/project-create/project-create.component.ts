@@ -121,15 +121,16 @@ export class ProjectCreateComponent implements OnInit {
 
     this.githubRepoSection = true;
     this.urlSection = false;
+    this.newProject._repository.createdByLink = false;
   }
 
   urlRadioClicked() {
     this.urlSection = true;
     this.githubRepoSection = false;
+    this.newProject._repository.createdByLink = true;
   }
 
   closeForm() {
-    console.log(1);
     this.activeModal.close();
   }
 
