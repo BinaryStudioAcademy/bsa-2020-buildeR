@@ -6,6 +6,7 @@ using buildeR.Common.DTO.Project;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.API.Controllers
@@ -16,13 +17,13 @@ namespace buildeR.API.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly IBuildOperationsService _builder;
-        private readonly ISecretService _secretService;
+        private readonly IEnvironmentVariablesService _envService;
         public ProjectsController(IProjectService projectService,
                                   IBuildOperationsService builder,
-                                  ISecretService secretService)
+                                  IEnvironmentVariablesService envService)
         {
             _builder = builder;
-            _secretService = secretService;
+            _envService = envService;
             _projectService = projectService;
         }
 
@@ -76,21 +77,27 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("envVar")]
-        public async Task<Dictionary<string,string>> AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        public async Task AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
         {
-            var secrets = await _secretService.ReadSecretsAsync("secret");
-            secrets.Add(variableDTO.Name, variableDTO.Value);
-            var res = await _secretService.CreateSecretsAsync(secrets, "projects/" + variableDTO.ProjectId.ToString());
-            return res;
+            await _envService.AddEnvironmenVariable(variableDTO);
         }
 
-        //[HttpGet("envVar")]
-        //public async Task<IActionResult> AddEnviromentVariable()
-        //{
-        //    var secrets = await _secretService.GetSecretsDirectory("secret/projects/");
+        [HttpGet("envVar/{projectId}")]
+        public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(int projectId)
+        {
+            return await _envService.GetEnvironmentVariables(projectId.ToString());
+        }
 
-        //    return Ok();
-        //}
+        [HttpPost("envVar/delete")]
+        public async Task DeleteEnvironmentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        {
+             await _envService.DeleteEnvironmentVariable(variableDTO);
+        }
 
+        [HttpPut("envVar")]
+        public async Task UpdateEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        {
+            await _envService.UpdateEnvironmentVariable(variableDTO);
+        }
     }
 }
