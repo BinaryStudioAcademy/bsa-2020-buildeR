@@ -1,5 +1,6 @@
 import { PluginCommand } from './plugin-command';
 import { EnvVariable } from './env-variable';
+import { Arg } from './arg';
 
 export interface BuildStep {
   id: number;
@@ -9,5 +10,6 @@ export interface BuildStep {
   pluginCommandId: number;
   workDirectory: string;
   projectId: number;
-  envVaiables: EnvVariable[];
+  envVariables: EnvVariable[];
+  args: Arg[];
 }
