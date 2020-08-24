@@ -4,6 +4,7 @@ using buildeR.Common.DTO.Project;
 using buildeR.DAL.Entities;
 
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace buildeR.BLL.MappingProfiles
 {
