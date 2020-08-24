@@ -61,11 +61,12 @@ namespace buildeR.BLL.Services
                     });
             return options;
         }
-        public async Task Update(NotificationSettingDTO dto)
+        public async Task<NotificationSettingDTO> Update(NotificationSettingDTO dto)
         {
             var entity = Mapper.Map<NotificationSetting>(dto);
             Context.NotificationSettings.Update(entity);
             await Context.SaveChangesAsync();
+            return await base.GetAsync(dto.Id);
         }
         public async Task<IEnumerable<NotificationSettingDTO>> GetAll()
         {

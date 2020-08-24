@@ -11,7 +11,7 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<NotificationSettingDTO>> GetAll();
         Task<NotificationSettingDTO> GetById(int id);
         Task<NotificationSettingDTO> Create(NewNotificationSettingDTO dto);
-        Task Update(NotificationSettingDTO dto);
+        Task<NotificationSettingDTO> Update(NotificationSettingDTO dto);
         Task Delete(int id);
     }
 }

@@ -23,9 +23,9 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPut]
-        public async Task Put([FromBody] NotificationSettingDTO dto)
+        public async Task<NotificationSettingDTO> Put([FromBody] NotificationSettingDTO dto)
         {
-            await _service.Update(dto);
+            return await _service.Update(dto);
         }
         [HttpGet]
         public async Task<IEnumerable<NotificationSettingDTO>> GetAll()
