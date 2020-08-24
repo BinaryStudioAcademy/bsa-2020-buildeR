@@ -3,5 +3,4 @@ export interface EnviromentVariable {
   name: string;
   value: number;
   branch: string;
-  isEnabled: boolean;
 }

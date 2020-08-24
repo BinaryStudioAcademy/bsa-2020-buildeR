@@ -114,8 +114,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     buildStep.projectId = this.projectId;
     buildStep.workDirectory = this.workDir;
 
-    this.newBuildStep = null;
-    this.isAdding = false;
+    this.cancelBuildStep();
 
     this.isLoading = true;
     this.buildStepService
@@ -123,14 +122,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
-          this.isLoading = false;
           this.buildSteps.push(resp);
         },
         (error) => {
-          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+
+    this.isLoading = false;
   }
 
   removeBuildStep(buildStep: BuildStep) {
@@ -139,15 +138,15 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .removeBuildStep(buildStep)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (resp) => {
-          this.isLoading = false;
+        () => {
           this.buildSteps = this.buildSteps.filter(step => buildStep.id !== step.id);
         },
         (error) => {
-          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+
+    this.isLoading = false;
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -161,13 +160,13 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => {
-          this.isLoading = false;
           moveItemInArray(this.buildSteps, oldIndex, newIndex);
         },
         (error) => {
-          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+
+    this.isLoading = false;
   }
 }

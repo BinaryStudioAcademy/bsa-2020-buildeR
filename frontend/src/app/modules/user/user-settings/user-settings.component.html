@@ -1,5 +1,49 @@
 <div class="container-fluid">
   <div class="scroll-container">
+    <div class="link-buttons">
+      <button class="btn btn-sm btn-github" *ngIf="!(isProviderAdded(0) || githubClick) else linkedGithub"
+        [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+        <div class="icon">
+          <i class="fa fa-github" aria-hidden="true"></i>
+        </div>
+        <div class="button-text">
+          Link with Github
+        </div>
+      </button>
+      <ng-template #linkedGithub>
+        <button class="btn btn-sm btn-github" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+          <div class="check-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="verticalLine"></div>
+          <div class="icon icon-link">
+            <i class="fa fa-github" aria-hidden="true"></i>
+          </div>
+          <div class="button-text">Linked with Github</div>
+        </button>
+      </ng-template>
+      <button class="btn btn-sm btn-google" *ngIf="!(isProviderAdded(1) || googleClick) else linkedGoogle"
+        [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
+        <div class="icon">
+          <i class="fa fa-google" aria-hidden="true"></i>
+        </div>
+        <div class="button-text">
+          Link with Google
+        </div>
+      </button>
+      <ng-template #linkedGoogle>
+        <button class="btn btn-sm btn-google" [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
+          <div class="check-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="verticalLine"></div>
+          <div class="icon icon-link">
+            <i class="fa fa-google" aria-hidden="true"></i>
+          </div>
+          <div class="button-text">Linked with Google</div>
+        </button>
+      </ng-template>
+    </div>
     <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
       <div class="group">
         <div class="field">
@@ -40,7 +84,7 @@
           </div>
         </div>
         <div class="field">
-          <span>Upload Photo by link</span>
+          <span>Photo URL</span>
         </div>
         <div class="input-group mb-3">
           <input type="url" class="form-control form-control-sm upload" formControlName="avatarUrl"
@@ -114,19 +158,5 @@
         </div>
       </div>
     </form>
-    <div class="link-buttons">
-      <button class="btn btn-secondary" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
-        <div class="icon">
-          <i class="fa fa-github" aria-hidden="true"></i>
-        </div>
-        Link with Github
-      </button>
-      <button class="btn btn-secondary" [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
-        <div class="icon">
-          <i class="fa fa-google" aria-hidden="true"></i>
-        </div>
-        Link with Google
-      </button>
-    </div>
   </div>
 </div>

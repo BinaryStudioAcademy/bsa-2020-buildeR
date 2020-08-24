@@ -26,6 +26,72 @@ textarea
     color: crimson
     font-size: 12px
 
+h3
+  color: #17a2b8
+
+.group
+    display: grid
+    grid-template-columns: 2
+    grid-template-rows: 2
+
+.input-area
+  grid-column-start: 1
+  grid-column-end: 2
+  justify-self: start
+  margin: 0 10px 20px
+
+input
+  width: 280px
+
+textarea
+  width: 280px
+
+.field
+  grid-column-start: 0
+  grid-column-end: 1
+  justify-self: end
+  .label-wr
+  width: 100%
+  display: flex
+  justify-content: flex-start
+  span
+    display: block
+
+.required-field::after
+    content: "*"
+    color: red
+
+.small-title
+  margin-top: 0
+  font-size: 18px
+  color: #3eaaaf
+
+.error
+  color: crimson
+  font-size: 12px
+
+.btn-wp
+  text-align: center
+
+.btn
+  margin: 10px
+
+@media screen and (max-width: 675px)
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
 
 
 

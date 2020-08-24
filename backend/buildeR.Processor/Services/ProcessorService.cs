@@ -1,50 +1,35 @@
-﻿using buildeR.Common.DTO.BuildHistory;
+﻿using buildeR.Common.DTO;
+using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
-using buildeR.RabbitMq.Interfaces;
 using buildeR.Kafka;
-
-using Docker.DotNet;
-using Docker.DotNet.Models;
-
-using ICSharpCode.SharpZipLib.Tar;
-
+using buildeR.RabbitMq.Interfaces;
 using LibGit2Sharp;
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-
+using Scriban;
 using Serilog;
-
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Globalization;
-using buildeR.Common.DTO;
-using Microsoft.Extensions.Configuration;
+using System.Xml.Serialization;
 
 namespace buildeR.Processor.Services
 {
-    public class ProcessorService : IProcessorService, IDisposable
+    public class ProcessorService
     {
-        #region Properties\fields
         private readonly IConsumer _consumer;
-        private readonly DockerClient _dockerClient;
-        private readonly string _pathToProjects;
-
         private readonly KafkaProducer _kafkaProducer;
-
-        private string DockerApiUri => IsCurrentOsLinux ? "unix:/var/run/docker.sock" : "npipe://./pipe/docker_engine";
-        private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-        #endregion
-
+        private readonly string _pathToProjects;
         public ProcessorService(IConfiguration config, IConsumer consumer)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
-
-            _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri)).CreateClient();
 
             _kafkaProducer = new KafkaProducer(config, "weblog");
 
@@ -52,16 +37,12 @@ namespace buildeR.Processor.Services
             _consumer.Received += Consumer_Received;
         }
 
-        private void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
+        private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var key = e.RoutingKey;
-            /* TODO: remove
-             * Example of sent message via RabbitMq:
-             {"ProjectId":111,"RepositoryUrl":"https://bitbucket.org/rusgumeniuk/doc-an","BuildSteps":[{"BuildStepId":0,"Name":null,"Index":1,"PluginCommand":{"Id":0,"PluginId":0,"Name":"build","TemplateForDocker":"FROM {BUILD_PLUGIN_IMAGE}{BUILD_PLUGIN_VERSION} AS build\r\nWORKDIR /src\r\nCOPY [\"{WORK_DIR_NAME}/{WORK_DIR_NAME}.csproj\", \"{WORK_DIR_NAME}/\"]\r\nRUN {BUILD_PLUGIN_COMMAND} restore \"{WORK_DIR_NAME}/{WORK_DIR_NAME}.csproj\"\r\n\r\nCOPY . .\r\nWORKDIR \"/src/{WORK_DIR_NAME}\"\r\nCMD {BUILD_PLUGIN_COMMAND} {PLUGIN_COMMAND_NAME}","Plugin":null},"BuildPlugin":{"Id":0,"PluginName":".NET Core","Command":"dotnet","DockerImageName":"mcr.microsoft.com/dotnet/core/sdk","PluginCommands":null},"WorkDirectory":"Doc-AN","LoggingVerbosity":0,"Parameters":null}]}
-             */
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
-            BuildProjectAsync(executeBuild);
+            await BuildProjectAsync(executeBuild);
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
 
@@ -75,6 +56,8 @@ namespace buildeR.Processor.Services
             Log.Information(" >>>> Unregistered");
         }
 
+        #region Build and output
+
         public async Task BuildProjectAsync(ExecutiveBuildDTO build)
         {
             var pathToClonedRepository = Path.Combine(
@@ -87,32 +70,10 @@ namespace buildeR.Processor.Services
             {
                 CloneRepository(build.RepositoryUrl, pathToClonedRepository);
 
-                foreach (var buildStep in build.BuildSteps.OrderBy(step => step.Index))
-                {
-                    var dockerFileContent = GenerateDockerFileContent(buildStep, build.RepositoryUrl);
-                    await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+                var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
+                await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
-                    var imageName = await CreateImageFromRepositoryWithDockerfileAsync(pathToClonedRepository);
-
-                    var portForNewContainer = await GetFreeDockerPort();
-                    var containerId = await CreateContainerAsync(imageName, (ushort)portForNewContainer);
-
-                    if (string.IsNullOrWhiteSpace(imageName) || string.IsNullOrWhiteSpace(containerId))
-                    {
-                        throw new InvalidOperationException($"Fail on creation: Image name {imageName}, container ID {containerId}");
-                    }
-
-                    Log.Information(
-                        $"Image with name '{imageName}' and container with ID [{containerId}] were created");
-
-                    await RunContainerAsync(containerId);
-                    Log.Information($" ================= Logs from container:");
-                    await GetLogFromContainer(containerId, build.ProjectId, buildStep.Id);
-
-                    await _dockerClient.Containers.WaitContainerAsync(containerId);
-
-                    await RemoveImageAndContainerAsync(imageName, containerId);
-                }
+                buildDockerImage(pathToClonedRepository, build.ProjectId);
             }
             catch (Exception e)
             {
@@ -121,269 +82,96 @@ namespace buildeR.Processor.Services
             finally
             {
                 DeleteClonedRepository(pathToClonedRepository);
+
+                // Remove all unused containers, networks, images (both dangling and unreferenced)
+                Process process = new Process();
+                process.StartInfo.FileName = "docker";
+                process.StartInfo.Arguments = "system prune -f";
+                process.Start();
+                process.WaitForExit();
             }
         }
 
-        #region Docker
-        #region Dockerfile
-        private string GenerateDockerFileContent(BuildStepDTO buildStep, string repositoryUrl)
+        public void buildDockerImage(string path, int projectId)
         {
-            var repositoryName = new string(repositoryUrl.TakeLast(repositoryUrl.Length - repositoryUrl.LastIndexOf('/') - 1).ToArray());
-            var workDir = buildStep.WorkDirectory;
-            var buildPluginImage = buildStep.BuildPlugin.DockerImageName;//for example "mcr.microsoft.com/dotnet/core/sdk"
-            var buildPluginCommand = buildStep.BuildPlugin.Command; //e.g. "dotnet"
-
-            return buildStep
-                .PluginCommand
-                .TemplateForDocker
-                    .Replace("{BUILD_PLUGIN_IMAGE}", buildPluginImage)
-                    .Replace("{BUILD_PLUGIN_VERSION}", ":latest")//TODO: from where we take version? for now will be used last version of image
-                    .Replace("{BUILD_PLUGIN_COMMAND}", buildPluginCommand)
-                    .Replace("{REPOS_NAME}", repositoryName)
-                    .Replace("{WORK_DIR_NAME}", workDir)
-                    .Replace("{PLUGIN_COMMAND_NAME}", buildStep.PluginCommand.Name);//like "build"
+            Process process = new Process();
+            process.StartInfo.FileName = "docker";
+            process.StartInfo.Arguments = $"build {path}";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            //* Set your output and error (asynchronous) handlers
+            process.OutputDataReceived += (Object _sender, DataReceivedEventArgs _args) =>
+                OutputHandler(_sender, _args, projectId);
+            process.ErrorDataReceived += (Object _sender, DataReceivedEventArgs _args) =>
+                OutputHandler(_sender, _args, projectId);
+            //* Start process and handlers
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
         }
 
-        private async Task CreateDockerFileAsync(string content, string path)
+        private bool areDockerLogs = true;
+        private int startLogging = 2;
+        public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
         {
-            await using (var outputFile = new StreamWriter(Path.Combine(path, "Dockerfile")))
+            // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
+            // (also applied to "Removing intermediate container" and "Sending build context"). Skip checking empty strings
+            if (outLine.Data != null &&
+              ((outLine.Data.StartsWith("Step") && outLine.Data.Contains("FROM")) ||
+                outLine.Data.StartsWith("Removing intermediate container") ||
+                outLine.Data.StartsWith("Sending build context")))
             {
-                await outputFile.WriteAsync(content);
+                areDockerLogs = true;
+                startLogging = 2;
+            }
+            // We begin logging again after logs that starts with Step and contains RUN. Usually RUN starts process, which we need logs to take from
+            // TODO: We can add checking 'contains' from list, that will have all starter commands like RUN, CMD, etc.
+            else if (outLine.Data != null &&
+                    (outLine.Data.StartsWith("Step") &&
+                     outLine.Data.Contains("RUN")))
+            {
+                areDockerLogs = false;
+
+                // Add one specific string to divide different build steps
+                var log = new ProjectLog()
+                {
+                    Timestamp = DateTime.Now,
+                    Message = $">>> Here starts a new step",
+                    BuildId = projectId,
+                    BuildStep = 1
+                };
+                await _kafkaProducer.SendLog(log);
+            }
+
+            // This function is needed to get rid of first two lines before actual logs of our process
+            if (!areDockerLogs)
+                startLogging--;
+
+            if (!areDockerLogs && startLogging < 0)
+            {
+                var log = new ProjectLog()
+                {
+                    Timestamp = DateTime.Now,
+                    Message = outLine.Data,
+                    BuildId = projectId,
+                    BuildStep = 1
+                };
+                Log.Information("{BuildId} {BuildStep} {Message} {Timestamp}", log.BuildId, log.BuildStep, log.Message, log.Timestamp);
+                await _kafkaProducer.SendLog(log);
             }
         }
+
         #endregion
 
-        #region Image
-        private async Task PullImageByNameAsync(string imageName)
-        {
-            try
-            {
-                await _dockerClient
-                    .Images
-                    .CreateImageAsync(
-                        new ImagesCreateParameters
-                        {
-                            FromImage = imageName,
-                            Tag = "latest"
-                        },
-                        new AuthConfig(),
-                        new Progress<JSONMessage>()
-                    );
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message);
-            }
-        }
+        #region Directory and repository
 
-        /// <summary />
-        /// <param name="path">Path to directory with Dockerfile</param>
-        /// <returns>Name of created image or empty</returns>
-        private async Task<string> CreateImageFromRepositoryWithDockerfileAsync(string path)
-        {
-            await using (var stream = CreateTarballForDockerfileDirectory(path))
-            {
-                try
-                {
-                    //Dockerfile has to be in the parent directory of cloned repository. It can be changed later.
-                    var imageName = $"image{new Random().Next()}{DateTime.Now.Millisecond}";
-                    await _dockerClient
-                        .Images
-                        .BuildImageFromDockerfileAsync(
-                            stream,
-                            new ImageBuildParameters()
-                            {
-                                Tags = new[] { imageName }
-                            });
-                    return imageName;
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e.Message);
-                    return string.Empty;
-                }
-            }
-        }
-        #endregion
-
-        #region Container
-        private async Task<int> GetFreeDockerPort()
-        {
-            var containers = await _dockerClient
-                .Containers
-                .ListContainersAsync(new ContainersListParameters() { All = true });
-
-            var reservedPorts = containers.SelectMany(container => container.Ports).Select(port => port.IP);
-
-            int selectedPort;
-            do
-            {
-                selectedPort = new Random().Next(1000, 9999);
-            } while (reservedPorts.Contains(selectedPort.ToString()));
-
-            return selectedPort;
-        }
-
-        /// <summary />
-        /// <param name="imageName">Name of image that will be used to create container</param>
-        /// <param name="port">Expose port</param>
-        /// <returns>ID of created container or empty</returns>
-        private async Task<string> CreateContainerAsync(string imageName, ushort port)
-        {
-            return await TryCreateContainerAsync(imageName, port, 0, 100);
-        }
-
-        /// <summary>Try to create container until retry count reached maximum retry count</summary>
-        /// <param name="imageName">Name of image that will be used to create container</param>
-        /// <param name="port">Expose port</param>
-        /// <param name="retryCount">Current count of retry to create Docker container</param>
-        /// <param name="maxRetryCount"></param>
-        /// <returns>ID of created container or empty</returns>
-        private async Task<string> TryCreateContainerAsync(string imageName, ushort port, uint retryCount = 0, uint maxRetryCount = 100)
-        {
-            try
-            {
-                var createdContainer = await _dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
-                {
-                    Image = imageName,
-                    ExposedPorts = new Dictionary<string, EmptyStruct>
-                    {
-                        {
-                            port.ToString(), default
-                        }
-                    },
-                    HostConfig = new HostConfig
-                    {
-                        PortBindings = new Dictionary<string, IList<PortBinding>>
-                        {
-                            {port.ToString(), new List<PortBinding> {new PortBinding {HostPort = port.ToString()}}}
-                        },
-                        PublishAllPorts = true
-                    }
-                });
-                return createdContainer.ID;
-            }
-            catch (DockerContainerNotFoundException)
-            {
-                //DockerContainerNotFoundException can be caused by some Docker client error, so sometimes should retry the operation
-                //But DockerContainerNotFoundException can be caused by incorrect Dockerfile also
-                return ++retryCount < maxRetryCount ? await TryCreateContainerAsync(imageName, port, retryCount, maxRetryCount) : string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                return string.Empty;
-            }
-        }
-
-        private async Task<bool> RunContainerAsync(string containerId)
-        {
-            return await _dockerClient.Containers.StartContainerAsync(containerId, new ContainerStartParameters());
-        }
-
-        private async Task StopContainerAsync(string containerId)
-        {
-            await _dockerClient.Containers.StopContainerAsync(containerId, new ContainerStopParameters());
-        }
-
-        private async Task RemoveImageAndContainerAsync(string imageName, string containerId)
-        {
-            await _dockerClient.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters());
-            await _dockerClient.Images.DeleteImageAsync(imageName, new ImageDeleteParameters());
-        }
-        #endregion
-
-        private async Task GetLogFromContainer(string containerId, int buildId, int stepId)
-        {
-            var logStream = await _dockerClient.Containers.GetContainerLogsAsync(containerId,
-                new ContainerLogsParameters
-                {
-                    Follow = true,
-                    ShowStderr = true,
-                    ShowStdout = true,
-                    Timestamps = true,
-
-                }, default);
-
-            using (var reader = new StreamReader(logStream))
-            {
-                string line = null;
-                
-                while ((line = await reader.ReadLineAsync()) != null)
-                {
-                    var firstSpaceIndex = line.IndexOf("Z "); // separating timestamp from message (timestamp always ends with Z+space)
-
-                    var garbageDate = line.Substring(0, firstSpaceIndex + 1); // getting date string with garbage letters at the beginning
-                    var date = garbageDate.Substring(8); // real timestamp always starts on 9th symbol because of docker logs format
-                    var timestamp = DateTime.Parse(date); // parsing timestamp
-
-                    var message = line.Substring(firstSpaceIndex + 2).TrimStart(); // getting message 
-
-                    var log = new ProjectLog()
-                    {
-                        Timestamp = timestamp,
-                        Message = message,
-                        BuildId = buildId,
-                        BuildStep = stepId
-                    };
-
-                    await _kafkaProducer.SendLog(log);
-                }
-            }
-        }
-        #endregion
-
-        #region Tar
-        private static Stream CreateTarballForDockerfileDirectory(string directory)
-        {
-            var tarball = new MemoryStream();
-            var files = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories);
-
-            using var archive = new TarOutputStream(tarball)
-            {
-                //Prevent the TarOutputStream from closing the underlying memory stream when done
-                IsStreamOwner = false
-            };
-
-            foreach (var file in files)
-            {
-                //Replacing slashes as KyleGobel suggested and removing leading /
-                string tarName = file.Substring(directory.Length).Replace('\\', '/').TrimStart('/');
-
-                //Let's create the entry header
-                var entry = TarEntry.CreateTarEntry(tarName);
-                using var fileStream = File.OpenRead(file);
-                entry.Size = fileStream.Length;
-                archive.PutNextEntry(entry);
-
-                //Now write the bytes of data
-                byte[] localBuffer = new byte[32 * 1024];
-                while (true)
-                {
-                    int numRead = fileStream.Read(localBuffer, 0, localBuffer.Length);
-                    if (numRead <= 0)
-                        break;
-
-                    archive.Write(localBuffer, 0, numRead);
-                }
-
-                //Nothing more to do with this entry
-                archive.CloseEntry();
-            }
-            archive.Close();
-
-            //Reset the stream and return it, so it can be used by the caller
-            tarball.Position = 0;
-            return tarball;
-        }
-        #endregion
-
-        #region Directory
         private void CloneRepository(string repositoryUrl, string path)
         {
             try
             {
-                EnsureExistDirectory(path);
+                Directory.CreateDirectory(path);
                 Repository.Clone(repositoryUrl, path);//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
             }
             catch (Exception e)
@@ -392,21 +180,12 @@ namespace buildeR.Processor.Services
             }
         }
 
-        private void EnsureExistDirectory(string path)
-        {
-            Directory.CreateDirectory(path);
-        }
-
-        /// <summary>
-        /// Will delete parent directory where the cloned repository is located
-        /// </summary>
-        /// <param name="pathToClonedRepository">Path to cloned repository</param>
         private void DeleteClonedRepository(string pathToClonedRepository)
         {
             var pathToParentDirectory = pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf(IsCurrentOsLinux ? "/" : "\\", StringComparison.Ordinal));
             DeleteFolderWithSubfolders(pathToParentDirectory);
         }
-
+        private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         private void DeleteFolderWithSubfolders(string path)
         {
             foreach (var sub in Directory.EnumerateDirectories(path))
@@ -422,9 +201,40 @@ namespace buildeR.Processor.Services
         }
         #endregion
 
-        public void Dispose()
+        #region Dockerfile
+        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl)
         {
-            _dockerClient.Dispose();
+            string dockerfile = "";
+
+            /* Base template for generating dockerfile
+            FROM {{ docker_image }}:latest AS {{ step_name }}
+            WORKDIR /src
+            COPY . .
+            WORKDIR /src/{{ work_directory }}
+            ENV {{ key }}={{ value }} // if any
+            RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
+            */
+            var template = Template.Parse(
+                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
+                 "WORKDIR \"/src\"\r\n" +
+                 "COPY . .\r\n" +
+                 "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
+                 "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
+                 "RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }} {{ for arg in this.plugin_command.args }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
+
+            foreach (var step in buildSteps)
+                dockerfile += template.Render(step);
+
+            return dockerfile;
         }
+
+        private async Task CreateDockerFileAsync(string content, string path)
+        {
+            await using (var outputFile = new StreamWriter(Path.Combine(path, "Dockerfile")))
+            {
+                await outputFile.WriteAsync(content);
+            }
+        }
+        #endregion
     }
 }
