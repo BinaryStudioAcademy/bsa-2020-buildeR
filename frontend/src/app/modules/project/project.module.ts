@@ -14,6 +14,7 @@ import { ProjectBuildStepsComponent } from './project-build-steps/project-build-
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-project.component';
 import { EnvVarsEditorComponent } from './project-settings/env-vars-editor/env-vars-editor.component';
+import { ProjectBuildComponent } from './project-build/project-build.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { EnvVarsEditorComponent } from './project-settings/env-vars-editor/env-v
     ProjectBuildHistoryComponent,
     ModalCopyProjectComponent,
     ProjectBuildStepsComponent,
-    EnvVarsEditorComponent
+    EnvVarsEditorComponent,
+    ProjectBuildComponent
   ],
   imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule],
   exports: [ProjectCreateComponent]
