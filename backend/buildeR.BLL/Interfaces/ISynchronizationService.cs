@@ -6,7 +6,7 @@ namespace buildeR.BLL.Interfaces
 {
     public interface ISynchronizationService
     {
-        Task<IEnumerable<Branch>> GetRepositoryBranches(string repositoryName, string accessToken);
+        Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId, string accessToken);
         Task<IEnumerable<Repository>> GetUserRepositories(string accessToken);
         Task RegisterWebhook(int projectId, string callback, string accessToken);
     }

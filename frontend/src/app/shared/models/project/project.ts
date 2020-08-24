@@ -1,6 +1,7 @@
 import { BuildHistory } from '../build-history';
 import { User } from '../user/user';
 import { ProjectTrigger } from './project-trigger/project-trigger';
+import { BuildStep } from '../build-step';
 
 export interface Project {
   id: number;
@@ -18,6 +19,6 @@ export interface Project {
 
   owner: User;
   buildHistories: BuildHistory[];
- // buildSteps: BuildSteps[];
+  buildSteps: BuildStep[];
   projectTriggers: ProjectTrigger[];
 }

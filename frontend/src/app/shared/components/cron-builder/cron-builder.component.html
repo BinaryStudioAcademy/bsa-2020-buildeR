@@ -2,8 +2,8 @@
   <cron-jobs [config]="cronConfig" [(ngModel)]="cronResult" class="fisrt"> </cron-jobs>
 
   <div *ngIf="cronInput; else elseBlock" class="btn-wr">
-    <button (click)="updating()" class="btn btn-warning"><i class="fa fa-save fa-lg"></i></button>
-    <button (click)="deleting()" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button>
+    <button (click)="updating()" class="btn btn-warning"><i class="fas fa-save fa-lg"></i></button>
+    <button (click)="deleting()" class="btn btn-danger"><i class="fas fa-trash fa-lg"></i></button>
   </div>
 
   <ng-template #elseBlock>
