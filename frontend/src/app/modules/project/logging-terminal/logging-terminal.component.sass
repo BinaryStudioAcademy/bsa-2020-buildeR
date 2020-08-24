@@ -20,13 +20,6 @@
     background-color: #444
     height: 1.5rem
 
-    a
-      display: inline-block
-      float: right
-      margin-right: 0.5rem
-      text-decoration: none
-      cursor: pointer
-
   .log-container
     min-height: 60vh
     background-color: #222
@@ -119,11 +112,14 @@
     .tail-body
       position: absolute
       left: -1.5rem
+      display: flex
+      flex-direction: column
+      gap: 0.5rem
+      align-items: center
 
       a
         display: inline-block
         cursor: pointer
-        margin-bottom: 0.5rem
 
         &:hover
           opacity: 65%

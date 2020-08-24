@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
 import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
@@ -19,10 +25,15 @@ type Action = {
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
+export class LoggingTerminalComponent extends BaseComponent
+  implements OnInit, OnDestroy {
   private log = new Subject<string>();
   private step = 1;
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
+
+  @ViewChild('bottom') private bottom: ElementRef;
+
+  autoscroll = true;
 
   private lineNumber: number = 1;
 
@@ -34,15 +45,18 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     [boolean, Action[]]
   >();
 
-  constructor(private buildService: BuildLogService, private logsService: ProjectLogsService) {
+  constructor(
+    private buildService: BuildLogService,
+    private logsService: ProjectLogsService
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    // this.buildService
-    //   .getTestBuildLog()
-    //   .pipe(delay(0))
-    //   .subscribe((line) => this.buildLog(line));
+    this.buildService
+      .getTestBuildLog()
+      .pipe(delay(0))
+      .subscribe((line) => this.buildLog(line));
     this.logsService.buildConnection();
     this.logsService.startConnectionAndJoinGroup('111'); // '111' is buildId of our demo project
     this.logsService.logsListener(this.log);
@@ -71,6 +85,10 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
   }
 
   private buildLog(line: string) {
+    if (this.autoscroll) {
+      this.scrollBottom(this.bottom.nativeElement);
+    }
+
     const [step, action] = this.parseLine(line);
     this.appendLog(step, action);
   }
