@@ -1,4 +1,5 @@
 import { BuildPlugin } from './build-plugin';
+import { Arg } from './arg';
 
 export interface PluginCommand {
   id: number;
@@ -6,4 +7,5 @@ export interface PluginCommand {
   teplateForDocker: string;
   pluginId: number;
   plugin: BuildPlugin;
+  args: Arg[];
 }

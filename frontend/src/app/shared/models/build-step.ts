@@ -1,4 +1,5 @@
 import { PluginCommand } from './plugin-command';
+import { EnvVariable } from './env-variable';
 
 export interface BuildStep {
   id: number;
@@ -8,4 +9,5 @@ export interface BuildStep {
   pluginCommandId: number;
   workDirectory: string;
   projectId: number;
+  envVaiables: EnvVariable[];
 }
