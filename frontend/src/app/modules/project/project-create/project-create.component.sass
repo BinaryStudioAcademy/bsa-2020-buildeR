@@ -6,8 +6,20 @@
   align-items: center
   justify-content: flex-start
 
-h3
+.h4
   color: #17a2b8
+  margin: 0
+
+#cross
+  height: 20px
+  width: 20px
+  margin-top: 6px
+  transition: .3s
+  cursor: pointer
+
+#cross:hover
+  transition: .3s
+  color: crimson
 
 .radio-wr
   width: 100%
@@ -29,23 +41,11 @@ h3
   .connect-with-title-wr
   color: var(--gray)
 
-.connect-with-divider
+.divider
   min-height: 2px
-  width: 100%
-  margin-top: 10px
-  margin-bottom: 10px
+  width: 103%
+  margin: 10px 0px 10px -1.5%
   background-color: var(--light)
-
-.small-divider
-  width: 90%
-  margin: auto
-
-.vide-divider-first
-  width: 100%
-  margin-left: -15px
-
-.vide-divider-second
-  margin-right: -15px
 
 .connect-with-title-wr
   display: flex
@@ -76,77 +76,53 @@ h3
     margin-left: 10px
     font-size: .75em
 
-.github-form
-  max-width: 100%
-  padding: 10px
+.form-control-wr
+  padding: 5px
 
-.group
-    display: grid
-    grid-template-columns: 2
-    grid-template-rows: 2
-
-.little-group
-  max-height: 30px
-
-.input-area
-  grid-column-start: 1
-  grid-column-end: 2
-  justify-self: start
-  margin: 5px
-
-input
-  width: 280px
-
-textarea
-  width: 280px
-
-.field
-  grid-column-start: 0
-  grid-column-end: 1
-  justify-self: end
-  min-width: 120px
+.input-wr
+  display: flex
+  align-items: center
   .label-wr
+    min-width: 120px
+    max-width: 120px
+    display: flex
+    justify-content: flex-start
+  label
+    margin-bottom: 0
+  input, textarea
+    margin-left: 10px
+
+.custom-switch
+  padding-left: 45px
+
+.btn-wr
   width: 100%
   display: flex
-  justify-content: flex-start
-  span
-    display: block
+  justify-content: flex-end
+  align-items: center
+  button
+    margin: 5px
 
 .required-field::after
     content: "*"
     color: red
 
-.small-title
-  margin-top: 0
-  font-size: 18px
-  color: #3eaaaf
-
 .error
   color: crimson
   font-size: 12px
-
-.btn-wp
-  text-align: center
-
-.btn
-  margin: 10px
-
-.main-form-wr
-  padding: 10px 0px 0px 15px
-
-@media screen and (max-width: 675px)
-  .field
-    grid-column-start: 1
-    grid-column-end: 2
-    justify-self: start
-    margin-left: calc((100% - 300px)/2)
-  .input-area
-    justify-self: center
-    margin-left: 0
-    margin-right: 0
-  .save-button-container
-    justify-self: center
-  .input-group
-    justify-self: center
-    margin-left: 0
-    margin-right: 0
+// @media screen and (max-width: 675px)
+//   .field
+//     grid-column-start: 1
+//     grid-column-end: 2
+//     justify-self: start
+//     margin-left: calc((100% - 300px)/2)
+//   .input-area
+//     justify-self: center
+//     margin-left: 0
+//     margin-right: 0
+//   .save-button-container
+//     justify-self: center
+//   .input-group
+//     justify-self: center
+//     margin-left: 0
+//     margin-right: 0
