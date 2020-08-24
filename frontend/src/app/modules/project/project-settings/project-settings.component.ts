@@ -20,8 +20,7 @@ export class ProjectSettingsComponent implements OnInit {
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
   public projectForm: FormGroup;
-  public envVarsEditForm: FormGroup;
-  @Input() envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
+  @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
   @Input() project: Project = {} as Project;
   constructor(
@@ -49,18 +48,6 @@ export class ProjectSettingsComponent implements OnInit {
           ])
     });
 
-    this.envVarsEditForm = new FormGroup({
-      name: new FormControl(this.envVar.data.name,
-        [
-          Validators.required
-        ]),
-      value: new FormControl(this.envVar.data.value,
-        [
-          Validators.required
-        ]),
-        isSecret: new FormControl(this.envVar.data.isSecret)
-    });
-
     this.envVarsForm = new FormGroup({
       name: new FormControl(this.envVar.data.name,
         [
@@ -72,6 +59,13 @@ export class ProjectSettingsComponent implements OnInit {
         ]),
         isSecret: new FormControl(this.envVar.data.isSecret)
     });
+    this.projectService.envVariable.subscribe((res) => {
+      this.edit(res);
+    });
+    this.projectService.deleteEnvVariable.subscribe((res) => {
+      this.delete(res);
+    });
+
   }
 
   reset() {
@@ -96,7 +90,7 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
 
-  remvove(envVar: EnviromentVariable){
+  delete(envVar: EnviromentVariable){
     const index = this.envVariables.lastIndexOf(envVar);
     this.envVariables.splice(index, 1);
   }

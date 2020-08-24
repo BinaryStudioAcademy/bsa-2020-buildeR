@@ -1,0 +1,27 @@
+<form [formGroup]="envVarsEditForm" class="group-ev vars" >
+  <div class="name">
+    <div class="input-area">
+      <input type="text" class="form-control form-control form-control-ev"
+      formControlName="name">
+    </div>
+  </div>
+  <div class="value">
+    <div class="input-area">
+      <input type="text" class="form-control form-control form-control-ev val"
+      formControlName="value">
+    </div>
+  </div>
+    <div class="switch">
+      <div class="input-area">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" formControlName="isSecret"/>
+          <label class="custom-control-label isSecret-label" for="isSecret"></label>
+        </div>
+    </div>
+    </div>
+    <div class="options-env-vars">
+      <button class="btn btn-warning add-cron" [disabled]="envVarsEditForm.untouched
+      && !envVarsEditForm.errors" (click)="edit()">Edit</button>
+      <button class="btn btn-danger add-cron" (click)="delete()" >Delete</button>
+    </div>
+  </form>

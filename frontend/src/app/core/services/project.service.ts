@@ -3,12 +3,18 @@ import { HttpService } from './http.service';
 import { ProjectInfo } from '../../shared/models/project-info';
 import { Project } from '@shared/models/project/project';
 import { NewProject } from '@shared/models/project/new-project';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   public routePrefix = '/projects';
+  private envVariable$ = new Subject<EnviromentVariable>();
+  private deleteEnvVariable$ = new Subject<EnviromentVariable>();
+
+  envVariable = this.envVariable$.asObservable();
+  deleteEnvVariable = this.deleteEnvVariable$.asObservable();
 
   constructor(private httpService: HttpService) { }
 
@@ -52,5 +58,12 @@ export class ProjectService {
       `${this.routePrefix}/copy`,
       project
     );
+  }
+  editEnvVar(envVar: EnviromentVariable) {
+    this.envVariable$.next(envVar);
+  }
+
+  deleteEnvVar(envVar: EnviromentVariable){
+    this.deleteEnvVariable$.next(envVar);
   }
 }

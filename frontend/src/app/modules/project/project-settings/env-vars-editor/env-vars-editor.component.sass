@@ -1,0 +1,128 @@
+
+.group-ev
+  display: grid
+  grid-template-columns: 4
+  grid-template-rows: 2
+
+.vars
+  display: grid
+  grid-template-columns: 5
+  background-color: #EAE4E4
+  padding-bottom: 10px
+
+.vars input
+  background-color: #F0ECEC
+
+.vars select
+  background-color: #F0ECEC
+
+.vars .form-control-ev
+  width: 85%
+
+.val
+  margin-left: 2%
+
+.error
+  color: red
+  font-size: .75em
+
+.options-env-vars
+  grid-column-end: 5
+
+.padd
+  padding-top:20px
+
+.name
+  grid-column-start: 1
+  grid-column-end: 2
+
+.value
+  grid-column-start: 2
+  grid-column-end: 3
+
+.switch
+  grid-column-start: 3
+  grid-column-end: 4
+  padding-right: 5rem
+  justify-self: center
+
+.custom-control-input
+  z-index: 2
+.add-env
+  grid-column-start: 4
+  grid-column-end: 5
+
+.add-env button
+  margin-top: 28px
+
+.isOn button
+  margin-top: 28px
+
+select.form-control
+  width: 130%
+
+.addSwitch
+  padding-top: 25px
+
+.add-cron
+ margin-left: 30px
+
+.group-jobs
+  display: grid
+  grid-template-columns: 4
+  grid-template-rows: 2
+
+.add
+  margin-top:28px
+
+
+
+.text
+  font-size: 16px
+  color: #666
+  font-weight: 600
+
+.env-var-switch
+  margin-left: 30px
+  padding-bottom: 10px
+
+.tab
+  display: table
+
+@media screen and (max-width: 675px)
+  .container
+    max-width: 100%
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .group-ev
+   grid-template-columns: 2
+   grid-template-rows: 5
+  .name
+    grid-column-start: 1
+    grid-column-end: 2
+  .value
+    grid-column-start: 1
+    grid-column-end: 2
+  .switch
+    grid-column-start: 1
+    grid-column-end: 2
+  .isOn
+    grid-column-start: 1
+    grid-column-end: 2
+  .form-control-ev
+    margin-left: 0
+  .options-env-vars
+    justify-self: start
