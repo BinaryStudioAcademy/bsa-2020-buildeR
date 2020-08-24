@@ -31,10 +31,18 @@
   color: #666
 
 .text-near
-  margin-top: -12px
+  margin-top: -10px
 
 input
   width: 300px
+
+#isPublicSwitch
+  width: 100%
+
+.base-line
+  span
+    display: block
+    padding-top: 1px
 
 textarea
   width: 300px
@@ -129,8 +137,8 @@ select.form-control
 .addSwitch
   padding-top: 25px
 
-.add-cron
- margin-left: 30px
+//.add-cron
+// margin-left: 30px
 
 .group-jobs
   display: grid
@@ -156,6 +164,10 @@ select.form-control
 .tab
   display: table
 
+.settings-section:last-of-type
+  .input-area
+    margin: 0px
+
 @media screen and (max-width: 675px)
   .container
     max-width: 100%
@@ -164,6 +176,8 @@ select.form-control
     grid-column-end: 2
     justify-self: start
     margin-left: calc((100% - 300px)/2)
+  .base-line
+    grid-row: 3 / 4
   .input-area
     justify-self: center
     margin-left: 0
@@ -191,7 +205,10 @@ select.form-control
   .isOn
     grid-column-start: 1
     grid-column-end: 2
+    button
+      margin: 28px 0px 5px 0px
   .form-control-ev
     margin-left: 0
   .options-env-vars
     justify-self: start
+

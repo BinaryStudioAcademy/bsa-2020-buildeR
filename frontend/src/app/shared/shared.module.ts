@@ -16,6 +16,7 @@ import { TimespanPipe } from './pipes/timespan.pipe';
 import { BuildHistoryStatusDirective } from './directives/build-history-status.directive';
 import { BuildHistoryStatusOutlineDirective } from './directives/build-history-status-outline.directive';
 import { TabsComponent } from './components/tabs/tabs.component';
+import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -31,6 +32,7 @@ import { TabsComponent } from './components/tabs/tabs.component';
     BuildHistoryStatusDirective,
     BuildHistoryStatusOutlineDirective,
     TabsComponent,
+    LoadingSpinnerComponent,
   ],
   imports: [
     CommonModule,
@@ -60,6 +62,7 @@ import { TabsComponent } from './components/tabs/tabs.component';
     BuildHistoryStatusDirective,
     BuildHistoryStatusOutlineDirective,
     TabsComponent,
+    LoadingSpinnerComponent
   ],
 })
 export class SharedModule {}
