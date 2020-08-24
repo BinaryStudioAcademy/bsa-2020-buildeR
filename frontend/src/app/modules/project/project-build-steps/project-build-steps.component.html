@@ -5,7 +5,7 @@
 "></div>
 
 <ng-template #loading>
-    <app-loading-spinner size="30px"></app-loading-spinner>
+    <app-loading-spinner size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
     <div class="container px-0">
@@ -29,20 +29,87 @@
         </div>
 
         <div class="row" hidden="true" [hidden]="!isAdding">
-            <div class="col-sm-4 col-xs-12 px-0 pr-2 new-step-input">
-                <select required class="form-control" [(ngModel)]="newBuildStep">
-          <ng-container *ngFor="let step of emptyBuildSteps">
-            <option [ngValue]='step'>{{step.buildStepName}}</option>
-          </ng-container>
-        </select>
+            <div class="container row">
+                <div class="col-sm-4 col-xs-12 px-0 pr-2 new-step-input">
+                    <select required class="form-control" [(ngModel)]="newBuildStep">
+            <ng-container *ngFor="let step of emptyBuildSteps">
+              <option [ngValue]='step'>{{step.buildStepName}}</option>
+            </ng-container>
+          </select>
+                </div>
+                <div class="col-sm-4 col-xs-12 px-0 new-step-input"><input class="input h-100 text-input" type="text" required placeholder="Work directory" [(ngModel)]="workDir"></div>
+                <div class="col-sm-2 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
+                <div class="col-sm-2 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-success" [disabled]="!newBuildStep || !workDir" (click)="saveBuildStep()">Save</button></div>
             </div>
-            <div class="col-sm-4 col-xs-12 px-0 new-step-input"><input class="input h-100 work-dir" type="text" required placeholder="Work directory" [(ngModel)]="workDir"></div>
-            <div class="col-sm-2 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
-            <div class="col-sm-2 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-success" [disabled]="!newBuildStep || !workDir" (click)="saveBuildStep()">Save</button></div>
+
+            <div class="container mt-2" *ngIf="envVariables?.length">
+                <h4>Environment variables</h4>
+                <div class="row" *ngFor="let envVariable of envVariables">
+                    <div class="col-1">Key</div>
+                    <div class="col-3">
+                        <span>{{envVariable.key}}</span>
+                    </div>
+                    <div class="col-1">Value</div>
+                    <div class="col-3">
+                        <span>{{envVariable.value}}</span>
+                    </div>
+                    <div class="col-1"> <button class="btn" (click)="removeNewEnvVariable(envVariable.key)">
+              <i class="fa fa-close"></i>
+            </button></div>
+                </div>
+            </div>
+            <div class="row mt-2" *ngIf="newEnvVariableValue !== null && newEnvVariableKey !== null">
+                <div class="col-2 px-0 new-step-input">Key</div>
+                <div class="col-3 px-0 new-step-input">
+                    <input type="text" class="text-input w-100" [(ngModel)]="newEnvVariableKey" placeholder="--verbosity">
+                </div>
+                <div class="col-2 px-0 new-step-input">Value</div>
+                <div class="col-3 px-0 new-step-input">
+                    <input type="text" class="text-input w-100" [(ngModel)]="newEnvVariableValue" placeholder="normal">
+                </div>
+                <div class="col-1 px-0 new-step-input"> <button class="btn" (click)="clearNewEnvVariable()">
+            <i class="fa fa-close text-danger"></i>
+          </button></div>
+                <div class="col-1 px-0 new-step-input"> <button class="btn" [disabled]="!newEnvVariableKey || !newEnvVariableValue" (click)="saveEnvVariable()">
+            <i class="fas fa-check text-success"></i>
+          </button></div>
+            </div>
+            <div class="container" *ngIf="args?.length">
+                <h4>Command arguments</h4>
+                <div class="row" *ngFor="let arg of args">
+                    <div class="col-2">Key</div>
+                    <div class="col-3">{{arg.key}}</div>
+                    <div class="col-2">Value</div>
+                    <div class="col-3">{{arg.value}}</div>
+                    <div> <button class="btn" (click)="removeNewArg(arg.key)">
+                    <i class="fa fa-close"></i>
+                  </button></div>
+                </div>
+            </div>
+            <div class="row mt-2" *ngIf="newArgValue !== null && newArgKey !== null">
+                <div class="col-2 px-0 new-step-input">Key</div>
+                <div class="col-3 px-0 new-step-input">
+                    <input type="text" class="text-input w-100" [(ngModel)]="newArgKey" placeholder="--verbosity">
+                </div>
+                <div class="col-2 px-0 new-step-input">Value</div>
+                <div class="col-3 px-0 new-step-input">
+                    <input type="text" class="text-input w-100" [(ngModel)]="newArgValue" placeholder="normal">
+                </div>
+                <div class="col-1 px-0 new-step-input"> <button class="btn" (click)="clearNewArg()">
+          <i class="fa fa-close text-danger"></i>
+        </button></div>
+                <div class="col-1 px-0 new-step-input"> <button class="btn" [disabled]="!newArgValue || !newArgKey" (click)="saveArg()">
+          <i class="fas fa-check text-success"></i>
+        </button></div>
+            </div>
+            <div class="container row mt-2">
+                <div class="col-4"><button class="btn btn-info" (click)="addEnvVariable()">Add Environment variable</button></div>
+                <div class="col-4"><button class="btn btn-info" (click)="addArg()">Add command argument</button></div>
+            </div>
         </div>
 
         <div class="row">
-            <button class="btn btn-info" [hidden]="isAdding" (click)="addBuildStep()">Add a build step</button>
+            <button class="btn btn-primary" [hidden]="isAdding" (click)="addBuildStep()">Add a build step</button>
         </div>
     </div>
 </ng-template>
