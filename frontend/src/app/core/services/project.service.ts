@@ -3,11 +3,13 @@ import { HttpService } from './http.service';
 import { ProjectInfo } from '../../shared/models/project-info';
 import { Project } from '@shared/models/project/project';
 import { NewProject } from '@shared/models/project/new-project';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
+  private projectName$ = new Subject<string>();
+  projectName = this.projectName$.asObservable();
   public routePrefix = '/projects';
 
   constructor(private httpService: HttpService) { }
@@ -52,5 +54,9 @@ export class ProjectService {
       `${this.routePrefix}/copy`,
       project
     );
+  }
+
+  changeProjectName(projectName: string){
+    this.projectName$.next(projectName);
   }
 }

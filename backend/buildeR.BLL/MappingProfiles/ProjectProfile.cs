@@ -20,7 +20,10 @@ namespace buildeR.BLL.MappingProfiles
                             .OrderByDescending(prj => prj.BuildAt)
                             .FirstOrDefault()));
 
-            CreateMap<ProjectDTO, Project>();
+            CreateMap<ProjectDTO, Project>()
+                .ForMember(dest => dest._Repository,
+                    src => src
+                        .MapFrom(project => project._Repository));
             CreateMap<NewProjectDTO, Project>();
         }
     }
