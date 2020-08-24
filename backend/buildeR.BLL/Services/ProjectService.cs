@@ -62,14 +62,12 @@ namespace buildeR.BLL.Services
         }
         public async Task<ProjectDTO> CreateProject(NewProjectDTO dto)
         {
-            var createdProject =  await base.AddAsync(dto);
-            if(createdProject._Repository.CreatedByLink)
+            if(dto._Repository.CreatedByLink)
             {
-                createdProject._Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(createdProject._Repository.Url);
-                createdProject._Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(createdProject._Repository.Url);
-                await UpdateProject(createdProject, createdProject.OwnerId);
+                dto._Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(dto._Repository.Url);
+                dto._Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(dto._Repository.Url);
             }
-            return createdProject;
+            return await base.AddAsync(dto);
         }
         public async Task UpdateProject(ProjectDTO dto, int userId)
         {
@@ -165,10 +163,10 @@ namespace buildeR.BLL.Services
         }
         public async Task<RepositoryDTO> GetRepository(int projectId)
         {
-            var repository = await Context.Projects.Include(p => p._Repository)
+            var project = await Context.Projects.Include(p => p._Repository)
                                                    .FirstOrDefaultAsync(p => p.Id == projectId);
 
-            return Mapper.Map<RepositoryDTO>(repository);
+            return Mapper.Map<RepositoryDTO>(project._Repository);
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {

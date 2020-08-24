@@ -8,6 +8,7 @@ namespace buildeR.BLL.Interfaces
     {
         Task<GithubUser> GetUserFromToken(string providerToken);
         Task<IEnumerable<GithubRepository>> GetUserRepositories(string providerToken);
+        Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryOwner, string repositoryName, string providerToken);
         Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryName, string providerToken);
         Task CreateWebhook(string repositoryName, string callback, string providerToken);
     }

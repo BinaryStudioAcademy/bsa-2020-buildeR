@@ -10,5 +10,6 @@ namespace buildeR.Common.DTO.Repository
         public string Url { get; set; }
         public bool Private { get; set; }
         public bool CreatedByLink { get; set; }
+        public string Owner { get; set; }
     }
 }
