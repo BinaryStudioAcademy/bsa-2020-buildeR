@@ -59,11 +59,33 @@ export class ProjectService {
       project
     );
   }
-  editEnvVar(envVar: EnviromentVariable) {
+
+  public getEnvironmentVariables(projectId: number): Observable<any>{
+    return this.httpService.getRequest<EnviromentVariable[]>
+    (`${this.routePrefix}/envVar/${projectId}`);
+  }
+
+  public addEnvironmentVariable(envVar: EnviromentVariable){
+    return this.httpService.postRequest<Project>(
+      `${this.routePrefix}/envVar`,
+      envVar
+    );
+  }
+  public deleteEnviromentVariable(envVar: EnviromentVariable){
+    return this.httpService.postRequest(`${this.routePrefix}/envVar/delete`,
+    envVar);
+  }
+
+  public updateEnviromentVariable(envVar: EnviromentVariable){
+    return this.httpService.putRequest(`${this.routePrefix}/envVar`,
+    envVar);
+  }
+
+  editEnvVarEvent(envVar: EnviromentVariable) {
     this.envVariable$.next(envVar);
   }
 
-  deleteEnvVar(envVar: EnviromentVariable){
+  deleteEnvVarEvent(envVar: EnviromentVariable){
     this.deleteEnvVariable$.next(envVar);
   }
 }

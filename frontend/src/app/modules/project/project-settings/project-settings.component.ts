@@ -32,7 +32,6 @@ export class ProjectSettingsComponent implements OnInit {
     route.parent.params.subscribe(
       (params) => this.projectId = params.projectId);
     this.route.parent.data.subscribe(data => this.project = data.project);
-    console.log(this.project);
   }
 
   ngOnInit(): void {
@@ -66,6 +65,7 @@ export class ProjectSettingsComponent implements OnInit {
       this.delete(res);
     });
 
+    this.loadEnvVars();
   }
 
   reset() {
@@ -81,21 +81,45 @@ export class ProjectSettingsComponent implements OnInit {
     });
   }
 
-  addEnvVar(envValue: VariableValue){
-    this.envVar.projectId = this.project.id;
-    this.envVar.data = envValue;
-    console.log(this.envVar);
-    this.envVariables.push(this.envVar);
-    this.envVarsForm.reset();
+  loadEnvVars(){
+    this.projectService.getEnvironmentVariables(this.project.id).subscribe((res) => {
+      this.envVariables = res;
+    });
   }
 
+  addEnvVar(envValue: VariableValue){
+    this.envVar.projectId = this.project.id;
+    this.envVar.id = this.createId();
+    this.envVar.data = envValue;
+    if (!this.envVar.data.isSecret) {
+      this.envVar.data.isSecret = false;
+    }
+    console.log(this.envVar);
+    this.projectService.addEnvironmentVariable(this.envVar).subscribe(() => {
+      this.envVariables.push(this.envVar);
+      this.envVarsForm.reset();
+      this.loadEnvVars();
+    }, (err) => {
+      console.log(err);
+    });
+  }
+  createId(): number{
+    if (this.envVariables.length > 0) {
+      // tslint:disable-next-line: no-shadowed-variable
+      return Math.max.apply(null, this.envVariables.map((env) => env.id)) + 1;
+    }
+    return 0;
+  }
 
   delete(envVar: EnviromentVariable){
-    const index = this.envVariables.lastIndexOf(envVar);
-    this.envVariables.splice(index, 1);
+    this.projectService.deleteEnviromentVariable(envVar).subscribe(() => {
+     this.loadEnvVars();
+   });
   }
 
   edit(envVar: EnviromentVariable){
-    console.log(envVar);
+    this.projectService.updateEnviromentVariable(envVar).subscribe(() => {
+      this.loadEnvVars();
+    });
   }
 }

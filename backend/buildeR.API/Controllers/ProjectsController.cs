@@ -77,17 +77,27 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("envVar")]
-        public async Task<Dictionary<string,string>> AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        public async Task AddEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
         {
-            var secrets = await _envService.AddEnvironmenVariable(variableDTO);
-            return secrets;
+            await _envService.AddEnvironmenVariable(variableDTO);
         }
 
-        [HttpGet("envVar/{id}")]
-        public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(int id)
+        [HttpGet("envVar/{projectId}")]
+        public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(int projectId)
         {
-            return await _envService.GetEnvironmentVariables(id.ToString());
+            return await _envService.GetEnvironmentVariables(projectId.ToString());
         }
 
+        [HttpPost("envVar/delete")]
+        public async Task DeleteEnvironmentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        {
+             await _envService.DeleteEnvironmentVariable(variableDTO);
+        }
+
+        [HttpPut("envVar")]
+        public async Task UpdateEnviromentVariable([FromBody] EnvironmentVariableDTO variableDTO)
+        {
+            await _envService.UpdateEnvironmentVariable(variableDTO);
+        }
     }
 }

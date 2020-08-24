@@ -33,10 +33,12 @@ export class EnvVarsEditorComponent implements OnInit {
   }
 
   edit(){
-    this.pojectService.editEnvVar(this.envVarsEditForm.value);
+    this.envVar.data = this.envVarsEditForm.value;
+    this.pojectService.editEnvVarEvent(this.envVar);
   }
 
   delete(){
-    this.pojectService.deleteEnvVar(this.envVarsEditForm.value);
+    this.envVar.data = this.envVarsEditForm.value;
+    this.pojectService.deleteEnvVarEvent(this.envVar);
   }
 }
