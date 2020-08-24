@@ -5,6 +5,7 @@ using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.Repository;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
@@ -161,6 +162,13 @@ namespace buildeR.BLL.Services
                                                 .FirstOrDefaultAsync(p => p.Id == id);
 
             return Mapper.Map<ProjectDTO>(project);
+        }
+        public async Task<RepositoryDTO> GetRepository(int projectId)
+        {
+            var repository = await Context.Projects.Include(p => p._Repository)
+                                                   .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            return Mapper.Map<RepositoryDTO>(repository);
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {
