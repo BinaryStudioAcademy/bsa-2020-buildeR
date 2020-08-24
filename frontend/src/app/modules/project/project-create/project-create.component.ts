@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { NewProject } from '@shared/models/project/new-project';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
@@ -10,7 +10,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, NgModel } from '@angular/forms';
 import { NewRepository } from '@core/models/NewRepository';
 
 @Component({
@@ -116,13 +116,22 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   githubRadioClicked() {
+    if (!this.isGithubAccessable())
+      return;
+
     this.githubRepoSection = true;
     this.urlSection = false;
+    this.newProject._repository.createdByLink = false;
   }
 
   urlRadioClicked() {
     this.urlSection = true;
     this.githubRepoSection = false;
+    this.newProject._repository.createdByLink = true;
+  }
+
+  closeForm() {
+    this.activeModal.close();
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;
