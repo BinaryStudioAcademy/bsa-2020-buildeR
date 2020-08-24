@@ -10,9 +10,11 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   public routePrefix = '/projects';
+  private projectName$ = new Subject<string>();
   private envVariable$ = new Subject<EnviromentVariable>();
   private deleteEnvVariable$ = new Subject<EnviromentVariable>();
 
+  projectName = this.projectName$.asObservable();
   envVariable = this.envVariable$.asObservable();
   deleteEnvVariable = this.deleteEnvVariable$.asObservable();
 
@@ -58,6 +60,10 @@ export class ProjectService {
       `${this.routePrefix}/copy`,
       project
     );
+  }
+
+  changeProjectName(projectName: string){
+    this.projectName$.next(projectName);
   }
 
   public getEnvironmentVariables(projectId: number): Observable<any>{

@@ -23,12 +23,8 @@ namespace buildeR.BLL.MappingProfiles
 
             CreateMap<ProjectDTO, Project>()
                 .ForMember(dest => dest._Repository,
-                   src => src
-                   .MapFrom(project => project
-                   ._Repository));
-
-
-
+                    src => src
+                        .MapFrom(project => project._Repository));
             CreateMap<NewProjectDTO, Project>();
         }
     }

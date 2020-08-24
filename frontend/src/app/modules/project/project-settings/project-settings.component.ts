@@ -75,6 +75,7 @@ export class ProjectSettingsComponent implements OnInit {
     this.project = Object.assign(this.project, project);
     this.projectService.updateProject(this.project).subscribe(() =>
     {
+      this.projectService.changeProjectName(this.project.name);
       this.toastrService.showSuccess('Project successfully updated');
     }, (err) => {
       this.toastrService.showError(err);

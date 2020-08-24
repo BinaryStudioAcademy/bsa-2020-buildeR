@@ -26,6 +26,7 @@ namespace buildeR.Common.DTO.Project
 
         public UserDTO Owner { get; set; }
         public RepositoryDTO _Repository { get; set; }
+
         public ICollection<BuildHistoryDTO> BuildHistories { get; set; }
         public ICollection<BuildStepDTO> BuildSteps { get; set; }
         public ICollection<ProjectTriggerDTO> ProjectTriggers { get; set; }
