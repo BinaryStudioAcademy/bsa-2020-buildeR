@@ -42,6 +42,6 @@
     </div>
   </div>
 </nav>
-<div class="work-wrapper">
+<div class="work-wrapper" [ngStyle]="isMenuCollapsed ? {'margin-top': '71px'} : {'margin-top': '121.50px'}">
   <router-outlet></router-outlet>
 </div>
