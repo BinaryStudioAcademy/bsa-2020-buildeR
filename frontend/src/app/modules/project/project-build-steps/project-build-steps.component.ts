@@ -9,6 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { EnvVariable } from '@shared/models/env-variable';
+import { Arg } from '@shared/models/arg';
 
 
 @Component({
@@ -25,6 +27,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   isAdding = false;
   newBuildStep: EmptyBuildStep = {} as EmptyBuildStep;
   workDir: string;
+  envVariables: EnvVariable[] = new Array();
+  args: Arg[] = new Array();
+
+  newEnvVariableKey: string = null;
+  newEnvVariableValue: string = null;
+
+  newArgKey: string = null;
+  newArgValue: string = null;
 
   constructor(
     private projectService: ProjectService,
@@ -108,18 +118,71 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     this.newBuildStep = null;
     this.isAdding = false;
     this.workDir = null;
+    this.envVariables = null;
+    this.args = null;
+
+    this.clearNewEnvVariable();
+    this.clearNewArg();
   }
 
+  addEnvVariable() {
+    this.newEnvVariableKey = '';
+    this.newEnvVariableValue = '';
+  }
+
+  saveEnvVariable() {
+    const newEnvVariable = {
+      key: this.newEnvVariableKey,
+      value: this.newEnvVariableValue
+    } as EnvVariable;
+    this.envVariables.push(newEnvVariable);
+    this.clearNewEnvVariable();
+  }
+
+  removeNewEnvVariable(key: string) {
+    this.envVariables = this.envVariables.filter(envVar => envVar.key !== key);
+  }
+
+  clearNewEnvVariable() {
+    this.newEnvVariableKey = null;
+    this.newEnvVariableValue = null;
+  }
+
+  addArg() {
+    this.newArgKey = '';
+    this.newArgValue = '';
+  }
+
+  saveArg() {
+    const newArg = {
+      key: this.newArgKey,
+      value: this.newArgValue
+    } as Arg;
+    this.args.push(newArg);
+    this.clearNewArg();
+  }
+
+  removeNewArg(key: string) {
+    this.args = this.args.filter(arg => arg.key !== key);
+  }
+
+  clearNewArg() {
+    this.newArgKey = null;
+    this.newArgValue = null;
+  }
+
+
   saveBuildStep() {
-    const buildStep = {} as BuildStep;
-
-    buildStep.pluginCommand = this.newBuildStep.pluginCommand;
-    buildStep.index = this.buildSteps.length;
-    buildStep.buildStepName = this.newBuildStep.buildStepName;
-    buildStep.pluginCommandId = this.newBuildStep.pluginCommand.id;
-    buildStep.projectId = this.projectId;
-    buildStep.workDirectory = this.workDir;
-
+    const buildStep = {
+      pluginCommand: this.newBuildStep.pluginCommand,
+      index: this.buildSteps.length,
+      buildStepName: this.newBuildStep.buildStepName,
+      pluginCommandId: this.newBuildStep.pluginCommand.id,
+      projectId: this.projectId,
+      workDirectory: this.workDir,
+      args: this.args,
+      envVariables: this.envVariables
+    } as BuildStep;
     this.cancelBuildStep();
 
     this.isLoading = true;
