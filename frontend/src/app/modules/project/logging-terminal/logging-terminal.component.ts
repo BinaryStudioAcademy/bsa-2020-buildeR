@@ -53,10 +53,10 @@ export class LoggingTerminalComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    this.buildService
-      .getTestBuildLog()
-      .pipe(delay(0))
-      .subscribe((line) => this.buildLog(line));
+    // this.buildService
+    //   .getTestBuildLog()
+    //   .pipe(delay(0))
+    //   .subscribe((line) => this.buildLog(line));
     this.logsService.buildConnection();
     this.logsService.startConnectionAndJoinGroup('111'); // '111' is buildId of our demo project
     this.logsService.logsListener(this.log);
