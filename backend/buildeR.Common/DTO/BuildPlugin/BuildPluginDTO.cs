@@ -10,6 +10,7 @@ namespace buildeR.Common.DTO.BuildPlugin
         public string PluginName { get; set; }
         public string Runner { get; set; }
         public string DockerImage { get; set; }
+        public float Version { get; set; }
 
         public ICollection<PluginCommandDTO> PluginCommands { get; set; } //is needed?
     }
