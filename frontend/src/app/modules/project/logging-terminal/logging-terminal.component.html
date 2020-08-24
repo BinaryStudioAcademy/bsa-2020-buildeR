@@ -15,8 +15,11 @@
   </div>
   <div class="log-tail">
     <div class="tail-body">
-      <a (click)="scrollTop(top)" title="Scroll to top"><i class="fas fa-lg fa-arrow-circle-up"></i></a>
-      <a (click)="scrollBottom(bottom)" title="Scroll to bottom"> <i class="fas fa-lg fa-arrow-circle-down"></i></a>
+      <a (click)="scrollTop(top)" title="Scroll To Top"><i class="fas fa-lg fa-arrow-circle-up"></i></a>
+      <a (click)="autoscroll = !autoscroll" title="Turn Auto Scrolling {{autoscroll ? 'Off' : 'On'}}">
+        <i class="fas fa-lg" [class.fa-lock]="!autoscroll" [class.fa-unlock]="autoscroll"></i>
+      </a>
+      <a (click)="scrollBottom(bottom)" title="Scroll To Bottom"> <i class="fas fa-lg fa-arrow-circle-down"></i></a>
     </div>
   </div>
   <div class="log-container">
