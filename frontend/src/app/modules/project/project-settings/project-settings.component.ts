@@ -20,7 +20,8 @@ export class ProjectSettingsComponent implements OnInit {
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
   public projectForm: FormGroup;
-  envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
+  public envVarsEditForm: FormGroup;
+  @Input() envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
   @Input() project: Project = {} as Project;
   constructor(
@@ -46,6 +47,18 @@ export class ProjectSettingsComponent implements OnInit {
           [
             Validators.required
           ])
+    });
+
+    this.envVarsEditForm = new FormGroup({
+      name: new FormControl(this.envVar.data.name,
+        [
+          Validators.required
+        ]),
+      value: new FormControl(this.envVar.data.value,
+        [
+          Validators.required
+        ]),
+        isSecret: new FormControl(this.envVar.data.isSecret)
     });
 
     this.envVarsForm = new FormGroup({
