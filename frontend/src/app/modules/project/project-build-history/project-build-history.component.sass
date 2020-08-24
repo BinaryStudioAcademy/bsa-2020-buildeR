@@ -16,6 +16,11 @@
     border: 1px solid #eaeaea
     padding: 0.2rem
 
+    &:hover
+      transition: transform 0.3s
+      transform: scale(1.02)
+      cursor: pointer
+
     .user-commit
       display: flex
       flex-direction: column
@@ -66,6 +71,7 @@
 
     li
       height: 12vh
+
 @media (max-width:500px)
   ul.build-container
 
