@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using buildeR.Common.DTO.EnvironmentVariables;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Interfaces
