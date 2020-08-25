@@ -13,7 +13,6 @@ namespace buildeR.DAL.Entities
             Projects = new HashSet<Project>();
             TeamMembers = new HashSet<TeamMember>();
             UserSocialNetworks = new HashSet<UserSocialNetwork>();
-            NotificationSettings = new HashSet<NotificationSetting>();
         }
 
         public UserRole Role { get; set; }
@@ -23,11 +22,11 @@ namespace buildeR.DAL.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Bio { get; set; }
+        public NotificationSetting NotificationSetting { get; set; }
 
         public virtual ICollection<BuildHistory> BuildHistories { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<TeamMember> TeamMembers { get; set; }
         public virtual ICollection<UserSocialNetwork> UserSocialNetworks { get; set; }
-        public virtual ICollection<NotificationSetting> NotificationSettings { get; set; }
     }
 }

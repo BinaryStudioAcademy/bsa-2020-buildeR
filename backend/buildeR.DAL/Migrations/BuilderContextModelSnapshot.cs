@@ -202,23 +202,47 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("App")
+                    b.Property<bool>("EnableApp")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Email")
+                    b.Property<bool>("EnableEmail")
                         .HasColumnType("bit");
-
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("NotificationSettings");
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSettingOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("App")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Email")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NotificationSettingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotificationSettingId");
+
+                    b.ToTable("NotificationSettingOptions");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
@@ -363,10 +387,16 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("CreatedByLink")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Privte")
+                    b.Property<string>("Owner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Private")
                         .HasColumnType("bit");
 
                     b.Property<int>("ProjectId")
@@ -516,8 +546,17 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.User", "User")
-                        .WithMany("NotificationSettings")
-                        .HasForeignKey("UserId")
+                        .WithOne("NotificationSetting")
+                        .HasForeignKey("buildeR.DAL.Entities.NotificationSetting", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSettingOption", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.NotificationSetting", "NotificationSetting")
+                        .WithMany("NotificationSettingOptions")
+                        .HasForeignKey("NotificationSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

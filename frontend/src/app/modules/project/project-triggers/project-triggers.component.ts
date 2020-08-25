@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { NewProjectTrigger} from '@shared/models/project/project-trigger/new-project-trigger';
+import { NewProjectTrigger } from '@shared/models/project/project-trigger/new-project-trigger';
 import { UpdateTriggerCron } from '@shared/models/project/project-trigger/update-trigger-cron';
 import { ProjectTrigger } from '@shared/models/project/project-trigger/project-trigger';
 import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
@@ -26,7 +26,7 @@ export class ProjectTriggersComponent implements OnInit {
   runOnShedule = false;
   triggers: ProjectTriggerInfo[] = [];
 
-  @ViewChild('branch', {static: false}) branchInput: NgbTypeahead;
+  @ViewChild('branch', { static: false }) branchInput: NgbTypeahead;
 
   branchInputFocus$ = new Subject<string>();
   branchInputClick$ = new Subject<string>();
@@ -48,16 +48,17 @@ export class ProjectTriggersComponent implements OnInit {
     private route: ActivatedRoute,
     private projectSerivce: ProjectService,
     private syncService: SynchronizationService
-    )
-    { }
+  ) { }
 
   ngOnInit(): void {
     this.projectSerivce.getProjectById(this.route.parent.snapshot.params.projectId)
-            .subscribe(project => {
-              this.project = project;
-              this.syncService.getRepositoryBranches(project.repository)
-                .subscribe(branches => this.branches = branches);
-            });
+      .subscribe(project => {
+        this.project = project;
+        if (this.syncService.isGithubAccessable()) {
+          this.syncService.getRepositoryBranches(project.repository)
+            .subscribe(branches => this.branches = branches);
+        }
+      });
     console.log(this.branchInput);
   }
 
@@ -68,16 +69,16 @@ export class ProjectTriggersComponent implements OnInit {
     );
   }
 
-  createTrigger(cron: string)  {
+  createTrigger(cron: string) {
     if (this.selectedBranch) {
 
-     const newTrigger: NewProjectTrigger = {
-       projectId: this.project.id,
-       branchHash: this.selectedBranch,
-       cronExpression: cron
+      const newTrigger: NewProjectTrigger = {
+        projectId: this.project.id,
+        branchHash: this.selectedBranch,
+        cronExpression: cron
       };
-     console.log(newTrigger.cronExpression);
-     this.triggerService.createTrigger(newTrigger).subscribe(
+      console.log(newTrigger.cronExpression);
+      this.triggerService.createTrigger(newTrigger).subscribe(
         (data) => {
           console.log(data);
 
@@ -122,7 +123,7 @@ export class ProjectTriggersComponent implements OnInit {
   onToggle(change: boolean) {
     change = !change;
   }
-  compareToMinDate(date: Date){
+  compareToMinDate(date: Date) {
     const minDate: Date = new Date('2000-01-01');
     const thisDate: Date = new Date(date);
     if (minDate < thisDate) {
