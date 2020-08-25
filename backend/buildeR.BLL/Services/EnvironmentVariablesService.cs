@@ -25,6 +25,12 @@ namespace buildeR.BLL.Services
             try
             {
                 var res = await _secretService.ReadSecretsAsync(path);
+                //To avoid name duplicates
+                if (res.ContainsKey(variableDTO.Id))
+                {
+                    await UpdateEnvironmentVariable(variableDTO, res);
+                    return;
+                }
                 res.Add(variableDTO.Id, value);
                 await _secretService.CreateSecretsAsync(res, path);
             }
@@ -52,6 +58,12 @@ namespace buildeR.BLL.Services
         {
             string path = "projects/" + variableDTO.ProjectId.ToString();
             var res = await _secretService.ReadSecretsAsync(path);
+            if (res.Count == 1)
+            {   
+                //clear all
+                await _secretService.DeleteSecretsAsync(path);
+                return;
+            }
             res.Remove(variableDTO.Id);
             await _secretService.CreateSecretsAsync(res, path);
         }
