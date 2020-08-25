@@ -43,6 +43,9 @@ namespace buildeR.API.Extensions
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddTransient<ISecretService, SecretService>();
+            services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
+            services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
+
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)

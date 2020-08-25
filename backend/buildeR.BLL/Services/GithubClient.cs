@@ -46,6 +46,17 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
         }
+
+        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryOwner, string repositoryName, string providerToken)
+        {
+            SetUpHttpClient(providerToken);
+
+            var endpoint = $"repos/{repositoryOwner}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
         public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string providerToken)
         {
             SetUpHttpClient(providerToken);

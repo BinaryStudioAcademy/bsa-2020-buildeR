@@ -1,6 +1,7 @@
 ﻿using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Synchronization;
+using buildeR.Common.DTO.Synchronization.Github;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +20,16 @@ namespace buildeR.BLL.Services
             _projectService = projectService;
         }
 
-        public async Task<IEnumerable<Branch>> GetRepositoryBranches(string repositoryName, string accessToken)
+        public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId, string accessToken)
         {
-            var branches = await _githubClient.GetRepositoryBranches(repositoryName, accessToken);
+            var repository = await _projectService.GetRepository(projectId);
+           IEnumerable<GithubBranch> branches = null;
+
+            if (repository.Owner != null)
+                branches = await _githubClient.GetRepositoryBranches(repository.Owner, repository.Name, accessToken);
+            else
+                branches = await _githubClient.GetRepositoryBranches(repository.Name, accessToken);
+            
             return branches.Select(b => new Branch { Name = b.Name });
         }
 

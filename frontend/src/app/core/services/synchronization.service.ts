@@ -20,7 +20,13 @@ export class SynchronizationService {
     throw new Error('In progress');
   }
 
+  isGithubAccessable() {
+    return localStorage.getItem('github-access-token');
+  }
+
+
   getUserRepositories(): Observable<Repository[]> {
+
     const token = localStorage.getItem('github-access-token');
 
     this.httpService.setHeader('ProviderAuthorization', token);

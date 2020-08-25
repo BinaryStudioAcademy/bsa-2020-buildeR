@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200824175220_AddFieldsToRepositoryEntity")]
+    partial class AddFieldsToRepositoryEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,47 +204,23 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("EnableApp")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("EnableEmail")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("NotificationSettings");
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSettingOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<bool>("App")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Email")
                         .HasColumnType("bit");
 
-                    b.Property<int>("NotificationSettingId")
+                    b.Property<int>("NotificationType")
                         .HasColumnType("int");
 
-                    b.Property<int>("NotificationType")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NotificationSettingId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("NotificationSettingOptions");
+                    b.ToTable("NotificationSettings");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
@@ -546,17 +524,8 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.User", "User")
-                        .WithOne("NotificationSetting")
-                        .HasForeignKey("buildeR.DAL.Entities.NotificationSetting", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.NotificationSettingOption", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.NotificationSetting", "NotificationSetting")
-                        .WithMany("NotificationSettingOptions")
-                        .HasForeignKey("NotificationSettingId")
+                        .WithMany("NotificationSettings")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
