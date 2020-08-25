@@ -5,6 +5,7 @@ namespace buildeR.DAL.Entities
 {
     public class UserLetter: Entity
     {
+        public string UserName { get; set; }
         public string UserEmail { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
