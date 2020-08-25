@@ -78,7 +78,7 @@
   </div>
 </div>
 <div class="modal-body">
-  <form (ngSubmit)="save()" #projectCreatingForm="ngForm" class="project-form">
+  <form (ngSubmit)="save()" [formGroup]="projectForm" class="project-form">
     <div ngbRadioGroup name="radioBasic" class="radio-wr">
       <div class="connect-with" [class.connect-with-inactive]="!isGithubAccessable()">
         <div class="connect-with-title-wr">
@@ -129,12 +129,11 @@
                 (focus)="repositoryInputFocus$.next($any($event).target.value)"
                 (click)="repositoryInputClick$.next($any($event).target.value)"
                 #repository="ngbTypeahead"
-                name="repositoryInput"
-                #repositoryInput="ngModel"
+                formControlName="_repository"
                 required
               />
           </div>
-          <div class="error" [hidden]="!repositoryInput.errors?.required || repositoryInput.untouched">
+          <div class="error" [hidden]="!projectForm.get('_repository').errors?.required || projectForm.get('_repository').untouched">
             Repository is required
           </div>
         </div>
@@ -160,11 +159,17 @@
             <div class="label-wr">
               <label class="required-field">Repository URL</label>
             </div>
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject._repository.url" name="repositoryUrl"
-             required autocomplete="off" #repositoryUrl="ngModel"/>
+            <input type="text" class="form-control form-control-sm"
+             required autocomplete="off" formControlName="repositoryURL"/>
           </div>
-          <div class="error" [hidden]="!repositoryUrl.errors?.required || repositoryUrl.untouched">
+          <div class="error" [hidden]="!projectForm.get('repositoryURL').errors?.required || projectForm.get('repositoryURL').untouched">
             Repository URL is required
+          </div>
+          <div class="error" [hidden]="!projectForm.get('repositoryURL').errors?.pattern || projectForm.get('repositoryURL').untouched">
+            Enter correct repository link. Example: https://github.com/username/repository
+          </div>
+          <div class="error" [hidden]="!projectForm.get('repositoryURL').errors?.isRepoNotAccessable || projectForm.get('repositoryURL').untouched">
+            Repository is private or not accessable
           </div>
         </div>
       </div>
@@ -175,10 +180,10 @@
             <div class="label-wr">
               <label class="required-field">Name</label>
             </div>
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="newProject.name" name="projectName"
-            required autocomplete="off" #projectName="ngModel" placeholder="Project name">
+            <input type="text" class="form-control form-control-sm" formControlName="name"
+            required autocomplete="off" placeholder="Project name">
           </div>
-          <div class="error" [hidden]="!projectName.errors?.required || projectName.untouched">
+          <div class="error" [hidden]="!projectForm.get('name').errors?.required || projectForm.get('name').untouched">
             Project name is required
           </div>
         </div>
@@ -188,8 +193,7 @@
               <label>Description</label>
             </div>
             <textarea type="text" rows="3" class="form-control form-control-sm"
-            autocomplete="off" placeholder="Some description for project" [(ngModel)]="newProject.description"
-            name="projectDescription" #projectDescription="ngModel" >
+            autocomplete="off" placeholder="Some description for project" formControlName="description" >
             </textarea>
           </div>
         </div>
@@ -200,13 +204,13 @@
             </div>
             <div class="custom-control custom-switch">
               <input type="checkbox" class="custom-control-input" id="customSwitches" value="true"
-              [(ngModel)]="newProject.isPublic" name="isPublic" #isPublic="ngModel">
+              formControlName="isPublic">
               <label class="custom-control-label" for="customSwitches"></label>
             </div>
           </div>
         </div>
         <div class="btn-wr">
-          <button type="submit" class="btn btn-success" [disabled]="projectCreatingForm.invalid">
+          <button type="submit" class="btn btn-success">
             Create
           </button>
           <button type="button" class="btn btn-warning" (click)="cancel()">

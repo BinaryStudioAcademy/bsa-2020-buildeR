@@ -37,6 +37,12 @@ namespace buildeR.API.Controllers
             return await _synchronizationService.GetRepositoryBranches(projectId, ProviderAuthorization);
         }
 
+        [HttpPost("repo/exist")]
+        public async Task<bool> CheckIfRepositoryAccessable([FromBody]RepositoryLinkDTO linkDTO)
+        {
+            return await _synchronizationService.CheckIfRepositoryAccessable(linkDTO.Link);
+        }
+
         [HttpPost("hooks/{projectId}")]
         public async Task RegisterWebhooks(int projectId, [FromHeader] string ProviderAuthorization)
         {

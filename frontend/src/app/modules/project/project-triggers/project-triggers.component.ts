@@ -55,11 +55,10 @@ export class ProjectTriggersComponent implements OnInit {
       .subscribe(project => {
         this.project = project;
         if (this.syncService.isGithubAccessable()) {
-          this.syncService.getRepositoryBranches(project.repository)
+          this.syncService.getRepositoryBranches(project.id)
             .subscribe(branches => this.branches = branches);
         }
       });
-    console.log(this.branchInput);
   }
 
   getTriggers() {
