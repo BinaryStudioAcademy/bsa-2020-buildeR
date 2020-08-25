@@ -31,6 +31,13 @@ const routes = [
           ),
       },
       {
+        path: 'groups',
+        loadChildren: () =>
+          import('../../modules/group/group.module').then(
+            (m) => m.GroupModule
+          ),
+      },
+      {
         path: '**',
         component: NotFoundComponent,
         pathMatch: 'full',
@@ -46,4 +53,4 @@ const routes = [
   exports: [RouterModule],
   providers: [],
 })
-export class WorkSpaceRoutingModule {}
+export class WorkSpaceRoutingModule { }
