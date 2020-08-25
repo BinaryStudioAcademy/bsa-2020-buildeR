@@ -15,13 +15,14 @@ export class TabsComponent implements OnInit {
   @Input('tabRoutes') tabRoutes: TabRoute[] = [];
 
   constructor(private route: ActivatedRoute){}
-    ngOnInit() {
-      this.currentPath = this.route.snapshot.children[0].url[0].path;
-      const index = this.tabRoutes.findIndex(x => x.route === this.currentPath);
-      if (index > 0) {
-        this.tab = index;
-      }
+
+  ngOnInit() {
+    this.currentPath = this.route.snapshot.children[0]?.url[0]?.path;
+    const index = this.tabRoutes.findIndex(x => x.route === this.currentPath);
+    if (index > 0) {
+      this.tab = index;
     }
+  }
 
   change(id: number) {
     this.tab = id;
