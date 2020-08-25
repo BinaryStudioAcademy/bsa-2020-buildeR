@@ -122,6 +122,7 @@
                 id="typeahead-focus"
                 type="text"
                 class="form-control form-control-sm"
+                [editable]="false"
                 [(ngModel)]="newProject._repository"
                 [inputFormatter]="repoListResultFormatter"
                 [ngbTypeahead]="search"

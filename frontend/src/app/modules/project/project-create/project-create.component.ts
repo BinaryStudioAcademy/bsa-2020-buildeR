@@ -168,6 +168,10 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   isFormValid() {
+    if (!this.newProject._repository) {
+      return false;
+    }
+
     if (!this.newProject._repository.createdByLink) {
       return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
     }
