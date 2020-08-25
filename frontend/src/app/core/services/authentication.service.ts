@@ -3,10 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { Subject, Observable } from 'rxjs';
-import { UserService } from './user.service';
-import { auth } from 'firebase/app';
+import { Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,6 @@ import { filter, mergeMap } from 'rxjs/operators';
 export class AuthenticationService {
   private currentUser: User;
   private firebaseUser: firebase.User;
-  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private angularAuth: AngularFireAuth,
@@ -78,16 +76,15 @@ export class AuthenticationService {
     return this.angularAuth.idToken;
   }
 
-  // refreshToken() {
-  //   auth().onAuthStateChanged((user) => {
-  //     if (user) {
-  //       user.getIdToken().then((jwt) => {
-  //         localStorage.setItem('user', JSON.stringify(user));
-  //         localStorage.setItem('jwt', jwt);
-  //       });
-  //     }
-  //   });
-  // }
+  stateChanged() {
+    this.angularAuth.onAuthStateChanged((user) => {
+      if (user) {
+        user.getIdToken().then((jwt) => {
+          this.populateAuth(jwt, user);
+        });
+      }
+    });
+  }
   public refreshToken(): Observable<string> {
     return this.angularAuth.authState.pipe(
       filter((user) => Boolean(user)),
@@ -115,17 +112,17 @@ export class AuthenticationService {
     return Boolean(this.getFireUser());
   }
 
-  populateAuth(jwt: string, user: firebase.User) {
+  populateAuth(jwt: string, user: firebase.User/*, githubToken: string*/) {
     this.firebaseUser = user;
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('jwt', jwt);
+    // localStorage.setItem('github-access-token', githubToken);
   }
 
   clearAuth() {
     localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
-    localStorage.removeItem('github-access-token');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
   }
