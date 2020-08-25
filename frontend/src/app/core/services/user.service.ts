@@ -66,7 +66,7 @@ export class UserService {
     return this.httpService.postRequest<User>(`${this.routePrefix}/link-provider`, user);
   }
 
-  uploadAvatar(avatar: FormData, userId: number): Observable<UserAvatar>{
-    return this.httpService.postRequest<UserAvatar>(`${this.routePrefix}/avatar/${userId}`, avatar);
+  uploadAvatar(avatar: FormData, userId: number): Observable<User>{
+    return this.httpService.postRequest<User>(`${this.routePrefix}/avatar/${userId}`, avatar);
   }
 }
