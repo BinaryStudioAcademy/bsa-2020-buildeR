@@ -61,9 +61,14 @@ export class ProjectCreateComponent implements OnInit {
         [
           Validators.minLength(4),
           Validators.maxLength(32),
-          Validators.required
+          Validators.required,
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._\s]+(?<![-\\.])$`)
         ]),
-      description: new FormControl(this.newProject.description, []),
+      description: new FormControl(this.newProject.description,
+        [
+          Validators.maxLength(300),
+          Validators.pattern('[^А-яа-я]*')
+        ]),
       isPublic: new FormControl(this.newProject.isPublic, []),
     });
     if (this.syncService.isGithubAccessable()) {

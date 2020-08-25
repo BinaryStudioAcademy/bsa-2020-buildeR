@@ -187,6 +187,9 @@
           <div class="error" [hidden]="!projectForm.get('name').errors?.required || projectForm.get('name').untouched">
             Project name is required
           </div>
+          <div class="error" [hidden]="!projectForm.get('name').errors?.pattern || projectForm.get('name').untouched">
+            Name must have only latin letters, digits and can't start<br> or finish with these characters ' - ', ' . '
+          </div>
         </div>
         <div class="form-control-wr">
           <div class="input-wr">
@@ -196,6 +199,12 @@
             <textarea type="text" rows="3" class="form-control form-control-sm"
             autocomplete="off" placeholder="Some description for project" formControlName="description" >
             </textarea>
+          </div>
+          <div class="error" [hidden]="!projectForm.get('description').errors?.maxLength|| projectForm.get('description').untouched">
+            Description must be less than 300 charecters
+          </div>
+          <div class="error" [hidden]="!projectForm.get('description').errors?.pattern|| projectForm.get('description').untouched">
+            Description must have only latin letters, digits and special<br> characters
           </div>
         </div>
         <div class="form-control-wr">
