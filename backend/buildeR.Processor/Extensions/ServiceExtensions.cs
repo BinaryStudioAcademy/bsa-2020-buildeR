@@ -1,4 +1,5 @@
-﻿using buildeR.Common.Extensions;
+﻿using buildeR.Common.DTO;
+using buildeR.Common.Extensions;
 using buildeR.Processor.Services;
 using buildeR.RabbitMq.Interfaces;
 using buildeR.RabbitMq.Models;
@@ -6,7 +7,7 @@ using buildeR.RabbitMq.Realization;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Nest;
 using RabbitMQ.Client;
 
 using System;
@@ -30,7 +31,26 @@ namespace buildeR.Processor.Extensions
         {
             var connectionProvider = serviceProvider.GetService<IProducerConsumerWrapper>();
             var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("Queues:FromAPIToProcessor"));
-            return new ProcessorService(configuration, consumer);
+
+            var elasticClient = serviceProvider.GetService<IElasticClient>();
+
+            return new ProcessorService(configuration, consumer, elasticClient);
+        }
+        public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
+        {
+            var url = configuration["ElasticConfiguration:Uri"];
+            var defaultIndex = configuration["ElasticConfiguration:Index"];
+
+            var settings = new ConnectionSettings(new Uri(url))
+                .DefaultIndex(defaultIndex)
+                .DefaultMappingFor<ProjectLog>(m => m
+                    .Ignore(p => p.Timestamp)
+                    .PropertyName(p => p.BuildStep, "id")
+                );
+
+            var client = new ElasticClient(settings);
+
+            services.AddSingleton<IElasticClient>(client);
         }
     }
 }

@@ -29,6 +29,8 @@ namespace builder.Processor
             services.RegisterConnectionFactory(Configuration);
 
             services.RegisterServices(Configuration);
+
+            services.AddElasticsearch(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

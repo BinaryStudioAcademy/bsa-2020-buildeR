@@ -6,6 +6,7 @@ using buildeR.RabbitMq.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nest;
 using Newtonsoft.Json;
 using Scriban;
 using Serilog;
@@ -27,11 +28,14 @@ namespace buildeR.Processor.Services
         private readonly IConsumer _consumer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
-        public ProcessorService(IConfiguration config, IConsumer consumer)
+        private readonly IElasticClient _elk;
+        public ProcessorService(IConfiguration config, IConsumer consumer, IElasticClient elk)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
             _kafkaProducer = new KafkaProducer(config, "weblog");
+
+            _elk = elk;
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
@@ -158,7 +162,7 @@ namespace buildeR.Processor.Services
                     BuildId = projectId,
                     BuildStep = 1
                 };
-                Log.Information("{BuildId} {BuildStep} {Message} {Timestamp}", log.BuildId, log.BuildStep, log.Message, log.Timestamp);
+                await _elk.IndexDocumentAsync(log);
                 await _kafkaProducer.SendLog(log);
             }
         }

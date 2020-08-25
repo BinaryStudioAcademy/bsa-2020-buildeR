@@ -1,11 +1,10 @@
-import { NotificationSettingType } from './notification-setting-type';
+import { NotificationSettingOption } from './notification-setting-option';
 
 export interface NotificationSetting {
   id: number;
   userId: number;
-  notificationType: NotificationSettingType;
-  app: boolean;
-  email: boolean;
-  description: string;
+  enableApp: boolean;
+  enableEmail: boolean;
+  notificationSettingOptions: NotificationSettingOption [];
 }
 
