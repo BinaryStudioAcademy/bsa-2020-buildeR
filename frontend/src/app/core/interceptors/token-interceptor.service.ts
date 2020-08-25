@@ -16,18 +16,16 @@ export class TokenInterceptorService implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
 
-    if (this.authService.isAuthorized) {
-      const jwt = this.authService.getToken();
-      if (jwt) {
-        const header = 'Bearer ' + jwt;
-        const reqWithAuth = req.clone({ headers: req.headers.set('Authorization', header) });
-        return next.handle(reqWithAuth);
-      }
+    if (!this.authService.isAuthorized()) {
+      return next.handle(req);
     }
-    else {
-      this.authRequest = from(this.authService.refreshToken());
-      this.authService.stateChanged();
-    }
+
+    // const jwt = this.authService.getToken();
+    // if (jwt) {
+    //   const header = 'Bearer ' + jwt;
+    //   const reqWithAuth = req.clone({ headers: req.headers.set('Authorization', header) });
+    //   return next.handle(reqWithAuth);
+    // }
 
     if (!this.authRequest) {
       this.authRequest = this.authService.getIdToken();
@@ -37,7 +35,7 @@ export class TokenInterceptorService implements HttpInterceptor {
       switchMap((token: string) => {
         this.authRequest = null;
         if (token) {
-          this.authService.stateChanged();
+          // this.authService.stateChanged();
           const header = 'Bearer ' + token;
           const reqAuth = req.clone({ headers: req.headers.set('Authorization', header) });
           return next.handle(reqAuth);
@@ -55,7 +53,7 @@ export class TokenInterceptorService implements HttpInterceptor {
             switchMap((newToken: string) => {
               this.authRequest = null;
               if (newToken) {
-                this.authService.stateChanged();
+                // this.authService.stateChanged();
                 const header = 'Bearer ' + newToken;
                 const authReqRepeat = req.clone({ headers: req.headers.set('Authorization', header) });
                 return next.handle(authReqRepeat);
@@ -67,5 +65,15 @@ export class TokenInterceptorService implements HttpInterceptor {
         }
       })
     );
+  }
+  async stateChanged(forceRefresh?: boolean) {
+    this.authService.getAngularAuth().onAuthStateChanged((user) => {
+      if (user) {
+        user.getIdTokenResult(forceRefresh).then((result) => {
+          this.authService.populateAuth(result.token, user);
+          console.log(result.expirationTime);
+        });
+      }
+    });
   }
 }

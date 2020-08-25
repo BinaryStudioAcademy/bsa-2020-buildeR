@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
@@ -22,8 +22,8 @@ export class AuthenticationService {
 
   configureAuthState = (user: firebase.User) => {
     if (user) {
-      return user.getIdToken().then((token) => {
-        this.populateAuth(token, user);
+      return user.getIdTokenResult().then((result) => {
+        this.populateAuth(result.token, user);
         return this.loadCurrentUser();
       });
     }
@@ -76,15 +76,16 @@ export class AuthenticationService {
     return this.angularAuth.idToken;
   }
 
-  stateChanged() {
-    this.angularAuth.onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdToken().then((jwt) => {
-          this.populateAuth(jwt, user);
-        });
-      }
-    });
-  }
+  // stateChanged(forceRefresh?: boolean) {
+  //   this.angularAuth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //       user.getIdTokenResult(forceRefresh).then((result) => {
+  //         this.populateAuth(result.token, user);
+  //         console.log(result.expirationTime);
+  //       });
+  //     }
+  //   });
+  // }
   public refreshToken(): Observable<string> {
     return this.angularAuth.authState.pipe(
       filter((user) => Boolean(user)),
@@ -116,7 +117,7 @@ export class AuthenticationService {
     this.firebaseUser = user;
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('jwt', jwt);
-    // localStorage.setItem('github-access-token', githubToken);
+    // localStorage.setItem('github-access-token', jwt);
   }
 
   clearAuth() {
