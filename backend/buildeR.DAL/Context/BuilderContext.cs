@@ -1,4 +1,5 @@
 using buildeR.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace buildeR.DAL.Context
@@ -12,6 +13,8 @@ namespace buildeR.DAL.Context
         public DbSet<Group> Groups { get; private set; }
         public DbSet<Notification> Notifications { get; private set; }
         public DbSet<PluginCommand> PluginCommands { get; private set; }
+        public DbSet<CommandArgument> CommandArguments { get; private set; }
+        public DbSet<EnvVariable> EnvVariables { get; private set; }
         public DbSet<Project> Projects { get; private set; }
         public DbSet<ProjectGroup> ProjectGroups { get; private set; }
         public DbSet<ProjectTrigger> ProjectTriggers { get; private set; }
@@ -20,10 +23,10 @@ namespace buildeR.DAL.Context
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }
         public DbSet<NotificationSetting> NotificationSettings { get; private set; }
         public DbSet<Repository> Repositories { get; private set; }
-        public BuilderContext(DbContextOptions<BuilderContext> options) : base(options) {}
+        public BuilderContext(DbContextOptions<BuilderContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {   
+        {
             modelBuilder.Configure();
             modelBuilder.Seed();
         }
