@@ -7,6 +7,7 @@ import { NewUser } from '../../shared/models/user/new-user';
 import { LinkProvider } from '../../shared/models/user/link-provider';
 import { ValidateUser } from '@shared/models/user/validate-user';
 import { HttpRequest } from '@angular/common/http';
+import {UserHelp} from "@shared/models/user/user-help";
 
 @Injectable({
   providedIn: 'root'
@@ -64,4 +65,10 @@ export class UserService {
   {
     return this.httpService.postRequest<User>(`${this.routePrefix}/link-provider`, user);
   }
+
+  sendLetter(newUserLetter: UserHelp): Observable<UserHelp>
+  {
+    return this.httpService.postRequest<UserHelp>(`${this.routePrefix}/letter`, newUserLetter);
+  }
+
 }
