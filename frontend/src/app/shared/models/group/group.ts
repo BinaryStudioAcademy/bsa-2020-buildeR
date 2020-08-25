@@ -1,10 +1,10 @@
-import { Project } from "../project/project";
-import { User } from "../user/user";
+import { Project } from '../project/project';
+import { TeamMember } from './team-member';
 
 export interface Group {
   id: number;
   isPublic: boolean;
   name: string;
-  projects: Project[];
-  members: User[];
+  projectGroups: Project[];
+  teamMembers: TeamMember[];
 }

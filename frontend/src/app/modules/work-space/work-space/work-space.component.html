@@ -40,12 +40,9 @@
         </li>
         <li class="nav-item">
           <div class="nav-item" ngbDropdown>
-            <!-- <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button"> -->
             <a class="nav-link" [routerLink]="['groups']">Groups</a>
             <div ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
-              <div *ngFor="let group of groups">
-                <a ngbDropdownItem [routerLink]="['groups', group.id]">{{group.name}}</a>
-              </div>
+              <a *ngFor="let group of groups" ngbDropdownItem [routerLink]="['groups', group.id]">{{group.name}}</a>
             </div>
           </div>
         </li>
