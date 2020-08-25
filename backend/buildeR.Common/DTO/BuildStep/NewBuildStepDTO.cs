@@ -12,6 +12,7 @@ namespace buildeR.Common.DTO.BuildStep
         public int Index { get; set; }
         public int LoggingVerbosity { get; set; }
         public string WorkDirectory { get; set; }
+        public IEnumerable<CommandArgumentDTO> Args { get; set; }
         public ICollection<BuildPluginParameterDTO> BuildPluginParameters { get; set; }
     }
 }
