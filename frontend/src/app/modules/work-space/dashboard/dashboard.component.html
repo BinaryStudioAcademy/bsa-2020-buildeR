@@ -5,251 +5,274 @@
 "></div>
 
 <ng-template #loading>
-    <app-loading-spinner size="20px"></app-loading-spinner>
+  <app-loading-spinner size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
-    <div *ngIf="
+  <div *ngIf="
     activeProjects?.length || starredProjects?.length;
     then existProjects;
     else emptyProjects
   ">
+  </div>
+  <ng-template #existProjects>
+
+    <div class="container my-3">
+      <span class="my-auto title">Starred projects</span>
     </div>
-    <ng-template #existProjects>
 
-        <div class="container my-3">
-            <span class="my-auto title">Starred projects</span>
-        </div>
-
-        <div *ngIf="starredProjects?.length;
+    <div *ngIf="starredProjects?.length;
     then existStarredProjects;
     else emptyStarredProjects
     ">
-        </div>
-        <ng-template #existStarredProjects>
-            <div class="container">
-                <div class="row my-3 border rounded" *ngFor="let project of starredProjects">
-                    <div class="col-md-1 col-sm-1 col-1 vertical-line star-area">
-                        <button class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project" (click)="changeFavoriteStateOfProject(project)">
+    </div>
+    <ng-template #existStarredProjects>
+      <div class="container">
+        <div class="row my-3 border rounded" *ngFor="let project of starredProjects">
+          <div class="col-md-1 col-sm-1 col-1 vertical-line star-area">
+            <button class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
+              (click)="changeFavoriteStateOfProject(project)">
               <i class="fas fa-lg fa-star star"></i>
             </button>
-                    </div>
-                    <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                        <div class="col-md-12 col-sm-5 col-5 row-top">
-                            <a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a>
-                        </div>
-                        <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
-                            <a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a>
-                        </div>
-                    </div>
+          </div>
+          <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+            <div class="col-md-12 col-sm-5 col-5 row-top">
+              <a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a>
+            </div>
+            <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
+              <a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a>
+            </div>
+          </div>
 
-                    <div *ngIf="
+          <div *ngIf="
           project.lastBuildHistory;
           then existBuildBlock;
           else notExistBuildBlock
         "></div>
-                    <ng-template #existBuildBlock>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Default branch
-                            </div>
-                            <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                                {{project.lastBuildHistory.branchHash}}
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Last build
-                            </div>
-                            <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
-                                <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
-                  <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span> {{ project.lastBuildHistory.buildStatus | buildStatus }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Commit
-                            </div>
-                            <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                                {{ project.lastBuildHistory.commitHash }}
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Finished
-                            </div>
-                            <div class="col-md-12 col-sm-5 small row-bottom">
-                                {{ project.lastBuildHistory.buildAt | dateAgo }}
-                            </div>
-                        </div>
-
-                        <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto drop-down-area overflow-hidden">
-                            <div class="dropdown" container="body" ngbDropdown>
-                                <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButtonStarred" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-bars"></i>
-                </button>
-                                <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuButtonStarred">
-                                    <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)">Run</button>
-                                    <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']">Settings</button>
-                                    <button class="btn dropdown-item" (click)="copyProject(project.id)">Copy</button>
-                                    <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                    <ng-template #notExistBuildBlock>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-6 my-auto mx-0 px-0">
-                            <span>There are no builds for this project yet</span>
-                        </div>
-                        <div class="col-lg-2 col-md-2 col-sm-2 col-2 my-auto mx-0 px-0">
-                            <div class="dropdown" container="body" ngbDropdown>
-                                <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButtonActive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-bars"></i>
-                </button>
-                                <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuButtonStarred">
-                                    <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)">Run</button>
-                                    <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']">Settings</button>
-                                    <button class="btn dropdown-item" (click)="copyProject(project.id)">Copy</button>
-                                    <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                </div>
+          <ng-template #existBuildBlock>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Default branch
+              </div>
+              <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+                {{project.lastBuildHistory.branchHash}}
+              </div>
             </div>
-        </ng-template>
-        <ng-template #emptyStarredProjects>
-            <div class="container">
-                <div class="row border rounded my-3">
-                    <p class="m-auto text-center"><i class="far fa-star"></i> You can keep track of your favorite projects here once you start starring!</p>
-                </div>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Last build
+              </div>
+              <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
+                <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
+                  <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span>
+                  {{ project.lastBuildHistory.buildStatus | buildStatus }}
+                </span>
+              </div>
             </div>
-        </ng-template>
-
-        <div class="container d-flex flex-row my-3">
-            <span class="my-auto title">
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Commit
+              </div>
+              <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+                {{ project.lastBuildHistory.commitHash }}
+              </div>
+            </div>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Finished
+              </div>
+              <div class="col-md-12 col-sm-5 small row-bottom">
+                {{ project.lastBuildHistory.buildAt | dateAgo }}
+              </div>
+            </div>
+            <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto drop-down-area overflow-hidden">
+              <ng-template #popContent>
+                <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)"><i
+                    class="fas fa-redo-alt"></i>
+                  Run</button>
+                <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']"><i
+                    class="fas fa-cog"></i> Settings</button>
+                <button class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                  Copy</button>
+                <div class="dropdown-divider"></div>
+                <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                  <i class="far fa-trash-alt"></i> Delete</button>
+              </ng-template>
+              <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+          </ng-template>
+          <ng-template #notExistBuildBlock>
+            <div class="col-lg-8 col-md-8 col-sm-3 col-3 no-builds my-auto">
+              <span>There are no builds for this project yet</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto">
+              <ng-template #popContent>
+                <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)"><i
+                    class="fas fa-redo-alt"></i>
+                  Run</button>
+                <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']"><i
+                    class="fas fa-cog"></i> Settings</button>
+                <button class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                  Copy</button>
+                <div class="dropdown-divider"></div>
+                <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                  <i class="far fa-trash-alt"></i> Delete</button>
+              </ng-template>
+              <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #emptyStarredProjects>
+      <div class="container">
+        <div class="row border rounded my-3">
+          <p class="m-auto text-center"><i class="far fa-star"></i> You can keep track of your favorite projects
+            here once
+            you start starring!</p>
+        </div>
+      </div>
+    </ng-template>
+    <div class="container d-flex flex-row my-3">
+      <span class="my-auto title">
         Active projects
       </span>
-            <div class="ml-auto">
-                <button class="btn btn-info" (click)="openCreateProjectModal()">
+      <div class="ml-auto">
+        <button class="btn btn-info" (click)="openCreateProjectModal()">
           <i class="fas fa-plus"></i>
         </button>
-            </div>
-        </div>
+      </div>
+    </div>
 
-        <div *ngIf="activeProjects?.length;
+    <div *ngIf="activeProjects?.length;
         then existActiveProjects;
         else emptyActiveProjects
         ">
-        </div>
+    </div>
 
-        <ng-template #existActiveProjects>
-            <div class="container">
-                <div class="row my-3 border rounded" *ngFor="let project of activeProjects">
-                    <div class="col-md-1 col-sm-1 col-1 vertical-line star-area">
-                        <button class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project" (click)="changeFavoriteStateOfProject(project)">
+    <ng-template #existActiveProjects>
+      <div class="container">
+        <div class="row my-3 border rounded" *ngFor="let project of activeProjects">
+          <div class="col-md-1 col-sm-1 col-1 vertical-line star-area">
+            <button class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
+              (click)="changeFavoriteStateOfProject(project)">
               <i class="far fa-star star"></i>
             </button>
-                    </div>
-                    <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                        <div class="col-md-12 col-sm-5 col-5 row-top">
-                            <a class="text-dark" [routerLink]="['../user']">{{project?.owner.username}}</a>
-                        </div>
-                        <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
-                            <a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a>
-                        </div>
-                    </div>
+          </div>
+          <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+            <div class="col-md-12 col-sm-5 col-5 row-top">
+              <a class="text-dark" [routerLink]="['../user']">{{project?.owner.username}}</a>
+            </div>
+            <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
+              <a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a>
+            </div>
+          </div>
 
-                    <div *ngIf="
+
+          <div *ngIf="
           project.lastBuildHistory;
           then existBuildBlock;
           else notExistBuildBlock
         "></div>
-                    <ng-template #existBuildBlock>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Default branch
-                            </div>
-                            <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                                {{project.lastBuildHistory.branchHash}}
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Last build
-                            </div>
-                            <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
-                                <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
-                  <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span> {{ project.lastBuildHistory.buildStatus | buildStatus }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Commit
-                            </div>
-                            <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                                {{ project.lastBuildHistory.commitHash }}
-                            </div>
-                        </div>
-                        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-                            <div class="col-md-12 col-sm-5 text-muted small row-top">
-                                Finished
-                            </div>
-                            <div class="col-md-12 col-sm-5 small row-bottom">
-                                {{ project.lastBuildHistory.buildAt | dateAgo }}
-                            </div>
-                        </div>
-
-                        <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto drop-down-area overflow-hidden">
-                            <div class="dropdown" container="body" ngbDropdown>
-                                <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButtonActive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <ng-template #existBuildBlock>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Default branch
+              </div>
+              <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+                {{project.lastBuildHistory.branchHash}}
+              </div>
+            </div>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Last build
+              </div>
+              <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
+                <span buildStatusColor [buildStatus]="project.lastBuildHistory.buildStatus">
+                  <span buildStatusIcon [buildStatus]="project.lastBuildHistory.buildStatus"></span>
+                  {{ project.lastBuildHistory.buildStatus | buildStatus }}
+                </span>
+              </div>
+            </div>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Commit
+              </div>
+              <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+                {{ project.lastBuildHistory.commitHash }}
+              </div>
+            </div>
+            <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+              <div class="col-md-12 col-sm-5 text-muted small row-top">
+                Finished
+              </div>
+              <div class="col-md-12 col-sm-5 small row-bottom">
+                {{ project.lastBuildHistory.buildAt | dateAgo }}
+              </div>
+            </div>
+            <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto drop-down-area overflow-hidden">
+              <ng-template #popContent>
+                <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)"><i
+                    class="fas fa-redo-alt"></i>
+                  Run</button>
+                <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']"><i
+                    class="fas fa-cog"></i>
+                  Settings</button>
+                <button class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                  Copy</button>
+                <div class="dropdown-divider"></div>
+                <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                  <i class="far fa-trash-alt"></i> Delete</button>
+              </ng-template>
+              <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+          </ng-template>
+          <ng-template #notExistBuildBlock>
+            <div class="col-lg-8 col-md-8 mx-0 px-0 col-sm-3 col-3 no-builds my-auto ">
+              <span>There are no builds for this project yet</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto">
+              <div>
+                <ng-template #popContent>
+                  <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)"><i
+                      class="fas fa-redo-alt"></i> Run</button>
+                  <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']"><i
+                      class="fas fa-cog"></i> Settings</button>
+                  <button class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                    Copy</button>
+                  <div class="dropdown-divider"></div>
+                  <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                    <i class="far fa-trash-alt"></i> Delete</button>
+                </ng-template>
+                <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
                   <i class="fas fa-bars"></i>
                 </button>
-                                <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuButtonStarred">
-                                    <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)">Run</button>
-                                    <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']">Settings</button>
-                                    <button class="btn dropdown-item" (click)="copyProject(project.id)">Copy</button>
-                                    <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                    <ng-template #notExistBuildBlock>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-6 my-auto mx-0 px-0">
-                            <span>There are no builds for this project yet</span>
-                        </div>
-                        <div class="col-lg-2 col-md-2 col-sm-2 col-2 my-auto mx-0 px-0">
-                            <div class="dropdown" container="body" ngbDropdown>
-                                <button ngbDropdownToggle class="btn" type="button" id="dropdownMenuButtonActive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-bars"></i>
-                </button>
-                                <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuButtonStarred">
-                                    <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)">Run</button>
-                                    <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']">Settings</button>
-                                    <button class="btn dropdown-item" (click)="copyProject(project.id)">Copy</button>
-                                    <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                </div>
+              </div>
             </div>
-        </ng-template>
-
-        <ng-template #emptyActiveProjects>
-            <div class="container">
-                <div class="row border rounded my-3">
-                    <p class="m-auto text-center">All your projects are your favorite, it's impressive!</p>
-                </div>
-            </div>
-        </ng-template>
+          </ng-template>
+        </div>
+      </div>
     </ng-template>
-    <ng-template #emptyProjects>
-        <div class="container">
-            <div class="no-projects-container">
-                <div class="image-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+    <ng-template #emptyActiveProjects>
+      <div class="container">
+        <div class="row border rounded my-3">
+          <p class="m-auto text-center">All your projects are your favorite, it's impressive!</p>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+  <ng-template #emptyProjects>
+    <div class="container">
+      <div class="no-projects-container">
+        <div class="image-container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" xmlns:xlink="http://www.w3.org/1999/xlink"
+            version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;"
+            xml:space="preserve">
             <g>
               <path style="fill:#FDCC00;"
                 d="M503.467,256C503.467,119.33,392.67,8.533,256,8.533S8.533,119.33,8.533,256   S119.33,503.467,256,503.467S503.467,392.67,503.467,256" />
@@ -275,12 +298,12 @@
               </g>
             </g>
           </svg>
-                </div>
-                <span class="my-3">It seems that you don't have active projects. Maybe it's time to add
+        </div>
+        <span class="my-3">It seems that you don't have active projects. Maybe it's time to add
           the first one?</span>
-                <button class="btn btn-success" (click)="openCreateProjectModal()">
+        <button class="btn btn-success" (click)="openCreateProjectModal()">
           Add first project
         </button>
-            </div>
-        </div>
-    </ng-template>
+      </div>
+    </div>
+  </ng-template>

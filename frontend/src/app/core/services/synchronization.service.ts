@@ -20,7 +20,13 @@ export class SynchronizationService {
     throw new Error('In progress');
   }
 
+  isGithubAccessable() {
+    return localStorage.getItem('github-access-token');
+  }
+
+
   getUserRepositories(): Observable<Repository[]> {
+
     const token = localStorage.getItem('github-access-token');
 
     this.httpService.setHeader('ProviderAuthorization', token);
@@ -28,12 +34,16 @@ export class SynchronizationService {
     return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/`);
   }
 
-  getRepositoryBranches(repoName: string): Observable<Branch[]> {
+  getRepositoryBranches(projectId: number): Observable<Branch[]> {
     const token = localStorage.getItem('github-access-token');
 
     this.httpService.setHeader('ProviderAuthorization', token);
 
-    return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${repoName}/branches`);
+    return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${projectId}/branches`);
+  }
+
+  checkIfRepositoryAccessable(repoUrl: string): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.endpoint}/repo/exist`, { link: repoUrl });
   }
 
   registerWebhook(projectId: number): Observable<any> {
