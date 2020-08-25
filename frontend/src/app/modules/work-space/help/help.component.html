@@ -16,15 +16,15 @@
         <span>Email</span>
       </div>
       <div class="input-area">
-        <input type="email" class="form-control form-control-sm" formControlName="email"
+        <input type="email" class="form-control form-control-sm" formControlName="userEmail"
                placeholder="example@mail.com">
-        <div *ngIf="helpForm.controls['email'].errors">
-          <div class="error" *ngIf="helpForm.controls['email'].errors.required">
+        <div *ngIf="helpForm.controls['userEmail'].errors">
+          <div class="error" *ngIf="helpForm.controls['userEmail'].errors.required">
             Email is required
           </div>
-          <div class="error" *ngIf="helpForm.controls['email'].errors.pattern
-            || helpForm.controls['email'].errors.email
-            || helpForm.controls['email'].errors.notValid">
+          <div class="error" *ngIf="helpForm.controls['userEmail'].errors.pattern
+            || helpForm.controls['userEmail'].errors.email
+            || helpForm.controls['userEmail'].errors.notValid">
             Email must be like 'example12@gmail.com' and can't start or finish <br>with these characters ' - ', ' .
             '<br>
           </div>
@@ -96,7 +96,9 @@
       </ngb-rating>
       <div class="save-button-container">
         <button type="submit" class="btn btn-success"
-                [disabled]="helpForm.invalid || !helpForm.dirty">Submit</button>
+                [disabled]="helpForm.invalid || !helpForm.dirty">Submit
+          <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
       </div>
     </div>
   </form>

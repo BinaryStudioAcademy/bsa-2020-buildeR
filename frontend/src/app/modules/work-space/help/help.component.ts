@@ -3,9 +3,11 @@ import {BaseComponent} from "../../../core/components/base/base.component";
 import {User} from "../../../shared/models/user/user";
 import {AuthenticationService} from "../../../core/services/authentication.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {UserHelp} from "@shared/models/user/user-help";
+import {UserLetter} from "@shared/models/user/user-letter";
 import { emailDotValidator } from '@core/validators/email-dot-validator';
 import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
+import {UserService} from "@core/services/user.service";
+
 
 @Component({
   selector: 'app-help',
@@ -16,24 +18,26 @@ export class HelpComponent extends BaseComponent
   implements OnInit, OnDestroy {
 
   currentUser: User = {} as User;
-  userHelp: UserHelp = {} as UserHelp;
+  userHelp: UserLetter = {} as UserLetter;
   currentRate: number = 0;
+  isShowSpinner = false;
 
   public helpForm: FormGroup;
 
   constructor(
     private authService: AuthenticationService,
-    private toastrService: ToastrNotificationsService
+    private toastrService: ToastrNotificationsService,
+    private userService: UserService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.userHelp.email = this.currentUser.email;
+    this.userHelp.userEmail = this.currentUser.email;
 
     this.helpForm = new FormGroup({
-      email: new FormControl(this.userHelp.email,
+      userEmail: new FormControl(this.userHelp.userEmail,
         [
           Validators.required,
           Validators.email,
@@ -60,8 +64,25 @@ export class HelpComponent extends BaseComponent
 
   }
 
-  onSubmit(letter: UserHelp): void {
-    this.toastrService.showSuccess("Your letter was delivered! Thanks!")
+  onSubmit(letter: UserLetter): void {
+    letter.rating = this.currentRate;
+
+    this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
+      letter.userName = this.currentUser.username
+
+    console.log(letter);
+
+    this.isShowSpinner = true;
+    this.userService.sendLetter(letter).subscribe( letter =>
+    {
+      this.toastrService.showSuccess("Your letter was delivered! Thanks!");
+      this.isShowSpinner = false;
+    },
+      error => {
+      console.error(error.message);
+      this.toastrService.showError("Your letter wasn\'t delivered!");
+      this.isShowSpinner = false;
+    });
   }
 
 }
