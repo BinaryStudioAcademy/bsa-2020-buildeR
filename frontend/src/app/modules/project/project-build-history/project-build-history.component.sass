@@ -16,11 +16,6 @@
     border: 1px solid #eaeaea
     padding: 0.2rem
 
-    &:hover
-      transition: transform 0.3s
-      transform: scale(1.02)
-      cursor: pointer
-
     .user-commit
       display: flex
       flex-direction: column
@@ -55,6 +50,15 @@
       p
         margin: 0
         width: 12rem
+
+        &.status
+
+          &:hover
+            text-decoration: underline
+            cursor: pointer
+
+          &:focus
+            outline: none
 
         &:first-of-type
           width: 15rem
