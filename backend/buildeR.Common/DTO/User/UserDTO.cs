@@ -1,4 +1,5 @@
-﻿using buildeR.Common.DTO.Project;
+﻿using buildeR.Common.DTO.NotificationSetting;
+using buildeR.Common.DTO.Project;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.Common.Enums;
@@ -19,7 +20,7 @@ namespace buildeR.Common.DTO.User
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Bio { get; set; }
-        
+        public NotificationSettingDTO NotificationSetting { get; set; }
         public ICollection<ProjectDTO> Projects { get; set; }
         public ICollection<TeamMemberDTO> TeamMembers { get; set; }
         public ICollection<UserSocialNetworkDTO> UserSocialNetworks { get; set; }
