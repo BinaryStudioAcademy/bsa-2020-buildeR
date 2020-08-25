@@ -11,7 +11,7 @@ namespace buildeR.BLL.Services
         {
             if (repoUrl.StartsWith("https://github.com"))
             {
-                var name = repoUrl.Substring(19).Split('/')[1].Split('.')[0];
+                var name = repoUrl.Substring(19).Split('/')[1];
                 return name;
             }
 
