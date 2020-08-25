@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO;
 using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -70,7 +71,7 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("letter")]
-        public async Task AddUserLetter([FromBody] UserLetter userLetter)
+        public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
         {
             await _userService.AddUserLetter(userLetter);
         }

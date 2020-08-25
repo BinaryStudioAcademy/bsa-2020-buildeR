@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO;
 using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.DAL.Context;
@@ -154,11 +155,13 @@ namespace buildeR.BLL.Services
             }
         }
 
-        public async Task AddUserLetter(UserLetter newUserLetter)
+        public async Task AddUserLetter(UserLetterDTO newUserLetter)
         {
-            // await _context.Set<UserLetter>().AddAsync(newUserLetter);
-            // await _context.SaveChangesAsync();
+            var userLetter = _mapper.Map<UserLetter>(newUserLetter);
+            await _context.Set<UserLetter>().AddAsync(userLetter);
+            await _context.SaveChangesAsync();
             
+            Console.WriteLine("Email: " + _emailService.SupportEmail);
             string strSubject = $"Feedback from {newUserLetter.UserName}: {newUserLetter.Subject}";
             await _emailService.SendEmailAsync(new List<string> {_emailService.SupportEmail},
                 new EmailAddress(newUserLetter.UserEmail), strSubject, newUserLetter.Description);
