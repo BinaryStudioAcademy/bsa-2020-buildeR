@@ -3,26 +3,22 @@
   height: 100%
   margin-top: 1rem
 
-
   .log-header
     background-color: #444
-    height: 3rem
+
+    .buttons-left
+      display: inline-block
+
+    .buttons-right
+      display: inline-block
+      float: right
 
     button, label
-      margin-top: 0.3rem
-      margin-right: 0.5rem
-      margin-left: 0.5rem
+      margin: 0.3rem 0.5rem
 
   .log-footer
     background-color: #444
     height: 1.5rem
-
-    a
-      display: inline-block
-      float: right
-      margin-right: 0.5rem
-      text-decoration: none
-      cursor: pointer
 
   .log-container
     min-height: 60vh
@@ -67,7 +63,10 @@
 
       p
         padding-left: 0.5rem
+        padding-right: 2rem
         margin: 0
+        min-height: 1.3rem
+        word-wrap: break-word
 
         &:hover
           background-color: #444
@@ -101,6 +100,38 @@
         &.WRN
           color: orange
 
+  .log-tail
+    position: sticky
+    float: right
+    width: 0
+    margin-right: 0.7rem
+    margin-top: 1rem
+    text-align: right
+    z-index: 6
+    top: 6rem
 
+    .tail-body
+      position: absolute
+      left: -1.5rem
+      display: flex
+      flex-direction: column
+      gap: 0.5rem
+      align-items: center
 
+      a
+        display: inline-block
+        cursor: pointer
 
+        &:hover
+          opacity: 65%
+
+        &:active
+          transition: transform 0.1s
+          transform: scale(1.2)
+
+@media (max-width: 550px)
+  .log-view
+    .log-header
+      .buttons-right
+          display: block
+          float: unset

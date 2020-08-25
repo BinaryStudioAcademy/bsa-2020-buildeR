@@ -1,4 +1,5 @@
 ﻿using buildeR.Common.DTO.BuildPlugin;
+using System.Collections.Generic;
 
 namespace buildeR.Common.DTO.PluginCommand
 {
@@ -7,8 +8,8 @@ namespace buildeR.Common.DTO.PluginCommand
         public int Id { get; set; }
         public int PluginId { get; set; }
         public string Name { get; set; }
-        public string TemplateForDocker { get; set; }
 
         public BuildPluginDTO Plugin { get; set; }
+        public IEnumerable<Arg> Args { get; set; }
     }
 }

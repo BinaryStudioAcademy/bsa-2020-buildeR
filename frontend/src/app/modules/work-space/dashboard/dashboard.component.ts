@@ -20,7 +20,7 @@ import { ProjectCreateComponent } from '@modules/project/project-create/project-
 })
 export class DashboardComponent extends BaseComponent
   implements OnInit, OnDestroy {
-  userProjects: ProjectInfo[];
+  activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
@@ -51,8 +51,8 @@ export class DashboardComponent extends BaseComponent
       .subscribe(
         (resp) => {
           this.loadingProjects = false;
-          this.cachedUserProjects = this.userProjects = resp.body;
-          this.starredProjects = this.userProjects.filter(project => project.isFavorite);
+          this.activeProjects = resp.body.filter(project => !project.isFavorite);
+          this.starredProjects = resp.body.filter(project => project.isFavorite);
         },
         (error) => {
           this.loadingProjects = false;
@@ -79,9 +79,11 @@ export class DashboardComponent extends BaseComponent
         () => {
           project.isFavorite = !project.isFavorite;
           if (project.isFavorite) {
+            this.activeProjects = this.activeProjects.filter(proj => proj.id !== project.id);
             this.starredProjects.push(project);
           }
           else {
+            this.activeProjects.push(project);
             this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
           }
         },
@@ -91,17 +93,17 @@ export class DashboardComponent extends BaseComponent
 
   deleteProject(projectId: number) {
     const modalRef = this.modalService.open(ModalContentComponent);
-    let data = {
-      title: 'Are you sure?',
-      message: 'You are going to delete project.',
-      text: 'Press "yes" button to confirm deleting project or "no" button to come back.'
+    const data = {
+      title: 'Project deletion',
+      message: 'Are you sure you want to delete this project?',
+      text: 'All information associated to this project will be permanently deleted. This operation can not be undone.'
     };
     modalRef.componentInstance.content = data;
     modalRef.result
       .then((result) => {
         if (result) {
           this.projectService.deleteProject(projectId).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-            this.userProjects = this.userProjects.filter(proj => proj.id !== projectId);
+            this.activeProjects = this.activeProjects.filter(proj => proj.id !== projectId);
             this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
           });
         }
@@ -118,10 +120,9 @@ export class DashboardComponent extends BaseComponent
       .then((result) => {
         if (result.isFavorite) {
           this.starredProjects.push(result);
-          this.userProjects.push(result);
         }
         else if (result) {
-          this.userProjects.push(result);
+          this.activeProjects.push(result);
         }
       })
       .catch((error) => {

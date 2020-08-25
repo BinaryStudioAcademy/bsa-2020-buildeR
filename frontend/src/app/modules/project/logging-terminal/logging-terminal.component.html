@@ -1,13 +1,26 @@
-<div class="log-view" id="log-view">
+<div class="log-view" #top>
   <div class="log-header">
-    <label class="btn-outline-light" ngbButtonLabel>
-      <input type="checkbox" ngbButton [(ngModel)]="showLevels"> Levels
-    </label>
-    <label class="btn-outline-light" ngbButtonLabel>
-      <input type="checkbox" ngbButton [(ngModel)]="showTimeStamps"> Timestamps
-    </label>
-    <button class="btn btn-outline-light float-right" (click)="clear()">Clear log</button>
-    <button class="btn btn-outline-light float-right">Raw Log</button>
+    <div class="buttons-left">
+      <label class="btn-outline-light" ngbButtonLabel>
+        <input type="checkbox" ngbButton [(ngModel)]="showLevels"> Levels
+      </label>
+      <label class="btn-outline-light" ngbButtonLabel>
+        <input type="checkbox" ngbButton [(ngModel)]="showTimeStamps"> Timestamps
+      </label>
+    </div>
+    <div class="buttons-right">
+      <button class="btn btn-outline-light" (click)="clear()">Clear log</button>
+      <button class="btn btn-outline-light">Raw Log</button>
+    </div>
+  </div>
+  <div class="log-tail">
+    <div class="tail-body">
+      <a (click)="scrollTop(top)" title="Scroll To Top"><i class="fas fa-lg fa-arrow-circle-up"></i></a>
+      <a (click)="autoscroll = !autoscroll" title="Turn Auto Scrolling {{autoscroll ? 'Off' : 'On'}}">
+        <i class="fas fa-lg" [class.fa-lock]="!autoscroll" [class.fa-unlock]="autoscroll"></i>
+      </a>
+      <a (click)="scrollBottom(bottom)" title="Scroll To Bottom"> <i class="fas fa-lg fa-arrow-circle-down"></i></a>
+    </div>
   </div>
   <div class="log-container">
     <div class="build-step" [class]="{'expandable': buildStep.value[1].length > 1, 'expanded': buildStep.value[0]}"
@@ -25,7 +38,6 @@
       </div>
     </div>
   </div>
-  <div class="log-footer">
-    <a class="go-top btn-outline-light" href="#log-view">Top</a>
+  <div class="log-footer" #bottom>
   </div>
 </div>

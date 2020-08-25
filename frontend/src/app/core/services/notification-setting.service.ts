@@ -11,10 +11,10 @@ export class NotificationSettingService {
 
   constructor(private httpService: HttpService) {}
 
-  public getNotificationSettingByUserId(userId: number): Observable<NotificationSetting[]> {
-    return this.httpService.getRequest<NotificationSetting[]>(`${this.routePrefix}/GetByUserId/${userId}`);
+  public getNotificationSettingByUserId(userId: number): Observable<NotificationSetting> {
+    return this.httpService.getRequest<NotificationSetting>(`${this.routePrefix}/GetByUserId/${userId}`);
   }
-  public updateNotificationSettings(settings: NotificationSetting[]): Observable<NotificationSetting[]> {
-    return this.httpService.putRequest<NotificationSetting[]>(`${this.routePrefix}/UpdateRange`, settings);
+  public updateNotificationSettings(settings: NotificationSetting): Observable<NotificationSetting> {
+    return this.httpService.putRequest<NotificationSetting>(`${this.routePrefix}`, settings);
   }
 }

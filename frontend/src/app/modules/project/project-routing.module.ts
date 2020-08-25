@@ -7,6 +7,7 @@ import { ProjectComponent } from './project.component';
 import { ProjectResolverService } from '@core/resolvers/project.resolver';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
+import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
 const routes: Routes = [
   {
     path: 'create',
@@ -30,6 +31,10 @@ const routes: Routes = [
       {
         path: 'history',
         component: ProjectBuildHistoryComponent,
+      },
+      {
+        path: 'steps',
+        component: ProjectBuildStepsComponent,
       },
     ],
   },

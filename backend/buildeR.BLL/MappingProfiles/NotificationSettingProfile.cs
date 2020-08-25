@@ -11,7 +11,7 @@ namespace buildeR.BLL.MappingProfiles
             CreateMap<NotificationSetting, NotificationSettingDTO>();
 
             CreateMap<NotificationSettingDTO, NotificationSetting>();
-            CreateMap<NewNotificationSettingDTO, Notification>();
+            CreateMap<NewNotificationSettingDTO, NotificationSetting>();
         }
     }
 }

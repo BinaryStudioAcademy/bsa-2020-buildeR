@@ -20,7 +20,8 @@ namespace buildeR.DAL.Context
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }
         public DbSet<UserLetter> UserLetters { get; private set; }
         public DbSet<NotificationSetting> NotificationSettings { get; private set; }
-
+        public DbSet<NotificationSettingOption> NotificationSettingOptions { get; private set; }
+        public DbSet<Repository> Repositories { get; private set; }
         public BuilderContext(DbContextOptions<BuilderContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
