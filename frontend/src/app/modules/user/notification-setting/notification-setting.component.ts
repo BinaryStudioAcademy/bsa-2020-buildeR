@@ -15,14 +15,12 @@ import { AuthenticationService } from '@core/services/authentication.service';
 })
 export class NotificationSettingComponent implements OnInit {
 
-  appChecked = false;
-  emailChecked = false;
   user: User = this.authService.getCurrentUser();
-  settings: NotificationSetting [] = [];
+  setting: NotificationSetting = {} as NotificationSetting;
   descriptions: NotificationDescription [] =
   [
     { notificationType: NotificationSettingType.buildSuccess,  description: 'When build of project was successful'},
-    { notificationType: NotificationSettingType.buildFailed, description: 'When build of project was was failed'},
+    { notificationType: NotificationSettingType.buildFailed, description: 'When build of project was failed'},
   ];
   constructor(
     private settingService: NotificationSettingService,
@@ -33,20 +31,21 @@ export class NotificationSettingComponent implements OnInit {
   ngOnInit(): void {
     this.getSettings(this.user.id);
   }
+
   getSettings(userId: number) {
     this.settingService.getNotificationSettingByUserId(userId)
     .pipe(
-      map(x =>
+      map(setting =>
         {
-          x.map(des =>
+          setting.notificationSettingOptions.map(option =>
             {
-              des.description = this.descriptions.find(d => d.notificationType === des.notificationType).description;
-              return des;
+              option.description = this.descriptions.find(d => d.notificationType === option.notificationType).description;
+              return option;
             });
-          return x;
-        } ))
+          return setting;
+        }))
     .subscribe(
-      (data) => this.settings = data,
+      (data) => this.setting = data,
       (error) => this.toastrService.showError(error.message, error.name)
     );
   }
@@ -56,10 +55,22 @@ export class NotificationSettingComponent implements OnInit {
   }
 
   save() {
-    this.settingService.updateNotificationSettings(this.settings)
+    let res = true;
+    if (res) {
+      res = false;
+      this.settingService.updateNotificationSettings(this.setting)
       .subscribe(
-        () => this.toastrService.showSuccess('notification settings updated'),
-        (error) => this.toastrService.showError(error.message, error.name)
+        (data) =>
+        {
+          this.setting = data;
+          this.toastrService.showSuccess('notification settings updated');
+          res = true;
+        },
+        (error) => {
+          this.toastrService.showError(error.message, error.name);
+          res = true;
+        }
       );
+    }
   }
 }
