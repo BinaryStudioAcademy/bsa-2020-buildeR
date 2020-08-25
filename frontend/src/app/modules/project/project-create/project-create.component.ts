@@ -29,7 +29,7 @@ export class ProjectCreateComponent implements OnInit {
 
   isPrivateRepoChoosed = false;
 
-  @ViewChild('repository', {static: false}) instance: NgbTypeahead;
+  @ViewChild('repository', { static: false }) instance: NgbTypeahead;
 
   repositoryInputFocus$ = new Subject<string>();
   repositoryInputClick$ = new Subject<string>();
@@ -51,7 +51,7 @@ export class ProjectCreateComponent implements OnInit {
     private authService: AuthenticationService,
     private syncService: SynchronizationService,
     public activeModal: NgbActiveModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.defaultValues();
@@ -70,10 +70,12 @@ export class ProjectCreateComponent implements OnInit {
         ]
       ),
     });
-    this.syncService.getUserRepositories()
-      .subscribe(repos => {
-        this.repositories = repos;
-      });
+    if (this.syncService.isGithubAccessable()) {
+      this.syncService.getUserRepositories()
+        .subscribe(repos => {
+          this.repositories = repos;
+        });
+    }
   }
 
   defaultValues() {
@@ -95,8 +97,10 @@ export class ProjectCreateComponent implements OnInit {
       (resp) => {
         this.toastrService.showSuccess('project created');
         this.activeModal.close("Saved");
-        this.syncService.registerWebhook(resp.id)
-          .subscribe(() => resp.id);
+        if (this.syncService.isGithubAccessable()) {
+          this.syncService.registerWebhook(resp.id)
+            .subscribe(() => resp.id);
+        }
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);
