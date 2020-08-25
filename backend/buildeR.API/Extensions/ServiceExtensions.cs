@@ -33,6 +33,7 @@ namespace buildeR.API.Extensions
             services.AddSingleton(provider => GetScheduler(configuration));
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
+            services.AddScoped<ICommandArgumentService, CommandArgumentService>();
             services.AddScoped<IBuildService, BuildService>();
             services.AddScoped<IGithubClient, GithubClient>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
