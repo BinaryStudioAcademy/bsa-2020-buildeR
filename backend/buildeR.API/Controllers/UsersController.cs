@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO;
 using buildeR.Common.DTO.User;
+using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,6 +68,12 @@ namespace buildeR.API.Controllers
         public async Task<UserDTO> LinkProvider([FromBody] LinkProviderDTO user)
         {
             return await _userService.LinkProvider(user);
+        }
+
+        [HttpPost("letter")]
+        public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
+        {
+            await _userService.AddUserLetter(userLetter);
         }
     }
 }

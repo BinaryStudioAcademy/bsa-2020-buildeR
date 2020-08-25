@@ -15,6 +15,7 @@ using Quartz.Impl;
 using System;
 using System.Collections.Specialized;
 using System.Reflection;
+using buildeR.Common.DTO;
 
 namespace buildeR.API.Extensions
 {
@@ -51,6 +52,7 @@ namespace buildeR.API.Extensions
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(UserLetterProfile)));
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
