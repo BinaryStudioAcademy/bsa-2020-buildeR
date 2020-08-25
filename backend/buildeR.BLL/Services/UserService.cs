@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using buildeR.BLL.Exceptions;
@@ -9,6 +11,7 @@ using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace buildeR.BLL.Services
@@ -149,6 +152,23 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException("user", userLink.UserId);
             }
+        }
+
+        public async Task<UserDTO> UploadUserPhoto(IFormFile file, int userId)
+        {
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var folderName = Path.Combine("Resources", "Avatars");
+            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            var fullPath = Path.Combine(pathToSave, fileName);
+            var dbPath = Path.Combine("http://localhost:5050", folderName, fileName);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var user = await GetUserById(userId);
+            user.AvatarUrl = dbPath;
+            return await Update(user);
         }
     }
 }

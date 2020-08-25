@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.Common.DTO.User;
+using Microsoft.AspNetCore.Http;
 
 namespace buildeR.BLL.Interfaces
 {
@@ -14,5 +15,6 @@ namespace buildeR.BLL.Interfaces
         Task<bool> ValidateUsername(ValidateUserDTO user);
         Task<UserDTO> LinkProvider(LinkProviderDTO userLink);
         Task Delete(int id);
+        Task<UserDTO> UploadUserPhoto(IFormFile file, int userId);
     }
 }

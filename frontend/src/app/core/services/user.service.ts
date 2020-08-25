@@ -7,6 +7,7 @@ import { NewUser } from '../../shared/models/user/new-user';
 import { LinkProvider } from '../../shared/models/user/link-provider';
 import { ValidateUser } from '@shared/models/user/validate-user';
 import { HttpRequest } from '@angular/common/http';
+import { UserAvatar } from '@shared/models/user/user-avatar';
 
 @Injectable({
   providedIn: 'root'
@@ -63,5 +64,9 @@ export class UserService {
   linkProvider(user: LinkProvider): Observable<User>
   {
     return this.httpService.postRequest<User>(`${this.routePrefix}/link-provider`, user);
+  }
+
+  uploadAvatar(avatar: FormData, userId: number): Observable<UserAvatar>{
+    return this.httpService.postRequest<UserAvatar>(`${this.routePrefix}/avatar/${userId}`, avatar);
   }
 }

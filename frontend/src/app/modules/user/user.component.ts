@@ -4,6 +4,7 @@ import { TabRoute } from '@shared/models/tabs/tab-route';
 import { ModalCropperService } from '../../core/services/modal-cropper.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../shared/models/user/user';
+import { UserAvatar } from '@shared/models/user/user-avatar';
 
 @Component({
   selector: 'app-user',
@@ -12,6 +13,7 @@ import { User } from '../../shared/models/user/user';
 })
 export class UserComponent implements OnInit {
   currentUser: User = {} as User;
+  avatar: UserAvatar = {} as UserAvatar;
   githubClick = false;
   googleClick = false;
 
@@ -39,8 +41,12 @@ export class UserComponent implements OnInit {
   async open() {
     const file = await this.cropper.open();
     if (file) {
-      console.log('we have cropped ' + typeof (file));
-      // now we can use it for saving image logic
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      console.log(file.name);
+      this.userService.uploadAvatar(formData, this.currentUser.id).subscribe((res) => {
+        console.log(res);
+      });
     }
     else {
       console.log('Image didn`t change');
