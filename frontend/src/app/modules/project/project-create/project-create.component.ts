@@ -61,24 +61,15 @@ export class ProjectCreateComponent implements OnInit {
         [
           Validators.minLength(4),
           Validators.maxLength(32),
-          Validators.required
-        ]),
-      description: new FormControl(this.newProject.description, []),
-      isPublic: new FormControl(this.newProject.isPublic, []),
-      _repository: new FormControl(this.newProject._repository,
-        [
-          Validators.required
-        ]
-      ),
-      repositoryURL: new FormControl(this.newProject._repository.url,
-        [
           Validators.required,
-          Validators.pattern(`https:\/\/github\.com\/[A-Za-z]+\/[A-Za-z]+`)
-        ],
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._\s]+(?<![-\\.])$`)
+        ]),
+      description: new FormControl(this.newProject.description,
         [
-          repoUrlAsyncValidator(this.syncService),
-        ]
-      ),
+          Validators.maxLength(300),
+          Validators.pattern('[^А-яа-я]*')
+        ]),
+      isPublic: new FormControl(this.newProject.isPublic, []),
     });
     if (this.syncService.isGithubAccessable()) {
       this.syncService.getUserRepositories()
@@ -100,10 +91,15 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
-    this.newProject = this.projectForm.value as NewProject;
-    this.newProject._repository.url = this.projectForm.value['repositoryURL'];
+    this.newProject.name = this.projectForm.controls['name'].value;
+    this.newProject.description = this.projectForm.controls['description'].value;
+    this.newProject.isPublic = this.projectForm.controls['isPublic'].value;
+    this.newProject._repository = this.projectForm.controls['_repository']?.value ?? this.newProject._repository;
+    this.newProject._repository.url = this.projectForm.controls['repositoryURL']?.value;
+
     this.newProject.ownerId = this.user.id;
-    this.newProject.repository = this.newProject._repository.name;
+    this.newProject.repository = this.newProject._repository?.name;
+
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
@@ -131,22 +127,62 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   githubRadioClicked() {
-    if (!this.isGithubAccessable())
+    if (!this.isGithubAccessable()) {
       return;
+    }
 
     this.githubRepoSection = true;
     this.urlSection = false;
     this.newProject._repository.createdByLink = false;
+
+    if (this.projectForm.controls['repositoryURL']) {
+      this.projectForm.removeControl('repositoryURL');
+    }
+
+    this.projectForm.addControl('_repository', new FormControl(this.newProject._repository,
+      [
+        Validators.required
+      ]
+    ),
+    );
   }
 
   urlRadioClicked() {
     this.urlSection = true;
     this.githubRepoSection = false;
     this.newProject._repository.createdByLink = true;
+
+    if (this.projectForm.controls['_repository']) {
+      this.projectForm.removeControl('_repository');
+    }
+
+    this.projectForm.addControl('repositoryURL', new FormControl(this.newProject._repository.url,
+      [
+        Validators.required,
+        Validators.pattern(`https:\/\/github\.com\/[A-Za-z]+\/[A-Za-z]+`)
+      ],
+      [
+        repoUrlAsyncValidator(this.syncService),
+      ]
+    ),
+    );
   }
 
   closeForm() {
     this.activeModal.close();
+  }
+
+  isFormValid() {
+    if (!this.newProject._repository) {
+      return false;
+    }
+
+    if (!this.newProject._repository.createdByLink) {
+      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
+    }
+    else {
+      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid;
+    }
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;
