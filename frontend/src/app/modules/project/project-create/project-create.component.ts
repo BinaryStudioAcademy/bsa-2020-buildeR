@@ -149,5 +149,12 @@ export class ProjectCreateComponent implements OnInit {
     this.activeModal.close();
   }
 
+  isFormValid() {
+    const repoControlValue = this.projectForm.value['_repository'];
+    return ((repoControlValue.name && !repoControlValue.createdByLink) ||
+           (this.projectForm.controls['repositoryURL'].valid && repoControlValue.createdByLink) ) &&
+           this.projectForm.controls['name'].valid;
+  }
+
   repoListResultFormatter = (repo: Repository) => repo.name;
 }
