@@ -3,14 +3,14 @@ import { Project } from '@shared/models/project/project';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
+import { CommandArgumentService } from '@core/services/command-argument.service';
 import { BuildStepService } from '@core/services/build-step.service';
 import { BaseComponent } from '@core/components/base/base.component';
 import { takeUntil } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { EnvVariable } from '@shared/models/env-variable';
-import { Arg } from '@shared/models/arg';
+import { CommandArgument } from '@shared/models/command-argument';
 
 
 @Component({
@@ -27,18 +27,18 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   isAdding = false;
   newBuildStep: EmptyBuildStep = {} as EmptyBuildStep;
   workDir: string;
-  envVariables: EnvVariable[] = new Array();
-  args: Arg[] = new Array();
+  commandArguments: CommandArgument[] = new Array();
 
   newEnvVariableKey: string = null;
   newEnvVariableValue: string = null;
 
-  newArgKey: string = null;
-  newArgValue: string = null;
+  newCommandArgumentKey: string = null;
+  newCommandArgumentValue: string = null;
 
   constructor(
     private projectService: ProjectService,
     private buildStepService: BuildStepService,
+    private commandArgumentService: CommandArgumentService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   ) {
@@ -118,59 +118,53 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     this.newBuildStep = null;
     this.isAdding = false;
     this.workDir = null;
-    this.envVariables = null;
-    this.args = null;
+    this.commandArguments = null;
 
-    this.clearNewEnvVariable();
-    this.clearNewArg();
+    this.clearNewCommandArgument();
   }
 
-  addEnvVariable() {
-    this.newEnvVariableKey = '';
-    this.newEnvVariableValue = '';
+  addCommandArgument() {
+    this.newCommandArgumentKey = '';
+    this.newCommandArgumentValue = '';
   }
 
-  saveEnvVariable() {
-    const newEnvVariable = {
-      key: this.newEnvVariableKey,
-      value: this.newEnvVariableValue
-    } as EnvVariable;
-    this.envVariables.push(newEnvVariable);
-    this.clearNewEnvVariable();
+  saveCommandArgument() {
+    const newCommandArgument = {
+      key: this.newCommandArgumentKey,
+      value: this.newCommandArgumentValue
+    } as CommandArgument;
+    if (!this.commandArguments) {
+      this.commandArguments = new Array();
+    }
+    this.commandArguments.push(newCommandArgument);
+    this.clearNewCommandArgument();
   }
 
-  removeNewEnvVariable(key: string) {
-    this.envVariables = this.envVariables.filter(envVar => envVar.key !== key);
+  removeNewCommandArgument(key: string) {
+    this.commandArguments = this.commandArguments.filter(commandArgument => commandArgument.key !== key);
   }
 
-  clearNewEnvVariable() {
-    this.newEnvVariableKey = null;
-    this.newEnvVariableValue = null;
+  clearNewCommandArgument() {
+    this.newCommandArgumentKey = null;
+    this.newCommandArgumentValue = null;
   }
 
-  addArg() {
-    this.newArgKey = '';
-    this.newArgValue = '';
+  removeExistingCommandArgument(buildStep: BuildStep, argumentId: number) {
+    this.isLoading = true;
+    this.commandArgumentService
+      .removeCommandArgument(argumentId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => {
+          this.isLoading = false;
+          buildStep.commandArguments = buildStep.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
   }
-
-  saveArg() {
-    const newArg = {
-      key: this.newArgKey,
-      value: this.newArgValue
-    } as Arg;
-    this.args.push(newArg);
-    this.clearNewArg();
-  }
-
-  removeNewArg(key: string) {
-    this.args = this.args.filter(arg => arg.key !== key);
-  }
-
-  clearNewArg() {
-    this.newArgKey = null;
-    this.newArgValue = null;
-  }
-
 
   saveBuildStep() {
     const buildStep = {
@@ -180,8 +174,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       pluginCommandId: this.newBuildStep.pluginCommand.id,
       projectId: this.projectId,
       workDirectory: this.workDir,
-      args: this.args,
-      envVariables: this.envVariables
+      commandArguments: this.commandArguments
     } as BuildStep;
     this.cancelBuildStep();
 
