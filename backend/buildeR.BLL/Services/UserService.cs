@@ -161,7 +161,6 @@ namespace buildeR.BLL.Services
             await _context.Set<UserLetter>().AddAsync(userLetter);
             await _context.SaveChangesAsync();
             
-            Console.WriteLine("Email: " + _emailService.SupportEmail);
             string strSubject = $"Feedback from {newUserLetter.UserName}: {newUserLetter.Subject}";
             await _emailService.SendEmailAsync(new List<string> {_emailService.SupportEmail},
                 new EmailAddress(newUserLetter.UserEmail), strSubject, newUserLetter.Description);
