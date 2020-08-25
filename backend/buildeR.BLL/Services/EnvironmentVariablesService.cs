@@ -19,22 +19,16 @@ namespace buildeR.BLL.Services
         }
 
         public async Task AddEnvironmenVariable(EnvironmentVariableDTO variableDTO)
-        {   
-            string path = variableDTO.ProjectId.ToString();
+        {
+            string path = "projects/" + variableDTO.ProjectId.ToString();
             string value = JsonConvert.SerializeObject(variableDTO.Data);
             try
             {
                 var res = await _secretService.ReadSecretsAsync(path);
-                //To avoid name duplicates
-                if (res.ContainsKey(variableDTO.Id))
-                {
-                    await UpdateEnvironmentVariable(variableDTO, res);
-                    return;
-                }
                 res.Add(variableDTO.Id, value);
                 await _secretService.CreateSecretsAsync(res, path);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 var res = new Dictionary<string, string>();
                 res.Add(variableDTO.Id, value);
@@ -45,17 +39,18 @@ namespace buildeR.BLL.Services
         public async Task UpdateEnvironmentVariable(EnvironmentVariableDTO variableDTO,
                                                                           Dictionary<string, string> dict = null)
         {
+            string path = "projects/" + variableDTO.ProjectId.ToString();
             if (dict == null)
             {
-                dict = await _secretService.ReadSecretsAsync(variableDTO.ProjectId.ToString());
+                dict = await _secretService.ReadSecretsAsync(path);
             }
             dict[variableDTO.Id] = JsonConvert.SerializeObject(variableDTO.Data);
-            await _secretService.CreateSecretsAsync(dict, variableDTO.ProjectId.ToString());
+            await _secretService.CreateSecretsAsync(dict, path);
         }
 
         public async Task DeleteEnvironmentVariable(EnvironmentVariableDTO variableDTO)
         {
-            string path = variableDTO.ProjectId.ToString();
+            string path = "projects/" + variableDTO.ProjectId.ToString();
             var res = await _secretService.ReadSecretsAsync(path);
             res.Remove(variableDTO.Id);
             await _secretService.CreateSecretsAsync(res, path);
@@ -63,17 +58,24 @@ namespace buildeR.BLL.Services
 
         public async Task<List<EnvironmentVariableDTO>> GetEnvironmentVariables(string projectId)
         {
-            var dict = await _secretService.ReadSecretsAsync(projectId);
-            List<EnvironmentVariableDTO> res = new List<EnvironmentVariableDTO>();
-            foreach (var item in dict)
+            try
             {
-                EnvironmentVariableDTO dto = new EnvironmentVariableDTO();
-                dto.ProjectId = Convert.ToInt32(projectId);
-                dto.Id = item.Key;
-                dto.Data = JsonConvert.DeserializeObject<VariableValue>(item.Value);
-                res.Add(dto);
+                var dict = await _secretService.ReadSecretsAsync("projects/" + projectId);
+                List<EnvironmentVariableDTO> res = new List<EnvironmentVariableDTO>();
+                foreach (var item in dict)
+                {
+                    EnvironmentVariableDTO dto = new EnvironmentVariableDTO();
+                    dto.ProjectId = Convert.ToInt32(projectId);
+                    dto.Id = item.Key;
+                    dto.Data = JsonConvert.DeserializeObject<VariableValue>(item.Value);
+                    res.Add(dto);
+                }
+                return res;
             }
-            return res;
+            catch (Exception)
+            {
+                return new List<EnvironmentVariableDTO>();
+            }
         }
     }
 }
