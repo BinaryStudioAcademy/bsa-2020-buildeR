@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace buildeR.Common.DTO
+﻿namespace buildeR.Common.DTO
 {
-    public class Arg
+    public class CommandArgumentDTO
     {
         public int Id { get; set; }
         public string Key { get; set; }
