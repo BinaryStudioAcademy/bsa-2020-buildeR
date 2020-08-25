@@ -1,7 +1,5 @@
 ﻿using buildeR.Common.DTO.BuildPlugin;
 
-using System.Collections.Generic;
-
 namespace buildeR.Common.DTO.PluginCommand
 {
     public sealed class PluginCommandDTO
@@ -11,6 +9,5 @@ namespace buildeR.Common.DTO.PluginCommand
         public string Name { get; set; }
 
         public BuildPluginDTO Plugin { get; set; }
-        public IEnumerable<CommandArgumentDTO> Args { get; set; }
     }
 }

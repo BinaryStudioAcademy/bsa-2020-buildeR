@@ -1,4 +1,4 @@
-export interface Arg {
+export interface CommandArgument {
   id: number;
   key: string;
   value: string;
