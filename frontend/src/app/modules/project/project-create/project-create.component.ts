@@ -8,10 +8,11 @@ import { SynchronizationService } from '@core/services/synchronization.service';
 import { Repository } from '@core/models/Repository';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject, merge } from 'rxjs';
+import { Observable, Subject, merge, from } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators, NgModel } from '@angular/forms';
 import { NewRepository } from '@core/models/NewRepository';
+import { repoUrlAsyncValidator } from '@core/validators/repo-url.async-validator';
 
 @Component({
   selector: 'app-project-create',
@@ -64,9 +65,18 @@ export class ProjectCreateComponent implements OnInit {
         ]),
       description: new FormControl(this.newProject.description, []),
       isPublic: new FormControl(this.newProject.isPublic, []),
-      repositoryInput: new FormControl(this.newProject.repository,
+      _repository: new FormControl(this.newProject._repository,
         [
           Validators.required
+        ]
+      ),
+      repositoryURL: new FormControl(this.newProject._repository.url,
+        [
+          Validators.required,
+          Validators.pattern(`https:\/\/github\.com\/[A-Za-z]+\/[A-Za-z]+`)
+        ],
+        [
+          repoUrlAsyncValidator(this.syncService),
         ]
       ),
     });
@@ -90,7 +100,8 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
-    // this.newProject = this.projectForm.value as NewProject;
+    this.newProject = this.projectForm.value as NewProject;
+    this.newProject._repository.url = this.projectForm.value['repositoryURL'];
     this.newProject.ownerId = this.user.id;
     this.newProject.repository = this.newProject._repository.name;
     this.projectService.createProject(this.newProject).subscribe(

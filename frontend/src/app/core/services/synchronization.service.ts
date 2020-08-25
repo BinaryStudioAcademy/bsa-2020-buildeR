@@ -42,6 +42,10 @@ export class SynchronizationService {
     return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${projectId}/branches`);
   }
 
+  checkIfRepositoryAccessable(repoUrl: string): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.endpoint}/repo/exist`, { link: repoUrl });
+  }
+
   registerWebhook(projectId: number): Observable<any> {
     const token = localStorage.getItem('github-access-token');
     this.httpService.setHeader('ProviderAuthorization', token);
