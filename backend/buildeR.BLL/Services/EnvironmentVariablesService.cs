@@ -12,6 +12,7 @@ namespace buildeR.BLL.Services
     public class EnvironmentVariablesService : IEnvironmentVariablesService
     {
         private readonly ISecretService _secretService;
+        private readonly string route = "projects/";
 
         public EnvironmentVariablesService(ISecretService secretService)
         {
@@ -20,7 +21,7 @@ namespace buildeR.BLL.Services
 
         public async Task AddEnvironmenVariable(EnvironmentVariableDTO variableDTO)
         {
-            string path = "projects/" + variableDTO.ProjectId.ToString();
+            string path = route + variableDTO.ProjectId.ToString();
             string value = JsonConvert.SerializeObject(variableDTO.Data);
             try
             {
@@ -45,7 +46,7 @@ namespace buildeR.BLL.Services
         public async Task UpdateEnvironmentVariable(EnvironmentVariableDTO variableDTO,
                                                                           Dictionary<string, string> dict = null)
         {
-            string path = "projects/" + variableDTO.ProjectId.ToString();
+            string path = route + variableDTO.ProjectId.ToString();
             if (dict == null)
             {
                 dict = await _secretService.ReadSecretsAsync(path);
@@ -56,7 +57,7 @@ namespace buildeR.BLL.Services
 
         public async Task DeleteEnvironmentVariable(EnvironmentVariableDTO variableDTO)
         {
-            string path = "projects/" + variableDTO.ProjectId.ToString();
+            string path = route + variableDTO.ProjectId.ToString();
             var res = await _secretService.ReadSecretsAsync(path);
             if (res.Count == 1)
             {   
@@ -72,7 +73,7 @@ namespace buildeR.BLL.Services
         {
             try
             {
-                var dict = await _secretService.ReadSecretsAsync("projects/" + projectId);
+                var dict = await _secretService.ReadSecretsAsync(route + projectId);
                 List<EnvironmentVariableDTO> res = new List<EnvironmentVariableDTO>();
                 foreach (var item in dict)
                 {
