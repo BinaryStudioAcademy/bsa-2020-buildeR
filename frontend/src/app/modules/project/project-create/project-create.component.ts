@@ -25,6 +25,7 @@ export class ProjectCreateComponent implements OnInit {
   repositories: Repository[];
   projectForm: FormGroup;
 
+  userHasCredentials = false;
   githubRepoSection = false;
   urlSection = false;
 
@@ -71,12 +72,17 @@ export class ProjectCreateComponent implements OnInit {
         ]),
       isPublic: new FormControl(this.newProject.isPublic, []),
     });
-    if (this.syncService.isGithubAccessable()) {
-      this.syncService.getUserRepositories()
-        .subscribe(repos => {
-          this.repositories = repos;
+
+    this.syncService.checkIfUserHasCredentials(this.user.id)
+      .subscribe(res => {
+        this.userHasCredentials = res;
+        if (res) {
+          this.syncService.getUserRepositories(this.user.id)
+                .subscribe(repos => {
+                  this.repositories = repos;
         });
-    }
+        }
+      });
   }
 
   defaultValues() {
@@ -102,7 +108,7 @@ export class ProjectCreateComponent implements OnInit {
       (resp) => {
         this.toastrService.showSuccess('project created');
         this.activeModal.close("Saved");
-        if (this.syncService.isGithubAccessable()) {
+        if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
         }
@@ -120,12 +126,8 @@ export class ProjectCreateComponent implements OnInit {
     change = !change;
   }
 
-  isGithubAccessable() {
-    return localStorage.getItem('github-access-token');
-  }
-
   githubRadioClicked() {
-    if (!this.isGithubAccessable()) {
+    if (!this.userHasCredentials) {
       return;
     }
 

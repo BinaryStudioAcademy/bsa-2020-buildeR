@@ -18,37 +18,59 @@ namespace buildeR.API.Controllers
     public class SynchronizationController : ControllerBase
     {
         private readonly ISynchronizationService _synchronizationService;
-        private readonly LinkGenerator _linkGenerator;
-        public SynchronizationController(ISynchronizationService synchronizationService, LinkGenerator linkGenerator)
+        public SynchronizationController(ISynchronizationService synchronizationService)
         {
             _synchronizationService = synchronizationService;
-            _linkGenerator = linkGenerator;
         }
 
-        [HttpGet("repos/")]
-        public async Task<IEnumerable<Repository>> GetUserRepositories([FromHeader]string ProviderAuthorization)
+        [HttpGet("user/{userId}/credentials")]
+        public async Task<Credentials> GetUserCredentials(int userId)
         {
-            return await _synchronizationService.GetUserRepositories(ProviderAuthorization);
+            return await _synchronizationService.GetUserCredentials(userId);
+        }
+
+        [HttpPost("user/exist")]
+        public async Task<bool> CheckIfUserExist([FromBody]Credentials credentials)
+        {
+            return await _synchronizationService.CheckIfUserExist(credentials);
+        }
+
+        [HttpGet("user/{userId}/credentials/exist")]
+        public async Task<bool> CheckIfUserHasCredentials(int userId)
+        {
+            return await _synchronizationService.CheckIfUserHasCredentials(userId);
+        }
+
+        [HttpGet("{userId}/repos")]
+        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
+        {
+            return await _synchronizationService.GetUserRepositories(userId);
         }
 
         [HttpGet("{projectId}/branches")]
-        public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId, [FromHeader]string ProviderAuthorization)
+        public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId)
          {
-            return await _synchronizationService.GetRepositoryBranches(projectId, ProviderAuthorization);
+            return await _synchronizationService.GetRepositoryBranches(projectId);
         }
 
-        [HttpPost("repo/exist")]
-        public async Task<bool> CheckIfRepositoryAccessable([FromBody]RepositoryLinkDTO linkDTO)
+        [HttpPost("{userId}/repo/exist")]
+        public async Task<bool> CheckIfRepositoryAccessable(int userId, [FromBody]RepositoryLinkDTO linkDTO)
         {
-            return await _synchronizationService.CheckIfRepositoryAccessable(linkDTO.Link);
+            return await _synchronizationService.CheckIfRepositoryAccessable(linkDTO.Link, userId);
         }
 
         [HttpPost("hooks/{projectId}")]
-        public async Task RegisterWebhooks(int projectId, [FromHeader] string ProviderAuthorization)
+        public async Task RegisterWebhooks(int projectId)
         {
             var callback = Url.RouteUrl("Webhooks", new { controller = $"webhooks" }, Request.Scheme);
 
-            await _synchronizationService.RegisterWebhook(projectId, callback, ProviderAuthorization);
+            await _synchronizationService.RegisterWebhook(projectId, callback);
+        }
+
+        [HttpPost("credentials/{userId}")]
+        public async Task SetUpCredentials(int userId, [FromBody]Credentials credentials)
+        {
+            await _synchronizationService.SetUpUserCredentials(userId, credentials);
         }
     }
 }
