@@ -1,8 +1,9 @@
 <div class="container-fluid">
   <div class="scroll-container">
     <div class="link-buttons">
-      <button class="btn btn-sm btn-github" *ngIf="!(isProviderAdded(0) || githubClick) else linkedGithub"
-        [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+      <button class="btn btn-sm btn-github"
+        *ngIf="!((isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()) else linkedGithub"
+        [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
         <div class="icon">
           <i class="fab fa-github" aria-hidden="true"></i>
         </div>
@@ -11,7 +12,8 @@
         </div>
       </button>
       <ng-template #linkedGithub>
-        <button class="btn btn-sm btn-github" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+        <button class="btn btn-sm btn-github"
+          [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
           <div class="check-icon">
             <i class="fas fa-check"></i>
           </div>
@@ -99,6 +101,9 @@
         <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="username"
             placeholder="Your username">
+          <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+            *ngIf="settingsForm.controls['username'].status === 'PENDING'">
+          </app-loading-spinner>
           <div *ngIf="settingsForm.controls['username'].errors">
             <div class="error" *ngIf="settingsForm.controls['username'].errors.required">
               User name is required
@@ -153,8 +158,8 @@
           </div>
         </div>
         <div class="save-button-container">
-          <button type="submit" class="btn btn-success"
-            [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
+          <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged 
+            || settingsForm.controls['username'].status === 'PENDING'">Save</button>
         </div>
       </div>
     </form>

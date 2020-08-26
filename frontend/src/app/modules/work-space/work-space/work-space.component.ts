@@ -6,6 +6,8 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
 import { User } from '@shared/models/user/user';
 import { UserService } from '@core/services/user.service';
+import { Group } from '../../../shared/models/group/group';
+import { GroupService } from '../../../core/services/group.service';
 
 @Component({
   selector: 'app-work-space',
@@ -17,13 +19,16 @@ export class WorkSpaceComponent implements OnInit {
   isMenuCollapsed = true;
   url = environment.signalRUrl + '/test';
   user: User;
+  groups: Group[];
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
     private authService: AuthenticationService,
     private router: Router,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private groupService: GroupService
+  ) {
+  }
 
   ngOnInit(): void {
     this.signalR.signalRecieved.subscribe(() => {
@@ -34,7 +39,10 @@ export class WorkSpaceComponent implements OnInit {
       console.log(url);
       this.user.avatarUrl = url;
     });
+    this.groupService.getAllGroups().subscribe(res => this.groups = res);
   }
+
+
 
   broadcast() {
     this.httpService

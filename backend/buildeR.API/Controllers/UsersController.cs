@@ -15,9 +15,11 @@ namespace buildeR.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService)
+        private readonly IFileProvider _fileProvider;
+        public UsersController(IUserService userService, IFileProvider fileProvider)
         {
             _userService = userService;
+            _fileProvider = fileProvider;
         }
 
         [HttpGet]
@@ -64,6 +66,7 @@ namespace buildeR.API.Controllers
             await _userService.Delete(id);
         }
 
+        [AllowAnonymous]
         [HttpPost("link-provider")]
         public async Task<UserDTO> LinkProvider([FromBody] LinkProviderDTO user)
         {
@@ -73,9 +76,10 @@ namespace buildeR.API.Controllers
         [HttpPost("avatar/{id}")]
         public async Task<UserDTO> UpdateAvatar(int id)
         {
-            return await _userService.UploadUserPhoto(Request.Form.Files[0], id);
+            return await _userService.UpdateUserAvatar(Request.Form.Files[0], id);
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("letter")]
         public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
         {

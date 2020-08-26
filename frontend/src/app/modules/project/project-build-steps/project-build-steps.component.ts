@@ -3,12 +3,16 @@ import { Project } from '@shared/models/project/project';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
+import { CommandArgumentService } from '@core/services/command-argument.service';
+import { BuildPluginService } from '@core/services/build-plugin.service';
 import { BuildStepService } from '@core/services/build-step.service';
 import { BaseComponent } from '@core/components/base/base.component';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CommandArgument } from '@shared/models/command-argument';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -25,10 +29,22 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   isAdding = false;
   newBuildStep: EmptyBuildStep = {} as EmptyBuildStep;
   workDir: string;
+  commandArguments: CommandArgument[] = new Array();
+
+  newEnvVariableKey: string = null;
+  newEnvVariableValue: string = null;
+
+  newCommandArgumentKey: string = null;
+  newCommandArgumentValue: string = null;
+
+  version: string;
+  versions: string[];
 
   constructor(
     private projectService: ProjectService,
     private buildStepService: BuildStepService,
+    private commandArgumentService: CommandArgumentService,
+    private buildPluginService: BuildPluginService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   ) {
@@ -42,11 +58,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.project = this.route.snapshot.data.project as Project;
     this.getProject(this.projectId);
     this.getProjectBuildSteps(this.projectId);
     this.getEmptyBuildSteps();
-    this.isLoading = false;
   }
 
   getProject(projectId: number) {
@@ -55,9 +71,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .getProjectById(projectId)
       .subscribe(
         (data) => {
+          this.isLoading = false;
           this.project = data;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error.message, error.name);
         }
       );
@@ -70,9 +88,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.emptyBuildSteps = resp.body;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
@@ -85,9 +105,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.buildSteps = resp.body;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
@@ -102,18 +124,97 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     this.newBuildStep = null;
     this.isAdding = false;
     this.workDir = null;
+    this.commandArguments = null;
+    this.version = null;
+
+    this.clearNewCommandArgument();
+  }
+
+  addCommandArgument() {
+    this.newCommandArgumentKey = '';
+    this.newCommandArgumentValue = '';
+  }
+
+  saveCommandArgument() {
+    const newCommandArgument = {
+      key: this.newCommandArgumentKey,
+      value: this.newCommandArgumentValue
+    } as CommandArgument;
+    if (!this.commandArguments) {
+      this.commandArguments = new Array();
+    }
+    this.commandArguments.push(newCommandArgument);
+    this.clearNewCommandArgument();
+  }
+
+  removeNewCommandArgument(key: string) {
+    this.commandArguments = this.commandArguments.filter(commandArgument => commandArgument.key !== key);
+  }
+
+  clearNewCommandArgument() {
+    this.newCommandArgumentKey = null;
+    this.newCommandArgumentValue = null;
+  }
+
+  removeExistingCommandArgument(buildStep: BuildStep, argumentId: number) {
+    this.isLoading = true;
+    this.commandArgumentService
+      .removeCommandArgument(argumentId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => {
+          this.isLoading = false;
+          buildStep.commandArguments = buildStep.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
+  }
+
+  getVersions(buildPluginName: string, versionTerm: string) {
+    if (versionTerm.length < 2) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.buildPluginService
+      .getVersionsOfBuildPlugin(buildPluginName, versionTerm)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          this.versions = resp.body;
+          console.log(this.versions);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
+  }
+
+  search = (text$: Observable<string>) => {
+    return text$.pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(term => term.length < 2
+          ? [] : this.buildPluginService.versionsLookup(this.newBuildStep.buildPlugin.dockerRegistryName, term))
+    );
   }
 
   saveBuildStep() {
-    const buildStep = {} as BuildStep;
-
-    buildStep.pluginCommand = this.newBuildStep.pluginCommand;
-    buildStep.index = this.buildSteps.length;
-    buildStep.buildStepName = this.newBuildStep.buildStepName;
-    buildStep.pluginCommandId = this.newBuildStep.pluginCommand.id;
-    buildStep.projectId = this.projectId;
-    buildStep.workDirectory = this.workDir;
-
+    const buildStep = {
+      pluginCommand: this.newBuildStep.pluginCommand,
+      index: this.buildSteps.length,
+      buildStepName: this.newBuildStep.buildStepName,
+      pluginCommandId: this.newBuildStep.pluginCommand.id,
+      projectId: this.projectId,
+      workDirectory: this.workDir,
+      commandArguments: this.commandArguments
+    } as BuildStep;
+    buildStep.pluginCommand.plugin.version = this.version;
     this.cancelBuildStep();
 
     this.isLoading = true;
@@ -122,14 +223,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.isLoading = false;
           this.buildSteps.push(resp);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 
   removeBuildStep(buildStep: BuildStep) {
@@ -139,18 +240,20 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => {
+          this.isLoading = false;
           this.buildSteps = this.buildSteps.filter(step => buildStep.id !== step.id);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.increaseIndexesOfBuildStepsFrom(this.projectId, event.currentIndex, event.previousIndex);
+    if (event.currentIndex !== event.previousIndex) {
+      this.increaseIndexesOfBuildStepsFrom(this.projectId, event.currentIndex, event.previousIndex);
+    }
   }
 
   increaseIndexesOfBuildStepsFrom(projectId: number, newIndex: number, oldIndex: number) {
@@ -160,13 +263,13 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         () => {
+          this.isLoading = false;
           moveItemInArray(this.buildSteps, oldIndex, newIndex);
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
-
-    this.isLoading = false;
   }
 }

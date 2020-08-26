@@ -2,5 +2,7 @@ export interface BuildPlugin {
   id: number;
   pluginName: string;
   command: string;
-  dockerImageName: string;
+  DockerImageName: string;
+  version: string;
+  dockerRegistryName: string;
 }
