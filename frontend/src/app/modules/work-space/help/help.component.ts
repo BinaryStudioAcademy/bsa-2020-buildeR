@@ -36,7 +36,9 @@ export class HelpComponent extends BaseComponent
 
   ngOnInit(): void {
     this.route.data.subscribe(data => this.currentUser = data.user);
-    this.userHelp.userEmail = this.currentUser.email;
+    if(this.currentUser) {
+      this.userHelp.userEmail = this.currentUser.email;
+    }
 
     this.helpForm = new FormGroup({
       userEmail: new FormControl(this.userHelp.userEmail,
@@ -64,16 +66,24 @@ export class HelpComponent extends BaseComponent
         ),
     });
 
+    if(!this.currentUser)
+    this.helpForm.addControl('userName',
+      new FormControl(this.userHelp.userName,
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(30),
+          Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
+        ]));
   }
 
   onSubmit(letter: UserLetter): void {
     letter.rating = this.currentRate;
 
-    this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
-      letter.userName = this.currentUser.username
-
-    console.log(letter);
-
+    if(this.currentUser) {
+      this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
+        letter.userName = this.currentUser.username
+    }
     this.isShowSpinner = true;
     this.userService.sendLetter(letter).subscribe( letter =>
     {
