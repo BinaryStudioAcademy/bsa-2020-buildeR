@@ -64,6 +64,7 @@ namespace buildeR.API.Controllers
             await _userService.Delete(id);
         }
 
+        [AllowAnonymous]
         [HttpPost("link-provider")]
         public async Task<UserDTO> LinkProvider([FromBody] LinkProviderDTO user)
         {

@@ -42,9 +42,10 @@ export class FirebaseSignInService {
 
   signInWithGoogle(redirectUrl?: string) {
     const googleProvider = new auth.GoogleAuthProvider();
-    return this.authService.getAngularAuth().signInWithPopup(googleProvider).then((credential) => {
-      this.login(credential, redirectUrl);
-    },
+    return this.authService.getAngularAuth().signInWithPopup(googleProvider).then(
+      (credential) => {
+        this.login(credential, redirectUrl);
+      },
       (error: auth.Error) => {
         this.openSignInWarning(error, Providers.Google);
       }
@@ -136,8 +137,8 @@ export class FirebaseSignInService {
 
           this.authService.getAngularAuth().authState
             .subscribe((user) => {
-              if (!user.emailVerified) {
-                user.sendEmailVerification().then(() => {
+              if (!user?.emailVerified) {
+                user?.sendEmailVerification().then(() => {
                   this.openVerificationEmailModal(credential.user.email);
                 });
               }
@@ -211,5 +212,27 @@ export class FirebaseSignInService {
           user = response;
         }
       });
+  }
+
+  async linkGithubOnlyInFirebase() {
+    const githubProvider = new auth.GithubAuthProvider();
+    githubProvider.addScope('admin:hooks');
+    githubProvider.addScope('repo');
+    const fireUser = this.authService.getFireUser();
+    try {
+      const result = await fireUser.linkWithPopup(githubProvider);
+      const credential = result.credential;
+      localStorage.setItem('github-access-token', credential[`accessToken`]);
+      return 'ok';
+    }
+    catch (err) {
+      console.log(err);
+      switch (err.code) {
+        case 'auth/credential-already-in-use': {
+          return 'This account is already added to BuildeR!';
+        }
+        default: { return err.code; }
+      }
+    }
   }
 }
