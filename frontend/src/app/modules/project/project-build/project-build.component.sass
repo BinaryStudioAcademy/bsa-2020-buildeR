@@ -1,0 +1,73 @@
+.breadcrumb
+  background-color: unset !important
+  padding: 0
+  padding-left: 0.5rem
+
+a.back
+  display: inline-block
+  margin-bottom: 0.5rem
+
+.build
+  height: 20vh
+  border-radius: 2px
+  border: 1px solid #eaeaea
+  padding: 0.2rem
+  margin-bottom: 2rem
+
+  i
+    width: 1.2rem
+
+  .user-commit
+    display: flex
+    flex-direction: column
+    justify-content: space-evenly
+    gap: 0.2rem
+    height: 100%
+    float: left
+    width: 50%
+    padding-left: 2rem
+
+    .branch, .commit
+      font-family: Cousine,monospace
+
+    p
+      margin: 0
+
+    a
+      text-decoration: none
+      cursor: pointer
+      margin: 0
+
+      &:hover
+        text-decoration: underline
+
+  .build-info
+    height: 100%
+    width: 50%
+    float: right
+    display: flex
+    flex-direction: column
+    justify-content: space-evenly
+    gap: 0.5rem
+
+    p
+      margin: 0
+      width: 12rem
+
+      &:first-of-type
+        width: 15rem
+
+      &:last-of-type
+        width: 15rem
+
+@media (max-width:500px)
+
+  .build
+    font-size: 1.2rem
+    height: unset
+
+    div.user-commit, div.build-info
+      margin: 1rem
+      padding-left: 2rem
+      width: 100%
+      float: unset
