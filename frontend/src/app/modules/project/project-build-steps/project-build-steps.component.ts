@@ -4,6 +4,7 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { CommandArgumentService } from '@core/services/command-argument.service';
+import { BuildPluginService } from '@core/services/build-plugin.service';
 import { BuildStepService } from '@core/services/build-step.service';
 import { BaseComponent } from '@core/components/base/base.component';
 import { takeUntil } from 'rxjs/operators';
@@ -35,10 +36,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   newCommandArgumentKey: string = null;
   newCommandArgumentValue: string = null;
 
+  version: string;
+  versions: string[];
+
   constructor(
     private projectService: ProjectService,
     private buildStepService: BuildStepService,
     private commandArgumentService: CommandArgumentService,
+    private buildPluginService: BuildPluginService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   ) {
@@ -158,6 +163,28 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         () => {
           this.isLoading = false;
           buildStep.commandArguments = buildStep.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
+  }
+
+  getVersions(buildPluginName: string, versionTerm: string) {
+    if (versionTerm.length < 2) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.buildPluginService
+      .getVersionsOfBuildPlugin(buildPluginName, versionTerm)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          this.versions = resp.body;
+          console.log(this.versions);
         },
         (error) => {
           this.isLoading = false;
