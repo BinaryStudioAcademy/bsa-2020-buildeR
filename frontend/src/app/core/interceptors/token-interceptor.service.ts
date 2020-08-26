@@ -1,79 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, from, throwError, of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
-import { switchMap, catchError, filter, take, finalize } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenInterceptorService implements HttpInterceptor {
+  tokenRequest$: Observable<string>;
+
   constructor(private authService: AuthenticationService) { }
-  authRequest = null;
 
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.authService.isAuthorized()) {
       return next.handle(req);
     }
 
-    // const jwt = this.authService.getToken();
-    // if (jwt) {
-    //   const header = 'Bearer ' + jwt;
-    //   const reqWithAuth = req.clone({ headers: req.headers.set('Authorization', header) });
-    //   return next.handle(reqWithAuth);
-    // }
-
-    if (!this.authRequest) {
-      this.authRequest = this.authService.getIdToken();
+    if (!this.tokenRequest$) {
+      this.tokenRequest$ = this.authService.getFirebaseToken();
     }
 
-    return this.authRequest.pipe(
-      switchMap((token: string) => {
-        this.authRequest = null;
-        if (token) {
-          // this.authService.stateChanged();
-          const header = 'Bearer ' + token;
-          const reqAuth = req.clone({ headers: req.headers.set('Authorization', header) });
-          return next.handle(reqAuth);
-        }
+    return this.tokenRequest$.pipe(
+      switchMap(token => {
+        this.tokenRequest$ = null;
+        return next.handle(this.setToken(req, token));
       }),
-      catchError((error) => {
-        if (error.status === 401) {
-          if (!this.authRequest) {
-            this.authRequest = from(this.authService.refreshToken());
-            if (!this.authRequest) {
-              return throwError(error);
-            }
-          }
-          return this.authRequest.pipe(
-            switchMap((newToken: string) => {
-              this.authRequest = null;
-              if (newToken) {
-                // this.authService.stateChanged();
-                const header = 'Bearer ' + newToken;
-                const authReqRepeat = req.clone({ headers: req.headers.set('Authorization', header) });
-                return next.handle(authReqRepeat);
-              }
-            })
-          );
-        } else {
+      catchError((error: HttpErrorResponse) => {
+        if (error.status !== 401) {
           return throwError(error);
         }
+        if (!this.tokenRequest$) {
+          this.tokenRequest$ = this.authService.refreshFirebaseToken();
+        }
+        return this.tokenRequest$.pipe(
+          switchMap(newToken => {
+            this.tokenRequest$ = null;
+            return next.handle(this.setToken(req, newToken));
+          })
+        );
       })
     );
   }
-  async stateChanged(forceRefresh?: boolean) {
-    this.authService.getAngularAuth().onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdTokenResult(forceRefresh).then((result) => {
-          this.authService.populateAuth(result.token, user);
-          console.log(result.expirationTime);
-        });
-      }
-    });
-  }
+
+  private setToken = (request: HttpRequest<unknown>, token: string) =>
+    token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` }}) : request
 }

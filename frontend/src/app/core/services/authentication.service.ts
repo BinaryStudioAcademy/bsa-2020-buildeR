@@ -3,9 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { Observable, of } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { filter, tap, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
+import { from, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -68,28 +68,22 @@ export class AuthenticationService {
     return this.angularAuth.signOut();
   }
 
-  getToken(): string {
-    return localStorage.getItem('jwt');
+  getFirebaseToken() {
+    const currentToken =  localStorage.getItem('jwt');
+    return !currentToken
+      ? this.refreshFirebaseToken()
+      : of(currentToken);
   }
 
-  getIdToken() {
-    return this.angularAuth.idToken;
-  }
+  refreshFirebaseToken() {
+    const fireUser$ = this.angularAuth.currentUser
+      ? from(this.angularAuth.currentUser)
+      : this.angularAuth.authState;
 
-  // stateChanged(forceRefresh?: boolean) {
-  //   this.angularAuth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       user.getIdTokenResult(forceRefresh).then((result) => {
-  //         this.populateAuth(result.token, user);
-  //         console.log(result.expirationTime);
-  //       });
-  //     }
-  //   });
-  // }
-  public refreshToken(): Observable<string> {
-    return this.angularAuth.authState.pipe(
-      filter((user) => Boolean(user)),
-      mergeMap(async (user) => await user.getIdToken(true))
+    return fireUser$.pipe(
+      filter(user => Boolean(user)),
+      switchMap(user => user.getIdToken(true)),
+      tap(token => localStorage.setItem('jwt', token))
     );
   }
 
