@@ -12,17 +12,27 @@ using Microsoft.AspNetCore.Routing;
 
 namespace buildeR.API.Controllers
 {
-  
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class SynchronizationController : ControllerBase
     {
         private readonly ISynchronizationService _synchronizationService;
-        private readonly LinkGenerator _linkGenerator;
-        public SynchronizationController(ISynchronizationService synchronizationService, LinkGenerator linkGenerator)
+        public SynchronizationController(ISynchronizationService synchronizationService)
         {
             _synchronizationService = synchronizationService;
-            _linkGenerator = linkGenerator;
+        }
+
+        [HttpGet("user/{userId}/credentials")]
+        public async Task<Credentials> GetUserCredentials(int userId)
+        {
+            return await _synchronizationService.GetUserCredentials(userId);
+        }
+
+        [HttpPost("user/exist")]
+        public async Task<bool> CheckIfUserExist([FromBody]Credentials credentials)
+        {
+            return await _synchronizationService.CheckIfUserExist(credentials);
         }
 
         [HttpGet("{userId}/repos")]
@@ -49,6 +59,12 @@ namespace buildeR.API.Controllers
             var callback = Url.RouteUrl("Webhooks", new { controller = $"webhooks" }, Request.Scheme);
 
             await _synchronizationService.RegisterWebhook(projectId, callback);
+        }
+
+        [HttpPost("credentials/{userId}")]
+        public async Task SetUpCredentials(int userId, [FromBody]Credentials credentials)
+        {
+            await _synchronizationService.SetUpUserCredentials(userId, credentials);
         }
     }
 }
