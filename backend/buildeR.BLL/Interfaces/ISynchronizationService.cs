@@ -9,6 +9,9 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId);
         Task<IEnumerable<Repository>> GetUserRepositories(int userId);
         Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId);
+        Task<bool> CheckIfUserExist(Credentials credentials);
         Task RegisterWebhook(int projectId, string callback);
+        Task SetUpUserCredentials(int userId, Credentials credentials);
+        Task<Credentials> GetUserCredentials(int userId);
     }
 }
