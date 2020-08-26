@@ -7,11 +7,12 @@ import { CommandArgumentService } from '@core/services/command-argument.service'
 import { BuildPluginService } from '@core/services/build-plugin.service';
 import { BuildStepService } from '@core/services/build-step.service';
 import { BaseComponent } from '@core/components/base/base.component';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommandArgument } from '@shared/models/command-argument';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -124,6 +125,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     this.isAdding = false;
     this.workDir = null;
     this.commandArguments = null;
+    this.version = null;
 
     this.clearNewCommandArgument();
   }
@@ -193,6 +195,15 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
+  search = (text$: Observable<string>) => {
+    return text$.pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(term => term.length < 2
+          ? [] : this.buildPluginService.versionsLookup(this.newBuildStep.buildPlugin.dockerRegistryName, term))
+    );
+  }
+
   saveBuildStep() {
     const buildStep = {
       pluginCommand: this.newBuildStep.pluginCommand,
@@ -203,6 +214,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       workDirectory: this.workDir,
       commandArguments: this.commandArguments
     } as BuildStep;
+    buildStep.pluginCommand.plugin.version = this.version;
     this.cancelBuildStep();
 
     this.isLoading = true;
