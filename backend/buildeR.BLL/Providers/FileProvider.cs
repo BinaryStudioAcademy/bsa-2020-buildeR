@@ -12,15 +12,9 @@ namespace buildeR.BLL.Providers
 {
     public class FileProvider : IFileProvider
     {
-        private readonly IUserService _userService;
         private readonly string BaseUrl = Environment.GetEnvironmentVariable(nameof(BaseUrl));
 
-        public FileProvider(IUserService userService)
-        {
-            _userService = userService;
-        }
-
-        public async Task<UserDTO> UploadUserPhoto(IFormFile file, int userId)
+        public async Task<string> UploadUserPhoto(IFormFile file)
         {
             var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             var folderName = Path.Combine("Resources", "Avatars");
@@ -32,9 +26,8 @@ namespace buildeR.BLL.Providers
             {
                 await file.CopyToAsync(stream);
             }
-            var user = await _userService.GetUserById(userId);
-            user.AvatarUrl = dbPath;
-            return await _userService.Update(user);
+            return dbPath;
+            
         }
     }
 }

@@ -75,7 +75,7 @@ namespace buildeR.API.Controllers
         [HttpPost("avatar/{id}")]
         public async Task<UserDTO> UpdateAvatar(int id)
         {
-            return await _fileProvider.UploadUserPhoto(Request.Form.Files[0], id);
+            return await _userService.UpdateUserAvatar(Request.Form.Files[0], id);
         }
 
         [HttpPost("letter")]

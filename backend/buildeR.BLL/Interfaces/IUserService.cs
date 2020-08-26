@@ -14,6 +14,7 @@ namespace buildeR.BLL.Interfaces
         Task<ICollection<UserDTO>> GetAll();
         Task<UserDTO> Register(NewUserDTO creatingUser);
         Task<UserDTO> Update(UserDTO userDTO);
+        Task<UserDTO> UpdateUserAvatar(IFormFile file, int userId);
         Task<bool> ValidateUsername(ValidateUserDTO user);
         Task<UserDTO> LinkProvider(LinkProviderDTO userLink);
         Task Delete(int id);

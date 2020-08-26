@@ -25,14 +25,18 @@ namespace buildeR.BLL.Services
         private readonly IMapper _mapper;
         private readonly IEmailBuilder _emailBuilder;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
-        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder, IConfiguration configuration)
+        private readonly IFileProvider _fileProvider;
+        public UserService(BuilderContext context,
+                           IMapper mapper,
+                           IEmailService emailService,
+                           IEmailBuilder emailBuilder,
+                           IFileProvider fileProvider)
         {
             _context = context;
             _mapper = mapper;
             _emailService = emailService;
             _emailBuilder = emailBuilder;
-            _configuration = configuration;
+            _fileProvider = fileProvider;
         }
 
         public async Task<UserDTO> GetUserById(int id)
@@ -117,6 +121,13 @@ namespace buildeR.BLL.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<UserDTO>(existing);
         }
+        public async Task<UserDTO> UpdateUserAvatar(IFormFile file, int userId)
+        {
+            string dbPath = await _fileProvider.UploadUserPhoto(file);
+            var user = await GetUserById(userId);
+            user.AvatarUrl = dbPath;
+            return await Update(user);
+        }
 
         public async Task<bool> ValidateUsername(ValidateUserDTO user)
         {
@@ -158,7 +169,6 @@ namespace buildeR.BLL.Services
             }
         }
 
-        
         public async Task AddUserLetter(UserLetterDTO newUserLetter)
         {
             var userLetter = _mapper.Map<UserLetter>(newUserLetter);

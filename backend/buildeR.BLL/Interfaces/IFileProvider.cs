@@ -6,6 +6,6 @@ namespace buildeR.BLL.Interfaces
 {
     public interface IFileProvider
     {
-        Task<UserDTO> UploadUserPhoto(IFormFile file, int userId);
+        Task<string> UploadUserPhoto(IFormFile file);
     }
 }
