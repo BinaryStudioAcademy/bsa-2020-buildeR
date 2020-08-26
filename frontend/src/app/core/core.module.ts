@@ -9,7 +9,6 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { firebase } from '../../environments/firebase.config';
 
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
-import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
@@ -18,7 +17,6 @@ import { AuthGuard } from './guards/auth.guard';
 import { HomeGuard } from './guards/home.guard';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { RegistrationWarningComponent } from './components/registration-warning/registration-warning.component';
-import {LandingPageModule} from "@core/components/landing-page/landing-page.module";
 
 @NgModule({
   declarations: [
