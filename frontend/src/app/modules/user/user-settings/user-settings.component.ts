@@ -9,6 +9,7 @@ import { ToastrNotificationsService } from '../../../core/services/toastr-notifi
 import { UserService } from '../../../core/services/user.service';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -32,7 +33,8 @@ export class UserSettingsComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private fbr: FirebaseSignInService) { }
+    private fbr: FirebaseSignInService,
+    private authService: AuthenticationService) { }
 
   ngOnInit(): void {
 
@@ -133,12 +135,18 @@ export class UserSettingsComponent implements OnInit {
   }
 
   linkWithGithub() {
-    this.fbr.linkWithGithub().then((result) => {
-      if (result === 'ok') {
-        this.githubClick = true;
-      }
-      this.showLinkMessage(result, 'Github');
-    });
+    if (!this.isGithubAddedInFirebase() && !this.isProviderAdded(Providers.Github)) {
+      this.fbr.linkWithGithub().then((result) => {
+        if (result === 'ok') {
+          this.githubClick = true;
+        }
+        this.showLinkMessage(result, 'Github');
+      });
+    } else if (!this.isGithubAddedInFirebase() && this.isProviderAdded(Providers.Github)) {
+      this.fbr.linkGithubOnlyInFirebase().then((result) => {
+        this.showLinkMessage(result, 'Github');
+      });
+    }
   }
 
   linkWithGoogle() {
@@ -162,5 +170,9 @@ export class UserSettingsComponent implements OnInit {
   isProviderAdded(provider: Providers) {
     const check = (item: UserSocialNetwork) => item.providerName === provider;
     return this.details.userSocialNetworks.some(check);
+  }
+
+  isGithubAddedInFirebase() {
+    return this.authService.isGithubAddedInFirebase();
   }
 }

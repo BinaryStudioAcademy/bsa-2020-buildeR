@@ -18,6 +18,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { HomeGuard } from './guards/home.guard';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { RegistrationWarningComponent } from './components/registration-warning/registration-warning.component';
+import { EmailVerificationModalComponent } from './components/email-verification-modal/email-verification-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { RegistrationWarningComponent } from './components/registration-warning/
     SignInComponent,
     SignUpComponent,
     RegistrationDialogComponent,
-    RegistrationWarningComponent
+    RegistrationWarningComponent,
+    EmailVerificationModalComponent
   ],
   imports: [
     HttpClientModule,

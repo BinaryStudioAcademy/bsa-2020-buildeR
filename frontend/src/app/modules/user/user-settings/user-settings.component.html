@@ -1,8 +1,9 @@
 <div class="container-fluid">
   <div class="scroll-container">
     <div class="link-buttons">
-      <button class="btn btn-sm btn-github" *ngIf="!(isProviderAdded(0) || githubClick) else linkedGithub"
-        [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+      <button class="btn btn-sm btn-github"
+        *ngIf="!((isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()) else linkedGithub"
+        [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
         <div class="icon">
           <i class="fab fa-github" aria-hidden="true"></i>
         </div>
@@ -11,7 +12,8 @@
         </div>
       </button>
       <ng-template #linkedGithub>
-        <button class="btn btn-sm btn-github" [disabled]="isProviderAdded(0) || githubClick" (click)="linkWithGithub()">
+        <button class="btn btn-sm btn-github"
+          [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
           <div class="check-icon">
             <i class="fas fa-check"></i>
           </div>

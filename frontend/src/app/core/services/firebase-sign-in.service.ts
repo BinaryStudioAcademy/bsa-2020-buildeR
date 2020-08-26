@@ -8,6 +8,9 @@ import { LinkProvider } from '@shared/models/user/link-provider';
 import { auth } from 'firebase/app';
 import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
 import { AuthenticationService } from './authentication.service';
+import { User } from '@shared/models/user/user';
+import { EmailVerificationModalComponent } from '@core/components/email-verification-modal/email-verification-modal.component';
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 
 @Injectable({
   providedIn: 'root'
@@ -31,78 +34,40 @@ export class FirebaseSignInService {
         localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
-      (error) => {
-        switch (error.code) {
-          case 'auth/account-exists-with-different-credential': {
-            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-            modalRef.componentInstance.linkProvider = Providers.Github;
-            modalRef.result.then((res) => {
-              switch (res) {
-                case Providers.Github: {
-                  this.signInWithGithub();
-                  break;
-                }
-                case Providers.Google: {
-                  this.signInWithGoogle();
-                  break;
-                }
-              }
-            }, (reason) => console.log(reason));
-            break;
-          }
-          case 'auth/cancelled-popup-request': break;
-          default: console.log(error);
-        }
+      (error: auth.Error) => {
+        this.openSignInWarning(error, Providers.Github);
       }
     );
   }
 
   signInWithGoogle(redirectUrl?: string) {
     const googleProvider = new auth.GoogleAuthProvider();
-    return this.authService.getAngularAuth().signInWithPopup(googleProvider).then((credential) => {
-      this.login(credential, redirectUrl);
-    },
-      (error) => {
-        switch (error.code) {
-          case 'auth/account-exists-with-different-credential': {
-            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-            modalRef.componentInstance.linkProvider = Providers.Google;
-            modalRef.result.then((res) => {
-              switch (res) {
-                case Providers.Github: {
-                  this.signInWithGithub();
-                  break;
-                }
-                case Providers.Google: {
-                  this.signInWithGoogle();
-                  break;
-                }
-              }
-            }, (reason) => console.log(reason));
-            break;
-          }
-          case 'auth/cancelled-popup-request': break;
-          default: console.log(error);
-        }
+    return this.authService.getAngularAuth().signInWithPopup(googleProvider).then(
+      (credential) => {
+        this.login(credential, redirectUrl);
+      },
+      (error: auth.Error) => {
+        this.openSignInWarning(error, Providers.Google);
       }
     );
   }
 
-  linkWithGithub(): Promise<string> {
+  async linkWithGithub(): Promise<string> {
     const githubProvider = new auth.GithubAuthProvider();
     githubProvider.addScope('admin:hooks');
     githubProvider.addScope('repo');
     const fireUser = this.authService.getFireUser();
-    return fireUser.linkWithPopup(githubProvider).then((result) => {
+    try {
+      const result = await fireUser.linkWithPopup(githubProvider);
       const credential = result.credential;
       localStorage.setItem('github-access-token', credential[`accessToken`]);
       const user = result.user;
-      const linkUser = {
+      const linkUser = ({
         userId: this.authService.getCurrentUser().id,
         providerName: Providers.Github,
         providerUrl: credential.providerId,
         uId: user.uid
-      } as LinkProvider;
+      } as LinkProvider);
       this.userService.linkProvider(linkUser)
         .subscribe((resp) => {
           if (resp) {
@@ -110,7 +75,8 @@ export class FirebaseSignInService {
           }
         });
       return 'ok';
-    }).catch((err) => {
+    }
+    catch (err) {
       console.log(err);
       switch (err.code) {
         case 'auth/credential-already-in-use': {
@@ -118,21 +84,22 @@ export class FirebaseSignInService {
         }
         default: { return err.code; }
       }
-    });
+    }
   }
 
-  linkWithGoogle(): Promise<string> {
+  async linkWithGoogle(): Promise<string> {
     const googleProvider = new auth.GoogleAuthProvider();
     const fireUser = this.authService.getFireUser();
-    return fireUser.linkWithPopup(googleProvider).then((result) => {
+    try {
+      const result = await fireUser.linkWithPopup(googleProvider);
       const credential = result.credential;
       const user = result.user;
-      const linkUser = {
+      const linkUser = ({
         userId: this.authService.getCurrentUser().id,
         providerName: Providers.Google,
         providerUrl: credential.providerId,
         uId: user.uid
-      } as LinkProvider;
+      } as LinkProvider);
       this.userService.linkProvider(linkUser)
         .subscribe((resp) => {
           if (resp) {
@@ -140,7 +107,8 @@ export class FirebaseSignInService {
           }
         });
       return 'ok';
-    }).catch((err) => {
+    }
+    catch (err) {
       console.log(err);
       switch (err.code) {
         case 'auth/credential-already-in-use': {
@@ -148,19 +116,34 @@ export class FirebaseSignInService {
         }
         default: return err.code;
       }
-    });
+    }
   }
 
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
       .subscribe((resp) => {
+        if (!credential.user.emailVerified) {
+          credential.user.sendEmailVerification().then(() => {
+            this.openVerificationEmailModal(credential.user.email);
+          });
+          return;
+        }
         if (resp) {
+          if (credential.credential.providerId === 'google.com') {
+            if (!this.isProviderAdded(resp, Providers.Google)) {
+              this.linkUser(resp, credential, Providers.Google);
+            }
+          }
+
           this.authService.getAngularAuth().authState
             .subscribe((user) => {
-              this.authService.configureAuthState(user);
-              if (user && user.uid === resp.userSocialNetworks[0].uId) {
-                this.authService.setUser(resp);
-                this.router.navigate([redirectUrl ?? '/portal']);
+              if (!user?.emailVerified) {
+                user?.sendEmailVerification().then(() => {
+                  this.openVerificationEmailModal(credential.user.email);
+                });
+              }
+              else {
+                this.giveAccessToUser(resp, user, redirectUrl);
               }
             });
         }
@@ -168,5 +151,88 @@ export class FirebaseSignInService {
           this.registerDialog.signUp(credential);
         }
       });
+  }
+
+  giveAccessToUser(resp: User, user: firebase.User, redirectUrl?: string) {
+    this.authService.configureAuthState(user);
+    if (user && user.uid === resp.userSocialNetworks[0].uId) {
+      this.authService.setUser(resp);
+      this.router.navigate([redirectUrl ?? '/portal']);
+    }
+  }
+
+  openVerificationEmailModal(email: string) {
+    const modalRef = this.modalService.open(EmailVerificationModalComponent, { backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.email = email;
+  }
+
+  openSignInWarning(error: auth.Error, provider: Providers) {
+    switch (error.code) {
+      case 'auth/account-exists-with-different-credential': {
+        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.linkProvider = provider;
+        modalRef.result.then((res) => {
+          switch (res) {
+            case Providers.Github: {
+              this.signInWithGithub();
+              break;
+            }
+            case Providers.Google: {
+              this.signInWithGoogle();
+              break;
+            }
+          }
+        }, (reason) => console.log(reason));
+        break;
+      }
+      case 'auth/cancelled-popup-request': break;
+      default: console.log(error);
+    }
+  }
+
+  isProviderAdded(user: User, provider: Providers) {
+    if (user.userSocialNetworks === null) {
+      return true;
+    }
+    const check = (item: UserSocialNetwork) => item.providerName === provider;
+    return user.userSocialNetworks?.some(check);
+  }
+
+  linkUser(user: User, credential: auth.UserCredential, provider: Providers) {
+    const linkUser = ({
+      userId: user.id,
+      providerName: Providers.Google,
+      providerUrl: credential.credential.providerId,
+      uId: credential.user.uid
+    } as LinkProvider);
+    this.userService.linkProvider(linkUser)
+      .subscribe((response) => {
+        if (response) {
+          this.authService.setUser(response);
+          user = response;
+        }
+      });
+  }
+
+  async linkGithubOnlyInFirebase() {
+    const githubProvider = new auth.GithubAuthProvider();
+    githubProvider.addScope('admin:hooks');
+    githubProvider.addScope('repo');
+    const fireUser = this.authService.getFireUser();
+    try {
+      const result = await fireUser.linkWithPopup(githubProvider);
+      const credential = result.credential;
+      localStorage.setItem('github-access-token', credential[`accessToken`]);
+      return 'ok';
+    }
+    catch (err) {
+      console.log(err);
+      switch (err.code) {
+        case 'auth/credential-already-in-use': {
+          return 'This account is already added to BuildeR!';
+        }
+        default: { return err.code; }
+      }
+    }
   }
 }
