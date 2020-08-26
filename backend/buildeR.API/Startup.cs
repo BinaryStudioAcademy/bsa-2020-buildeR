@@ -57,6 +57,8 @@ namespace buildeR
             services.RegisterRabbitMQ(Configuration);
             services.RegisterHttpCients();
 
+            services.AddMemoryCache();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AnyOrigin", x => x
