@@ -1,6 +1,29 @@
 <div class="container line-bottom mb-3 pb-3">
- <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small>
+  <div class="date-with-options">
+    <div class="date">
 
-  | View:
-
+      <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small>
     </div>
+    <div class="build-history-select">
+      View:
+      <select class="form-control form-control-sm selecter">
+        <option>Private and public builds</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+      </select>
+    </div>
+    <div class="week-month">
+      <nav>
+        <ul class="list-group list-group-horizontal ">
+          <li *ngFor="let tabRoute of tabRoutes; let i = index" class="list-group-item">
+            <a href="#">
+              {{tabRoute.name}}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
