@@ -4,6 +4,7 @@ import { WorkSpaceComponent } from './work-space/work-space.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 import {HelpComponent} from "@modules/work-space/help/help.component";
+import {UserResolverService} from "@core/resolvers/user.resolver";
 
 const routes = [
   {
@@ -22,6 +23,9 @@ const routes = [
       {
         path: 'help',
         component: HelpComponent,
+        resolve: {
+          user: UserResolverService
+        }
       },
       {
         path: 'user',

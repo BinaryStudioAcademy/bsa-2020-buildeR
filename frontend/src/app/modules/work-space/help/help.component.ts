@@ -7,6 +7,7 @@ import {UserLetter} from "@shared/models/user/user-letter";
 import { emailDotValidator } from '@core/validators/email-dot-validator';
 import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
 import {UserService} from "@core/services/user.service";
+import {ActivatedRoute} from "@angular/router";
 
 
 @Component({
@@ -27,13 +28,14 @@ export class HelpComponent extends BaseComponent
   constructor(
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
+    this.route.data.subscribe(data => this.currentUser = data.user);
     this.userHelp.userEmail = this.currentUser.email;
 
     this.helpForm = new FormGroup({
