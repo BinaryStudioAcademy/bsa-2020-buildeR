@@ -22,9 +22,9 @@ namespace buildeR.BLL.MappingProfiles
                             .FirstOrDefault()));
 
             CreateMap<ProjectDTO, Project>()
-                .ForMember(dest => dest._Repository,
+                .ForMember(dest => dest.Repository,
                     src => src
-                        .MapFrom(project => project._Repository));
+                        .MapFrom(project => project.Repository));
             CreateMap<NewProjectDTO, Project>();
         }
     }
