@@ -14,6 +14,7 @@ using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Specialized;
+using System.Net.Http;
 using System.Reflection;
 
 namespace buildeR.API.Extensions
@@ -40,10 +41,15 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
-
+            
+            services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddTransient<ISecretService, SecretService>();
+
+             services.AddHttpClient();
+
             services.RegisterAutoMapper();
         }
         public static void RegisterAutoMapper(this IServiceCollection services)
