@@ -3,7 +3,6 @@
     grid-template-columns: 2
     grid-template-rows: 6
 
-
 .container
   height: 100%
   position: relative
@@ -15,6 +14,9 @@
   grid-column-end: 2
   justify-self: start
   margin: 0 10px 20px
+
+.upper
+  margin-top: -8px
 
 .input-group
   width: 300px
@@ -36,6 +38,10 @@
 input
   width: 300px
 
+.custom-control-input
+  width: 30px
+  margin-top: 10px
+  z-index: 2
 #isPublicSwitch
   width: 100%
 
@@ -78,6 +84,14 @@ h2
 .custom-switch .custom-control-label::after
   margin-top: 12px
 
+.custom-switch .isSecret-label::before
+  margin-top: 0px
+
+.custom-switch .isSecret-label::after
+  margin-top: 0px
+
+.custom-switch
+  margin-top: 0px
 .save-button-container
   grid-column-start: 1
   grid-column-end: 2
@@ -91,10 +105,12 @@ h2
 
 .group-ev
   display: grid
-  grid-template-columns: 5
+  grid-template-columns: 4
   grid-template-rows: 2
 
 .vars
+  display: grid
+  grid-template-columns: 5
   background-color: #EAE4E4
 
 .vars input
@@ -103,10 +119,18 @@ h2
 .vars select
   background-color: #F0ECEC
 
+.vars .form-control-ev
+  width: 85%
+
+.val
+  margin-left: 2%
+
+.error
+  color: red
+  font-size: .75em
+
 .options-env-vars
-  grid-column-start: 4
   grid-column-end: 5
-  justify-self: end
 
 .padd
   padding-top:20px
@@ -119,14 +143,17 @@ h2
   grid-column-start: 2
   grid-column-end: 3
 
-.branch
+.switch
   grid-column-start: 3
   grid-column-end: 4
   padding-right: 5rem
 
-.isOn
- grid-column-start: 4
- grid-column-end: 5
+.add-env
+  grid-column-start: 4
+  grid-column-end: 5
+
+.add-env button
+  margin-top: 28px
 
 .isOn button
   margin-top: 28px
@@ -197,11 +224,9 @@ select.form-control
   .value
     grid-column-start: 1
     grid-column-end: 2
-  .branch
+  .switch
     grid-column-start: 1
     grid-column-end: 2
-  .branch select
-    width: 95%
   .isOn
     grid-column-start: 1
     grid-column-end: 2

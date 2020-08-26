@@ -17,11 +17,9 @@ namespace buildeR.BLL.Services
     public class GithubClient : IGithubClient
     {
         private readonly HttpClient _client;
-        private readonly BuilderContext _context;
-        public GithubClient(IHttpClientFactory factory, BuilderContext context)
+        public GithubClient(IHttpClientFactory factory)
         {
             _client = factory.CreateClient("github");
-            _context = context;
         }
 
         public async Task<GithubUser> GetUserFromToken(string providerToken)
@@ -41,6 +39,17 @@ namespace buildeR.BLL.Services
             var user = await GetUserFromToken(providerToken);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
+
+        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryOwner, string repositoryName, string providerToken)
+        {
+            SetUpHttpClient(providerToken);
+
+            var endpoint = $"repos/{repositoryOwner}/{repositoryName}/branches";
             var response = await _client.GetAsync(endpoint);
             var content = await response.Content.ReadAsStringAsync();
 
@@ -73,6 +82,13 @@ namespace buildeR.BLL.Services
             while (lastLoadedRepos.Count >= reposPerRequest);
 
             return allRepos;
+        }
+        public async Task<bool> CheckIfRepositoryAccessable(string repoOwner, string repoName)
+        {
+            var endpoint = $"repos/{repoOwner}/{repoName}";
+            var response = await _client.GetAsync(endpoint);
+
+            return response.IsSuccessStatusCode;
         }
         public async Task CreateWebhook(string repositoryName, string callback, string providerToken)
         {

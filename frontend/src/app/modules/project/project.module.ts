@@ -13,6 +13,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-project.component';
+import { EnvVarsEditorComponent } from './project-settings/env-vars-editor/env-vars-editor.component';
+import { CronJobsModule } from 'ngx-cron-jobs';
 
 @NgModule({
   declarations: [
@@ -24,9 +26,10 @@ import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-proje
     ProjectTriggersComponent,
     ProjectBuildHistoryComponent,
     ModalCopyProjectComponent,
-    ProjectBuildStepsComponent
+    ProjectBuildStepsComponent,
+    EnvVarsEditorComponent
   ],
-  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule],
+  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule, CronJobsModule],
   exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

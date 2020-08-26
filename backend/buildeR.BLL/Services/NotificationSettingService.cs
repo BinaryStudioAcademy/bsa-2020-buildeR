@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
@@ -20,42 +19,62 @@ namespace buildeR.BLL.Services
     {
         public NotificationSettingService(BuilderContext context, IMapper mapper) : base(context, mapper)  { }
 
-        public async Task<IEnumerable<NotificationSettingDTO>> GetNotificationSettingByUserId(int userId)
+        public async Task<NotificationSettingDTO> GetNotificationSettingByUserId(int userId)
         {
-            var fromDb = await Context.NotificationSettings
+            var notificationSetting = await Context.NotificationSettings
                 .AsNoTracking()
-                .Where(x => x.UserId == userId).ToListAsync();
+                .Include(notSetOp => notSetOp.NotificationSettingOptions)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
 
-            var fromEnum = GetFromEnum(userId);
-            var settings = fromDb.Concat(fromEnum.Where(byType => fromDb.All(x => x.NotificationType != byType.NotificationType)));
+            if (notificationSetting == null) // when user don't have notification settings yet
+            {
+                var newNotSet = new NotificationSetting
+                {
+                    UserId = userId,
+                    EnableApp = true,
+                    EnableEmail = false,
+                };
+                var additionResult = await Context.NotificationSettings.AddAsync(newNotSet);
+                await Context.SaveChangesAsync();
+                notificationSetting = await Context.NotificationSettings.FindAsync(additionResult.Entity.Id);
+            }
 
-            return Mapper.Map<IEnumerable<NotificationSettingDTO>>(settings); 
+            var fromEnum = GetOptionsFromEnum(userId);
+
+            notificationSetting.NotificationSettingOptions = notificationSetting.NotificationSettingOptions
+                .Concat(fromEnum.Where(byType => notificationSetting.NotificationSettingOptions.All(x => x.NotificationType != byType.NotificationType)))
+                .ToList();
+
+            return Mapper.Map<NotificationSettingDTO>(notificationSetting);
         }
-        private IEnumerable<NotificationSetting> GetFromEnum(int userId)
+        private IEnumerable<NotificationSettingOption> GetOptionsFromEnum(int NotificationSettingId)
         {
-            var settings = Enum.GetValues(typeof(NotificationType))
+            var options = Enum.GetValues(typeof(NotificationType))
                 .Cast<NotificationType>()
                 .Select(type =>
-                    new NotificationSetting
+                    new NotificationSettingOption
                     {
-                        UserId = userId,
+                        NotificationSettingId = NotificationSettingId,
                         NotificationType = type,
-                        App = false,
+                        App = true,
                         Email = false
                     });
-            return settings;
+            return options;
         }
-        public async Task<IEnumerable<NotificationSettingDTO>> UpdateRange(IEnumerable<NotificationSettingDTO> settingDTOs)
+        public async Task<NotificationSettingDTO> Update(NotificationSettingDTO dto)
         {
-            var entities = Mapper.Map<IEnumerable<NotificationSetting>>(settingDTOs);
-            Context.NotificationSettings.UpdateRange(entities);
+            var entity = Mapper.Map<NotificationSetting>(dto);
+            Context.NotificationSettings.Update(entity);
             await Context.SaveChangesAsync();
-            var updatedsettingDTOs = Mapper.Map<IEnumerable<NotificationSettingDTO>>(entities);
-            return updatedsettingDTOs;
+            return await base.GetAsync(dto.Id);
         }
         public async Task<IEnumerable<NotificationSettingDTO>> GetAll()
         {
             return await base.GetAllAsync();
+        }
+        public async Task<NotificationSettingDTO> GetById(int id)
+        {
+            return await base.GetAsync(id);
         }
         public async Task<NotificationSettingDTO> Create(NewNotificationSettingDTO dto)
         {
@@ -65,16 +84,6 @@ namespace buildeR.BLL.Services
         public async Task Delete(int id)
         {
             await base.RemoveAsync(id);
-        }
-
-        public async Task Update(NotificationSettingDTO dto)
-        {
-            await base.UpdateAsync(dto);
-        }
-
-        public async Task<NotificationSettingDTO> GetById(int id)
-        {
-            return await base.GetAsync(id);
         }
     }
 }

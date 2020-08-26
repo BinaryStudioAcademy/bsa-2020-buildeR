@@ -5,40 +5,15 @@
   color: #03BBD5
   font-size: 1.5rem
 
-input[type=checkbox]
-  width: 22px
-  height: 22px
-
-.custom-switch .custom-control-label::before
-    left: -2.25rem
-    width: 2.75rem
-    height: 1.35rem
-    pointer-events: all
-    border-radius: 0.5rem
-
-.custom-switch .custom-control-label::after
-    transition: none
-    height: 1.14rem
-    width: 1.15rem
-
-.custom-switch .custom-control-input:checked ~ .custom-control-label::after
-    background-color: #fff
-    transform: translateX(1.35rem)
-
-.custom-control-label
-    padding-left: 16px
-    padding-top: 4px
-    margin-top: -4px
-
 select
   display: inline-block
   width: auto
   vertical-align: middle
 
-.trigger-options
-    display: flex
-    flex-direction: row
-    align-items: flex-start
+.add-new-job
+  display: flex
+  flex-direction: row
+  align-items: flex-start
 
 .text-over
   font-size: 18px
@@ -50,19 +25,82 @@ select
   color: #666
   font-weight: 700
 
-.vl
-  border-left: 2px solid  #666
-
 .small-text
   color: #666
   font-size: 14px
 
-.branch-wr
-  float: left
-
 .switch-wr
   margin: 20px 0
 
-@media screen and (max-width: 675px)
-  .branch-select
-    margin-top: 31px
+.trigger-group
+  display: grid
+  grid-template-columns: minmax(auto, max-content) minmax(auto, max-content) minmax(auto, max-content) auto
+  grid-template-rows: repeat(1, auto)
+  justify-items: start
+  align-items: center
+  position: relative
+
+.button-icons-wr
+  position: absolute
+  top: 0px
+  right: 0px
+
+.barnch-column
+  grid-column-start: 1/span 1
+  max-width: max-content
+
+.cron-job-column
+  grid-column-start: 2/span 1
+  max-width: max-content
+
+.fire-time-column
+  grid-column-start: 3/span 1
+  max-width: max-content
+
+.button-column
+  grid-column-start: 4/span 1
+  justify-self: right
+
+.fire-time-wr
+  grid-template-columns: 1
+  grid-template-rows: 2
+
+.pre-fire-time
+  grid-row-start: 0
+  grid-row-end: 1
+  justify-self: start
+
+.pre-fire-time
+  grid-row-start: 1
+  grid-row-end: 2
+  justify-self: start
+
+.btn-add
+  align-self: flex-end
+
+@media screen and (max-width: 992px)
+  .trigger-group
+    display: grid
+    grid-template-columns: repeat(1, auto)
+    grid-template-rows: repeat(4, auto)
+    justify-items: start
+  .barnch-column
+    grid-column-start: 1/span 1
+    border-bottom: 1px solid #dee2e6
+    min-width: 100%
+    padding-bottom: 8px
+  .cron-job-column
+    grid-column-start: 1/span 1
+    border-bottom: 1px solid #dee2e6
+    min-width: 100%
+    padding: 8px 0
+  .fire-time-column
+    grid-column-start: 1/span 1
+    border-bottom: 1px solid #dee2e6
+    min-width: 100%
+    padding: 8px 0
+  .button-column
+    padding-top: 8px
+    grid-column-start: 1/span 1
+    justify-self: center
+
