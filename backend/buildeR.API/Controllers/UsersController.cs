@@ -75,7 +75,8 @@ namespace buildeR.API.Controllers
         {
             return await _userService.UploadUserPhoto(Request.Form.Files[0], id);
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("letter")]
         public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
         {
