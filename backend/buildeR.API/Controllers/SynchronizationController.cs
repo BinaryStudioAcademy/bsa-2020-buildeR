@@ -25,10 +25,10 @@ namespace buildeR.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet("repos/")]
-        public async Task<IEnumerable<Repository>> GetUserRepositories([FromBody]Credentials credentials)
+        [HttpGet("{userId}/repos")]
+        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
         {
-            return await _synchronizationService.GetUserRepositories(credentials.Username, credentials.Password);
+            return await _synchronizationService.GetUserRepositories(userId);
         }
 
         [HttpGet("{projectId}/branches")]
@@ -37,10 +37,10 @@ namespace buildeR.API.Controllers
             return await _synchronizationService.GetRepositoryBranches(projectId);
         }
 
-        [HttpPost("repo/exist")]
-        public async Task<bool> CheckIfRepositoryAccessable([FromBody]RepositoryLinkDTO linkDTO)
+        [HttpPost("{userId}/repo/exist")]
+        public async Task<bool> CheckIfRepositoryAccessable(int userId, [FromBody]RepositoryLinkDTO linkDTO)
         {
-            return await _synchronizationService.CheckIfRepositoryAccessable(linkDTO.Link);
+            return await _synchronizationService.CheckIfRepositoryAccessable(linkDTO.Link, userId);
         }
 
         [HttpPost("hooks/{projectId}")]

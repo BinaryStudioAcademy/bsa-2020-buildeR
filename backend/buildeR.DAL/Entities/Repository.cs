@@ -9,8 +9,6 @@ namespace buildeR.DAL.Entities
         public bool Private { get; set; }
         public string Url { get; set; }
         public bool CreatedByLink { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
         public int ProjectId { get; set; }
         public Project Project { get; set; }
     }

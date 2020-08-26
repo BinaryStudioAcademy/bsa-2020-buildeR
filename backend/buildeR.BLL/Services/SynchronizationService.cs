@@ -14,90 +14,58 @@ namespace buildeR.BLL.Services
         private readonly IGithubClient _githubClient;
         private readonly IProjectService _projectService;
         private readonly ISynchronizationHelper _synchronizationHelper;
+        private readonly ISecretService _secretService;
         public SynchronizationService(IGithubClient githubClient,
                                       IProjectService projectService,
-                                      ISynchronizationHelper synchronizationHelper)
+                                      ISynchronizationHelper synchronizationHelper,
+                                      ISecretService secretService)
         {
             _githubClient = githubClient;
             _projectService = projectService;
             _synchronizationHelper = synchronizationHelper;
+            _secretService = secretService;
         }
         public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId)
         {
+            var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
-
+            var credentials = await _secretService.ReadSecretsAsync($"users/{project.OwnerId}/credentials/github");
+            
             IEnumerable<GithubBranch> branches = null;
 
             if (repository.Private)
-                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, repository.Username, repository.Password);
+                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, credentials["username"], credentials["password"]);
             else
                 branches = await _githubClient.GetPublicRepositoryBranches(repository.Name, repository.Owner);
 
             return branches.Select(b => new Branch { Name = b.Name });
         }
-        public async Task<IEnumerable<Repository>> GetUserRepositories(string username, string password)
+        public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
         {
-            var repositories = await _githubClient.GetUserRepositories(username, password);
+            var credentials = await _secretService.ReadSecretsAsync($"users/{userId}/credentials/github");
+
+            var repositories = await _githubClient.GetUserRepositories(credentials["username"], credentials["password"]);
 
             return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private });
         }
-        public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, string username = null, string password = null)
+        public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId)
         {
+            var credentials = await _secretService.ReadSecretsAsync($"users/{userId}/credentials/github");
+
             var repoName = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
             var repoOwner = _synchronizationHelper.GetRepositoryOwnerFromUrl(repoUrl);
 
-            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, username, password);
+            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, credentials["username"], credentials["password"]);
         }
         public async Task RegisterWebhook(int projectId, string callback)
         {
             callback += $"/{projectId}/github";
 
+            var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
-            await _githubClient.CreateWebhook(repository.Name, callback, repository.Username, repository.Password);
+            var credentials = await _secretService.ReadSecretsAsync($"users/{project.OwnerId}/credentials/github");
+
+            await _githubClient.CreateWebhook(repository.Name, callback, credentials["username"], credentials["password"]);
         }
-
-        //public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId, string accessToken)
-        //{
-        //    var repository = await _projectService.GetRepository(projectId);
-        //   IEnumerable<GithubBranch> branches = null;
-
-        //    if (repository.Owner != null)
-        //        branches = await _githubClient.GetRepositoryBranches(repository.Owner, repository.Name, accessToken);
-        //    else
-        //        branches = await _githubClient.GetRepositoryBranches(repository.Name, accessToken);
-
-        //    return branches.Select(b => new Branch { Name = b.Name });
-        //}
-
-        //public async Task<IEnumerable<Repository>> GetUserRepositories(string accessToken)
-        //{
-        //    var repos = await _githubClient.GetUserRepositories(accessToken);
-        //    return repos.Select(r => new Repository { Id = r.Id, Name = r.Name, Private = r.Private });
-        //}
-        //public async Task<bool> CheckIfRepositoryAccessable(string repoUrl)
-        //{
-        //    string owner = "";
-        //    string repo = "";
-
-        //    try
-        //    {
-        //        owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(repoUrl);
-        //        repo = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
-        //    }
-        //    catch(Exception)
-        //    {
-        //        return false;
-        //    }
-
-        //    return await _githubClient.CheckIfRepositoryAccessable(owner, repo);
-        //}
-
-        //public async Task RegisterWebhook(int projectId, string callback, string accessToken)
-        //{
-        //    callback += $"/{projectId}/github";
-
-        //    var repository = await _projectService.GetRepository(projectId);
-        //    await _githubClient.CreateWebhook(repository.Name, callback, accessToken);
-        //}
     }
 }
