@@ -31,28 +31,8 @@ export class FirebaseSignInService {
         localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
-      (error) => {
-        switch (error.code) {
-          case 'auth/account-exists-with-different-credential': {
-            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-            modalRef.componentInstance.linkProvider = Providers.Github;
-            modalRef.result.then((res) => {
-              switch (res) {
-                case Providers.Github: {
-                  this.signInWithGithub();
-                  break;
-                }
-                case Providers.Google: {
-                  this.signInWithGoogle();
-                  break;
-                }
-              }
-            }, (reason) => console.log(reason));
-            break;
-          }
-          case 'auth/cancelled-popup-request': break;
-          default: console.log(error);
-        }
+      (error: auth.Error) => {
+        this.openSignInWarning(error, Providers.Github);
       }
     );
   }
@@ -62,28 +42,8 @@ export class FirebaseSignInService {
     return this.authService.getAngularAuth().signInWithPopup(googleProvider).then((credential) => {
       this.login(credential, redirectUrl);
     },
-      (error) => {
-        switch (error.code) {
-          case 'auth/account-exists-with-different-credential': {
-            const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
-            modalRef.componentInstance.linkProvider = Providers.Google;
-            modalRef.result.then((res) => {
-              switch (res) {
-                case Providers.Github: {
-                  this.signInWithGithub();
-                  break;
-                }
-                case Providers.Google: {
-                  this.signInWithGoogle();
-                  break;
-                }
-              }
-            }, (reason) => console.log(reason));
-            break;
-          }
-          case 'auth/cancelled-popup-request': break;
-          default: console.log(error);
-        }
+      (error: auth.Error) => {
+        this.openSignInWarning(error, Providers.Google);
       }
     );
   }
@@ -168,5 +128,29 @@ export class FirebaseSignInService {
           this.registerDialog.signUp(credential);
         }
       });
+  }
+
+  openSignInWarning(error: auth.Error, provider: Providers) {
+    switch (error.code) {
+      case 'auth/account-exists-with-different-credential': {
+        const modalRef = this.modalService.open(RegistrationWarningComponent, { backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.linkProvider = provider;
+        modalRef.result.then((res) => {
+          switch (res) {
+            case Providers.Github: {
+              this.signInWithGithub();
+              break;
+            }
+            case Providers.Google: {
+              this.signInWithGoogle();
+              break;
+            }
+          }
+        }, (reason) => console.log(reason));
+        break;
+      }
+      case 'auth/cancelled-popup-request': break;
+      default: console.log(error);
+    }
   }
 }
