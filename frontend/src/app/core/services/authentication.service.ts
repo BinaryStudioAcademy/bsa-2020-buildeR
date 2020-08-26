@@ -3,9 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { Subject } from 'rxjs';
+import { filter, tap, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
-import { auth } from 'firebase/app';
+import { from, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,6 @@ import { auth } from 'firebase/app';
 export class AuthenticationService {
   private currentUser: User;
   private firebaseUser: firebase.User;
-  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private angularAuth: AngularFireAuth,
@@ -23,8 +22,8 @@ export class AuthenticationService {
 
   configureAuthState = (user: firebase.User) => {
     if (user) {
-      return user.getIdToken().then((token) => {
-        this.populateAuth(token, user);
+      return user.getIdTokenResult().then((result) => {
+        this.populateAuth(result.token, user);
         return this.loadCurrentUser();
       });
     }
@@ -69,19 +68,23 @@ export class AuthenticationService {
     return this.angularAuth.signOut();
   }
 
-  getToken(): string {
-    return localStorage.getItem('jwt');
+  getFirebaseToken() {
+    const currentToken =  localStorage.getItem('jwt');
+    return !currentToken
+      ? this.refreshFirebaseToken()
+      : of(currentToken);
   }
 
-  refreshToken() {
-    auth().onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdToken().then((jwt) => {
-          localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('jwt', jwt);
-        });
-      }
-    });
+  refreshFirebaseToken() {
+    const fireUser$ = this.angularAuth.currentUser
+      ? from(this.angularAuth.currentUser)
+      : this.angularAuth.authState;
+
+    return fireUser$.pipe(
+      filter(user => Boolean(user)),
+      switchMap(user => user.getIdToken(true)),
+      tap(token => localStorage.setItem('jwt', token))
+    );
   }
 
   getCurrentUser() {
@@ -114,7 +117,6 @@ export class AuthenticationService {
     localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
-    localStorage.removeItem('github-access-token');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
   }

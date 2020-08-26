@@ -4,7 +4,6 @@ export interface NewProject {
   name: string;
   description: string;
   isPublic: boolean;
-  repository: string;
-  _repository: NewRepository;
+  repository: NewRepository;
   ownerId: number;
 }

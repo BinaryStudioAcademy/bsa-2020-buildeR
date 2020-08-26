@@ -6,16 +6,19 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
+using System.IO;
 
 namespace buildeR
 {
@@ -159,7 +162,24 @@ namespace buildeR
                 endpoints.MapHealthChecks("/health");
             });
 
+            InitializeFileProvider(app);
             InitializeDatabase(app);
+        }
+
+        private void InitializeFileProvider(IApplicationBuilder app)
+        {
+            var resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
+            if (!Directory.Exists(resourcesPath))
+            {
+                Directory.CreateDirectory(resourcesPath);
+            }
+
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(resourcesPath),
+                RequestPath = new PathString("/Resources")
+            });
         }
 
         private void InitializeDatabase(IApplicationBuilder app)

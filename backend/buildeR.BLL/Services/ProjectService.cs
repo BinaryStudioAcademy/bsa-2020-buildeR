@@ -5,10 +5,12 @@ using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.Repository;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,10 +21,16 @@ namespace buildeR.BLL.Services
     {
         private readonly IQuartzService _quartzService;
         private readonly IBuildStepService _buildStepService;
-        public ProjectService(BuilderContext context, IMapper mapper, IQuartzService quartzService, IBuildStepService buildStepService) : base(context, mapper)
+        private readonly ISynchronizationHelper _synchronizationHelper;
+        public ProjectService(BuilderContext context,
+                              IMapper mapper,
+                              IQuartzService quartzService, 
+                              IBuildStepService buildStepService,
+                              ISynchronizationHelper synchronizationHelper) : base(context, mapper)
         {
             _quartzService = quartzService;
             _buildStepService = buildStepService;
+            _synchronizationHelper = synchronizationHelper;
         }
 
         public override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
@@ -54,6 +62,11 @@ namespace buildeR.BLL.Services
         }
         public async Task<ProjectDTO> CreateProject(NewProjectDTO dto)
         {
+            if(dto.Repository.CreatedByLink)
+            {
+                dto.Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(dto.Repository.Url);
+                dto.Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(dto.Repository.Url);
+            }
             return await base.AddAsync(dto);
         }
         public async Task UpdateProject(ProjectDTO dto, int userId)
@@ -82,6 +95,7 @@ namespace buildeR.BLL.Services
                                     .Include(p => p.BuildSteps)
                                         .ThenInclude(s => s.PluginCommand)
                                             .ThenInclude(c => c.Plugin)
+                                    .Include(p => p.Repository)
                                     .Include(p => p.BuildSteps)
                                         .ThenInclude(s => s.BuildPluginParameters)
                                     .FirstOrDefaultAsync(p => p.Id == projectId);
@@ -92,7 +106,7 @@ namespace buildeR.BLL.Services
             var executiveBuild = new ExecutiveBuildDTO
             {
                 ProjectId = project.Id,
-                RepositoryUrl = project.Repository,
+                RepositoryUrl = project.Repository.Url,
                 BuildSteps = project.BuildSteps
                     .Select(buildStep => Mapper.Map<BuildStepDTO>(buildStep))
                     .OrderBy(buildStep => buildStep.Index)
@@ -147,6 +161,13 @@ namespace buildeR.BLL.Services
                                                 .FirstOrDefaultAsync(p => p.Id == id);
 
             return Mapper.Map<ProjectDTO>(project);
+        }
+        public async Task<RepositoryDTO> GetRepository(int projectId)
+        {
+            var project = await Context.Projects.Include(p => p.Repository)
+                                                   .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            return Mapper.Map<RepositoryDTO>(project.Repository);
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {

@@ -1,6 +1,8 @@
 import { BuildHistory } from '../build-history';
 import { User } from '../user/user';
 import { ProjectTrigger } from './project-trigger/project-trigger';
+import { BuildStep } from '../build-step';
+import { Repository } from '@core/models/Repository';
 
 export interface Project {
   id: number;
@@ -8,7 +10,7 @@ export interface Project {
   name: string;
   description: string;
   isPublic: boolean;
-  repository: string;
+  repository: Repository;
   credentialsId: string;
   isAutoCancelBranchBuilds: boolean;
   isAutoCancelPullRequestBuilds: boolean;
@@ -18,6 +20,6 @@ export interface Project {
 
   owner: User;
   buildHistories: BuildHistory[];
- // buildSteps: BuildSteps[];
+  buildSteps: BuildStep[];
   projectTriggers: ProjectTrigger[];
 }
