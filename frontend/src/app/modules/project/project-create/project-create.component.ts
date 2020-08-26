@@ -84,9 +84,8 @@ export class ProjectCreateComponent implements OnInit {
       name: '',
       description: '',
       isPublic: true,
-      repository: '',
       ownerId: this.user.id,
-      _repository: {} as NewRepository
+      repository: {} as NewRepository
     };
   }
 
@@ -94,11 +93,10 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject.name = this.projectForm.controls['name'].value;
     this.newProject.description = this.projectForm.controls['description'].value;
     this.newProject.isPublic = this.projectForm.controls['isPublic'].value;
-    this.newProject._repository = this.projectForm.controls['_repository']?.value ?? this.newProject._repository;
-    this.newProject._repository.url = this.projectForm.controls['repositoryURL']?.value;
+    this.newProject.repository = this.projectForm.controls['_repository']?.value ?? this.newProject.repository;
+    this.newProject.repository.url = this.projectForm.controls['repositoryURL']?.value;
 
     this.newProject.ownerId = this.user.id;
-    this.newProject.repository = this.newProject._repository?.name;
 
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
@@ -133,13 +131,13 @@ export class ProjectCreateComponent implements OnInit {
 
     this.githubRepoSection = true;
     this.urlSection = false;
-    this.newProject._repository.createdByLink = false;
+    this.newProject.repository.createdByLink = false;
 
     if (this.projectForm.controls['repositoryURL']) {
       this.projectForm.removeControl('repositoryURL');
     }
 
-    this.projectForm.addControl('_repository', new FormControl(this.newProject._repository,
+    this.projectForm.addControl('_repository', new FormControl(this.newProject.repository,
       [
         Validators.required
       ]
@@ -150,13 +148,13 @@ export class ProjectCreateComponent implements OnInit {
   urlRadioClicked() {
     this.urlSection = true;
     this.githubRepoSection = false;
-    this.newProject._repository.createdByLink = true;
+    this.newProject.repository.createdByLink = true;
 
     if (this.projectForm.controls['_repository']) {
       this.projectForm.removeControl('_repository');
     }
 
-    this.projectForm.addControl('repositoryURL', new FormControl(this.newProject._repository.url,
+    this.projectForm.addControl('repositoryURL', new FormControl(this.newProject.repository.url,
       [
         Validators.required,
         Validators.pattern(`https:\/\/github\.com\/[A-Za-z]+\/[A-Za-z]+`)
@@ -173,11 +171,11 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   isFormValid() {
-    if (!this.newProject._repository) {
+    if (!this.newProject.repository) {
       return false;
     }
 
-    if (!this.newProject._repository.createdByLink) {
+    if (!this.newProject.repository.createdByLink) {
       return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
     }
     else {
