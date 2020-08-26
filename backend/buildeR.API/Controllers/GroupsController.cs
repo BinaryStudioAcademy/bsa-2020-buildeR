@@ -19,7 +19,7 @@ namespace buildeR.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<GroupDTO>> GetAll()
         {
-            return await _groupService.GetAll();
+           return await _groupService.GetGroupsWithMembersAndProjects();
         }
 
         [HttpGet("{id}")]
