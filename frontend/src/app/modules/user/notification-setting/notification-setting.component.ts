@@ -59,6 +59,16 @@ export class NotificationSettingComponent implements OnInit {
     if (res) {
       res = false;
       this.settingService.updateNotificationSettings(this.setting)
+      .pipe(
+        map(setting =>
+          {
+            setting.notificationSettingOptions.map(option =>
+              {
+                option.description = this.descriptions.find(d => d.notificationType === option.notificationType).description;
+                return option;
+              });
+            return setting;
+          }))
       .subscribe(
         (data) =>
         {
