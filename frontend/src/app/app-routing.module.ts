@@ -7,7 +7,12 @@ import { HomeGuard } from '@core/guards/home.guard';
 import { AuthResolver } from '@core/resolvers/auth.resolver';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./modules/landing-page/landing-page.module').then(m => m.LandingPageModule)},
+  { path: '',
+    loadChildren: () =>
+      import('./modules/landing-page/landing-page.module')
+        .then(m => m.LandingPageModule),
+    canActivate: [HomeGuard]
+  },
   { path: 'signin', component: SignInComponent, canActivate: [HomeGuard] },
   { path: 'signup', component: SignUpComponent, canActivate: [HomeGuard] },
   {
