@@ -91,6 +91,15 @@ namespace buildeR.BLL.Services
 
             return response.IsSuccessStatusCode;
         }
+        public async Task<bool> CheckIfUserExist(string username, string password)
+        {
+            SetUpHttpClient(username, password);
+
+            var endpoint = $"user";
+            var response = await _client.GetAsync(endpoint);
+
+            return response.IsSuccessStatusCode;
+        }
         public async Task CreateWebhook(string repositoryName, string callback, string username, string password)
         {
             var user = await GetUserFromCredentials(username, password);
