@@ -13,21 +13,25 @@ import { UserRole } from '../../../shared/models/group/user-role';
   styleUrls: ['./group-list.component.sass']
 })
 export class GroupListComponent extends BaseComponent implements OnInit {
-  public userRole: typeof UserRole = UserRole;
+  userRole: typeof UserRole = UserRole;
+  loadingGroups = false;
   groups: Group[];
   currentUser: User;
   constructor(private groupService: GroupService, private authService: AuthenticationService) { super(); }
 
   ngOnInit(): void {
-    this.getGroups();
+    this.loadingGroups = true;
     this.currentUser = this.authService.getCurrentUser();
+    this.getGroups();
   }
   getGroups() {
+    this.loadingGroups = true;
     this.groupService
       .getAllGroups()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
+          this.loadingGroups = false;
           this.groups = resp;
         }
       );

@@ -1,56 +1,60 @@
-<div class="container my-3">
-  <span class="my-auto title">Groups</span>
-</div>
-<div class="container">
-  <div class="row my-3 border rounded" *ngFor="let group of groups">
-    <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-      <div class="col-md-12 col-sm-5 text-muted small row-top">
-        Group Name
-      </div>
-      <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-        {{group.name}}
-      </div>
-    </div>
-    <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-      <div class="col-md-12 col-sm-5 text-muted small row-top">
-        Your role
-      </div>
-      <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-
-        <span class="user-access-role">{{userRole[getCurrentUserRole(group.id)]}}</span></div>
-    </div>
-    <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-      <div class="col-md-12 col-sm-5 text-muted small row-top">
-        Members
-      </div>
-      <div class="col-md-12 col-sm-5 small row-bottom">
-        <i class="fas fa-users"></i> 111
-      </div>
-    </div>
-    <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-      <div class="col-md-12 col-sm-5 text-muted small row-top">
-        Projects
-      </div>
-      <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-        1
-      </div>
-    </div>
+<div *ngIf="
+loadingGroups ;
+then loading;
+else loaded;
+"></div>
+<ng-template #loading>
+  <app-loading-spinner size="20px"></app-loading-spinner>
+</ng-template>
+<ng-template #loaded>
+  <div class="container my-3">
+    <span class="my-auto title">Groups</span>
   </div>
-</div>
-<!-- <div class="col-md-1 mx-0 px-0 col-sm-4 my-auto drop-down-area overflow-hidden">
+  <div class="container" *ngIf="groups">
+    <div class="row my-3 border rounded" *ngFor="let group of groups">
+      <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
+        <div class="col-md-12 col-sm-12 text-dark">
+          <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
+          <i *ngIf="group.isPublic" class="fas fa-globe"></i>
+          {{group.name}}
+        </div>
+      </div>
+      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+        <div class="col-md-12 col-sm-12 text-muted small row-top">
+          Your role
+        </div>
+        <div class="col-md-12 col-sm-12 small row-bottom">
+          <span class="user-access-role">{{userRole[getCurrentUserRole(group.id)]}}</span></div>
+      </div>
+      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+        <div class="col-md-12 col-sm-12 text-muted small row-top">
+          Members
+        </div>
+        <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+          <i class="fas fa-users"></i> {{group.teamMembers.length}}
+        </div>
+      </div>
+      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+        <div class="col-md-12 col-sm-12 text-muted small row-top">
+          Projects
+        </div>
+        <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+          <i class="far fa-bookmark"></i> {{group.projectGroups.length}}
+        </div>
+      </div>
+      <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
         <ng-template #popContent>
-          <button class="btn btn-success dropdown-item" (click)="triggerBuild(project.id)"><i
-              class="fas fa-redo-alt"></i>
-            Run</button>
-          <button class="btn dropdown-item" [routerLink]="['../projects', project?.id, 'settings']"><i
-              class="fas fa-cog"></i> Settings</button>
-          <button class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
-            Copy</button>
+          <button class="btn dropdown-item" [routerLink]="['../groups', group?.id, 'settings']"><i
+              class="fas fa-cog"></i>
+            Settings</button>
           <div class="dropdown-divider"></div>
-          <button class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+          <button class="btn btn-danger dropdown-item">
             <i class="far fa-trash-alt"></i> Delete</button>
         </ng-template>
         <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
           <i class="fas fa-bars"></i>
         </button>
-      </div> -->
+      </div>
+    </div>
+  </div>
+</ng-template>
