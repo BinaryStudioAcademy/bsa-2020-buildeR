@@ -7,6 +7,7 @@ import {UserLetter} from "@shared/models/user/user-letter";
 import { emailDotValidator } from '@core/validators/email-dot-validator';
 import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
 import {UserService} from "@core/services/user.service";
+import {ActivatedRoute} from "@angular/router";
 
 
 @Component({
@@ -27,14 +28,17 @@ export class HelpComponent extends BaseComponent
   constructor(
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
-    this.userHelp.userEmail = this.currentUser.email;
+    this.route.data.subscribe(data => this.currentUser = data.user);
+    if(this.currentUser) {
+      this.userHelp.userEmail = this.currentUser.email;
+    }
 
     this.helpForm = new FormGroup({
       userEmail: new FormControl(this.userHelp.userEmail,
@@ -62,16 +66,24 @@ export class HelpComponent extends BaseComponent
         ),
     });
 
+    if(!this.currentUser)
+    this.helpForm.addControl('userName',
+      new FormControl(this.userHelp.userName,
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(30),
+          Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
+        ]));
   }
 
   onSubmit(letter: UserLetter): void {
     letter.rating = this.currentRate;
 
-    this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
-      letter.userName = this.currentUser.username
-
-    console.log(letter);
-
+    if(this.currentUser) {
+      this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
+        letter.userName = this.currentUser.username
+    }
     this.isShowSpinner = true;
     this.userService.sendLetter(letter).subscribe( letter =>
     {
