@@ -4,14 +4,6 @@
 
       <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small>
     </div>
-    <div class="build-history-select">
-      View:
-      <select class="form-control form-control-sm selecter">
-        <option>public and private builds</option>
-        <option>public builds</option>
-        <option>private builds</option>
-      </select>
-    </div>
     <div class="week-month">
       <nav>
         <ul class="list-group list-group-horizontal ">
@@ -23,25 +15,38 @@
         </ul>
       </nav>
     </div>
+    <div class="build-history-select">
+      <label style="margin-top: 2px"> View:</label>
+      <select class="form-control form-control-sm selecter">
+        <option>public and private builds</option>
+        <option>public builds</option>
+        <option>private builds</option>
+      </select>
+    </div>
   </div>
   <div class="charts">
-    <div class="first-chart">
-      <h5>Total builds</h5>
+
+    <div class="first-chart border">
+      <h6>Total builds</h6>
+      <h5>231</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
-    <div class="second-chart">
-      <h5>Total job minutes</h5>
+    <div class="second-chart border">
+      <h6>Total job minutes</h6>
+      <h5>1232</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
-    <div class="third-chart">
-      <h5>Average Queue Time</h5>
+    <div class="third-chart border">
+      <h6>Average Queue Time</h6>
+      <h5>30</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
-    <div class="fourth-chart">
-      <h5>Active Repositories</h5>
+    <div class="fourth-chart border">
+      <h6>Active Repositories</h6>
+      <h5>5</h5>
       <app-chart-small>
       </app-chart-small>
     </div>

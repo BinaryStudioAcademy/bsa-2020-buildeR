@@ -1,28 +1,37 @@
+h6
+  margin: 5px
+h5
+  margin: 5px
+
+
 .date-with-options
   display: grid
-  grid-template-columns: 20% 26% auto auto auto 20%
+  grid-template-columns: 20% 26% auto auto auto 25%
   grid-template-rows: 1
 
 .date
-  grid-column-start: 1
+  grid-column-start: 2
   grid-column-end: 2
   grid-row:1
+  margin-top: 5px
+  justify-self: start
 
 .build-history-select
-  grid-column-start: 2
-  grid-column-end: 3
+  grid-column-start: 6
+  grid-column-end: 6
   grid-row: 1
   display: inline-flex
+  margin-top: 5px
 
 .selecter
   max-width: 100%
   margin-left: 10px
 
 .week-month
-  grid-column-start: 6
-  grid-column-end: 6
+  grid-column-start:1
+  grid-column-end: 1
   grid-row: 1
-  justify-self: flex-end
+  justify-self: flex-start
 
 
 
@@ -76,35 +85,43 @@
   display: grid
   grid-template-columns: 4
   grid-template-rows: 2
-  max-height: 150px
+  max-height: 170px
 
 .first-chart
   grid-column-start: 1
   grid-column-end: 1
   grid-row-start: 1
   margin:10px
-  max-height: 80%
+  max-height: 150px
+  width: 95%
+  justify-self: center
 
 .second-chart
   grid-column-start: 2
   grid-column-end: 2
   grid-row-start: 1
   margin:10px
-  max-height: 80%
+  max-height: 150px
+  width: 95%
+  justify-self: center
 
 .third-chart
   grid-column-start: 3
   grid-column-end: 3
   grid-row-start: 1
   margin:10px
-  max-height: 80%
+  max-height: 150px
+  width: 95%
+  justify-self: center
 
 .fourth-chart
   grid-column-start: 4
   grid-column-end: 4
   grid-row-start: 1
   margin:10px
-  max-height: 80%
+  max-height: 150px
+  width: 95%
+  justify-self: center
 
 .big-chart-wrap
   display: grid
@@ -125,6 +142,7 @@
     font-size: 13px
   .charts
     grid-template-columns: 2
+    max-height: 100%
   .second-chart
     grid-column-start: 1
     grid-column-end: 1
@@ -137,3 +155,8 @@
     grid-column-start: 1
     grid-column-end: 1
     grid-row-start: 4
+  .build-history-select
+    grid-column-start: 3
+    grid-column-end: 6
+    display: -webkit-box
+    margin-left: 3px

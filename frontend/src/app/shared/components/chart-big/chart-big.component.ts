@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChartBigComponent implements OnInit {
 
-  //Mock
+  // Mock
   multi = [
     {
       name: '26.02',
@@ -52,7 +52,6 @@ export class ChartBigComponent implements OnInit {
         }
       ]
     },
-
     {
       name: '28.02',
       series: [
@@ -73,6 +72,27 @@ export class ChartBigComponent implements OnInit {
           value: 53
         }
       ]
+    },
+    {
+      name: '29.02',
+      series: [
+        {
+          name: 'Succeed',
+          value: 25
+        },
+        {
+          name: 'Faild',
+          value: 48
+        },
+        {
+          name: 'Errored',
+          value: 31
+        },
+        {
+          name: 'Canceled',
+          value: 13
+        }
+      ]
     }
   ];
 
@@ -90,7 +110,7 @@ export class ChartBigComponent implements OnInit {
   legendTitle = 'Statuses';
 
   colorScheme = {
-    domain: ['#5AA454', '#C7B42C', '#E43939', '#AAAAAA']
+    domain: ['#34ab53', '#d84848', '#ecdb43', '#9d9d9d']
   };
 
   constructor() {
