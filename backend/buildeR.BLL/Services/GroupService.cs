@@ -5,6 +5,7 @@ using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,6 +28,12 @@ namespace buildeR.BLL.Services
         public async Task<IEnumerable<GroupDTO>> GetAll()
         {
             return await base.GetAllAsync();
+        }
+        public async Task<IEnumerable<GroupDTO>> GetGroupsWithMembersAndProjects()
+        {
+            var groups = await Context.Groups.Include(g => g.TeamMembers)
+                                                .Include(g => g.ProjectGroups).ToListAsync();
+            return Mapper.Map<IEnumerable<GroupDTO>>(groups);
         }
         public async Task<GroupDTO> Create(NewGroupDTO group)
         {

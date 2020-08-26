@@ -35,7 +35,7 @@ namespace buildeR.BLL.Services
                 res.Add(variableDTO.Id, value);
                 await _secretService.CreateSecretsAsync(res, path);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 var res = new Dictionary<string, string>();
                 res.Add(variableDTO.Id, value);

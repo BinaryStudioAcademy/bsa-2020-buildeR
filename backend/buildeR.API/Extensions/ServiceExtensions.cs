@@ -45,6 +45,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddTransient<ISecretService, SecretService>();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
+            services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
 
             services.RegisterAutoMapper();
