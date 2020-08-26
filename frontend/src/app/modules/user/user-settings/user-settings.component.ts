@@ -125,6 +125,7 @@ export class UserSettingsComponent implements OnInit {
 
   private isValidUrl(url: string) {
     try {
+      // tslint:disable-next-line: no-unused-expression
       new URL(url);
     } catch (_) {
       return false;

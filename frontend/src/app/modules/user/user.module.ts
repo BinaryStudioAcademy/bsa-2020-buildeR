@@ -7,10 +7,11 @@ import { SharedModule } from '@shared/shared.module';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { PhotoCropperContentComponent } from './photo-cropper-content/photo-cropper-content.component';
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
+import { InsightsComponent } from './insights/insights.component';
 
 
 @NgModule({
-  declarations: [UserComponent, UserSettingsComponent, PhotoCropperContentComponent, NotificationSettingComponent],
+  declarations: [UserComponent, UserSettingsComponent, PhotoCropperContentComponent, NotificationSettingComponent, InsightsComponent],
   imports: [
     UserRoutingModule,
     SharedModule,
