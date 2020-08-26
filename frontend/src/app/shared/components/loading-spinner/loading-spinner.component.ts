@@ -13,9 +13,6 @@ export class LoadingSpinnerComponent implements OnInit {
   @Input() position = 'absolute';
   @Input() margin = '100px auto';
 
-  @ViewChild('spinner')
-  spinner: ElementRef;
-
   constructor() { }
 
   ngOnInit(): void { }
