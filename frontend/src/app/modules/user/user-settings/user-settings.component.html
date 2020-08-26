@@ -99,7 +99,8 @@
         <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="username"
             placeholder="Your username">
-          <app-loading-spinner class="my-loader" size="3px" *ngIf="settingsForm.controls['username'].status !== 'PENDING'">
+          <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+            *ngIf="settingsForm.controls['username'].status === 'PENDING'">
           </app-loading-spinner>
           <div *ngIf="settingsForm.controls['username'].errors">
             <div class="error" *ngIf="settingsForm.controls['username'].errors.required">
