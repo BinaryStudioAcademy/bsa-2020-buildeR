@@ -7,8 +7,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '
 })
 export class LoadingSpinnerComponent implements OnInit, AfterViewInit {
 
-  @Input()
-  size = '20px';
+  @Input() size = '20px';
 
   @ViewChild('spinner')
   spinner: ElementRef;
