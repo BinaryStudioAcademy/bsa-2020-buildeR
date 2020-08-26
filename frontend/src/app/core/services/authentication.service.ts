@@ -107,11 +107,10 @@ export class AuthenticationService {
     return Boolean(this.getFireUser());
   }
 
-  populateAuth(jwt: string, user: firebase.User/*, githubToken: string*/) {
+  populateAuth(jwt: string, user: firebase.User) {
     this.firebaseUser = user;
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('jwt', jwt);
-    // localStorage.setItem('github-access-token', jwt);
   }
 
   clearAuth() {
