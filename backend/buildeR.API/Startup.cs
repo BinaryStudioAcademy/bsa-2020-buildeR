@@ -159,13 +159,25 @@ namespace buildeR
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
+
+            InitializeFileProvider(app);
+            InitializeDatabase(app);
+        }
+
+        private void InitializeFileProvider(IApplicationBuilder app)
+        {
+            var resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
+            if (!Directory.Exists(resourcesPath))
+            {
+                Directory.CreateDirectory(resourcesPath);
+            }
+
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                FileProvider = new PhysicalFileProvider(resourcesPath),
                 RequestPath = new PathString("/Resources")
             });
-            InitializeDatabase(app);
         }
 
         private void InitializeDatabase(IApplicationBuilder app)

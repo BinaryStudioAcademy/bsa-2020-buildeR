@@ -8,7 +8,6 @@ namespace buildeR.Common.DTO.Project
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsPublic { get; set; }
-        public string Repository { get; set; }
-        public NewRepositoryDTO _Repository { get; set; }
+        public NewRepositoryDTO Repository { get; set; }
     }
 }
