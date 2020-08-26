@@ -1,15 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO;
 using buildeR.Common.DTO.User;
 using buildeR.Common.DTO.UserSocialNetwork;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using SendGrid.Helpers.Mail;
 
 namespace buildeR.BLL.Services
 {
@@ -19,13 +25,14 @@ namespace buildeR.BLL.Services
         private readonly IMapper _mapper;
         private readonly IEmailBuilder _emailBuilder;
         private readonly IEmailService _emailService;
-
-        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder)
+        private readonly IConfiguration _configuration;
+        public UserService(BuilderContext context, IMapper mapper, IEmailService emailService, IEmailBuilder emailBuilder, IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _emailService = emailService;
             _emailBuilder = emailBuilder;
+            _configuration = configuration;
         }
 
         public async Task<UserDTO> GetUserById(int id)
@@ -149,6 +156,37 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException("user", userLink.UserId);
             }
+        }
+
+        public async Task<UserDTO> UploadUserPhoto(IFormFile file, int userId)
+        {
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var folderName = Path.Combine("Resources", "Avatars");
+            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            var fullPath = Path.Combine(pathToSave, fileName);
+            var dbPath = Path.Combine("http://localhost:5050", folderName, fileName);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var user = await GetUserById(userId);
+            user.AvatarUrl = dbPath;
+            return await Update(user);
+        }
+        public async Task AddUserLetter(UserLetterDTO newUserLetter)
+        {
+            var userLetter = _mapper.Map<UserLetter>(newUserLetter);
+            await _context.Set<UserLetter>().AddAsync(userLetter);
+            await _context.SaveChangesAsync();
+            
+            string strSubject = $"Feedback from {newUserLetter.UserName}: {newUserLetter.Subject}";
+            await _emailService.SendEmailAsync(new List<string> {_emailService.SupportEmail},
+                new EmailAddress(newUserLetter.UserEmail), strSubject, newUserLetter.Description);
+            
+            var emailModel = _emailBuilder.GetFeedbackLetter(newUserLetter.UserEmail, newUserLetter.UserName, newUserLetter.Subject);
+            await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, 
+                emailModel.Subject, emailModel.Title, emailModel.Body);
         }
     }
 }

@@ -13,7 +13,11 @@ export class BuildHistoryService {
 
   constructor(private httpService: HttpService) { }
 
-  getBuildHistory(projectId: number): Observable<HttpResponse<BuildHistory[]>> {
+  getBuildHistoriesOfProject(projectId: number): Observable<HttpResponse<BuildHistory[]>> {
     return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/project/${projectId}`);
+  }
+
+  getBuildHistory(buildId: number): Observable<BuildHistory> {
+    return this.httpService.getRequest<BuildHistory>(`${this.routePrefix}/${buildId}`);
   }
 }

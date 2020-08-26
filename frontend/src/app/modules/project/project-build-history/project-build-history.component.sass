@@ -5,7 +5,7 @@
   margin: 0
   list-style: none
   display: flex
-  flex-direction: column
+  flex-direction: column-reverse
   gap: 1.5rem
   font-size: 1.1rem
   padding-left: 0
@@ -51,6 +51,15 @@
         margin: 0
         width: 12rem
 
+        &.status
+
+          &:hover
+            text-decoration: underline
+            cursor: pointer
+
+          &:focus
+            outline: none
+
         &:first-of-type
           width: 15rem
 
@@ -66,6 +75,7 @@
 
     li
       height: 12vh
+
 @media (max-width:500px)
   ul.build-container
 
