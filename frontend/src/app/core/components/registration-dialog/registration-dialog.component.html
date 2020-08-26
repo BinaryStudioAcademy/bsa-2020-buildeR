@@ -47,6 +47,9 @@
         <label [ngStyle]="{'color': registerForm.controls['username'].errors? 'red' : '#777777'}"
           for="username">Username<span class="required">*</span></label>
       </span>
+      <app-loading-spinner position="relative" margin="0" top="-21px" left="92%" size="3px"
+        *ngIf="registerForm.controls['username'].status === 'PENDING'">
+      </app-loading-spinner>
       <div *ngIf="registerForm.controls['username'].errors">
         <div class="error "
           [hidden]="registerForm.controls['username'].valid && registerForm.controls['username'].untouched || !registerForm.controls['username'].errors?.required">
@@ -89,8 +92,9 @@
       </div>
     </div>
     <div class="buttons">
-      <button type="submit" class="btn btn-success" [disabled]="registerForm.invalid">Save</button>
-      <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="btn btn-success"
+        [disabled]="registerForm.invalid || registerForm.controls['username'].status === 'PENDING'">Save</button>
+      <button type=" button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
     </div>
   </form>
 </div>

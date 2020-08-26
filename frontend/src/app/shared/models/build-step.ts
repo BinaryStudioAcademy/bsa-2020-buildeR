@@ -1,4 +1,5 @@
 import { PluginCommand } from './plugin-command';
+import { CommandArgument } from './command-argument';
 
 export interface BuildStep {
   id: number;
@@ -8,4 +9,5 @@ export interface BuildStep {
   pluginCommandId: number;
   workDirectory: string;
   projectId: number;
+  commandArguments: CommandArgument[];
 }

@@ -9,6 +9,7 @@ namespace buildeR.BLL.Interfaces
 {
     public interface IGroupService : ICrudService<GroupDTO, NewGroupDTO, int>
     {
+        Task<IEnumerable<GroupDTO>> GetGroupsWithMembersAndProjects();
         Task<GroupDTO> GetGroupById(int id);
         Task<IEnumerable<GroupDTO>> GetAll();
         Task<GroupDTO> Create(NewGroupDTO group);

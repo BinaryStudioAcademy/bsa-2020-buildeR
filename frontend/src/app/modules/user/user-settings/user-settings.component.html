@@ -101,6 +101,9 @@
         <div class="input-area">
           <input type="text" class="form-control form-control-sm" formControlName="username"
             placeholder="Your username">
+          <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+            *ngIf="settingsForm.controls['username'].status === 'PENDING'">
+          </app-loading-spinner>
           <div *ngIf="settingsForm.controls['username'].errors">
             <div class="error" *ngIf="settingsForm.controls['username'].errors.required">
               User name is required
@@ -155,8 +158,8 @@
           </div>
         </div>
         <div class="save-button-container">
-          <button type="submit" class="btn btn-success"
-            [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged">Save</button>
+          <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged 
+            || settingsForm.controls['username'].status === 'PENDING'">Save</button>
         </div>
       </div>
     </form>
