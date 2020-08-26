@@ -1,0 +1,23 @@
+<div *ngIf="buildHistory">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="../">Build History</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Build #{{buildHistory.number}}</li>
+    </ol>
+  </nav>
+  <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
+    <div class='user-commit'>
+      <a><i class="fas fa-user-tie"></i> Author: {{buildHistory.performer.username}}</a>
+      <p><i class="fas fa-code"></i> Commit <span class="commit">{{buildHistory.commitHash.substring(0, 6)}}</span></p>
+      <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
+    </div>
+    <div class="build-info">
+      <p class="status" [appBuildHistoryStatus]="buildHistory.buildStatus"><i class="fas fa-hammer"></i> Status
+        {{buildHistory.buildStatus | buildStatus}}</p>
+      <p class="build-time"><i class="far fa-clock"></i> Duration {{buildHistory.duration | timespan}}</p>
+      <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium'}}"><i
+          class="far fa-calendar-alt"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
+    </div>
+  </div>
+  <app-logging-terminal></app-logging-terminal>
+</div>

@@ -62,10 +62,10 @@ namespace buildeR.BLL.Services
         }
         public async Task<ProjectDTO> CreateProject(NewProjectDTO dto)
         {
-            if(dto._Repository.CreatedByLink)
+            if(dto.Repository.CreatedByLink)
             {
-                dto._Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(dto._Repository.Url);
-                dto._Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(dto._Repository.Url);
+                dto.Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(dto.Repository.Url);
+                dto.Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(dto.Repository.Url);
             }
             return await base.AddAsync(dto);
         }
@@ -95,6 +95,7 @@ namespace buildeR.BLL.Services
                                     .Include(p => p.BuildSteps)
                                         .ThenInclude(s => s.PluginCommand)
                                             .ThenInclude(c => c.Plugin)
+                                    .Include(p => p.Repository)
                                     .Include(p => p.BuildSteps)
                                         .ThenInclude(s => s.BuildPluginParameters)
                                     .FirstOrDefaultAsync(p => p.Id == projectId);
@@ -105,7 +106,7 @@ namespace buildeR.BLL.Services
             var executiveBuild = new ExecutiveBuildDTO
             {
                 ProjectId = project.Id,
-                RepositoryUrl = project.Repository,
+                RepositoryUrl = project.Repository.Url,
                 BuildSteps = project.BuildSteps
                     .Select(buildStep => Mapper.Map<BuildStepDTO>(buildStep))
                     .OrderBy(buildStep => buildStep.Index)
@@ -163,10 +164,10 @@ namespace buildeR.BLL.Services
         }
         public async Task<RepositoryDTO> GetRepository(int projectId)
         {
-            var project = await Context.Projects.Include(p => p._Repository)
+            var project = await Context.Projects.Include(p => p.Repository)
                                                    .FirstOrDefaultAsync(p => p.Id == projectId);
 
-            return Mapper.Map<RepositoryDTO>(project._Repository);
+            return Mapper.Map<RepositoryDTO>(project.Repository);
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {

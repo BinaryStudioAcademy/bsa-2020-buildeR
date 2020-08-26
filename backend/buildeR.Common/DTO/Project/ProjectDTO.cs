@@ -15,7 +15,6 @@ namespace buildeR.Common.DTO.Project
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsPublic { get; set; }
-        public string Repository { get; set; }
 
         public string CredentialsId { get; set; }
         public bool IsAutoCancelBranchBuilds { get; set; }
@@ -25,7 +24,7 @@ namespace buildeR.Common.DTO.Project
         public int? CancelAfter { get; set; }
 
         public UserDTO Owner { get; set; }
-        public RepositoryDTO _Repository { get; set; }
+        public RepositoryDTO Repository { get; set; }
 
         public ICollection<BuildHistoryDTO> BuildHistories { get; set; }
         public ICollection<BuildStepDTO> BuildSteps { get; set; }
