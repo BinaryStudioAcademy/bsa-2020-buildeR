@@ -39,14 +39,16 @@ namespace buildeR.DAL.Context
                 Id = 1,
                 Command = "dotnet",
                 PluginName = ".NET Core",
-                DockerImageName = "mcr.microsoft.com/dotnet/core/sdk"
+                DockerImageName = "mcr.microsoft.com/dotnet/core/sdk",
+                DockerRegistryName = "microsoft%2Fdotnet"
             };
             var nodeBuildPlugin = new BuildPlugin()
             {
                 Id = 2,
                 Command = "npm",
                 PluginName = "Node.js",
-                DockerImageName = "node"
+                DockerImageName = "node",
+                DockerRegistryName = "node"
             };
 
             var dotnetBuildCommand = new PluginCommand()
