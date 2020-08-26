@@ -1,6 +1,6 @@
 .date-with-options
   display: grid
-  grid-template-columns: 20% 22% auto auto auto 20%
+  grid-template-columns: 20% 26% auto auto auto 20%
   grid-template-rows: 1
 
 .date
@@ -15,7 +15,7 @@
   display: inline-flex
 
 .selecter
-  max-width: 60%
+  max-width: 100%
   margin-left: 10px
 
 .week-month
@@ -71,7 +71,69 @@
     height: 2px
     background-color: #3eaaaf
 
-@media screen and (max-width: 400px)
+
+.charts
+  display: grid
+  grid-template-columns: 4
+  grid-template-rows: 2
+  max-height: 150px
+
+.first-chart
+  grid-column-start: 1
+  grid-column-end: 1
+  grid-row-start: 1
+  margin:10px
+  max-height: 80%
+
+.second-chart
+  grid-column-start: 2
+  grid-column-end: 2
+  grid-row-start: 1
+  margin:10px
+  max-height: 80%
+
+.third-chart
+  grid-column-start: 3
+  grid-column-end: 3
+  grid-row-start: 1
+  margin:10px
+  max-height: 80%
+
+.fourth-chart
+  grid-column-start: 4
+  grid-column-end: 4
+  grid-row-start: 1
+  margin:10px
+  max-height: 80%
+
+.big-chart-wrap
+  display: grid
+  grid-template-columns: 4
+
+.big-chart
+  grid-column-start: 1
+  grid-column-end: 4
+  grid-row-start: 1
+
+
+
+
+
+
+@media screen and (max-width: 350px)
   a
     font-size: 13px
-
+  .charts
+    grid-template-columns: 2
+  .second-chart
+    grid-column-start: 1
+    grid-column-end: 1
+    grid-row-start: 2
+  .third-chart
+    grid-column-start: 1
+    grid-column-end: 1
+    grid-row-start: 3
+  .fourth-chart
+    grid-column-start: 1
+    grid-column-end: 1
+    grid-row-start: 4

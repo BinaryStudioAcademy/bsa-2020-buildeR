@@ -1,4 +1,4 @@
-<div class="container line-bottom mb-3 pb-3">
+<div class="container line-bottom ">
   <div class="date-with-options">
     <div class="date">
 
@@ -7,11 +7,9 @@
     <div class="build-history-select">
       View:
       <select class="form-control form-control-sm selecter">
-        <option>Private and public builds</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
+        <option>public and private builds</option>
+        <option>public builds</option>
+        <option>private builds</option>
       </select>
     </div>
     <div class="week-month">
@@ -24,6 +22,33 @@
           </li>
         </ul>
       </nav>
+    </div>
+  </div>
+  <div class="charts">
+    <div class="first-chart">
+      <h5>Total builds</h5>
+      <app-chart-small>
+      </app-chart-small>
+    </div>
+    <div class="second-chart">
+      <h5>Total job minutes</h5>
+      <app-chart-small>
+      </app-chart-small>
+    </div>
+    <div class="third-chart">
+      <h5>Average Queue Time</h5>
+      <app-chart-small>
+      </app-chart-small>
+    </div>
+    <div class="fourth-chart">
+      <h5>Active Repositories</h5>
+      <app-chart-small>
+      </app-chart-small>
+    </div>
+  </div>
+  <div class="big-chart-wrap">
+    <div class="big-chart">
+      <app-chart-big></app-chart-big>
     </div>
   </div>
 </div>

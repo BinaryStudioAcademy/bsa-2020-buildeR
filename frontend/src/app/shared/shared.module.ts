@@ -17,6 +17,9 @@ import { BuildHistoryStatusDirective } from './directives/build-history-status.d
 import { BuildHistoryStatusOutlineDirective } from './directives/build-history-status-outline.directive';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
+import { ChartSmallComponent } from './components/chart-small/chart-small.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ChartBigComponent } from './components/chart-big/chart-big.component';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -33,6 +36,8 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     BuildHistoryStatusOutlineDirective,
     TabsComponent,
     LoadingSpinnerComponent,
+    ChartSmallComponent,
+    ChartBigComponent,
   ],
   imports: [
     CommonModule,
@@ -43,6 +48,7 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    NgxChartsModule,
   ],
   exports: [
     CommonModule,
@@ -62,7 +68,9 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     BuildHistoryStatusDirective,
     BuildHistoryStatusOutlineDirective,
     TabsComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    ChartSmallComponent,
+    ChartBigComponent,
   ],
 })
 export class SharedModule {}
