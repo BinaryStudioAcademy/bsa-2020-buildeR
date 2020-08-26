@@ -158,22 +158,7 @@ namespace buildeR.BLL.Services
             }
         }
 
-        public async Task<UserDTO> UploadUserPhoto(IFormFile file, int userId)
-        {
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            var folderName = Path.Combine("Resources", "Avatars");
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-            var fullPath = Path.Combine(pathToSave, fileName);
-            var dbPath = Path.Combine("http://localhost:5050", folderName, fileName);
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-            var user = await GetUserById(userId);
-            user.AvatarUrl = dbPath;
-            return await Update(user);
-        }
+        
         public async Task AddUserLetter(UserLetterDTO newUserLetter)
         {
             var userLetter = _mapper.Map<UserLetter>(newUserLetter);

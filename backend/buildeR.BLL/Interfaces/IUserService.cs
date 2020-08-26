@@ -17,7 +17,6 @@ namespace buildeR.BLL.Interfaces
         Task<bool> ValidateUsername(ValidateUserDTO user);
         Task<UserDTO> LinkProvider(LinkProviderDTO userLink);
         Task Delete(int id);
-        Task<UserDTO> UploadUserPhoto(IFormFile file, int userId);
         Task AddUserLetter(UserLetterDTO newUserLetter);
     }
 }
