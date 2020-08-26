@@ -64,7 +64,7 @@ namespace buildeR.BLL.Services
             callback += $"/{projectId}/github";
 
             var project = await _projectService.GetAsync(projectId);
-            await _githubClient.CreateWebhook(project.Repository, callback, accessToken);
+            await _githubClient.CreateWebhook(project.Repository.Name, callback, accessToken);
         }
     }
 }

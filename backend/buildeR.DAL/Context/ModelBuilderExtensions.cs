@@ -175,7 +175,6 @@ namespace buildeR.DAL.Context
                 .RuleFor(p => p.Name, f => f.Commerce.ProductName())
                 .RuleFor(p => p.Description, f => f.Lorem.Text())
                 .RuleFor(p => p.IsPublic, f => f.Random.Bool())
-                .RuleFor(p => p.Repository, f => f.Internet.Url())
                 .RuleFor(p => p.CredentialsId, f => f.Lorem.Sentence())
                 .RuleFor(p => p.IsAutoCancelBranchBuilds, true)
                 .RuleFor(p => p.IsAutoCancelPullRequestBuilds, true)
