@@ -8,8 +8,9 @@ namespace buildeR.BLL.Interfaces
     {
         Task<GithubUser> GetUserFromCredentials(string username, string password);
         Task<IEnumerable<GithubRepository>> GetUserRepositories(string username, string password);
-        Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryName, string username, string password);
-        Task<bool> CheckIfRepositoryAccessable(string repoOwner, string repoName, string username = null, string password = null);
+        Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string username, string password);
+        Task<IEnumerable<GithubBranch>> GetPublicRepositoryBranches(string repositoryName, string repositoryOwner);
+        Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string username = null, string password = null);
         Task CreateWebhook(string repositoryName, string callback, string username, string password);
     }
 }

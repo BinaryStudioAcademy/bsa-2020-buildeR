@@ -61,7 +61,7 @@ namespace buildeR.BLL.Services
 
             return allRepos;
         }
-        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryName, string username, string password)
+        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string username, string password)
         {
             SetUpHttpClient(username, password);
 
@@ -72,9 +72,16 @@ namespace buildeR.BLL.Services
             var content = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
-
         }
-        public async Task<bool> CheckIfRepositoryAccessable(string repoOwner, string repoName, string username = null, string password = null)
+        public async Task<IEnumerable<GithubBranch>> GetPublicRepositoryBranches(string repositoryName, string repositoryOwner)
+        {
+            var endpoint = $"repos/{repositoryOwner}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
+        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string username = null, string password = null)
         {
             if (username != null && password != null)
                 SetUpHttpClient(username, password);
@@ -103,8 +110,9 @@ namespace buildeR.BLL.Services
         private void SetUpHttpClient(string username, string password)
         {
             var authenticationString = $"{username}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.UTF8.GetBytes(authenticationString));
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic ", base64EncodedAuthenticationString);
+            var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
         }
     }
 }
