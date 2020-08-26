@@ -393,9 +393,6 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("Owner")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Private")
                         .HasColumnType("bit");
 
@@ -403,9 +400,6 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
