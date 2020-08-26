@@ -61,6 +61,22 @@ namespace buildeR.BLL.Services
         {
             return await _githubClient.CheckIfUserExist(credentials.Username, credentials.Password);
         }
+        public async Task<bool> CheckIfUserHasCredentials(int userId)
+        {
+            try
+            {
+                var credentials = await GetUserCredentials(userId);
+
+                if (string.IsNullOrEmpty(credentials.Username) || string.IsNullOrEmpty(credentials.Password))
+                    return false;
+
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
         public async Task RegisterWebhook(int projectId, string callback)
         {
             callback += $"/{projectId}/github";
@@ -82,8 +98,19 @@ namespace buildeR.BLL.Services
         }
         public async Task<Credentials> GetUserCredentials(int userId)
         {
-            var dictionary = await _secretService.ReadSecretsAsync($"users/{userId}/credentials/github");
-            return new Credentials { Username = dictionary["username"], Password = dictionary["password"] };
+            try
+            {
+                var dictionary = await _secretService.ReadSecretsAsync($"users/{userId}/credentials/github");
+
+                dictionary.TryGetValue("username", out string username);
+                dictionary.TryGetValue("password", out string password);
+
+                return new Credentials { Username = username, Password = password };
+            }
+            catch(Exception)
+            {
+                return new Credentials();
+            }
         }
     }
 }

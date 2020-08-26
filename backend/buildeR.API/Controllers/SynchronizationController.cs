@@ -35,6 +35,12 @@ namespace buildeR.API.Controllers
             return await _synchronizationService.CheckIfUserExist(credentials);
         }
 
+        [HttpGet("user/{userId}/credentials/exist")]
+        public async Task<bool> CheckIfUserHasCredentials(int userId)
+        {
+            return await _synchronizationService.CheckIfUserHasCredentials(userId);
+        }
+
         [HttpGet("{userId}/repos")]
         public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
         {
