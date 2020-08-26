@@ -18,11 +18,11 @@ import { AuthGuard } from './guards/auth.guard';
 import { HomeGuard } from './guards/home.guard';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { RegistrationWarningComponent } from './components/registration-warning/registration-warning.component';
+import {LandingPageModule} from "@core/components/landing-page/landing-page.module";
 
 @NgModule({
   declarations: [
     ModalContentComponent,
-    LandingPageComponent,
     SignInComponent,
     SignUpComponent,
     RegistrationDialogComponent,
@@ -41,7 +41,6 @@ import { RegistrationWarningComponent } from './components/registration-warning/
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
   ],
   exports: [
-    LandingPageComponent,
     SignInComponent,
     SignUpComponent,
   ]
