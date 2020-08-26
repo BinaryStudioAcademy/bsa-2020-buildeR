@@ -325,9 +325,6 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Repository")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
@@ -636,7 +633,7 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.Repository", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
-                        .WithOne("_Repository")
+                        .WithOne("Repository")
                         .HasForeignKey("buildeR.DAL.Entities.Repository", "ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

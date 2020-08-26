@@ -26,7 +26,7 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   ngOnInit(): void {
     this.route.parent.params.subscribe((params) => {
       this.projectId = params.projectId;
-      this.buildHistoryService.getBuildHistory(this.projectId).subscribe(
+      this.buildHistoryService.getBuildHistoriesOfProject(this.projectId).subscribe(
         (response) => {
           this.builds = response.body;
         },
