@@ -21,6 +21,7 @@ namespace buildeR.DAL.Entities
 
         public virtual PluginCommand PluginCommand { get; set; }
         public virtual Project Project { get; set; }
+        public virtual IEnumerable<CommandArgument> CommandArguments { get; set; }
         public virtual ICollection<BuildPluginParameter> BuildPluginParameters { get; set; }
     }
 }
