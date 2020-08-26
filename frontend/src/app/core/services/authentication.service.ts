@@ -6,6 +6,7 @@ import { User } from '@shared/models/user/user';
 import { filter, tap, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { from, of } from 'rxjs';
+import { auth } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -69,7 +70,7 @@ export class AuthenticationService {
   }
 
   getFirebaseToken() {
-    const currentToken =  localStorage.getItem('jwt');
+    const currentToken = localStorage.getItem('jwt');
     return !currentToken
       ? this.refreshFirebaseToken()
       : of(currentToken);
@@ -119,5 +120,10 @@ export class AuthenticationService {
     localStorage.removeItem('jwt');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
+  }
+
+  isGithubAddedInFirebase() {
+    const check = (item) => item.providerId === 'github.com';
+    return this.firebaseUser.providerData.some(check);
   }
 }

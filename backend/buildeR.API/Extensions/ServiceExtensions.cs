@@ -14,6 +14,7 @@ using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Specialized;
+using System.Net.Http;
 using System.Reflection;
 using buildeR.Common.DTO;
 
@@ -34,16 +35,20 @@ namespace buildeR.API.Extensions
             services.AddSingleton(provider => GetScheduler(configuration));
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
+            services.AddScoped<ICommandArgumentService, CommandArgumentService>();
             services.AddScoped<IBuildService, BuildService>();
             services.AddScoped<IGithubClient, GithubClient>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
-
+            
+            services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddTransient<ISecretService, SecretService>();
+            services.AddHttpClient();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
