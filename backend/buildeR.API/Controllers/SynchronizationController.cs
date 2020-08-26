@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace buildeR.API.Controllers
 {
-    [Authorize]
+  
     [Route("[controller]")]
     [ApiController]
     public class SynchronizationController : ControllerBase
@@ -26,15 +26,15 @@ namespace buildeR.API.Controllers
         }
 
         [HttpGet("repos/")]
-        public async Task<IEnumerable<Repository>> GetUserRepositories([FromHeader]string ProviderAuthorization)
+        public async Task<IEnumerable<Repository>> GetUserRepositories([FromBody]Credentials credentials)
         {
-            return await _synchronizationService.GetUserRepositories(ProviderAuthorization);
+            return await _synchronizationService.GetUserRepositories(credentials.Username, credentials.Password);
         }
 
         [HttpGet("{projectId}/branches")]
-        public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId, [FromHeader]string ProviderAuthorization)
+        public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId)
          {
-            return await _synchronizationService.GetRepositoryBranches(projectId, ProviderAuthorization);
+            return await _synchronizationService.GetRepositoryBranches(projectId);
         }
 
         [HttpPost("repo/exist")]
@@ -44,11 +44,11 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("hooks/{projectId}")]
-        public async Task RegisterWebhooks(int projectId, [FromHeader] string ProviderAuthorization)
+        public async Task RegisterWebhooks(int projectId)
         {
             var callback = Url.RouteUrl("Webhooks", new { controller = $"webhooks" }, Request.Scheme);
 
-            await _synchronizationService.RegisterWebhook(projectId, callback, ProviderAuthorization);
+            await _synchronizationService.RegisterWebhook(projectId, callback);
         }
     }
 }
