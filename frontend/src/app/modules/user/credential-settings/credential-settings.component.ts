@@ -39,9 +39,7 @@ export class CredentialSettingsComponent implements OnInit {
   }
 
   saveCredentials() {
-
-    // this.syncService.setUpCredentials(this.user.id, this.credentials)
-    //   .subscribe(() => this.credentials);
-    console.log(this.credentialsForm);
+    this.syncService.setUpCredentials(this.user.id, this.credentialsForm.value as Credentials)
+      .subscribe(() => this.credentials);
   }
 }

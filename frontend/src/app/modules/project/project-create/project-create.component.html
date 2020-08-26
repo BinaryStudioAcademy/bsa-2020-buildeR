@@ -80,24 +80,23 @@
 <div class="modal-body">
   <form (ngSubmit)="save()" [formGroup]="projectForm" class="project-form">
     <div ngbRadioGroup name="radioBasic" class="radio-wr">
-      <div class="connect-with" [class.connect-with-inactive]="!isGithubAccessable()">
+      <div class="connect-with" [class.connect-with-inactive]="!userHasCredentials">
         <div class="connect-with-title-wr">
           <label ngbButtonLabel class="radio-label">
             <input ngbButton type="radio" class="radio" [value]="1" [checked]="githubRepoSection"
-            [disabled]="!isGithubAccessable()" (click)="githubRadioClicked()"
+            [disabled]="!userHasCredentials" (click)="githubRadioClicked()"
             name="githubRepoButton">
           </label>
           <p class="connect-with-title" (click)="githubRadioClicked()">
             From Github repository
           </p>
         </div>
-        <div class="additional-info-wr" *ngIf="!isGithubAccessable()">
+        <div class="additional-info-wr" *ngIf="!userHasCredentials">
           <p>
-            To chose this option you should link
-            Github to your buildeR account
+            To chose this option you should add your github credentials
           </p>
           <p>
-            You can link it in <a routerLink="/portal/user">user settings</a>
+            You can add it in <a routerLink="/portal/user/credentialsettings">credentials settings</a>
           </p>
         </div>
         <div *ngIf="githubRepoSection" class="form-control-wr">

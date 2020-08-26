@@ -25,21 +25,16 @@ export class SynchronizationService {
     return this.httpService.postRequest<boolean>(`${this.endpoint}/user/exist`, credentials);
   }
 
+  checkIfUserHasCredentials(userId: number): Observable<boolean> {
+    return this.httpService.getRequest<boolean>(`${this.endpoint}/user/${userId}/credentials/exist`);
+  }
+
   getSynchronizedUser(): Observable<SynchronizedUser> {
     throw new Error('In progress');
   }
 
-  isGithubAccessable() {
-    return localStorage.getItem('github-access-token');
-  }
-
-  getUserRepositories(): Observable<Repository[]> {
-
-    const token = localStorage.getItem('github-access-token');
-
-    this.httpService.setHeader('ProviderAuthorization', token);
-
-    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/`);
+  getUserRepositories(userId: number): Observable<Repository[]> {
+    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/${userId}/repos`);
   }
 
   getRepositoryBranches(projectId: number): Observable<Branch[]> {
