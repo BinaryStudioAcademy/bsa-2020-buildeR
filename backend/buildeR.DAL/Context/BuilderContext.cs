@@ -18,6 +18,7 @@ namespace buildeR.DAL.Context
         public DbSet<TeamMember> TeamMembers { get; private set; }
         public DbSet<User> Users { get; private set; }
         public DbSet<UserSocialNetwork> UserSocialNetworks { get; private set; }
+        public DbSet<UserLetter> UserLetters { get; private set; }
         public DbSet<NotificationSetting> NotificationSettings { get; private set; }
         public DbSet<NotificationSettingOption> NotificationSettingOptions { get; private set; }
         public DbSet<Repository> Repositories { get; private set; }

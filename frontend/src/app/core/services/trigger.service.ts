@@ -19,7 +19,7 @@ export class TriggerService {
   public createTrigger(newTrigger: NewProjectTrigger): Observable<ProjectTriggerInfo> {
     return this.httpService.postRequest<ProjectTriggerInfo>(`${this.routePrefix}`, newTrigger);
   }
-  public updateTrigger(trigger: ProjectTrigger): Observable<ProjectTriggerInfo> {
+  public updateTrigger(trigger: ProjectTriggerInfo): Observable<ProjectTriggerInfo> {
     return this.httpService.putRequest<ProjectTriggerInfo>(`${this.routePrefix}`, trigger);
   }
   public deleteTrigger(triggerId: number) {

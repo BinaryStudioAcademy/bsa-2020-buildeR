@@ -11,6 +11,7 @@ export class PhotoCropperContentComponent implements OnInit {
   imageChangedEvent;
   croppedImage;
   canSave = false;
+  imageName = '';
   constructor(private activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
@@ -19,6 +20,7 @@ export class PhotoCropperContentComponent implements OnInit {
 
   fileChangeEvent(event): void {
     this.imageChangedEvent = event;
+    this.imageName = event.target.files[0].name;
 }
 imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.base64;
@@ -35,8 +37,24 @@ loadImageFailed() {
 }
 
 save(){
-  const file = new File([this.croppedImage], 'image.png');
+
+  const file = this.base64ToFile(this.croppedImage, this.imageName);
   this.activeModal.close(file);
+}
+
+base64ToFile(data, filename) {
+
+  const arr = data.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  let u8arr = new Uint8Array(n);
+
+  while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], filename, { type: mime });
 }
 
 close(){

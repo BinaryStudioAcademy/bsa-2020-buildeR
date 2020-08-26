@@ -1,7 +1,5 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NewProjectTrigger } from '@shared/models/project/project-trigger/new-project-trigger';
-import { UpdateTriggerCron } from '@shared/models/project/project-trigger/update-trigger-cron';
-import { ProjectTrigger } from '@shared/models/project/project-trigger/project-trigger';
 import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
 import { TriggerService } from '@core/services/trigger.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
@@ -10,9 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Branch } from '@core/models/Branch';
 import { ProjectService } from '@core/services/project.service';
 import { Project } from '@shared/models/project/project';
-import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
+import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 
 @Component({
   selector: 'app-project-triggers',
@@ -26,21 +22,8 @@ export class ProjectTriggersComponent implements OnInit {
   runOnShedule = false;
   triggers: ProjectTriggerInfo[] = [];
 
-  @ViewChild('branch', { static: false }) branchInput: NgbTypeahead;
-
-  branchInputFocus$ = new Subject<string>();
-  branchInputClick$ = new Subject<string>();
-
-  search = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const clicksWithClosedPopup$ = this.branchInputClick$.pipe(filter(() => !this.branchInput.isPopupOpen()));
-    const inputFocus$ = this.branchInputFocus$;
-
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.branches.map((r) => r.name).slice(0, 8)
-        : this.branches.map((r) => r.name).filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 8))
-    );
-  }
+  cronConfig: CronJobsConfig = {quartz: true, option: { minute: false, year: false } };
+  cronResult: string;
 
   constructor(
     private triggerService: TriggerService,
@@ -59,10 +42,11 @@ export class ProjectTriggersComponent implements OnInit {
             .subscribe(branches => this.branches = branches);
         }
       });
+    this.getTriggers(this.route.parent.snapshot.params.projectId);
   }
 
-  getTriggers() {
-    this.triggerService.getTriggersByProjectId(this.project.id).subscribe(
+  getTriggers(projectId: number) {
+    this.triggerService.getTriggersByProjectId(projectId).subscribe(
       (data) => this.triggers = data,
       (error) => this.toastrService.showError(error.message, error.name)
     );
@@ -88,18 +72,9 @@ export class ProjectTriggersComponent implements OnInit {
       );
     }
   }
-  updateTrigger(upTrigger: UpdateTriggerCron) {
 
-    const findTrigger = this.triggers.find(t => t.id === upTrigger.id);
-
-    const trigger: ProjectTrigger = {
-      id: findTrigger.id,
-      projectId: findTrigger.projectId,
-      branchHash: findTrigger.branchHash,
-      cronExpression: upTrigger.cronExpression
-    };
-
-    const index = this.triggers.findIndex(t => t.id === upTrigger.id);
+  updateTrigger(trigger: ProjectTriggerInfo) {
+    const index = this.triggers.findIndex(t => t.id === trigger.id);
     this.triggerService.updateTrigger(trigger).subscribe(
       (data) => {
         this.triggers.splice(index, 1, data);
@@ -109,19 +84,21 @@ export class ProjectTriggersComponent implements OnInit {
     );
 
   }
-  deleteTrigger(id: number) {
 
-    this.triggerService.deleteTrigger(id).subscribe(
-      (data) => {
-        this.triggers = this.triggers.filter(x => x.id !== id);
+  deleteTrigger(trigger: ProjectTriggerInfo) {
+    this.triggerService.deleteTrigger(trigger.id).subscribe(
+      () => {
+        this.triggers = this.triggers.filter(x => x.id !== trigger.id);
         this.toastrService.showSuccess('trigger deleted');
       },
       (error) => this.toastrService.showError(error.message, error.name)
     );
   }
+
   onToggle(change: boolean) {
     change = !change;
   }
+
   compareToMinDate(date: Date) {
     const minDate: Date = new Date('2000-01-01');
     const thisDate: Date = new Date(date);
