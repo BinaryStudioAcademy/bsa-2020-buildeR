@@ -19,7 +19,6 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { ChartSmallComponent } from './components/chart-small/chart-small.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ChartBigComponent } from './components/chart-big/chart-big.component';
 import { ChartBigNormalizedComponent } from './components/chart-big-normalized/chart-big-normalized.component';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
@@ -38,7 +37,6 @@ import { ChartBigNormalizedComponent } from './components/chart-big-normalized/c
     TabsComponent,
     LoadingSpinnerComponent,
     ChartSmallComponent,
-    ChartBigComponent,
     ChartBigNormalizedComponent,
   ],
   imports: [
@@ -72,7 +70,6 @@ import { ChartBigNormalizedComponent } from './components/chart-big-normalized/c
     TabsComponent,
     LoadingSpinnerComponent,
     ChartSmallComponent,
-    ChartBigComponent,
     ChartBigNormalizedComponent
   ],
 })
