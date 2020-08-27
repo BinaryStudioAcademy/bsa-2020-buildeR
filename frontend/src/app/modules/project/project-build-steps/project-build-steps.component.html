@@ -1,8 +1,4 @@
-<div *ngIf="
-  isLoading;
-  then loading;
-  else loaded;
-"></div>
+<div *ngIf="isLoading; then loading; else loaded;"></div>
 
 <ng-template #loading>
     <app-loading-spinner size="20px"></app-loading-spinner>
@@ -12,83 +8,74 @@
         <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="drop($event)">
             <div class="project-build-step row" *ngFor="let buildStep of buildSteps; let i = index" cdkDrag>
                 <div class="container row">
-                    <div class="col-2 my-auto" cdkDragHandle>
-                        Build step #{{i+1}}
+                    <div class="col-3 my-auto" cdkDragHandle>
+                      <button type="button" class="btn" (click)="addBuildStep(buildStep)">
+                        <i class="expand-icon" [ngClass]="(buildStep.isAdding) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
+                      </button>
+                      Build step #{{i+1}}
                     </div>
-                    <div class="col-8 my-auto">
-                        {{buildStep.buildStepName}}
+                    <div class="col-6 my-auto">
+                        <h5 class="mb-0">{{buildStep.buildStepName}}</h5>
                     </div>
-                    <div class="col-2 my-auto">
-                        <button type="button" class="btn" (click)="addBuildStep(buildStep)">
-                          <i class="fas fa-angle-down"></i>
-                        </button>
+                    <div class="col-3 my-auto">
                         <button class="btn" (click)="removeBuildStep(buildStep)">
                           <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
 
-
-                <!-- <div class="container row my-1" *ngIf="buildStep.commandArguments?.length">
-                    <div class="container row">
-                        <h5>Command arguments:</h5>
-                    </div>
-                    <div class="container row" *ngFor="let arg of buildStep.commandArguments">
-                        <div class="col-1">Key:</div>
-                        <div class="col-3">{{arg.key}}</div>
-                        <div class="col-2">Value:</div>
-                        <div class="col-3">{{arg.value}}</div>
-                        <div class="col-3">
-                          <button class="btn p-0" (click)="removeExistingCommandArgument(buildStep, arg.id)">
-                            <i class="fa fa-close"></i>
-                          </button></div>
-                    </div>
-                </div> -->
-
-
-        <div class="container row mt-4" hidden="true" [hidden]="!buildStep.isAdding">
-                <div class="col-6 new-step-input">
-                  <input id="typeahead-prevent-manual-entry" type="text" class="form-control" placeholder="Plugin version" placement="bottom" ngbTooltip="Specify Docker image version"
+              <div class="container row mt-4" hidden="true" [hidden]="!buildStep.isAdding">
+                <div class="col-6 row new-step-input pl-5">
+                  <label class="col-4 mt-auto mb-auto pr-0" for="buildStep.id">Docker image:</label>
+                  <input id="buildStep.id" type="text" class="form-control col-8" placeholder="Plugin version" placement="bottom" ngbTooltip="Specify Docker image version"
                     [(ngModel)]="buildStep.dockerImageVersion"
                     [ngbTypeahead]="searchFunctionFactory(buildStep)"
                     [editable]='false' />
+              </div>
+
+                <div class="col-6 row new-step-input">
+                  <label class="col-4 mt-auto mb-auto pr-0" for="workDir">Work directory:</label>
+                  <input id ="workDir" class="input text-input form-control col-8" type="text" required placeholder="Work directory" [(ngModel)]="buildStep.workDirectory">
                 </div>
 
-                <div class="col-6 new-step-input"><input class="input h-100 text-input form-control" type="text" required placeholder="Work directory" [(ngModel)]="buildStep.workDirectory"></div>
-                <!--<div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
-                 <div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-success" [disabled]="!newBuildStep || !workDir" (click)="saveBuildStep()">Save</button></div>-->
-            <div class="container row mt-2" *ngIf="commandArguments?.length || (newCommandArgumentKey !== null && newCommandArgumentValue !== null)">
-                <h4>Command arguments</h4>
-            </div>
-            <div class="container" *ngIf="commandArguments?.length">
-                <div class="row" *ngFor="let arg of commandArguments">
-                    <div class="col-1">Key:</div>
-                    <div class="col-4">{{arg.key}}</div>
-                    <div class="col-2">Value</div>
+                <div class="container mt-4" *ngIf="buildStep.commandArguments?.length">
+                  <h6 class="border-top pt-2">Command arguments</h6>
+                </div>
+
+            <div class="container mt-2" *ngIf="buildStep.commandArguments?.length">
+                <div class="row" *ngFor="let arg of buildStep.commandArguments">
+                    <div class="col-2 ml-5"><h6>Key:</h6></div>
+                    <div class="col-3">{{arg.key}}</div>
+                    <div class="col-2"><h6>Value:</h6></div>
                     <div class="col-3">{{arg.value}}</div>
-                    <div class="col-2"> <button class="btn pt-0 pb-0" (click)="removeNewCommandArgument(arg.key)">
-              <i class="fa fa-close"></i>
-            </button></div>
+                    <div class="col-1">
+                      <button class="btn pt-0 pb-0" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </div>
                 </div>
             </div>
-            <div class="container row mt-2" *ngIf="newCommandArgumentValue !== null && newCommandArgumentKey !== null">
+
+            <div class="container row mt-2" *ngIf="buildStep.newCommandArgumentValue !== undefined && buildStep.newCommandArgumentKey !== undefined">
                 <div class="col-1 px-0 new-step-input">Key</div>
                 <div class="col-3 px-0 new-step-input">
-                    <input type="text" class="text-input w-100" [(ngModel)]="newCommandArgumentKey" placeholder="--verbosity">
+                    <input type="text" class="text-input w-100" [(ngModel)]="buildStep.newCommandArgumentKey" placeholder="--verbosity">
                 </div>
                 <div class="col-1 offset-1 px-0 new-step-input">Value</div>
                 <div class="col-3 px-0 new-step-input">
-                    <input type="text" class="text-input w-100" [(ngModel)]="newCommandArgumentValue" placeholder="normal">
+                    <input type="text" class="text-input w-100" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
                 </div>
-                <div class="col-1 offset-1 px-0 new-step-input"> <button class="btn pt-0 pb-0" (click)="clearNewCommandArgument()">
-            <i class="fa fa-close text-danger h-100"></i>
-          </button></div>
-                <div class="col-1 px-0 new-step-input"> <button class="btn pt-0 pb-0" [disabled]="!newCommandArgumentValue || !newCommandArgumentKey" (click)="saveCommandArgument()">
-            <i class="fas fa-check text-success h-100"></i>
-          </button></div>
+                <div class="col-1 offset-1 px-0 new-step-input">
+                  <button class="btn pt-0 pb-0" (click)="clearNewCommandArgument(buildStep)">
+                    <i class="fa fa-times text-danger h-100"></i>
+                  </button></div>
+                <div class="col-1 px-0 new-step-input">
+                  <button class="btn pt-0 pb-0" [disabled]="!buildStep.newCommandArgumentValue || !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
+                    <i class="fas fa-check text-success h-100"></i>
+                  </button></div>
             </div>
             <div class="container row mt-2">
-                <div class="col-md-4 col-12 px-0"><button class="btn btn-info" (click)="addCommandArgument()">Add command
+                <div class="col-md-4 col-12 px-0 mt-2"><button class="btn btn-info" [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey" (click)="addCommandArgument(buildStep)">Add command
             argument</button>
                 </div>
             </div>
@@ -100,19 +87,27 @@
           <div class="row">
             <button class="btn btn-primary" (click)="addBuildStep()">Add a build step</button>
         </div>
-      -->
+        -->
 
         <div class="row">
-          <div class="col">
+          <div class="col-8">
             <div ngbDropdown class="d-inline-block">
-              <button class="btn add-step-btn" id="allEmptySteps" ngbDropdownToggle>Add build step</button>
+              <button class="btn add-build-btn" id="allEmptySteps" ngbDropdownToggle>Add build step</button>
               <div  ngbDropdownMenu aria-labelledby="allEmptySteps">
                 <button *ngFor="let step of emptyBuildSteps" (click)="saveBuildStep(step)" ngbDropdownItem>{{ step.buildStepName }}</button>
               </div>
-              <button type="button" class="btn primary" (click)="updateAllSteps()">
+              <button class="btn save-btn" (click)="updateAllSteps()" [disabled]="!buildSteps || buildSteps.length === 0">
                 Save
               </button>
             </div>
+          </div>
+          <div class="col-4">
+            <button class="btn save-btn mr-2" (click)="expandAll()">
+              <i class="fas fa-angle-double-down"></i> Expand All
+            </button>
+            <button class="btn save-btn" (click)="collapseAll()">
+              <i class="fas fa-angle-double-up"></i> Collapse All
+            </button>
           </div>
         </div>
 

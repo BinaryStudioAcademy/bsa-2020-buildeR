@@ -120,43 +120,49 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     step.isAdding = !step.isAdding;
   }
 
+  expandAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = true;
+    });
+  }
+
+  collapseAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = false;
+    });
+  }
+
   cancelBuildStep() {
     this.newBuildStep = null;
     this.isAdding = false;
     this.workDir = null;
     this.commandArguments = null;
     this.version = null;
-
-    this.clearNewCommandArgument();
   }
 
-  addCommandArgument() {
-    this.newCommandArgumentKey = '';
-    this.newCommandArgumentValue = '';
+  addCommandArgument(step: BuildStep) {
+    step.newCommandArgumentKey = '';
+    step.newCommandArgumentValue = '';
   }
 
-  saveCommandArgument() {
+  saveCommandArgument(step: BuildStep) {
     const newCommandArgument = {
-      key: this.newCommandArgumentKey,
-      value: this.newCommandArgumentValue
+      buildStepId: step.id,
+      key: step.newCommandArgumentKey,
+      value: step.newCommandArgumentValue
     } as CommandArgument;
-    if (!this.commandArguments) {
-      this.commandArguments = new Array();
-    }
-    this.commandArguments.push(newCommandArgument);
-    this.clearNewCommandArgument();
+    step.commandArguments.push(newCommandArgument);
+    this.clearNewCommandArgument(step);
   }
 
-  removeNewCommandArgument(key: string) {
-    this.commandArguments = this.commandArguments.filter(commandArgument => commandArgument.key !== key);
+
+  clearNewCommandArgument(step: BuildStep) {
+    step.newCommandArgumentKey = undefined;
+    step.newCommandArgumentValue = undefined;
   }
 
-  clearNewCommandArgument() {
-    this.newCommandArgumentKey = null;
-    this.newCommandArgumentValue = null;
-  }
-
-  removeExistingCommandArgument(buildStep: BuildStep, argumentId: number) {
+  removeExistingCommandArgument(step: BuildStep, argumentId: number, key: string) {
+    step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.key !== key);
     this.isLoading = true;
     this.commandArgumentService
       .removeCommandArgument(argumentId)
@@ -164,7 +170,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .subscribe(
         () => {
           this.isLoading = false;
-          buildStep.commandArguments = buildStep.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+          step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
         },
         (error) => {
           this.isLoading = false;
@@ -237,6 +243,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.buildSteps.push(resp);
+          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;
