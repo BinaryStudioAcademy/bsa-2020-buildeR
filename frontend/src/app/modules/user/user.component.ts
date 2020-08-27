@@ -21,6 +21,7 @@ export class UserComponent implements OnInit {
     { name: 'Profile', route: '' },
     { name: 'Project settings', route: '' },
     { name: 'Notification settings', route: 'notificationsettings' },
+    { name: 'Credential settings', route: 'credentialsettings' }
   ];
 
   constructor(

@@ -13,6 +13,7 @@ import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/oper
 import { FormGroup, FormControl, Validators, NgModel } from '@angular/forms';
 import { NewRepository } from '@core/models/NewRepository';
 import { repoUrlAsyncValidator } from '@core/validators/repo-url.async-validator';
+import { projectNameAsyncValidator } from '../validators/project-name.async-validator';
 
 @Component({
   selector: 'app-project-create',
@@ -24,7 +25,9 @@ export class ProjectCreateComponent implements OnInit {
   user: User = this.authService.getCurrentUser();
   repositories: Repository[];
   projectForm: FormGroup;
+  credentialUsername = '';
 
+  userHasCredentials = false;
   githubRepoSection = false;
   urlSection = false;
 
@@ -34,6 +37,7 @@ export class ProjectCreateComponent implements OnInit {
 
   repositoryInputFocus$ = new Subject<string>();
   repositoryInputClick$ = new Subject<string>();
+  repositoryInputSubmit$ = new Subject<string>();
 
   search = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
@@ -62,7 +66,10 @@ export class ProjectCreateComponent implements OnInit {
           Validators.minLength(4),
           Validators.maxLength(32),
           Validators.required,
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._\s]+(?<![-\\.])$`)
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+        ],
+        [
+          projectNameAsyncValidator(this.projectService, this.user)
         ]),
       description: new FormControl(this.newProject.description,
         [
@@ -71,12 +78,14 @@ export class ProjectCreateComponent implements OnInit {
         ]),
       isPublic: new FormControl(this.newProject.isPublic, []),
     });
-    if (this.syncService.isGithubAccessable()) {
-      this.syncService.getUserRepositories()
-        .subscribe(repos => {
-          this.repositories = repos;
-        });
-    }
+
+    this.syncService.checkIfUserHasCredentials(this.user.id)
+      .subscribe(res => {
+        this.userHasCredentials = res;
+        if (res) {
+          this.synchronize();
+        }
+      });
   }
 
   defaultValues() {
@@ -100,9 +109,9 @@ export class ProjectCreateComponent implements OnInit {
 
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
-        this.toastrService.showSuccess('project created');
+        this.toastrService.showSuccess('Project created!');
         this.activeModal.close("Saved");
-        if (this.syncService.isGithubAccessable()) {
+        if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
         }
@@ -113,6 +122,15 @@ export class ProjectCreateComponent implements OnInit {
       },
     );
   }
+
+  synchronize() {
+    this.syncService.getUserRepositories(this.user.id)
+                .subscribe(repos => this.repositories = repos);
+
+    this.syncService.getUsernameFromCredentials(this.user.id)
+          .subscribe(res => this.credentialUsername = res.username);
+  }
+
   cancel() {
     this.activeModal.dismiss("Canceled");
   }
@@ -120,12 +138,8 @@ export class ProjectCreateComponent implements OnInit {
     change = !change;
   }
 
-  isGithubAccessable() {
-    return localStorage.getItem('github-access-token');
-  }
-
   githubRadioClicked() {
-    if (!this.isGithubAccessable()) {
+    if (!this.userHasCredentials) {
       return;
     }
 
@@ -157,10 +171,10 @@ export class ProjectCreateComponent implements OnInit {
     this.projectForm.addControl('repositoryURL', new FormControl(this.newProject.repository.url,
       [
         Validators.required,
-        Validators.pattern(`https:\/\/github\.com\/[A-Za-z]+\/[A-Za-z]+`)
+        Validators.pattern(`https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9_.-]+`)
       ],
       [
-        repoUrlAsyncValidator(this.syncService),
+        repoUrlAsyncValidator(this.syncService, this.user),
       ]
     ),
     );
@@ -176,11 +190,16 @@ export class ProjectCreateComponent implements OnInit {
     }
 
     if (!this.newProject.repository.createdByLink) {
-      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
+      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid && !this.projectForm.pending;
     }
     else {
-      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid;
+      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid && !this.projectForm.pending;
     }
+  }
+
+  handleRepositoryInputClick(repo: Repository) {
+    this.projectForm.controls['name'].setValue(repo.name);
+    this.projectForm.controls['description'].setValue(repo.description);
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;

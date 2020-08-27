@@ -169,6 +169,12 @@ namespace buildeR.BLL.Services
 
             return Mapper.Map<RepositoryDTO>(project.Repository);
         }
+
+        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName)
+        {
+            var project = await Context.Projects.FirstOrDefaultAsync(p => p.OwnerId == userId && p.Name == projectName);
+            return project == null;
+        }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {
             var project = await Context.Projects.Include(p => p.BuildSteps)

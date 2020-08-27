@@ -7,54 +7,77 @@ else loaded;
   <app-loading-spinner size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
-  <div class="container my-3">
-    <span class="my-auto title">Groups</span>
+  <div *ngIf="
+      groups?.length;
+      then existGroups;
+      else emptyGroups
+    ">
   </div>
-  <div class="container" *ngIf="groups">
-    <div class="row my-3 border rounded" *ngFor="let group of groups">
-      <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
-        <div class="col-md-12 col-sm-12 text-dark">
-          <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
-          <i *ngIf="group.isPublic" class="fas fa-globe"></i>
-          {{group.name}}
+  <ng-template #existGroups>
+    <div class="container my-3">
+      <span class="my-auto title">Groups</span>
+    </div>
+    <div class="container" *ngIf="groups">
+      <div class="row my-3 border rounded" *ngFor="let group of groups">
+        <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
+          <div class="col-md-12 col-sm-12 text-dark">
+            <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
+            <i *ngIf="group.isPublic" class="fas fa-globe"></i>
+            {{group.name}}
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div *ngIf="getCurrentUserRole(group.id)" class="col-md-12 col-sm-12 text-muted small row-top">
+            Your role
+          </div>
+          <div class="col-md-12 col-sm-12 small row-bottom">
+            <span *ngIf="getCurrentUserRole(group.id)"
+              class="user-access-role">{{userRole[getCurrentUserRole(group.id)]}}</span></div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Members
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="fas fa-users"></i> {{group.teamMembers.length}}
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Projects
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="far fa-bookmark"></i> {{group.projectGroups.length}}
+          </div>
+        </div>
+        <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
+          <ng-template #popContent>
+            <button class="btn dropdown-item" [routerLink]="['../groups', group?.id, 'settings']"><i
+                class="fas fa-cog"></i>
+              Settings</button>
+            <div class="dropdown-divider"></div>
+            <button class="btn btn-danger dropdown-item">
+              <i class="far fa-trash-alt"></i> Delete</button>
+          </ng-template>
+          <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+            <i class="fas fa-bars"></i>
+          </button>
         </div>
       </div>
-      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-        <div class="col-md-12 col-sm-12 text-muted small row-top">
-          Your role
-        </div>
-        <div class="col-md-12 col-sm-12 small row-bottom">
-          <span class="user-access-role">{{userRole[getCurrentUserRole(group.id)]}}</span></div>
+    </div>
+  </ng-template>
+</ng-template>
+<ng-template #emptyGroups>
+  <div class="container">
+    <div class="no-groups-container">
+      <div class="image-container">
+        <img class="builders" [src]="'../../../../assets/images/builders.png'" />
       </div>
-      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-        <div class="col-md-12 col-sm-12 text-muted small row-top">
-          Members
-        </div>
-        <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-          <i class="fas fa-users"></i> {{group.teamMembers.length}}
-        </div>
-      </div>
-      <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-        <div class="col-md-12 col-sm-12 text-muted small row-top">
-          Projects
-        </div>
-        <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-          <i class="far fa-bookmark"></i> {{group.projectGroups.length}}
-        </div>
-      </div>
-      <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
-        <ng-template #popContent>
-          <button class="btn dropdown-item" [routerLink]="['../groups', group?.id, 'settings']"><i
-              class="fas fa-cog"></i>
-            Settings</button>
-          <div class="dropdown-divider"></div>
-          <button class="btn btn-danger dropdown-item">
-            <i class="far fa-trash-alt"></i> Delete</button>
-        </ng-template>
-        <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
+      <span class="my-3">There are will be displayed the list of groups which you are a member of. Or you can create
+        your group.</span>
+      <button class="btn btn-success">
+        New group
+      </button>
     </div>
   </div>
 </ng-template>

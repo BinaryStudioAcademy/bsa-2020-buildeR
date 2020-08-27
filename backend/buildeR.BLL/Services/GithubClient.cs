@@ -3,6 +3,7 @@ using buildeR.Common.DTO.Synchronization.Github;
 using buildeR.Common.DTO.Webhooks.Github.NewWebhook;
 using buildeR.Common.Enums;
 using buildeR.DAL.Context;
+using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -22,9 +23,9 @@ namespace buildeR.BLL.Services
             _client = factory.CreateClient("github");
         }
 
-        public async Task<GithubUser> GetUserFromToken(string providerToken)
+        public async Task<GithubUser> GetUserFromCredentials(string username, string password)
         {
-            SetUpHttpClient(providerToken);
+            SetUpHttpClient(username, password);
 
             var endpoint = $"user";
             var response = await _client.GetAsync(endpoint);
@@ -32,32 +33,9 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<GithubUser>(content);
         }
-        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryName, string providerToken)
+        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string username, string password)
         {
-            SetUpHttpClient(providerToken);
-
-            var user = await GetUserFromToken(providerToken);
-
-            var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
-            var response = await _client.GetAsync(endpoint);
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
-        }
-
-        public async Task<IEnumerable<GithubBranch>> GetRepositoryBranches(string repositoryOwner, string repositoryName, string providerToken)
-        {
-            SetUpHttpClient(providerToken);
-
-            var endpoint = $"repos/{repositoryOwner}/{repositoryName}/branches";
-            var response = await _client.GetAsync(endpoint);
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
-        }
-        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string providerToken)
-        {
-            SetUpHttpClient(providerToken);
+            SetUpHttpClient(username, password);
 
             var allRepos = new List<GithubRepository>();
             var lastLoadedRepos = new List<GithubRepository>();
@@ -66,7 +44,7 @@ namespace buildeR.BLL.Services
             var pageNumber = 1;
 
             var endpoint = $"user/repos?visibility=all&affiliation=owner&per_page={reposPerRequest}&page=";
-            
+
             do
             {
                 lastLoadedRepos = new List<GithubRepository>();
@@ -83,16 +61,48 @@ namespace buildeR.BLL.Services
 
             return allRepos;
         }
-        public async Task<bool> CheckIfRepositoryAccessable(string repoOwner, string repoName)
+        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string username, string password)
         {
+            SetUpHttpClient(username, password);
+
+            var user = await GetUserFromCredentials(username, password);
+
+            var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
+        public async Task<IEnumerable<GithubBranch>> GetPublicRepositoryBranches(string repositoryName, string repositoryOwner)
+        {
+            var endpoint = $"repos/{repositoryOwner}/{repositoryName}/branches";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
+        }
+        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string username = null, string password = null)
+        {
+            if (username != null && password != null)
+                SetUpHttpClient(username, password);
+
             var endpoint = $"repos/{repoOwner}/{repoName}";
             var response = await _client.GetAsync(endpoint);
 
             return response.IsSuccessStatusCode;
         }
-        public async Task CreateWebhook(string repositoryName, string callback, string providerToken)
+        public async Task<bool> CheckIfUserExist(string username, string password)
         {
-            var user = await GetUserFromToken(providerToken);
+            SetUpHttpClient(username, password);
+
+            var endpoint = $"user";
+            var response = await _client.GetAsync(endpoint);
+
+            return response.IsSuccessStatusCode;
+        }
+        public async Task CreateWebhook(string repositoryName, string callback, string username, string password)
+        {
+            var user = await GetUserFromCredentials(username, password);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
 
@@ -105,9 +115,13 @@ namespace buildeR.BLL.Services
 
             var response = await _client.PostAsync(endpoint, content);
         }
-        private void SetUpHttpClient(string token)
+
+        private void SetUpHttpClient(string username, string password)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
+            var authenticationString = $"{username}:{password}";
+            var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
         }
     }
 }

@@ -19,5 +19,7 @@ namespace buildeR.BLL.Services.Abstract
 
         Task<ProjectDTO> CopyProject(ProjectDTO dto);
         Task<RepositoryDTO> GetRepository(int projectId);
+
+        Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName);
     }
 }
