@@ -2,7 +2,7 @@
   <div class="date-with-options">
     <div class="date">
 
-      <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small>
+     <label for=""> <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small></label>
     </div>
     <div class="week-month">
       <nav>
@@ -27,31 +27,33 @@
   <div class="charts">
 
     <div class="first-chart border">
-      <h6>Total builds</h6>
+      <h6 style="padding-left: 32%">Total builds</h6>
       <h5>231</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
     <div class="second-chart border">
-      <h6>Total job minutes</h6>
+      <h6 style="padding-left: 25%">Total job minutes</h6>
       <h5>1232</h5>
-      <app-chart-small>
-      </app-chart-small>
+      <div class="chart">
+        <app-chart-small>
+        </app-chart-small>
+      </div>
     </div>
     <div class="third-chart border">
-      <h6>Average Queue Time</h6>
+      <h6 style="padding-left: 18%">Average Queue Time</h6>
       <h5>30</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
-      <h6>Active Repositories</h6>
-      <h5>5</h5>
+      <h6 style="padding-left: 20%">Active Repositories</h6>
+      <h5>521</h5>
       <app-chart-small>
       </app-chart-small>
     </div>
   </div>
-  <div class="big-chart-wrap">
+  <div class="big-chart-wrap container">
     <div class="big-chart">
       <app-chart-big></app-chart-big>
     </div>

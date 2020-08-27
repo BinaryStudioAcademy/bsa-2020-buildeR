@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./chart-small.component.sass']
 })
 export class ChartSmallComponent implements OnInit {
-  view = [200, 150];
+  view = [250, 150];
 
   // options
   legend  = false;

@@ -96,13 +96,13 @@ export class ChartBigComponent implements OnInit {
     }
   ];
 
-  view = [window.screen.width - 300, 300];
+  view = [window.innerWidth - 300, 300];
 
   // options
   showXAxis = true;
   showYAxis = true;
   gradient = true;
-  showLegend = true;
+  showLegend = false;
   showXAxisLabel = false;
   xAxisLabel = '';
   showYAxisLabel = true;
@@ -114,8 +114,28 @@ export class ChartBigComponent implements OnInit {
   };
 
   constructor() {
+    if (window.innerWidth < 400){
+      this.view = [window.innerWidth - 50, 300];
+      this.showYAxisLabel = true;
+    }
+    else{
+      this.view = [window.innerWidth - 300, 300];
+      this.showYAxisLabel = true;
+    }
   }
   ngOnInit(): void {
+
+    window.onresize = () => {
+    if (window.innerWidth < 400){
+      this.view = [window.innerWidth - 50, 300];
+      this.showYAxisLabel = false;
+    }
+    else{
+      this.view = [window.innerWidth - 300, 300];
+      this.showYAxisLabel = true;
+    }
+  };
+
   }
 
  onSelect(data): void {

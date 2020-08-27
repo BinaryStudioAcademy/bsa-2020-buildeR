@@ -1,7 +1,12 @@
 h6
-  margin: 5px
+  margin: 7px
+  color: #666
+  padding-left: 20%
+
 h5
-  margin: 5px
+  margin: 10px
+  color: #666
+  padding-left: 37%
 
 
 .date-with-options
@@ -123,23 +128,31 @@ h5
   width: 95%
   justify-self: center
 
-.big-chart-wrap
-  display: grid
-  grid-template-columns: 4
 
-.big-chart
-  grid-column-start: 1
-  grid-column-end: 4
-  grid-row-start: 1
+
+.chart
+  justify-self: center
 
 
 
-
-
-
-@media screen and (max-width: 350px)
+@media screen and (max-width: 400px)
   a
     font-size: 13px
+  label
+    width: 150%
+  .date-with-options
+    display: grid
+    grid-template-columns: 4
+    grid-template-rows: 4
+  .date
+    grid-column-start: 1
+    grid-column-end: 3
+    grid-row-start: 2
+  .build-history-select
+    grid-column-start: 1
+    grid-row-start: 3
+    display: -webkit-box
+    margin-left: 3px
   .charts
     grid-template-columns: 2
     max-height: 100%
@@ -155,8 +168,4 @@ h5
     grid-column-start: 1
     grid-column-end: 1
     grid-row-start: 4
-  .build-history-select
-    grid-column-start: 3
-    grid-column-end: 6
-    display: -webkit-box
-    margin-left: 3px
+
