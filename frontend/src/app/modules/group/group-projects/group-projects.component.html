@@ -1,0 +1,30 @@
+<div class="container" *ngIf="projects">
+  <div class="row my-3 border rounded" *ngFor="let project of projects">
+    <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto name-area">
+      <!-- <div class="col-md-12 col-sm-5 col-5 row-top">
+        <a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a>
+      </div>
+      <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom"> -->
+
+      <a class="text-dark" [routerLink]="['../../../projects', project?.id, 'details']">{{project.name}}</a>
+      <!-- </div> -->
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto">
+      <ng-template #popContent>
+        <button class="btn btn-success dropdown-item"><i class="fas fa-redo-alt"></i>
+          Run</button>
+        <button class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
+            class="fas fa-cog"></i>
+          Settings</button>
+        <button class="btn dropdown-item"><i class="far fa-copy"></i>
+          Copy</button>
+        <div class="dropdown-divider"></div>
+        <button class="btn btn-danger dropdown-item">
+          <i class="far fa-trash-alt"></i> Delete</button>
+      </ng-template>
+      <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</div>

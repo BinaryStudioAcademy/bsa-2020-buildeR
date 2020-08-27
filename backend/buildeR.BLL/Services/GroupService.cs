@@ -3,11 +3,13 @@ using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
+using buildeR.Common.DTO.Project;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
@@ -59,6 +61,15 @@ namespace buildeR.BLL.Services
                 throw new NotFoundException(nameof(Group), id);
             }
             await base.RemoveAsync(id);
+        }
+
+        public async Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id)
+        {
+            var group = await Context.Groups.AsNoTracking().Include(g => g.ProjectGroups).ThenInclude(p=>p.Project)
+                .Include(g => g.TeamMembers).FirstOrDefaultAsync(g => g.Id == id);
+            var projects = group.ProjectGroups.Select(x => x.Project);
+            var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
+            return projectInfos;
         }
     }
 }

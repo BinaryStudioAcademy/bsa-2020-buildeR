@@ -1,5 +1,6 @@
 ﻿using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
+using buildeR.Common.DTO.Project;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,5 +16,6 @@ namespace buildeR.BLL.Interfaces
         Task<GroupDTO> Create(NewGroupDTO group);
         Task Update(GroupDTO group);
         Task Delete(int id);
+        Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id);
     }
 }

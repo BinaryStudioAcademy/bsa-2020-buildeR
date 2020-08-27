@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { GroupListComponent } from './group-list/group-list.component';
 import { GroupResolverService } from '../../core/resolvers/group.resolver';
 import { GroupComponent } from './group/group.component';
+import { GroupProjectsComponent } from './group-projects/group-projects.component';
 
 const routes: Routes = [
   {
@@ -16,16 +17,16 @@ const routes: Routes = [
     resolve: {
       project: GroupResolverService,
     },
-    // children: [
-    //   {
-    //     path: 'settings',
-    //     component: GroupSettingsComponent,
-    //   },
-    //   {
-    //     path: 'details',
-    //     component: GroupDetailsComponent,
-    //   },
-    // ],
+    children: [
+      {
+        path: 'projects',
+        component: GroupProjectsComponent,
+      },
+      //   {
+      //     path: 'details',
+      //     component: GroupDetailsComponent,
+      //   },
+    ],
   },
 ];
 

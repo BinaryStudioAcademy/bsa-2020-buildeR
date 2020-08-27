@@ -17,7 +17,7 @@ export class GroupComponent implements OnInit {
   isLoading = false;
 
   tabRoutes: TabRoute[] = [
-    { name: 'Project', route: 'projects' },
+    { name: 'Projects', route: 'projects' },
     { name: 'Members', route: 'members' },
     { name: 'Settings', route: 'settings' },
   ];
