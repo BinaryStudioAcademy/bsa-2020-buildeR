@@ -13,7 +13,7 @@ import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/oper
 import { FormGroup, FormControl, Validators, NgModel } from '@angular/forms';
 import { NewRepository } from '@core/models/NewRepository';
 import { repoUrlAsyncValidator } from '@core/validators/repo-url.async-validator';
-import { Credentials } from '@core/models/Credentials';
+import { projectNameAsyncValidator } from '../validators/project-name.async-validator';
 
 @Component({
   selector: 'app-project-create',
@@ -67,6 +67,9 @@ export class ProjectCreateComponent implements OnInit {
           Validators.maxLength(32),
           Validators.required,
           Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._\s]+(?<![-\\.])$`)
+        ],
+        [
+          projectNameAsyncValidator(this.projectService, this.user)
         ]),
       description: new FormControl(this.newProject.description,
         [
@@ -171,7 +174,7 @@ export class ProjectCreateComponent implements OnInit {
         Validators.pattern(`https:\/\/github\.com\/[A-Za-z0-9.-]+\/[A-Za-z0-9.-]+`)
       ],
       [
-        repoUrlAsyncValidator(this.syncService),
+        repoUrlAsyncValidator(this.syncService, this.user),
       ]
     ),
     );
@@ -187,10 +190,10 @@ export class ProjectCreateComponent implements OnInit {
     }
 
     if (!this.newProject.repository.createdByLink) {
-      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
+      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid && !this.projectForm.pending;
     }
     else {
-      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid;
+      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid && !this.projectForm.pending;
     }
   }
 

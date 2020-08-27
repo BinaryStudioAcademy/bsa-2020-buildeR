@@ -190,6 +190,9 @@
           <div class="error" [hidden]="!projectForm.get('name').errors?.pattern || projectForm.get('name').untouched">
             Name must have only latin letters, digits and can't start<br> or finish with these characters ' - ', ' . '
           </div>
+          <div class="error" [hidden]="!projectForm.get('name').errors?.isProjectNameTaken">
+            Project with name '{{projectForm.get('name').value}}' alredy exist
+          </div>
         </div>
         <div class="form-control-wr">
           <div class="input-wr">
@@ -227,11 +230,6 @@
             </div>
             <input type="text" class="form-control form-control-sm" [value]="credentialUsername"
             readonly autocomplete="off" placeholder="Loading..">
-          </div>
-          <div class="additional-info-wr">
-            <p  style="margin: 0;">
-              You can change your credentials <a routerLink="/portal/user/credentialsettings" (click)="closeForm()">here</a>
-            </p>
           </div>
         </div>
         <div class="btn-wr">
