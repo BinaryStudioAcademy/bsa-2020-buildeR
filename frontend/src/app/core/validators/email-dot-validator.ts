@@ -6,7 +6,7 @@ export const emailDotValidator = () => {
     if (email != null){
       const domain = email.split('@')[1];
       // console.log(domain);
-      const index = domain.indexOf('.');
+      const index = domain?.indexOf('.');
       if (index < 1){
           console.log(index);
           return { notValid: true };

@@ -7,11 +7,16 @@ import { GroupComponent } from './group/group.component';
 import { GroupProjectsComponent } from './group-projects/group-projects.component';
 import { GroupMembersComponent } from './group-members/group-members.component';
 import { GroupSettingsComponent } from './group-settings/group-settings.component';
+import { GroupCreateComponent } from './group-create/group-create.component';
 
 const routes: Routes = [
   {
     path: '',
     component: GroupListComponent,
+  },
+  {
+    path: 'new',
+    component: GroupCreateComponent,
   },
   {
     path: ':groupId',

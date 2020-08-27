@@ -8,7 +8,7 @@ namespace buildeR.Common.DTO.Group
     {
         public string Name { get; set; }
         public bool IsPublic { get; set; }
-
-        public ICollection<NewTeamMemberDTO> TeamMembers { get; set; }
+        public string Description { get; set; }
+        public int CreatorId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 import { UserSocialNetwork } from './user-social-network';
+import { BuildHistory } from '../build-history';
 
 export interface User {
   id: number;
@@ -12,4 +13,5 @@ export interface User {
   avatarUrl: string;
   createdAt: Date;
   userSocialNetworks: UserSocialNetwork[];
+  builds: BuildHistory[];
 }
