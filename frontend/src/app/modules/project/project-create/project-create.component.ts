@@ -102,15 +102,15 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject.name = this.projectForm.controls.name.value;
     this.newProject.description = this.projectForm.controls.description.value;
     this.newProject.isPublic = this.projectForm.controls.isPublic.value;
-    this.newProject._repository = this.projectForm.controls._repository?.value ?? this.newProject._repository;
-    this.newProject._repository.url = this.projectForm.controls.repositoryURL?.value;
+    this.newProject.repository = this.projectForm.controls._repository?.value ?? this.newProject.repository;
+    this.newProject.repository.url = this.projectForm.controls.repositoryURL?.value;
 
     this.newProject.ownerId = this.user.id;
 
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('Project created!');
-        this.activeModal.close("Saved");
+        this.activeModal.close('Saved');
         if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
