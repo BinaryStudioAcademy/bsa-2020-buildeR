@@ -13,6 +13,7 @@ import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/oper
 import { FormGroup, FormControl, Validators, NgModel } from '@angular/forms';
 import { NewRepository } from '@core/models/NewRepository';
 import { repoUrlAsyncValidator } from '@core/validators/repo-url.async-validator';
+import { Credentials } from '@core/models/Credentials';
 
 @Component({
   selector: 'app-project-create',
@@ -24,6 +25,7 @@ export class ProjectCreateComponent implements OnInit {
   user: User = this.authService.getCurrentUser();
   repositories: Repository[];
   projectForm: FormGroup;
+  credentialUsername = '';
 
   userHasCredentials = false;
   githubRepoSection = false;
@@ -77,10 +79,7 @@ export class ProjectCreateComponent implements OnInit {
       .subscribe(res => {
         this.userHasCredentials = res;
         if (res) {
-          this.syncService.getUserRepositories(this.user.id)
-                .subscribe(repos => {
-                  this.repositories = repos;
-        });
+          this.synchronize();
         }
       });
   }
@@ -119,6 +118,15 @@ export class ProjectCreateComponent implements OnInit {
       },
     );
   }
+
+  synchronize() {
+    this.syncService.getUserRepositories(this.user.id)
+                .subscribe(repos => this.repositories = repos);
+
+    this.syncService.getUsernameFromCredentials(this.user.id)
+          .subscribe(res => this.credentialUsername = res.username);
+  }
+
   cancel() {
     this.activeModal.dismiss("Canceled");
   }

@@ -96,7 +96,7 @@
             To chose this option you should add your github credentials
           </p>
           <p>
-            You can add it in <a routerLink="/portal/user/credentialsettings">credentials settings</a>
+            You can add it in <a routerLink="/portal/user/credentialsettings" (click)="closeForm()">credentials settings</a>
           </p>
         </div>
         <div *ngIf="githubRepoSection" class="form-control-wr">
@@ -216,6 +216,20 @@
               formControlName="isPublic">
               <label class="custom-control-label" for="customSwitches"></label>
             </div>
+          </div>
+        </div>
+        <div *ngIf="userHasCredentials" class="form-control-wr">
+          <div class="input-wr">
+            <div class="label-wr">
+              <label class="required-field">Credentials</label>
+            </div>
+            <input type="text" class="form-control form-control-sm" [value]="credentialUsername"
+            readonly autocomplete="off" placeholder="Loading..">
+          </div>
+          <div class="additional-info-wr">
+            <p  style="margin: 0;">
+              You can change your credentials <a routerLink="/portal/user/credentialsettings" (click)="closeForm()">here</a>
+            </p>
           </div>
         </div>
         <div class="btn-wr">

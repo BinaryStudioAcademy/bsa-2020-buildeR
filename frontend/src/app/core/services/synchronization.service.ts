@@ -21,6 +21,10 @@ export class SynchronizationService {
     return this.httpService.getRequest<Credentials>(`${this.endpoint}/user/${userId}/credentials`);
   }
 
+  getUsernameFromCredentials(userId: number): Observable<{ username: string }> {
+    return this.httpService.getRequest<{ username: string }>(`${this.endpoint}/user/${userId}/credentials/username`);
+  }
+
   checkIfUserExist(credentials: Credentials): Observable<boolean> {
     return this.httpService.postRequest<boolean>(`${this.endpoint}/user/exist`, credentials);
   }
