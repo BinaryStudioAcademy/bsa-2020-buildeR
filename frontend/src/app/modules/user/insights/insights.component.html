@@ -38,14 +38,14 @@
       <h6 style="padding-left: 25%">Total job minutes</h6>
       <h5>{{totalDuration}}</h5>
       <div class="chart">
-        <app-chart-small [results]="dataForBuilds">
+        <app-chart-small [results]="dataForDuration">
         </app-chart-small>
       </div>
     </div>
     <div class="third-chart border">
       <h6 style="padding-left: 18%">Build Success Rate</h6>
       <h5>{{buildSuccessRate}}%</h5>
-      <app-chart-small [results]="dataForBuilds">
+      <app-chart-small [results]="dataForSuccess">
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
