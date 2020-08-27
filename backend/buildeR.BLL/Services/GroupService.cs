@@ -3,6 +3,8 @@ using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
+using buildeR.Common.DTO.TeamMember;
+using buildeR.Common.Enums;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +43,21 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
-            return await base.AddAsync(group);
+
+            var newGroup = await base.AddAsync(group);
+
+            var newTeamMember = new NewTeamMemberDTO
+            {
+                UserId = group.CreatorId,
+                MemberRole = UserRole.Creator,
+                GroupId = newGroup.Id
+            };
+
+            var teamMember = Mapper.Map<TeamMember>(newTeamMember);
+            Context.Add(teamMember);
+            await Context.SaveChangesAsync();
+
+            return await GetGroupById(newGroup.Id);
         }
         public async Task Update(GroupDTO group)
         {

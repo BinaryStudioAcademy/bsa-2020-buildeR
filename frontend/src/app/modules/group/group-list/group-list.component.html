@@ -14,8 +14,13 @@ else loaded;
     ">
   </div>
   <ng-template #existGroups>
-    <div class="container my-3">
+    <div class="container d-flex flex-row my-3">
       <span class="my-auto title">Groups</span>
+      <div class="ml-auto">
+        <button class="btn btn-info" [routerLink]="'new'">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
     </div>
     <div class="container" *ngIf="groups">
       <div class="row my-3 border rounded" *ngFor="let group of groups">
@@ -75,7 +80,7 @@ else loaded;
       </div>
       <span class="my-3">There are will be displayed the list of groups which you are a member of. Or you can create
         your group.</span>
-      <button class="btn btn-success">
+      <button class="btn btn-success" [routerLink]="'new'">
         New group
       </button>
     </div>
