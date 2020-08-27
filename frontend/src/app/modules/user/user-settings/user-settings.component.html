@@ -71,7 +71,7 @@
           <span>Last Name</span>
         </div>
         <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Description">
+          <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Last name">
           <div *ngIf="settingsForm.controls['lastName'].errors">
             <div class="error" *ngIf="settingsForm.controls['lastName'].errors.minlength">
               The minimum length is 2 characters
@@ -158,7 +158,7 @@
           </div>
         </div>
         <div class="save-button-container">
-          <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged 
+          <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged
             || settingsForm.controls['username'].status === 'PENDING'">Save</button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { SynchronizationService } from '@core/services/synchronization.service';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { userCredentialsAsyncValidator } from '@core/validators/user-credentials.async-validator';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-credential-settings',
@@ -17,7 +18,8 @@ export class CredentialSettingsComponent implements OnInit {
   credentialsForm: FormGroup;
 
   constructor(private syncService: SynchronizationService,
-              private authService: AuthenticationService) { }
+              private authService: AuthenticationService,
+              private toastrService: ToastrNotificationsService) { }
 
   ngOnInit(): void {
     this.syncService.getUserCredentials(this.user.id)
@@ -40,6 +42,7 @@ export class CredentialSettingsComponent implements OnInit {
 
   saveCredentials() {
     this.syncService.setUpCredentials(this.user.id, this.credentialsForm.value as Credentials)
-      .subscribe(() => this.credentials);
+      .subscribe(() => this.toastrService.showSuccess('Your cedentials saved!'),
+                 error => this.toastrService.showError('Something went wrong'));
   }
 }

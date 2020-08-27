@@ -96,7 +96,7 @@
             To chose this option you should add your github credentials
           </p>
           <p>
-            You can add it in <a routerLink="/portal/user/credentialsettings">credentials settings</a>
+            You can add it in <a routerLink="/portal/user/credentialsettings" (click)="closeForm()">credentials settings</a>
           </p>
         </div>
         <div *ngIf="githubRepoSection" class="form-control-wr">
@@ -126,6 +126,7 @@
                 [inputFormatter]="repoListResultFormatter"
                 [ngbTypeahead]="search"
                 [resultTemplate]="repoInList"
+                (selectItem)="handleRepositoryInputClick($event.item)"
                 (focus)="repositoryInputFocus$.next($any($event).target.value)"
                 (click)="repositoryInputClick$.next($any($event).target.value)"
                 #repository="ngbTypeahead"
@@ -189,6 +190,9 @@
           <div class="error" [hidden]="!projectForm.get('name').errors?.pattern || projectForm.get('name').untouched">
             Name must have only latin letters, digits and can't start<br> or finish with these characters ' - ', ' . '
           </div>
+          <div class="error" [hidden]="!projectForm.get('name').errors?.isProjectNameTaken">
+            Project with name '{{projectForm.get('name').value}}' alredy exist
+          </div>
         </div>
         <div class="form-control-wr">
           <div class="input-wr">
@@ -196,7 +200,8 @@
               <label>Description</label>
             </div>
             <textarea type="text" rows="3" class="form-control form-control-sm"
-            autocomplete="off" placeholder="Some description for project" formControlName="description" >
+            autocomplete="off" placeholder="Some description for project" formControlName="description">
+
             </textarea>
           </div>
           <div class="error" [hidden]="!projectForm.get('description').errors?.maxLength|| projectForm.get('description').untouched">
@@ -216,6 +221,15 @@
               formControlName="isPublic">
               <label class="custom-control-label" for="customSwitches"></label>
             </div>
+          </div>
+        </div>
+        <div *ngIf="userHasCredentials" class="form-control-wr">
+          <div class="input-wr">
+            <div class="label-wr">
+              <label class="required-field">Credentials</label>
+            </div>
+            <input type="text" class="form-control form-control-sm" [value]="credentialUsername"
+            readonly autocomplete="off" placeholder="Loading..">
           </div>
         </div>
         <div class="btn-wr">
