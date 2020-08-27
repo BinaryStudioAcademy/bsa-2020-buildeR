@@ -21,7 +21,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['./project-build-steps.component.sass']
 })
 export class ProjectBuildStepsComponent extends BaseComponent implements OnInit, OnDestroy {
-  isCollapsed = false;
   projectId: number;
   project: Project = {} as Project;
   buildSteps: BuildStep[];
@@ -31,15 +30,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   newBuildStep: EmptyBuildStep = {} as EmptyBuildStep;
   workDir: string;
   commandArguments: CommandArgument[] = new Array();
-
-  newEnvVariableKey: string = null;
-  newEnvVariableValue: string = null;
-
-  newCommandArgumentKey: string = null;
-  newCommandArgumentValue: string = null;
-
-  version: string;
-  versions: string[];
 
   constructor(
     private projectService: ProjectService,
@@ -52,7 +42,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     super();
     route.parent.params.subscribe((params) => this.projectId = params.projectId);
   }
-
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
@@ -120,26 +109,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     step.isAdding = !step.isAdding;
   }
 
-  expandAll() {
-    this.buildSteps.forEach(step => {
-      step.isAdding = true;
-    });
-  }
-
-  collapseAll() {
-    this.buildSteps.forEach(step => {
-      step.isAdding = false;
-    });
-  }
-
-  cancelBuildStep() {
-    this.newBuildStep = null;
-    this.isAdding = false;
-    this.workDir = null;
-    this.commandArguments = null;
-    this.version = null;
-  }
-
   addCommandArgument(step: BuildStep) {
     step.newCommandArgumentKey = '';
     step.newCommandArgumentValue = '';
@@ -179,36 +148,19 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  getVersions(buildPluginName: string, versionTerm: string) {
-    if (versionTerm.length < 2) {
-      return;
-    }
-
+  editCommandArgument(arg: CommandArgument) {
     this.isLoading = true;
-    this.buildPluginService
-      .getVersionsOfBuildPlugin(buildPluginName, versionTerm)
+    this.commandArgumentService.updateCommandArgument(arg)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
           this.isLoading = false;
-          this.versions = resp.body;
-          console.log(this.versions);
         },
         (error) => {
           this.isLoading = false;
           this.toastrService.showError(error);
-        }
-      );
+        });
   }
-
-  // search = (text$: Observable<string>) => {
-  //   return text$.pipe(
-  //       debounceTime(200),
-  //       distinctUntilChanged(),
-  //       switchMap(term => term.length < 2
-  //         ? [] : this.buildPluginService.versionsLookup(buildStep.buildPlugin.dockerRegistryName, term))
-  //   );
-  // }
 
   public searchFunctionFactory(step: BuildStep): (text: Observable<string>) => Observable<any[]> {
     const search = (text$: Observable<string>) => {
@@ -230,10 +182,8 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       pluginCommandId: step.pluginCommand.id,
       projectId: this.projectId,
       workDirectory: this.workDir,
-      commandArguments: this.commandArguments,
-      dockerImageVersion: this.version
+      commandArguments: this.commandArguments
     } as BuildStep;
-    this.cancelBuildStep();
 
     this.isLoading = true;
     this.buildStepService
@@ -260,6 +210,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .subscribe(
         (resp) => {
           this.isLoading = false;
+          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;
@@ -305,5 +256,17 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.toastrService.showError(error);
         }
       );
+  }
+
+  expandAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = true;
+    });
+  }
+
+  collapseAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = false;
+    });
   }
 }
