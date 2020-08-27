@@ -50,15 +50,15 @@
     </div>
     <div class="fourth-chart border">
       <h6 style="padding-left: 26%">Active Projects</h6>
-      <h5>521</h5>
-      <app-chart-small [results]="buildsData">
+      <h5>{{activeProjects}}</h5>
+      <app-chart-small [results]="projectData">
       </app-chart-small>
     </div>
   </div>
   <div class="big-chart-wrap container">
     <div class="big-chart">
-      <app-chart-big [results]="bigChartData">
-      </app-chart-big>
+      <app-chart-big-normalized [results]="bigChartData">
+      </app-chart-big-normalized>
     </div>
   </div>
 </div>
