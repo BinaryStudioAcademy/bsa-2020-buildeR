@@ -71,8 +71,9 @@ namespace buildeR.API.Controllers
         [HttpPost("build")]
         public async Task<BuildHistoryDTO> BuildProject([FromBody] NewBuildHistoryDTO history)
         {
-            // await _builder.StartBuild(history.ProjectId);
-            return await _buildService.Create(history);
+            var buildHistory = await _buildService.Create(history);
+            await _builder.StartBuild(history.ProjectId, buildHistory.Id);
+            return buildHistory;
         }
 
         [HttpPost("markFavorite/{projectId}")]
