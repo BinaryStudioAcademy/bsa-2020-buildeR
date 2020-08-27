@@ -92,7 +92,83 @@ span.title
   font-size: 2rem
   overflow: visible
 
+.h4
+  color: #17a2b8
+  margin: 0
+
+.spinner-wrp
+  height: 3rem
+  width: 300px
+
+.cross
+  height: 20px
+  width: 20px
+  margin-top: 6px
+  transition: .3s
+  cursor: pointer
+
+.cross:hover
+  transition: .3s
+  color: crimson
+
+.input-area
+  grid-column-start: 1
+  grid-column-end: 2
+  justify-self: start
+  margin: 0 10px 20px
+
+.field
+  grid-column-start: 0
+  grid-column-end: 1
+  justify-self: end
+
+.label-wr
+  width: 100%
+  display: flex
+  justify-content: flex-start
+
+  span
+    display: block
+
+select
+  width: 300px
+
+.branches-loading-wrp
+  height: 3rem
+
+.group
+  display: grid
+  grid-template-columns: 2
+  grid-template-rows: 2
+
+.btn-wr
+  width: 100%
+  display: flex
+  justify-content: flex-end
+  align-items: center
+
+  button
+    margin: 5px
+
 /* MEDIA QUERIES */
+
+@media screen and (max-width: 675px)
+  .field
+    grid-column-start: 1
+    grid-column-end: 2
+    justify-self: start
+    margin-left: calc((100% - 300px)/2)
+  .input-area
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+  .save-button-container
+    justify-self: center
+  .input-group
+    justify-self: center
+    margin-left: 0
+    margin-right: 0
+
 @media only screen and (min-width: 767px)
   .row-bottom:after
     content: ""
@@ -166,15 +242,12 @@ span.title
     padding: 0
   .star
     font-size: 1.5rem
-  .btn
-    font-size: 0.8rem
-  span
+  .btn, span, .branch-select
     font-size: 0.8rem
 
+
 @media (max-width:368px)
-  .btn
-    font-size: 0.6rem
-  span
+  .btn, span, .branch-select
     font-size: 0.6rem
 
 

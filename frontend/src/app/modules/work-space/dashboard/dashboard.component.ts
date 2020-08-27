@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
 import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
+import { Branch } from '@core/models/Branch';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,12 +28,17 @@ export class DashboardComponent extends BaseComponent
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
 
+  selectedProjectBranches: Branch[];
+  loadingSelectedProjectBranches = false;
+  selectedProjectBranch: string;
+
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
     private githubService: SynchronizationService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private syncService: SynchronizationService,
   ) {
     super();
   }
@@ -62,13 +68,14 @@ export class DashboardComponent extends BaseComponent
   }
 
   triggerBuild(projectId: number) {
-    this.projectService
-      .startProjectBuild(projectId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        () => projectId,
-        (error) => this.toastrService.showError(error)
-      );
+    alert(`${projectId}, ${this.selectedProjectBranch}`);
+    // this.projectService
+    //   .startProjectBuild(projectId)
+    //   .pipe(takeUntil(this.unsubscribe$))
+    //   .subscribe(
+    //     () => projectId,
+    //     (error) => this.toastrService.showError(error)
+    //   );
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -129,10 +136,40 @@ export class DashboardComponent extends BaseComponent
         console.log(error);
       });
   }
+
   openCreateProjectModal() {
     const modalRef = this.modalService.open(ProjectCreateComponent);
     modalRef.result
       .then(() => this.getUserProjects(this.currentUser.id))
       .catch(() => { });
+  }
+
+  closeModal() {
+    this.modalService.dismissAll("Closed");
+  }
+
+  openBranchSelectionModal(content, projectId: number) {
+    this.loadProjectBranches(projectId);
+    this.modalService.open(content)
+    .result
+      .then(() => {})
+      .catch(() => { });
+  }
+
+  loadProjectBranches(projectId: number) {
+    this.loadingSelectedProjectBranches = true;
+    this.syncService
+      .getRepositoryBranches(projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.selectedProjectBranches = resp;
+          this.loadingSelectedProjectBranches = false;
+        },
+        (error) => {
+          this.toastrService.showError(error);
+          this.loadingSelectedProjectBranches = false;
+        }
+      );
   }
 }
