@@ -171,7 +171,7 @@ export class ProjectCreateComponent implements OnInit {
     this.projectForm.addControl('repositoryURL', new FormControl(this.newProject.repository.url,
       [
         Validators.required,
-        Validators.pattern(`https:\/\/github\.com\/[A-Za-z0-9.-]+\/[A-Za-z0-9.-]+`)
+        Validators.pattern(`https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9_.-]+`)
       ],
       [
         repoUrlAsyncValidator(this.syncService, this.user),
