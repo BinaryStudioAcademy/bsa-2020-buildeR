@@ -1,0 +1,7 @@
+<div *ngIf="members">
+  <div *ngFor="let member of members">
+    <p>{{member.memberRole}}</p>
+    <p>{{member.user.username}}</p>
+    <p>{{member.group.name}}</p>
+  </div>
+</div>

@@ -4,6 +4,7 @@ using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
 using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.TeamMember;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,14 @@ namespace buildeR.BLL.Services
             var projects = group.ProjectGroups.Select(x => x.Project);
             var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
             return projectInfos;
+        }
+
+        public async Task<IEnumerable<TeamMemberDTO>> GetGroupMembers(int id)
+        {
+            var group = await Context.Groups.AsNoTracking().Include(g => g.TeamMembers).ThenInclude(m=>m.User).FirstOrDefaultAsync(g => g.Id == id);
+           // var users = group.TeamMembers.Select(m => m.User);
+            var members = Mapper.Map<IEnumerable<TeamMemberDTO>>(group.TeamMembers);
+            return members;
         }
     }
 }

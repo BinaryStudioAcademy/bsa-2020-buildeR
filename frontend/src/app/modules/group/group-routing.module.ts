@@ -5,6 +5,8 @@ import { GroupListComponent } from './group-list/group-list.component';
 import { GroupResolverService } from '../../core/resolvers/group.resolver';
 import { GroupComponent } from './group/group.component';
 import { GroupProjectsComponent } from './group-projects/group-projects.component';
+import { GroupMembersComponent } from './group-members/group-members.component';
+import { GroupSettingsComponent } from './group-settings/group-settings.component';
 
 const routes: Routes = [
   {
@@ -22,10 +24,14 @@ const routes: Routes = [
         path: 'projects',
         component: GroupProjectsComponent,
       },
-      //   {
-      //     path: 'details',
-      //     component: GroupDetailsComponent,
-      //   },
+      {
+        path: 'members',
+        component: GroupMembersComponent,
+      },
+      {
+        path: 'settings',
+        component: GroupSettingsComponent,
+      },
     ],
   },
 ];

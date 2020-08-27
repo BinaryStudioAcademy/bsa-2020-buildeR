@@ -4,6 +4,7 @@ import { Group } from '../../shared/models/group/group';
 import { Observable } from 'rxjs';
 import { ProjectInfo } from '../../shared/models/project-info';
 import { HttpResponse } from '@angular/common/http';
+import { TeamMember } from '../../shared/models/group/team-member';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,13 @@ export class GroupService {
   ): Observable<HttpResponse<ProjectInfo[]>> {
     return this.httpService.getFullRequest<ProjectInfo[]>(
       `${this.routePrefix}/getProjectsByGroupId/${groupId}`
+    );
+  }
+  public getMembersByGroup(
+    groupId: number
+  ): Observable<HttpResponse<TeamMember[]>> {
+    return this.httpService.getFullRequest<TeamMember[]>(
+      `${this.routePrefix}/getMembersByGroupId/${groupId}`
     );
   }
 
