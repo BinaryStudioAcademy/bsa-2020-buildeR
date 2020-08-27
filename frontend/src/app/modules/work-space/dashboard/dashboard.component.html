@@ -33,7 +33,12 @@
               <h5><a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a></h5>
             </div>
             <div class="col-md-12 col-sm-5 col-5 row-bottom">
-              <h6><a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a></h6>
+              <div class="owner-wr">
+                <a class="avatar-wr" [routerLink]="'../user'">
+                  <img [src]="project.owner.avatarUrl" class="owner-avatar">
+                </a>
+                <h6 class="my-0 mx-2"><a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a></h6>
+              </div>
             </div>
           </div>
 
@@ -162,7 +167,12 @@
               <h5><a class="text-dark" [routerLink]="['../projects', project?.id, 'details']">{{project.name}}</a></h5>
             </div>
             <div class="col-md-12 col-sm-5 col-5 row-bottom">
-              <h6><a class="text-dark" [routerLink]="['../user']">{{project?.owner.username}}</a></h6>
+              <div class="owner-wr">
+                <a class="avatar-wr" [routerLink]="'../user'">
+                  <img [src]="project.owner.avatarUrl" class="owner-avatar">
+                </a>
+                <h6 class="my-0 mx-2"><a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a></h6>
+              </div>
             </div>
           </div>
 
