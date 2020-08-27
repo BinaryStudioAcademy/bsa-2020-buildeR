@@ -12,22 +12,24 @@
         <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="drop($event)">
             <div class="project-build-step row" *ngFor="let buildStep of buildSteps; let i = index" cdkDrag>
                 <div class="container row">
-                    <div class="col-2 my-auto">
+                    <div class="col-2 my-auto" cdkDragHandle>
                         Build step #{{i+1}}
                     </div>
-                    <div class="col-4 my-auto">
+                    <div class="col-8 my-auto">
                         {{buildStep.buildStepName}}
                     </div>
-                    <div class="col-4 my-auto">
-                        Work directory: {{buildStep.workDirectory}}
-                    </div>
                     <div class="col-2 my-auto">
+                        <button type="button" class="btn" (click)="addBuildStep(buildStep)">
+                          <i class="fas fa-angle-down"></i>
+                        </button>
                         <button class="btn" (click)="removeBuildStep(buildStep)">
-              <i class="fa fa-close"></i>
-            </button>
+                          <i class="fa fa-times"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="container row my-1" *ngIf="buildStep.commandArguments?.length">
+
+
+                <!-- <div class="container row my-1" *ngIf="buildStep.commandArguments?.length">
                     <div class="container row">
                         <h5>Command arguments:</h5>
                     </div>
@@ -36,35 +38,25 @@
                         <div class="col-3">{{arg.key}}</div>
                         <div class="col-2">Value:</div>
                         <div class="col-3">{{arg.value}}</div>
-                        <div class="col-3"> <button class="btn p-0" (click)="removeExistingCommandArgument(buildStep, arg.id)">
-                <i class="fa fa-close"></i>
-              </button></div>
+                        <div class="col-3">
+                          <button class="btn p-0" (click)="removeExistingCommandArgument(buildStep, arg.id)">
+                            <i class="fa fa-close"></i>
+                          </button></div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div> -->
 
-        <div class="row" hidden="true" [hidden]="!isAdding">
-            <div class="container row">
-                <div class="col-sm-4 col-xs-12 px-0 pr-2 new-step-input">
-                    <select required class="form-control" [(ngModel)]="newBuildStep">
-            <ng-container *ngFor="let step of emptyBuildSteps">
-              <option [ngValue]='step'>{{step.buildStepName}}</option>
-            </ng-container>
-          </select>
-                </div>
 
-                <div class="col-sm-2 col-xs-12 pr-2 px-0 new-step-input">
+        <div class="container row mt-4" hidden="true" [hidden]="!buildStep.isAdding">
+                <div class="col-6 new-step-input">
                   <input id="typeahead-prevent-manual-entry" type="text" class="form-control" placeholder="Plugin version" placement="bottom" ngbTooltip="Specify Docker image version"
-                    [(ngModel)]="version"
-                    [ngbTypeahead]="search"
+                    [(ngModel)]="buildStep.dockerImageVersion"
+                    [ngbTypeahead]="searchFunctionFactory(buildStep)"
                     [editable]='false' />
                 </div>
 
-                <div class="col-sm-4 col-xs-12 px-0 new-step-input"><input class="input h-100 text-input" type="text" required placeholder="Work directory" [(ngModel)]="workDir"></div>
-                <div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
-                <div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-success" [disabled]="!newBuildStep || !workDir" (click)="saveBuildStep()">Save</button></div>
-            </div>
+                <div class="col-6 new-step-input"><input class="input h-100 text-input form-control" type="text" required placeholder="Work directory" [(ngModel)]="buildStep.workDirectory"></div>
+                <!--<div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-danger" (click)="cancelBuildStep()">Cancel</button></div>
+                 <div class="col-sm-1 col-xs-6 px-0 new-step-input"><button class="btn operation-btn btn-success" [disabled]="!newBuildStep || !workDir" (click)="saveBuildStep()">Save</button></div>-->
             <div class="container row mt-2" *ngIf="commandArguments?.length || (newCommandArgumentKey !== null && newCommandArgumentValue !== null)">
                 <h4>Command arguments</h4>
             </div>
@@ -101,9 +93,28 @@
                 </div>
             </div>
         </div>
+      </div>
+    </div>
+
+        <!--
+          <div class="row">
+            <button class="btn btn-primary" (click)="addBuildStep()">Add a build step</button>
+        </div>
+      -->
 
         <div class="row">
-            <button class="btn btn-primary" [hidden]="isAdding" (click)="addBuildStep()">Add a build step</button>
+          <div class="col">
+            <div ngbDropdown class="d-inline-block">
+              <button class="btn add-step-btn" id="allEmptySteps" ngbDropdownToggle>Add build step</button>
+              <div  ngbDropdownMenu aria-labelledby="allEmptySteps">
+                <button *ngFor="let step of emptyBuildSteps" (click)="saveBuildStep(step)" ngbDropdownItem>{{ step.buildStepName }}</button>
+              </div>
+              <button type="button" class="btn primary" (click)="updateAllSteps()">
+                Save
+              </button>
+            </div>
+          </div>
         </div>
+
     </div>
 </ng-template>

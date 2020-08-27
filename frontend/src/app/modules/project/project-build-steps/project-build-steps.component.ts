@@ -21,6 +21,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./project-build-steps.component.sass']
 })
 export class ProjectBuildStepsComponent extends BaseComponent implements OnInit, OnDestroy {
+  isCollapsed = false;
   projectId: number;
   project: Project = {} as Project;
   buildSteps: BuildStep[];
@@ -115,9 +116,8 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  addBuildStep() {
-    this.isAdding = true;
-    this.newBuildStep = this.emptyBuildSteps[0];
+  addBuildStep(step: BuildStep) {
+    step.isAdding = !step.isAdding;
   }
 
   cancelBuildStep() {
@@ -195,26 +195,38 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  search = (text$: Observable<string>) => {
-    return text$.pipe(
-        debounceTime(200),
-        distinctUntilChanged(),
-        switchMap(term => term.length < 2
-          ? [] : this.buildPluginService.versionsLookup(this.newBuildStep.buildPlugin.dockerRegistryName, term))
-    );
-  }
+  // search = (text$: Observable<string>) => {
+  //   return text$.pipe(
+  //       debounceTime(200),
+  //       distinctUntilChanged(),
+  //       switchMap(term => term.length < 2
+  //         ? [] : this.buildPluginService.versionsLookup(buildStep.buildPlugin.dockerRegistryName, term))
+  //   );
+  // }
 
-  saveBuildStep() {
+  public searchFunctionFactory(step: BuildStep): (text: Observable<string>) => Observable<any[]> {
+    const search = (text$: Observable<string>) => {
+      return text$.pipe(
+          debounceTime(200),
+          distinctUntilChanged(),
+          switchMap(term => term.length < 2
+            ? [] : this.buildPluginService.versionsLookup(step.pluginCommand.plugin.dockerRegistryName, term))
+      );
+    };
+    return search;
+}
+
+  saveBuildStep(step: EmptyBuildStep) {
     const buildStep = {
-      pluginCommand: this.newBuildStep.pluginCommand,
+      pluginCommand: step.pluginCommand,
       index: this.buildSteps.length,
-      buildStepName: this.newBuildStep.buildStepName,
-      pluginCommandId: this.newBuildStep.pluginCommand.id,
+      buildStepName: step.buildStepName,
+      pluginCommandId: step.pluginCommand.id,
       projectId: this.projectId,
       workDirectory: this.workDir,
-      commandArguments: this.commandArguments
+      commandArguments: this.commandArguments,
+      dockerImageVersion: this.version
     } as BuildStep;
-    buildStep.pluginCommand.plugin.version = this.version;
     this.cancelBuildStep();
 
     this.isLoading = true;
@@ -231,6 +243,21 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.toastrService.showError(error);
         }
       );
+  }
+
+  updateAllSteps() {
+    this.isLoading = true;
+    this.buildSteps.forEach(step =>
+      this.buildStepService.updateBuildStep(step)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }));
   }
 
   removeBuildStep(buildStep: BuildStep) {
