@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.Synchronization;
 
 namespace buildeR.API.Controllers
 {
@@ -17,14 +19,17 @@ namespace buildeR.API.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly IBuildOperationsService _builder;
+        private readonly IBuildService _buildService;
         private readonly IEnvironmentVariablesService _envService;
         public ProjectsController(IProjectService projectService,
                                   IBuildOperationsService builder,
-                                  IEnvironmentVariablesService envService)
+                                  IEnvironmentVariablesService envService,
+                                  IBuildService buildService)
         {
             _builder = builder;
             _envService = envService;
             _projectService = projectService;
+            _buildService = buildService;
         }
 
         [HttpGet("getProjectsByUserId/{userId:int}")]
@@ -63,10 +68,11 @@ namespace buildeR.API.Controllers
             return await _projectService.CopyProject(projectDTO);
         }
 
-        [HttpPost("{projectId}/build")]
-        public async Task<IActionResult> BuildProject(int projectId)
+        [HttpPost("build")]
+        public async Task<IActionResult> BuildProject([FromBody] NewBuildHistoryDTO history)
         {
-            await _builder.StartBuild(projectId);
+            // await _builder.StartBuild(history.ProjectId);
+            await _buildService.Create(history);
             return Ok();
         }
 

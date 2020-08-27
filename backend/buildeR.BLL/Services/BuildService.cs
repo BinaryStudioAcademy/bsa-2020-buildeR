@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using buildeR.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace buildeR.BLL.Services
@@ -37,16 +38,21 @@ namespace buildeR.BLL.Services
                 throw new ArgumentNullException();
             }
 
-            var lastNumber = Context.BuildHistories.AsNoTracking().Where(bh => bh.ProjectId == build.ProjectId)
-                .Select(bh => bh.Number).Max();
+            var buildHistoriesOfProject =
+                Context.BuildHistories.AsNoTracking().Where(bh => bh.ProjectId == build.ProjectId);
 
-            var history = await base.AddAsync(build);
+            int lastNumber = buildHistoriesOfProject.Any() ? buildHistoriesOfProject.Select(bh => bh.Number).Max() : 0;
+
+            var historyDto = await base.AddAsync(build);
+
+            var history = await Context.BuildHistories.FindAsync(historyDto.Id);
 
             history.Number = lastNumber + 1;
+            history.BuildStatus = BuildStatus.Pending;
 
-            await Update(history);
+            await Context.SaveChangesAsync();
 
-            return history;
+            return await GetBuildById(history.Id);
         }
         public async Task Update(BuildHistoryDTO build)
         {

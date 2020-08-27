@@ -13,13 +13,15 @@ import { ModalContentComponent } from '../../../core/components/modal-content/mo
 import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 import { Branch } from '@core/models/Branch';
+import { NewBuildHistory } from '@shared/models/new-build-history';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
 })
-export class DashboardComponent extends BaseComponent
+export class DashboardComponent
+  extends BaseComponent
   implements OnInit, OnDestroy {
   activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
@@ -38,7 +40,7 @@ export class DashboardComponent extends BaseComponent
     private authService: AuthenticationService,
     private githubService: SynchronizationService,
     private modalService: NgbModal,
-    private syncService: SynchronizationService,
+    private syncService: SynchronizationService
   ) {
     super();
   }
@@ -57,8 +59,12 @@ export class DashboardComponent extends BaseComponent
       .subscribe(
         (resp) => {
           this.loadingProjects = false;
-          this.activeProjects = resp.body.filter(project => !project.isFavorite);
-          this.starredProjects = resp.body.filter(project => project.isFavorite);
+          this.activeProjects = resp.body.filter(
+            (project) => !project.isFavorite
+          );
+          this.starredProjects = resp.body.filter(
+            (project) => project.isFavorite
+          );
         },
         (error) => {
           this.loadingProjects = false;
@@ -68,14 +74,18 @@ export class DashboardComponent extends BaseComponent
   }
 
   triggerBuild(projectId: number) {
-    alert(`${projectId}, ${this.selectedProjectBranch}`);
-    // this.projectService
-    //   .startProjectBuild(projectId)
-    //   .pipe(takeUntil(this.unsubscribe$))
-    //   .subscribe(
-    //     () => projectId,
-    //     (error) => this.toastrService.showError(error)
-    //   );
+    this.projectService
+      .startProjectBuild({
+        branchHash: this.selectedProjectBranch,
+        performerId: this.currentUser.id,
+        projectId: projectId,
+        commitHash: "unknown"
+      } as NewBuildHistory)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        () => projectId,
+        (error) => this.toastrService.showError(error)
+      );
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -86,12 +96,15 @@ export class DashboardComponent extends BaseComponent
         () => {
           project.isFavorite = !project.isFavorite;
           if (project.isFavorite) {
-            this.activeProjects = this.activeProjects.filter(proj => proj.id !== project.id);
+            this.activeProjects = this.activeProjects.filter(
+              (proj) => proj.id !== project.id
+            );
             this.starredProjects.push(project);
-          }
-          else {
+          } else {
             this.activeProjects.push(project);
-            this.starredProjects = this.starredProjects.filter(proj => proj.id !== project.id);
+            this.starredProjects = this.starredProjects.filter(
+              (proj) => proj.id !== project.id
+            );
           }
         },
         (error) => this.toastrService.showError(error)
@@ -103,16 +116,24 @@ export class DashboardComponent extends BaseComponent
     const data = {
       title: 'Project deletion',
       message: 'Are you sure you want to delete this project?',
-      text: 'All information associated to this project will be permanently deleted. This operation can not be undone.'
+      text:
+        'All information associated to this project will be permanently deleted. This operation can not be undone.',
     };
     modalRef.componentInstance.content = data;
     modalRef.result
       .then((result) => {
         if (result) {
-          this.projectService.deleteProject(projectId).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-            this.activeProjects = this.activeProjects.filter(proj => proj.id !== projectId);
-            this.starredProjects = this.starredProjects.filter(proj => proj.id !== projectId);
-          });
+          this.projectService
+            .deleteProject(projectId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(() => {
+              this.activeProjects = this.activeProjects.filter(
+                (proj) => proj.id !== projectId
+              );
+              this.starredProjects = this.starredProjects.filter(
+                (proj) => proj.id !== projectId
+              );
+            });
         }
       })
       .catch((error) => {
@@ -127,8 +148,7 @@ export class DashboardComponent extends BaseComponent
       .then((result) => {
         if (result.isFavorite) {
           this.starredProjects.push(result);
-        }
-        else if (result) {
+        } else if (result) {
           this.activeProjects.push(result);
         }
       })
@@ -141,19 +161,19 @@ export class DashboardComponent extends BaseComponent
     const modalRef = this.modalService.open(ProjectCreateComponent);
     modalRef.result
       .then(() => this.getUserProjects(this.currentUser.id))
-      .catch(() => { });
+      .catch(() => {});
   }
 
   closeModal() {
-    this.modalService.dismissAll("Closed");
+    this.modalService.dismissAll('Closed');
   }
 
   openBranchSelectionModal(content, projectId: number) {
     this.loadProjectBranches(projectId);
-    this.modalService.open(content)
-    .result
-      .then(() => {})
-      .catch(() => { });
+    this.modalService
+      .open(content)
+      .result.then(() => {})
+      .catch(() => {});
   }
 
   loadProjectBranches(projectId: number) {
