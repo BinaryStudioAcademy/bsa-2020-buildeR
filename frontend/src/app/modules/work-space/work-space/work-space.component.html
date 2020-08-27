@@ -20,7 +20,6 @@
           </app-notifications-block>
         </a>
       </div>
-
       <div class="nav-item" ngbDropdown>
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
           <img [src]="user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
@@ -37,6 +36,16 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['dashboard']">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <div *ngIf="groupsLoaded | async" class="nav-item" ngbDropdown>
+            <a class="nav-link" [routerLink]="['groups']" ngbDropdownToggle>Groups</a>
+            <div *ngIf="groups.length > 0" ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
+              <a *ngFor="let group of groups" ngbDropdownItem [routerLink]="['groups', group.id]">{{group.name}}</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" [routerLink]="['help']">Help</a>
         </li>
       </ul>

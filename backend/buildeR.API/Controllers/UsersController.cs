@@ -66,6 +66,7 @@ namespace buildeR.API.Controllers
             await _userService.Delete(id);
         }
 
+        [AllowAnonymous]
         [HttpPost("link-provider")]
         public async Task<UserDTO> LinkProvider([FromBody] LinkProviderDTO user)
         {
@@ -77,7 +78,8 @@ namespace buildeR.API.Controllers
         {
             return await _userService.UpdateUserAvatar(Request.Form.Files[0], id);
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("letter")]
         public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
         {

@@ -7,6 +7,7 @@ import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserResolverService } from '../../core/resolvers/user.resolver';
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 import { InsightsComponent } from './insights/insights.component';
+import { CredentialSettingsComponent } from './credential-settings/credential-settings.component';
 
 
 @NgModule({
@@ -33,6 +34,13 @@ import { InsightsComponent } from './insights/insights.component';
     {
       path: 'insights',
       component: InsightsComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    },
+    {
+      path: 'credentialsettings',
+      component: CredentialSettingsComponent,
       resolve: {
         user: UserResolverService
       }

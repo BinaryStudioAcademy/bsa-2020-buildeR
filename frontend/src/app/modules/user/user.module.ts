@@ -8,10 +8,17 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { PhotoCropperContentComponent } from './photo-cropper-content/photo-cropper-content.component';
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 import { InsightsComponent } from './insights/insights.component';
+import { CredentialSettingsComponent } from './credential-settings/credential-settings.component';
+
 
 
 @NgModule({
-  declarations: [UserComponent, UserSettingsComponent, PhotoCropperContentComponent, NotificationSettingComponent, InsightsComponent],
+  declarations: [UserComponent,
+    UserSettingsComponent,
+    PhotoCropperContentComponent,
+    NotificationSettingComponent,
+    InsightsComponent,
+    CredentialSettingsComponent],
   imports: [
     UserRoutingModule,
     SharedModule,

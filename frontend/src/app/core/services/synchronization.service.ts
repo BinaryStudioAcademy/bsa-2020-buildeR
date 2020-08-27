@@ -6,6 +6,7 @@ import { Repository } from '../models/Repository';
 import { Branch } from '../models/Branch';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Credentials } from '@core/models/Credentials';
 
 @Injectable({
   providedIn: 'root',
@@ -16,34 +17,32 @@ export class SynchronizationService {
 
   constructor(private httpService: HttpService, private authService: AuthenticationService) { }
 
-  getSynchronizedUser(): Observable<SynchronizedUser> {
-    throw new Error('In progress');
+  getUserCredentials(userId: number): Observable<Credentials> {
+    return this.httpService.getRequest<Credentials>(`${this.endpoint}/user/${userId}/credentials`);
   }
 
-  isGithubAccessable() {
-    return localStorage.getItem('github-access-token');
+  getUsernameFromCredentials(userId: number): Observable<{ username: string }> {
+    return this.httpService.getRequest<{ username: string }>(`${this.endpoint}/user/${userId}/credentials/username`);
   }
 
+  checkIfUserExist(credentials: Credentials): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.endpoint}/user/exist`, credentials);
+  }
 
-  getUserRepositories(): Observable<Repository[]> {
+  checkIfUserHasCredentials(userId: number): Observable<boolean> {
+    return this.httpService.getRequest<boolean>(`${this.endpoint}/user/${userId}/credentials/exist`);
+  }
 
-    const token = localStorage.getItem('github-access-token');
-
-    this.httpService.setHeader('ProviderAuthorization', token);
-
-    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/repos/`);
+  getUserRepositories(userId: number): Observable<Repository[]> {
+    return this.httpService.getRequest<Repository[]>(`${this.endpoint}/${userId}/repos`);
   }
 
   getRepositoryBranches(projectId: number): Observable<Branch[]> {
-    const token = localStorage.getItem('github-access-token');
-
-    this.httpService.setHeader('ProviderAuthorization', token);
-
     return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${projectId}/branches`);
   }
 
-  checkIfRepositoryAccessable(repoUrl: string): Observable<boolean> {
-    return this.httpService.postRequest<boolean>(`${this.endpoint}/repo/exist`, { link: repoUrl });
+  checkIfRepositoryAccessable(userId: number, repoUrl: string): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.endpoint}/${userId}/repo/exist`, { link: repoUrl });
   }
 
   registerWebhook(projectId: number): Observable<any> {
@@ -51,5 +50,9 @@ export class SynchronizationService {
     this.httpService.setHeader('ProviderAuthorization', token);
 
     return this.httpService.postRequest<any>(`${this.endpoint}/hooks/${projectId}`, null);
+  }
+
+  setUpCredentials(userId: number, credentials: Credentials): Observable<void> {
+    return this.httpService.postRequest<void>(`${this.endpoint}/credentials/${userId}`, credentials);
   }
 }

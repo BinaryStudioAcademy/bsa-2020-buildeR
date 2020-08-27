@@ -72,6 +72,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("DockerImageName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DockerRegistryName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PluginName")
                         .HasColumnType("nvarchar(max)");
 
@@ -85,6 +88,7 @@ namespace buildeR.DAL.Migrations
                             Id = 1,
                             Command = "dotnet",
                             DockerImageName = "mcr.microsoft.com/dotnet/core/sdk",
+                            DockerRegistryName = "microsoft%2Fdotnet",
                             PluginName = ".NET Core"
                         },
                         new
@@ -92,6 +96,7 @@ namespace buildeR.DAL.Migrations
                             Id = 2,
                             Command = "npm",
                             DockerImageName = "node",
+                            DockerRegistryName = "node",
                             PluginName = "Node.js"
                         });
                 });
@@ -151,6 +156,47 @@ namespace buildeR.DAL.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BuildSteps");
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.CommandArgument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BuildStepId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildStepId");
+
+                    b.ToTable("CommandArguments");
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.EnvVariable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EnvVariables");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.Group", b =>
@@ -324,9 +370,6 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Repository")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -573,6 +616,15 @@ namespace buildeR.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("buildeR.DAL.Entities.CommandArgument", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.BuildStep", "BuildStep")
+                        .WithMany("CommandArguments")
+                        .HasForeignKey("BuildStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.User", "User")
@@ -636,7 +688,7 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.Repository", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
-                        .WithOne("_Repository")
+                        .WithOne("Repository")
                         .HasForeignKey("buildeR.DAL.Entities.Repository", "ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

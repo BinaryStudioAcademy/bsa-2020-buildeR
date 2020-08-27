@@ -24,16 +24,24 @@ namespace buildeR.BLL.Services
         public BuildStepService(BuilderContext context, IMapper mapper) : base(context, mapper) { }
         public async Task<BuildStepDTO> GetBuildStepById(int id)
         {
-            var buildStep = await base.GetAsync(id);
+            var buildStep = await Context
+                .BuildSteps
+                .Include(step => step.CommandArguments)
+                .FirstOrDefaultAsync(step => step.Id.Equals(id));
             if (buildStep == null)
             {
                 throw new NotFoundException(nameof(BuildStep), id);
             }
-            return buildStep;
+            return Mapper.Map<BuildStepDTO>(buildStep);
         }
         public async Task<IEnumerable<BuildStepDTO>> GetAll()
         {
-            return await base.GetAllAsync();
+            return await Context
+                .Set<BuildStep>()
+                .Include(buildStep => buildStep.CommandArguments)
+                .AsNoTracking()
+                .ProjectTo<BuildStepDTO>(Mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public async Task<BuildStepDTO> Create(NewBuildStepDTO buildStep)
@@ -59,6 +67,14 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException(nameof(BuildStep), id);
             }
+
+            var buildStepCommandArguments = await Context
+                .CommandArguments
+                .AsNoTracking()
+                .Where(commandArgument => commandArgument.Id.Equals(id))
+                .ToListAsync();
+
+            Context.CommandArguments.RemoveRange(buildStepCommandArguments);
 
             //Need to change indexes of other build steps 
             var projectBuildStepsWithIndexMoreBuildStepToDelete = await Context
@@ -99,6 +115,7 @@ namespace buildeR.BLL.Services
         {
             return await Context
                 .BuildSteps
+                .Include(buildStep => buildStep.CommandArguments)
                 .Where(buildStep => buildStep.ProjectId == projectId)
                 .OrderBy(buildStep => buildStep.Index)
                 .ProjectTo<BuildStepDTO>(Mapper.ConfigurationProvider)
@@ -107,13 +124,19 @@ namespace buildeR.BLL.Services
 
         public async Task UpdateIndexesOfBuildStepsAsync(int projectId, int newIndex, int oldIndex)
         {
-            var movedBuildStep = await Context
+            var buildStepsToReduceIndex = await Context
                 .BuildSteps
                 .AsNoTracking()
-                .FirstOrDefaultAsync(buildStep => buildStep.ProjectId == projectId && buildStep.Index == oldIndex);
+                .Where(buildStep => buildStep.ProjectId == projectId &&
+                                    buildStep.Index > oldIndex &&
+                                    buildStep.Index <= newIndex)
+                .ToListAsync();
 
-            movedBuildStep.Index = newIndex;
-            Context.Entry(movedBuildStep).State = EntityState.Modified;
+            foreach (var buildStep in buildStepsToReduceIndex)
+            {
+                --buildStep.Index;
+                Context.Entry(buildStep).State = EntityState.Modified;
+            }
 
             var buildStepsToIncreaseIndex = await Context
                 .BuildSteps
@@ -128,6 +151,13 @@ namespace buildeR.BLL.Services
                 ++buildStep.Index;
                 Context.Entry(buildStep).State = EntityState.Modified;
             }
+
+            var movedBuildStep = await Context
+                .BuildSteps
+                .FirstOrDefaultAsync(buildStep => buildStep.ProjectId == projectId && buildStep.Index == oldIndex);
+
+            movedBuildStep.Index = newIndex;
+            Context.Entry(movedBuildStep).State = EntityState.Modified;
 
             await Context.SaveChangesAsync();
         }

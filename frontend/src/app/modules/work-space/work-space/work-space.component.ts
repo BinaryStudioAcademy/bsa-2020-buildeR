@@ -6,24 +6,33 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { Router } from '@angular/router';
 import { User } from '@shared/models/user/user';
 import { UserService } from '@core/services/user.service';
+import { Group } from '../../../shared/models/group/group';
+import { GroupService } from '../../../core/services/group.service';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-work-space',
   templateUrl: './work-space.component.html',
   styleUrls: ['./work-space.component.sass'],
 })
-export class WorkSpaceComponent implements OnInit {
+export class WorkSpaceComponent extends BaseComponent implements OnInit {
   isShowNotifications = false;
   isMenuCollapsed = true;
   url = environment.signalRUrl + '/test';
   user: User;
+  groups: Group[];
+  groupsLoaded: Promise<boolean>;
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
     private authService: AuthenticationService,
     private router: Router,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private groupService: GroupService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.signalR.signalRecieved.subscribe(() => {
@@ -34,6 +43,12 @@ export class WorkSpaceComponent implements OnInit {
       console.log(url);
       this.user.avatarUrl = url;
     });
+    this.getGroups();
+  }
+
+  public getGroups() {
+    this.groupService.getAllGroups().pipe(takeUntil(this.unsubscribe$))
+      .subscribe(res => { this.groups = res; this.groupsLoaded = Promise.resolve(true); });
   }
 
   broadcast() {

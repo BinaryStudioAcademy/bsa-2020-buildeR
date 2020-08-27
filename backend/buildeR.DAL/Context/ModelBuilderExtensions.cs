@@ -39,14 +39,16 @@ namespace buildeR.DAL.Context
                 Id = 1,
                 Command = "dotnet",
                 PluginName = ".NET Core",
-                DockerImageName = "mcr.microsoft.com/dotnet/core/sdk"
+                DockerImageName = "mcr.microsoft.com/dotnet/core/sdk",
+                DockerRegistryName = "microsoft%2Fdotnet"
             };
             var nodeBuildPlugin = new BuildPlugin()
             {
                 Id = 2,
                 Command = "npm",
                 PluginName = "Node.js",
-                DockerImageName = "node"
+                DockerImageName = "node",
+                DockerRegistryName = "node"
             };
 
             var dotnetBuildCommand = new PluginCommand()
@@ -175,7 +177,6 @@ namespace buildeR.DAL.Context
                 .RuleFor(p => p.Name, f => f.Commerce.ProductName())
                 .RuleFor(p => p.Description, f => f.Lorem.Text())
                 .RuleFor(p => p.IsPublic, f => f.Random.Bool())
-                .RuleFor(p => p.Repository, f => f.Internet.Url())
                 .RuleFor(p => p.CredentialsId, f => f.Lorem.Sentence())
                 .RuleFor(p => p.IsAutoCancelBranchBuilds, true)
                 .RuleFor(p => p.IsAutoCancelPullRequestBuilds, true)

@@ -20,7 +20,8 @@ export class UserComponent implements OnInit {
   tabRoutes: TabRoute[] = [
     { name: 'Profile', route: '' },
     { name: 'Notification settings', route: 'notificationsettings' },
-    { name: 'Insights', route: 'insights'}
+    { name: 'Insights', route: 'insights'},
+    { name: 'Credential settings', route: 'credentialsettings' }
   ];
 
   constructor(
