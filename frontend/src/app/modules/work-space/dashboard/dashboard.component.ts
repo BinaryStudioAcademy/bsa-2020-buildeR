@@ -73,17 +73,26 @@ export class DashboardComponent
       );
   }
 
-  triggerBuild(projectId: number) {
+  triggerBuild(project: ProjectInfo) {
+    const newBuildHistory = {
+      branchHash: this.selectedProjectBranch,
+      performerId: this.currentUser.id,
+      projectId: project.id,
+      commitHash: 'unknown',
+    } as NewBuildHistory;
+    this.closeModal();
+    this.toastrService.showSuccess(
+      `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${project.name}. Hold tight, it might take a moment to show up.`
+    );
     this.projectService
-      .startProjectBuild({
-        branchHash: this.selectedProjectBranch,
-        performerId: this.currentUser.id,
-        projectId: projectId,
-        commitHash: "unknown"
-      } as NewBuildHistory)
+      .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        () => projectId,
+        (buildHistory) => {
+          if (project) {
+            project.lastBuildHistory = buildHistory;
+          }
+        },
         (error) => this.toastrService.showError(error)
       );
   }

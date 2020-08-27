@@ -11,12 +11,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using buildeR.Common.Enums;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1;
 
 namespace buildeR.BLL.Services
 {
     public class BuildService : BaseCrudService<BuildHistory, BuildHistoryDTO, NewBuildHistoryDTO>, IBuildService
     {
-        public BuildService(BuilderContext context, IMapper mapper) : base(context, mapper) {}
+        public BuildService(BuilderContext context, IMapper mapper) : base(context, mapper)
+        {
+        }
 
         public async Task<BuildHistoryDTO> GetBuildById(int id)
         {
@@ -25,12 +28,15 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException(nameof(BuildHistory), id);
             }
+
             return build;
         }
+
         public async Task<IEnumerable<BuildHistoryDTO>> GetAll()
         {
             return await base.GetAllAsync();
         }
+
         public async Task<BuildHistoryDTO> Create(NewBuildHistoryDTO build)
         {
             if (build == null)
@@ -54,14 +60,17 @@ namespace buildeR.BLL.Services
 
             return await GetBuildById(history.Id);
         }
+
         public async Task Update(BuildHistoryDTO build)
         {
             if (build == null)
             {
                 throw new ArgumentNullException();
             }
+
             await base.UpdateAsync(build);
         }
+
         public async Task Delete(int id)
         {
             var build = await base.GetAsync(id);
@@ -69,12 +78,17 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException(nameof(BuildHistory), id);
             }
+
             await base.RemoveAsync(id);
         }
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id)
         {
-            return Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(await Context.BuildHistories.AsNoTracking().Where(bh => bh.Project.Id == id).ToListAsync());
+            return Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
+                await Context.BuildHistories.AsNoTracking()
+                    .Where(bh => bh.Project.Id == id)
+                    .Include(bh => bh.Performer)
+                    .ToListAsync());
         }
     }
 }
