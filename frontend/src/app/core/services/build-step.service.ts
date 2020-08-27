@@ -26,6 +26,10 @@ export class BuildStepService {
     return this.httpService.postRequest<BuildStep>(`${this.routePrefix}`, buildStep);
   }
 
+  updateBuildStep(buildStep: BuildStep): Observable<any> {
+    return this.httpService.putRequest<BuildStep>(`${this.routePrefix}`, buildStep);
+  }
+
   removeBuildStep(buildStep: BuildStep) {
     return this.httpService.deleteRequest(`${this.routePrefix}/${buildStep.id}`);
   }
