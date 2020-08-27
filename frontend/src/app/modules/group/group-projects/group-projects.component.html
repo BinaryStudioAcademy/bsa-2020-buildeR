@@ -1,23 +1,21 @@
+<div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
+  <div class="ml-auto">
+    <button class="btn btn-info" (click)="openCreateProjectModal()">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+</div>
 <div class="container" *ngIf="projects">
-  <div class="row my-3 border rounded" *ngFor="let project of projects">
-    <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto name-area">
-      <!-- <div class="col-md-12 col-sm-5 col-5 row-top">
-        <a class="text-dark" [routerLink]="'../user'">{{project?.owner.username}}</a>
-      </div>
-      <div class="col-md-12 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom"> -->
-
+  <div class="row my-3 border rounded project-wr" *ngFor="let project of projects">
+    <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto area">
+      <i class="far fa-bookmark"></i>
       <a class="text-dark" [routerLink]="['../../../projects', project?.id, 'details']">{{project.name}}</a>
-      <!-- </div> -->
     </div>
-    <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto">
+    <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto actions">
       <ng-template #popContent>
-        <button class="btn btn-success dropdown-item"><i class="fas fa-redo-alt"></i>
-          Run</button>
         <button class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
             class="fas fa-cog"></i>
           Settings</button>
-        <button class="btn dropdown-item"><i class="far fa-copy"></i>
-          Copy</button>
         <div class="dropdown-divider"></div>
         <button class="btn btn-danger dropdown-item">
           <i class="far fa-trash-alt"></i> Delete</button>

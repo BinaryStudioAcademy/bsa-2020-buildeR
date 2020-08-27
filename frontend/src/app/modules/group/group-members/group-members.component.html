@@ -1,7 +1,23 @@
-<div *ngIf="members">
-  <div *ngFor="let member of members">
-    <p>{{member.memberRole}}</p>
-    <p>{{member.user.username}}</p>
-    <p>{{member.group.name}}</p>
+<label for="typeahead-basic">Search for a state:</label>
+<input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+  [resultFormatter]="formatter" />
+<hr>
+<div class="container">
+  <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
+    <div class="col-md-1 col-sm-2 col-2 area">
+      <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
+        class="avatar" />
+    </div>
+    <div class="col-md-9 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+      <div class="col-md-12 col-sm-5 col-5 row-top">
+        <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+      </div>
+      <div class="col-md-4 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
+        <p class="text-dark">Member since ADD!!!</p>
+      </div>
+    </div>
+    <div class="col-lg-1 col-md-2 col-sm-1 col-1 area role">
+      <a class="user-access-role" [routerLink]="">{{userRole[member.memberRole]}}</a>
+    </div>
   </div>
 </div>

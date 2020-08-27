@@ -23,4 +23,6 @@ export class GroupProjectsComponent implements OnInit {
   getGroupProjects(groupId: number) {
     this.groupService.getProjectsByGroup(groupId).subscribe(res => this.projects = res.body);
   }
+  openCreateProjectModal()
+  {}
 }
