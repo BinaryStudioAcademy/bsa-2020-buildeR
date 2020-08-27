@@ -126,6 +126,7 @@
                 [inputFormatter]="repoListResultFormatter"
                 [ngbTypeahead]="search"
                 [resultTemplate]="repoInList"
+                (selectItem)="handleRepositoryInputClick($event.item)"
                 (focus)="repositoryInputFocus$.next($any($event).target.value)"
                 (click)="repositoryInputClick$.next($any($event).target.value)"
                 #repository="ngbTypeahead"
@@ -196,7 +197,8 @@
               <label>Description</label>
             </div>
             <textarea type="text" rows="3" class="form-control form-control-sm"
-            autocomplete="off" placeholder="Some description for project" formControlName="description" >
+            autocomplete="off" placeholder="Some description for project" formControlName="description">
+
             </textarea>
           </div>
           <div class="error" [hidden]="!projectForm.get('description').errors?.maxLength|| projectForm.get('description').untouched">

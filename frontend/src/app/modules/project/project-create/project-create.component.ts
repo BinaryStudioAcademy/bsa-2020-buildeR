@@ -37,6 +37,7 @@ export class ProjectCreateComponent implements OnInit {
 
   repositoryInputFocus$ = new Subject<string>();
   repositoryInputClick$ = new Subject<string>();
+  repositoryInputSubmit$ = new Subject<string>();
 
   search = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
@@ -105,7 +106,7 @@ export class ProjectCreateComponent implements OnInit {
 
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
-        this.toastrService.showSuccess('project created');
+        this.toastrService.showSuccess('Project created!');
         this.activeModal.close("Saved");
         if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
@@ -191,6 +192,11 @@ export class ProjectCreateComponent implements OnInit {
     else {
       return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid;
     }
+  }
+
+  handleRepositoryInputClick(repo: Repository) {
+    this.projectForm.controls['name'].setValue(repo.name);
+    this.projectForm.controls['description'].setValue(repo.description);
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;
