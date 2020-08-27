@@ -98,6 +98,12 @@ export class UserSettingsComponent implements OnInit {
 
   onSubmit(user: User) {
     user.id = this.details.id;
+    if(!user.firstName){
+      user.firstName = null;
+    }
+    if(!user.lastName){
+      user.lastName = null;
+    }
     this.userService.updateUser(user).subscribe(updateUser => {
       this.details = updateUser;
       this.isChanged = true;
