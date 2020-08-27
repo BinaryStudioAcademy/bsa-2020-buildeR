@@ -46,7 +46,7 @@ namespace buildeR.BLL.Services
 
             var repositories = await _githubClient.GetUserRepositories(credentials.Username, credentials.Password);
 
-            return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private });
+            return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private, Description = r.Description });
         }
         public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId)
         {

@@ -21,6 +21,10 @@ export class SynchronizationService {
     return this.httpService.getRequest<Credentials>(`${this.endpoint}/user/${userId}/credentials`);
   }
 
+  getUsernameFromCredentials(userId: number): Observable<{ username: string }> {
+    return this.httpService.getRequest<{ username: string }>(`${this.endpoint}/user/${userId}/credentials/username`);
+  }
+
   checkIfUserExist(credentials: Credentials): Observable<boolean> {
     return this.httpService.postRequest<boolean>(`${this.endpoint}/user/exist`, credentials);
   }
@@ -29,24 +33,16 @@ export class SynchronizationService {
     return this.httpService.getRequest<boolean>(`${this.endpoint}/user/${userId}/credentials/exist`);
   }
 
-  getSynchronizedUser(): Observable<SynchronizedUser> {
-    throw new Error('In progress');
-  }
-
   getUserRepositories(userId: number): Observable<Repository[]> {
     return this.httpService.getRequest<Repository[]>(`${this.endpoint}/${userId}/repos`);
   }
 
   getRepositoryBranches(projectId: number): Observable<Branch[]> {
-    const token = localStorage.getItem('github-access-token');
-
-    this.httpService.setHeader('ProviderAuthorization', token);
-
     return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${projectId}/branches`);
   }
 
-  checkIfRepositoryAccessable(repoUrl: string): Observable<boolean> {
-    return this.httpService.postRequest<boolean>(`${this.endpoint}/repo/exist`, { link: repoUrl });
+  checkIfRepositoryAccessable(userId: number, repoUrl: string): Observable<boolean> {
+    return this.httpService.postRequest<boolean>(`${this.endpoint}/${userId}/repo/exist`, { link: repoUrl });
   }
 
   registerWebhook(projectId: number): Observable<any> {
