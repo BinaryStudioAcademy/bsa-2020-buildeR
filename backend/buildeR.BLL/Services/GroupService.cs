@@ -46,14 +46,13 @@ namespace buildeR.BLL.Services
 
             var newGroup = await base.AddAsync(group);
 
-            var newTeamMember = new NewTeamMemberDTO
+            var teamMember = new TeamMember
             {
                 UserId = group.CreatorId,
                 MemberRole = UserRole.Creator,
-                GroupId = newGroup.Id
+                GroupId = newGroup.Id,
+                JoinedDate = DateTime.Now
             };
-
-            var teamMember = Mapper.Map<TeamMember>(newTeamMember);
             Context.Add(teamMember);
             await Context.SaveChangesAsync();
 
