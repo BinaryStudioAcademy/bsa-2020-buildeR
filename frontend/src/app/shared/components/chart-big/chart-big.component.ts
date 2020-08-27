@@ -7,95 +7,31 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ChartBigComponent implements OnInit {
 
-  @Input() data;
+  @Input() results;
   // Mock
-  multi = [
-    {
-      name: '26.02',
-      series: [
-        {
-          name: 'Succeed',
-          value: 73
-        },
-        {
-          name: 'Faild',
-          value: 89
-        },
-        {
-          name: 'Errored',
-          value: 63
-        },
-        {
-          name: 'Canceled',
-          value: 12
-        }
-      ]
-    },
-
-    {
-      name: '27.02',
-      series: [
-        {
-          name: 'Succeed',
-          value: 70
-        },
-        {
-          name: 'Faild',
-          value: 61
-        },
-        {
-          name: 'Errored',
-          value: 11
-        },
-        {
-          name: 'Canceled',
-          value: 12
-        }
-      ]
-    },
-    {
-      name: '28.02',
-      series: [
-        {
-          name: 'Succeed',
-          value: 73
-        },
-        {
-          name: 'Faild',
-          value: 28
-        },
-        {
-          name: 'Errored',
-          value: 61
-        },
-        {
-          name: 'Canceled',
-          value: 53
-        }
-      ]
-    },
-    {
-      name: '29.02',
-      series: [
-        {
-          name: 'Succeed',
-          value: 25
-        },
-        {
-          name: 'Faild',
-          value: 48
-        },
-        {
-          name: 'Errored',
-          value: 31
-        },
-        {
-          name: 'Canceled',
-          value: 13
-        }
-      ]
-    }
-  ];
+  // results = [
+  //   {
+  //     name: '26.02',
+  //     series: [
+  //       {
+  //         name: 'Succeed',
+  //         value: 73
+  //       },
+  //       {
+  //         name: 'Failed',
+  //         value: 89
+  //       },
+  //       {
+  //         name: 'Errored',
+  //         value: 63
+  //       },
+  //       {
+  //         name: 'Canceled',
+  //         value: 12
+  //       }
+  //     ]
+  //   },
+  // ];
 
   view = [window.innerWidth - 300, 300];
 

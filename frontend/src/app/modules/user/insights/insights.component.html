@@ -30,7 +30,7 @@
       <h6 style="padding-left: 32%">Total builds</h6>
       <h5>{{totalBuilds}}</h5>
       <div>
-        <app-chart-small [results]="dataForBuilds">
+        <app-chart-small [results]="buildsData">
         </app-chart-small>
       </div>
     </div>
@@ -38,26 +38,27 @@
       <h6 style="padding-left: 25%">Total job minutes</h6>
       <h5>{{totalDuration}}</h5>
       <div class="chart">
-        <app-chart-small [results]="dataForDuration">
+        <app-chart-small [results]="durationData">
         </app-chart-small>
       </div>
     </div>
     <div class="third-chart border">
       <h6 style="padding-left: 18%">Build Success Rate</h6>
       <h5>{{buildSuccessRate}}%</h5>
-      <app-chart-small [results]="dataForSuccess">
+      <app-chart-small [results]="successData">
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
-      <h6 style="padding-left: 20%">Active Repositories</h6>
+      <h6 style="padding-left: 26%">Active Projects</h6>
       <h5>521</h5>
-      <app-chart-small [results]="dataForBuilds">
+      <app-chart-small [results]="buildsData">
       </app-chart-small>
     </div>
   </div>
   <div class="big-chart-wrap container">
     <div class="big-chart">
-      <app-chart-big></app-chart-big>
+      <app-chart-big [results]="bigChartData">
+      </app-chart-big>
     </div>
   </div>
 </div>

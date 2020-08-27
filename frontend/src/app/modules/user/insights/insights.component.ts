@@ -17,9 +17,10 @@ export class InsightsComponent implements OnInit {
   buildSuccessRate = 0;
   tab = 0;
 
-  dataForBuilds;
-  dataForDuration;
-  dataForSuccess;
+  buildsData;
+  durationData;
+  successData;
+  bigChartData;
 
   weekMonth = [
     { name: 'Week' },
@@ -41,6 +42,26 @@ export class InsightsComponent implements OnInit {
       commitHash: null,
       duration: 10
     }, {
+      id : 2,
+      number: 2,
+      performer: this.user,
+      branchHash: null,
+      buildAt: new Date(2020, 7, 25),
+      buildStatus: 2,
+      commitHash: null,
+      duration: 19
+    },
+    {
+      id : 2,
+      number: 2,
+      performer: this.user,
+      branchHash: null,
+      buildAt: new Date(2020, 7, 25),
+      buildStatus: 1,
+      commitHash: null,
+      duration: 19
+    },
+    {
       id : 2,
       number: 2,
       performer: this.user,
@@ -82,14 +103,41 @@ export class InsightsComponent implements OnInit {
   showWeek(){
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7){
-      console.log(this.createDataForBuildsChart(this.user.createdAt, diff));
-      this.dataForBuilds = this.createDataForBuildsChart(this.user.createdAt, diff);
-      this.dataForDuration = this.createDataForDuration(this.user.createdAt, diff);
-      this.dataForSuccess = this.createDataForSuccess(this.user.createdAt, diff);
+      console.log(this.formatBuildsData(this.user.createdAt, diff));
+      this.buildsData = this.formatBuildsData(this.user.createdAt, diff);
+      this.durationData = this.formatDurationData(this.user.createdAt, diff);
+      this.successData = this.formatSuccessData(this.user.createdAt, diff);
+      this.bigChartData = this.formatBigChartData(this.user.createdAt, diff);
     }
   }
 
-  createDataForBuildsChart(startDate: Date, days: number){
+  formatBigChartData(startDate: Date, days: number){
+    const result = new Array();
+    const resultsOfDay = new Array();
+    startDate = new Date(startDate);
+    for (let index = 0; index <= days; index++) {
+      const newDay =  new Date(startDate);
+      newDay.setDate(newDay.getDate() + index);
+      // name for result
+      const day = this.beautifyDate(newDay);
+      // counting successfull builds
+      const successCount = this.countBuildsByStatus(newDay, 0);
+      const failCount = this.countBuildsByStatus(newDay, 1);
+      const errorCount = this.countBuildsByStatus(newDay, 2);
+      const canceledCount = this.countBuildsByStatus(newDay, 3);
+      const value = [
+        {name: 'Succeed', value: successCount},
+        {name: 'Failed', value: failCount},
+        {name: 'Errored', value: errorCount},
+        {name: 'Canceled', value: canceledCount}];
+
+      console.log(day);
+      result.push({name: day, series: value});
+    }
+    return result;
+  }
+
+  formatBuildsData(startDate: Date, days: number){
     const result = new Array();
     startDate = new Date(startDate);
     for (let index = 0; index <= days; index++) {
@@ -103,7 +151,7 @@ export class InsightsComponent implements OnInit {
     return [{name: 'builds', series: result}];
   }
 
-  createDataForDuration(startDate: Date, days: number){
+  formatDurationData(startDate: Date, days: number){
     const result = new Array();
     startDate = new Date(startDate);
     for (let index = 0; index <= days; index++) {
@@ -116,13 +164,13 @@ export class InsightsComponent implements OnInit {
     return [{name: 'minutes', series: result}];
   }
 
-  createDataForSuccess(startDate: Date, days: number){
+  formatSuccessData(startDate: Date, days: number){
     const result = new Array();
     startDate = new Date(startDate);
     for (let index = 0; index <= days; index++) {
       const newDay =  new Date(startDate);
       newDay.setDate(newDay.getDate() + index);
-      const value = this.CountSucceedBuildsInDay(newDay);
+      const value = this.countBuildsByStatus(newDay, 0);
       const name = this.beautifyDate(newDay);
       result.push({name, value});
     }
@@ -143,10 +191,10 @@ export class InsightsComponent implements OnInit {
     return this.user.builds.filter(x => x.buildAt.getDay() === day.getDay()).length;
   }
 
-  CountSucceedBuildsInDay(day: Date){
+  countBuildsByStatus(day: Date, status: number = 0){
     day = new Date(day);
     return this.user.builds.filter(x => x.buildAt.getDay() === day.getDay()
-    && x.buildStatus === BuildStatus.Success).length;
+    && x.buildStatus === status).length;
   }
 
   countDurationInDay(day: Date){
