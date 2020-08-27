@@ -91,11 +91,11 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
-    this.newProject.name = this.projectForm.controls['name'].value;
-    this.newProject.description = this.projectForm.controls['description'].value;
-    this.newProject.isPublic = this.projectForm.controls['isPublic'].value;
-    this.newProject._repository = this.projectForm.controls['_repository']?.value ?? this.newProject._repository;
-    this.newProject._repository.url = this.projectForm.controls['repositoryURL']?.value;
+    this.newProject.name = this.projectForm.controls.name.value;
+    this.newProject.description = this.projectForm.controls.description.value;
+    this.newProject.isPublic = this.projectForm.controls.isPublic.value;
+    this.newProject._repository = this.projectForm.controls._repository?.value ?? this.newProject._repository;
+    this.newProject._repository.url = this.projectForm.controls.repositoryURL?.value;
 
     this.newProject.ownerId = this.user.id;
     this.newProject.repository = this.newProject._repository?.name;
@@ -103,7 +103,7 @@ export class ProjectCreateComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('project created');
-        this.activeModal.close("Saved");
+        this.activeModal.close('Saved');
         if (this.syncService.isGithubAccessable()) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
@@ -111,12 +111,12 @@ export class ProjectCreateComponent implements OnInit {
       },
       (error) => {
         this.toastrService.showError(error.message, error.name);
-        this.activeModal.dismiss("Error on save");
+        this.activeModal.dismiss('Error on save');
       },
     );
   }
   cancel() {
-    this.activeModal.dismiss("Canceled");
+    this.activeModal.dismiss('Canceled');
   }
   onToggle(change: boolean) {
     change = !change;
@@ -135,7 +135,7 @@ export class ProjectCreateComponent implements OnInit {
     this.urlSection = false;
     this.newProject._repository.createdByLink = false;
 
-    if (this.projectForm.controls['repositoryURL']) {
+    if (this.projectForm.controls.repositoryURL) {
       this.projectForm.removeControl('repositoryURL');
     }
 
@@ -152,7 +152,7 @@ export class ProjectCreateComponent implements OnInit {
     this.githubRepoSection = false;
     this.newProject._repository.createdByLink = true;
 
-    if (this.projectForm.controls['_repository']) {
+    if (this.projectForm.controls._repository) {
       this.projectForm.removeControl('_repository');
     }
 
@@ -178,10 +178,10 @@ export class ProjectCreateComponent implements OnInit {
     }
 
     if (!this.newProject._repository.createdByLink) {
-      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid;
+      return this.projectForm.controls._repository?.value.name && this.projectForm.valid;
     }
     else {
-      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid;
+      return this.projectForm.controls.repositoryURL?.value && this.projectForm.valid;
     }
   }
 

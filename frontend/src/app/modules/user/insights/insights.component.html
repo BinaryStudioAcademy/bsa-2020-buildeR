@@ -7,9 +7,9 @@
     <div class="week-month">
       <nav>
         <ul class="list-group list-group-horizontal ">
-          <li *ngFor="let tabRoute of tabRoutes; let i = index" class="list-group-item">
-            <a href="#">
-              {{tabRoute.name}}
+          <li *ngFor="let mode of weekMonth; let i = index" class="list-group-item"[ngClass]="{ active: tab == i }">
+            <a (click)="changeMode(i)">
+              {{mode.name}}
             </a>
           </li>
         </ul>
@@ -28,28 +28,30 @@
 
     <div class="first-chart border">
       <h6 style="padding-left: 32%">Total builds</h6>
-      <h5>231</h5>
-      <app-chart-small>
-      </app-chart-small>
+      <h5>{{totalBuilds}}</h5>
+      <div>
+        <app-chart-small [results]="dataForBuilds">
+        </app-chart-small>
+      </div>
     </div>
     <div class="second-chart border">
       <h6 style="padding-left: 25%">Total job minutes</h6>
-      <h5>1232</h5>
+      <h5>{{totalDuration}}</h5>
       <div class="chart">
-        <app-chart-small>
+        <app-chart-small [results]="dataForBuilds">
         </app-chart-small>
       </div>
     </div>
     <div class="third-chart border">
-      <h6 style="padding-left: 18%">Average Queue Time</h6>
-      <h5>30</h5>
-      <app-chart-small>
+      <h6 style="padding-left: 18%">Build Success Rate</h6>
+      <h5>{{buildSuccessRate}}%</h5>
+      <app-chart-small [results]="dataForBuilds">
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
       <h6 style="padding-left: 20%">Active Repositories</h6>
       <h5>521</h5>
-      <app-chart-small>
+      <app-chart-small [results]="dataForBuilds">
       </app-chart-small>
     </div>
   </div>
