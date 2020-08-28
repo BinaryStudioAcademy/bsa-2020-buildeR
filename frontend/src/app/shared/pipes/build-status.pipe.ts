@@ -9,8 +9,8 @@ export class BuildStatusPipe implements PipeTransform {
     if (value <= BuildStatus.Canceled) {
       return BuildStatus[value];
     }
-    if (value == BuildStatus.InProgress) {
-      return "In Progress";
+    if (value === BuildStatus.InProgress) {
+      return 'In Progress';
     }
     return value.toString();
   }

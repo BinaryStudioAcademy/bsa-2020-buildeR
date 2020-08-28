@@ -42,7 +42,9 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailBuilder, EmailBuilder>();
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
-            
+            services.AddScoped<ITeamMemberService, TeamMemberService>();
+
+
             services.AddTransient<IHttpClient, BuilderHttpClient>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();

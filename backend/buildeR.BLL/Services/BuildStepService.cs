@@ -4,6 +4,7 @@ using AutoMapper.QueryableExtensions;
 using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
+using buildeR.Common.DTO;
 using buildeR.Common.DTO.BuildPlugin;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.PluginCommand;
@@ -58,6 +59,13 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
+            foreach (var argDTO in buildStep.CommandArguments)
+            {
+                var arg = Mapper.Map<CommandArgument>(argDTO);
+                if (!base.Context.CommandArguments.Contains(arg))
+                    base.Context.CommandArguments.Add(arg);
+            }
+
             await base.UpdateAsync(buildStep);
         }
         public async Task Delete(int id)

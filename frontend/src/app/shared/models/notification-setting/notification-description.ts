@@ -1,6 +1,6 @@
-import { NotificationSettingType } from './notification-setting-type';
+import { NotificationType } from '../notification-type';
 
 export interface NotificationDescription {
-  notificationType: NotificationSettingType;
+  notificationType: NotificationType;
   description: string;
 }
