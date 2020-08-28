@@ -36,8 +36,8 @@ namespace buildeR.Processor.Services
         {
             var statusChange = new StatusChangeDto
             {
-                Status = status,
                 Time = DateTime.Now,
+                Status =status,
                 BuildHistoryId = buildHistoryId
             };
             _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
