@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-chart-big-normalized',
-  templateUrl: './chart-big-normalized.component.html',
-  styleUrls: ['./chart-big-normalized.component.sass']
+  selector: 'app-chart-big-grouped',
+  templateUrl: './chart-big-grouped.component.html',
+  styleUrls: ['./chart-big-grouped.component.sass']
 })
-export class ChartBigNormalizedComponent implements OnInit {
+export class ChartBigGroupedComponent implements OnInit {
 
   @Input() results;
   // Mock
@@ -76,6 +76,7 @@ export class ChartBigNormalizedComponent implements OnInit {
   }
 
  onSelect(data): void {
+
   }
 
   onActivate(data): void {
@@ -83,4 +84,5 @@ export class ChartBigNormalizedComponent implements OnInit {
 
   onDeactivate(data): void {
   }
+
 }
