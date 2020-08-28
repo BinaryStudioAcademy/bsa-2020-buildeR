@@ -18,6 +18,7 @@ export class InsightsComponent implements OnInit {
   buildSuccessRate = 0;
   activeProjects = 0;
   tab = 0;
+  month = false;
 
   buildsData;
   durationData;
@@ -101,22 +102,25 @@ export class InsightsComponent implements OnInit {
   }
 
   getData(isMonth = false) {
-    const diff = 10;
+    const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
       this.countedDate = this.user.createdAt;
       this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
     if (!(diff <= 7) && isMonth){
-      // tslint:disable-next-line: no-shadowed-variable
+      // Show month
       const date = new Date(this.now);
-      this.countedDate.setDate(this.now.getDate() - 30);
+      this.countedDate = new Date(this.now);
+      this.countedDate.setDate(this.countedDate.getDate() - 30);
       date.setDate(date.getDate() - 30);
       this.fulfillCharts(date, 30);
       return;
     }
+    // Show week
     const date = new Date(this.now);
-    this.countedDate.setDate(this.now.getDate() - 6);
+    this.countedDate = new Date(this.now);
+    this.countedDate.setDate(this.countedDate.getDate() - 6);
     date.setDate(date.getDate() - 6);
     this.fulfillCharts(date, 6);
     return;
@@ -161,7 +165,6 @@ export class InsightsComponent implements OnInit {
     for (let index = 0; index <= days; index++) {
       const newDay = new Date(startDate);
       newDay.setDate(newDay.getDate() + index);
-      console.log(newDay);
       const value = this.countActiveProjectsInDay(newDay);
       const name = this.beautifyDate(newDay);
       result.push({ name, value });
@@ -201,7 +204,7 @@ export class InsightsComponent implements OnInit {
     for (let index = 0; index <= days; index++) {
       const newDay = new Date(startDate);
       newDay.setDate(newDay.getDate() + index);
-      const value = this.countBuildsByStatus(newDay, 0);
+      const value = this.countBuildsByStatus(newDay, BuildStatus.Success);
       const name = this.beautifyDate(newDay);
       result.push({ name, value });
     }
@@ -264,9 +267,11 @@ export class InsightsComponent implements OnInit {
     this.tab = i;
     if (!i) {
       this.getData();
+      this.month = false;
       return;
     }
     this.getData(true);
+    this.month = true;
   }
 
   diffDates(dateOne: Date, dateTwo: Date): number {
