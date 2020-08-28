@@ -29,7 +29,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("BranchHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("BuildAt")
+                    b.Property<DateTime?>("BuildAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("BuildStatus")
@@ -38,7 +38,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("CommitHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Duration")
+                    b.Property<int?>("Duration")
                         .HasColumnType("int");
 
                     b.Property<int>("Number")
@@ -49,6 +49,9 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -655,9 +658,9 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.BuildPlugin", "Plugin")
-                        .WithMany("PluginCommands")
+                        .WithMany()
                         .HasForeignKey("PluginId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -675,7 +678,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Group", "Group")
                         .WithMany("ProjectGroups")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
@@ -708,7 +711,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Group", "Group")
                         .WithMany("TeamMembers")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.User", "User")

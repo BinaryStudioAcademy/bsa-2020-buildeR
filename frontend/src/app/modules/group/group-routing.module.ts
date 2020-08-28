@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { GroupListComponent } from './group-list/group-list.component';
 import { GroupResolverService } from '../../core/resolvers/group.resolver';
 import { GroupComponent } from './group/group.component';
+import { GroupProjectsComponent } from './group-projects/group-projects.component';
+import { GroupMembersComponent } from './group-members/group-members.component';
+import { GroupSettingsComponent } from './group-settings/group-settings.component';
 import { GroupCreateComponent } from './group-create/group-create.component';
 
 const routes: Routes = [
@@ -19,18 +22,22 @@ const routes: Routes = [
     path: ':groupId',
     component: GroupComponent,
     resolve: {
-      project: GroupResolverService,
+      group: GroupResolverService,
     },
-    // children: [
-    //   {
-    //     path: 'settings',
-    //     component: GroupSettingsComponent,
-    //   },
-    //   {
-    //     path: 'details',
-    //     component: GroupDetailsComponent,
-    //   },
-    // ],
+    children: [
+      {
+        path: 'projects',
+        component: GroupProjectsComponent,
+      },
+      {
+        path: 'members',
+        component: GroupMembersComponent,
+      },
+      {
+        path: 'settings',
+        component: GroupSettingsComponent,
+      },
+    ],
   },
 ];
 

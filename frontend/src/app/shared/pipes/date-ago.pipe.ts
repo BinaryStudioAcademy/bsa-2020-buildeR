@@ -5,7 +5,11 @@ import * as moment from 'moment';
   name: 'dateAgo',
 })
 export class DateAgoPipe implements PipeTransform {
-  transform(date: Date): string {
+  transform(date: Date | null): string {
+    if (date && date != new Date()) {
     return moment(date).fromNow();
+    } else {
+      return "—";
+    }
   }
 }

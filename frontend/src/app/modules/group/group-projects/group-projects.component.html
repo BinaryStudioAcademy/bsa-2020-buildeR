@@ -1,0 +1,28 @@
+<div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
+  <div class="ml-auto">
+    <button class="btn btn-info" (click)="openCreateProjectModal()">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+</div>
+<div class="container" *ngIf="projects">
+  <div class="row my-3 border rounded project-wr" *ngFor="let project of projects">
+    <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto area">
+      <i class="far fa-bookmark"></i>
+      <a class="text-dark" [routerLink]="['../../../projects', project?.id, 'details']">{{project.name}}</a>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto actions">
+      <ng-template #popContent>
+        <button class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
+            class="fas fa-cog"></i>
+          Settings</button>
+        <div class="dropdown-divider"></div>
+        <button class="btn btn-danger dropdown-item">
+          <i class="far fa-trash-alt"></i> Delete</button>
+      </ng-template>
+      <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</div>

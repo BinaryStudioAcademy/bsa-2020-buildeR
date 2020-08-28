@@ -20,16 +20,30 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using buildeR.Common.Enums;
 
 namespace buildeR.Processor.Services
 {
     public class ProcessorService
     {
         private readonly IConsumer _consumer;
+        private readonly IProducer _buildStatusesProducer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
         private readonly IElasticClient _elk;
-        public ProcessorService(IConfiguration config, IConsumer consumer, IElasticClient elk)
+
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
+        {
+            var statusChange = new StatusChangeDto
+            {
+                Status = BuildStatus.InProgress,
+                Time = DateTime.Now,
+                BuildHistoryId = buildHistoryId
+            };
+            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
+        }
+
+        public ProcessorService(IConfiguration config, IConsumer consumer, IProducer buildStatusesProducer, IElasticClient elk)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
@@ -39,6 +53,8 @@ namespace buildeR.Processor.Services
 
             _consumer = consumer;
             _consumer.Received += Consumer_Received;
+
+            _buildStatusesProducer = buildStatusesProducer;
         }
 
         private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
@@ -46,7 +62,12 @@ namespace buildeR.Processor.Services
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
-            await BuildProjectAsync(executeBuild);
+            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId);
+            // mock success
+            await BuildProjectAsync(executeBuild).ContinueWith(t =>
+            {
+                SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId);
+            });
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
 
@@ -219,12 +240,12 @@ namespace buildeR.Processor.Services
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
             var template = Template.Parse(
-                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
+                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.plugin_command.name }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
                  "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
-                 "RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }} {{ for arg in this.plugin_command.args }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
+                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
 
             foreach (var step in buildSteps)
                 dockerfile += template.Render(step);
