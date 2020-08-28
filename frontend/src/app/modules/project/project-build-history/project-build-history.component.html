@@ -2,7 +2,7 @@
   <li *ngFor="let build of builds" [appBuildHistoryStatusOutline]="build.buildStatus">
     <div class='user-commit'>
       <a><i class="fas fa-user-tie"></i> {{build.performer.username}}</a>
-      <p><i class="fas fa-code"></i> {{build.commitHash.substring(0, 6)}}</p>
+      <p><i class="fas fa-code"></i> {{ getCommit(build) }}</p>
     </div>
     <div class="build-info">
       <p class="status" [routerLink]="build.id" [appBuildHistoryStatus]="build.buildStatus"><i

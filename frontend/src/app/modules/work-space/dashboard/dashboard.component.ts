@@ -78,7 +78,7 @@ export class DashboardComponent
       branchHash: this.selectedProjectBranch,
       performerId: this.currentUser.id,
       projectId: project.id,
-      commitHash: 'unknown',
+      commitHash: null,
     } as NewBuildHistory;
     this.closeModal();
     this.toastrService.showSuccess(
@@ -89,9 +89,7 @@ export class DashboardComponent
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (buildHistory) => {
-          if (project) {
-            project.lastBuildHistory = buildHistory;
-          }
+          project.lastBuildHistory = buildHistory;
         },
         (error) => this.toastrService.showError(error)
       );
