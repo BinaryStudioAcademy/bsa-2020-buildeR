@@ -22,10 +22,9 @@ export class CredentialSettingsComponent implements OnInit {
               private toastrService: ToastrNotificationsService) { }
 
   ngOnInit(): void {
-    this.syncService.getUserCredentials(this.user.id)
+    this.syncService.getUsernameFromCredentials(this.user.id)
       .subscribe(credentials => {
-        this.credentialsForm.controls['username'].setValue(credentials.username);
-        this.credentialsForm.controls['password'].setValue(credentials.password);
+        this.credentialsForm.controls.username.setValue(credentials.username);
       });
 
     this.credentialsForm = new FormGroup({
