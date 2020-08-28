@@ -54,14 +54,14 @@ export class HelpComponent extends BaseComponent
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(200),
-          Validators.pattern('^[a-zA-Z].*')
+          Validators.pattern('[a-zA-z0-9_!"#$%&\'\(\)\*\+\,-\.:;<=>\?\[\@\^\{\}\~|\\]\\/ ]*')
         ]),
       description: new FormControl(this.userHelp.description,
         [
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(1000),
-          Validators.pattern('^[a-zA-Z].*')
+          Validators.pattern('[a-zA-z0-9_\n\r\t!"#$%&\'\(\)\*\+\,-\.:;<=>\?\[\@\^\{\}\~|\\]\\/ ]*')
         ]
         ),
     });
