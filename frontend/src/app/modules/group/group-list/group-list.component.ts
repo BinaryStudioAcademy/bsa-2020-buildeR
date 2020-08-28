@@ -8,6 +8,7 @@ import { User } from '../../../shared/models/user/user';
 import { UserRole } from '../../../shared/models/group/user-role';
 import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-group-list',
@@ -19,7 +20,12 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   loadingGroups = false;
   groups: Group[];
   currentUser: User;
-  constructor(private groupService: GroupService, private authService: AuthenticationService, private modalService: NgbModal) { super(); }
+  constructor(
+    private groupService: GroupService,
+    private authService: AuthenticationService,
+    private modalService: NgbModal,
+    private toastrService: ToastrNotificationsService
+  ) { super(); }
 
   ngOnInit(): void {
     this.loadingGroups = true;
@@ -66,6 +72,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
               this.groups = this.groups.filter(
                 (group) => group.id !== groupId
               );
+              this.toastrService.showSuccess('Group is deleted');
             });
         }
       })
@@ -73,9 +80,4 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         console.log(error);
       });
   }
-  // deleteGroup(groupId: number) {
-  //   this.groupService.deleteGroup(groupId).subscribe(() => {
-  //     this.groups = this.groups.filter(group => group.id !== groupId);
-  //   });
-  // }
 }
