@@ -13,5 +13,6 @@ namespace buildeR.BLL.Interfaces
         Task Update(BuildHistoryDTO build);
         Task Delete(int id);
         Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id);
+        Task<BuildHistoryDTO> ChangeStatus(int buildHistoryId, int status);
     }
 }

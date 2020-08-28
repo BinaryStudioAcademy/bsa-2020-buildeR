@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.User;
+using buildeR.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace buildeR.API.Controllers
@@ -36,6 +37,12 @@ namespace buildeR.API.Controllers
         public async Task<BuildHistoryDTO> GetById(int id)
         {
             return await _buildService.GetBuildById(id);
+        }
+
+        [HttpPost("{id}/status/{status:int}")]
+        public async Task<BuildHistoryDTO> ChangeStatus(int id, int status)
+        {
+            return await _buildService.ChangeStatus(id, status);
         }
 
         [HttpPost]
