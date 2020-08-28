@@ -14,6 +14,7 @@ import { ModalCopyProjectComponent } from '../../project/modal-copy-project/moda
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
+import { BuildHistory } from '@shared/models/build-history';
 
 @Component({
   selector: 'app-dashboard',
@@ -181,6 +182,10 @@ export class DashboardComponent
       .open(content)
       .result.then(() => {})
       .catch(() => {});
+  }
+
+  getCommit(bh: BuildHistory) {
+    return bh.commitHash?.substring(0, 6) ?? "—";
   }
 
   loadProjectBranches(projectId: number) {

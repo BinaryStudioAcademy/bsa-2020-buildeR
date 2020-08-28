@@ -74,7 +74,7 @@
                 Commit
               </div>
               <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                {{ project.lastBuildHistory.commitHash }}
+                {{ getCommit(project.lastBuildHistory) }}
               </div>
             </div>
             <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
@@ -291,7 +291,7 @@
                 Commit
               </div>
               <div class="col-md-12 col-sm-5 text-dark small row-bottom">
-                {{ project.lastBuildHistory.commitHash }}
+                {{ getCommit(project.lastBuildHistory) }}
               </div>
             </div>
             <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">

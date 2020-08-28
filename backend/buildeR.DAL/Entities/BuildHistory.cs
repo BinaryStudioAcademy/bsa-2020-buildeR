@@ -9,8 +9,8 @@ namespace buildeR.DAL.Entities
         public int ProjectId { get; set; }
         public int PerformerId { get; set; }
         public BuildStatus BuildStatus { get; set; }
-        public int Duration { get; set; }
-        public DateTime BuildAt { get; set; }
+        public int? Duration { get; set; }
+        public DateTime? BuildAt { get; set; }
         public DateTime StartedAt { get; set; }
         public string BranchHash { get; set; }
         public string CommitHash { get; set; }
