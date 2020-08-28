@@ -12,6 +12,7 @@ import { BuildStatus } from '@shared/models/build-status';
 export class InsightsComponent implements OnInit {
   user: User = this.authService.getCurrentUser();
   now: Date = new Date(Date.now());
+  countedDate = new Date(this.user.createdAt);
   totalBuilds = 0;
   totalDuration = 0;
   buildSuccessRate = 0;
@@ -33,61 +34,61 @@ export class InsightsComponent implements OnInit {
 
   ngOnInit(): void {
     // mock
-    // this.user.builds = [];
-    // this.user.builds.push({
-    //   id: 1,
-    //   number: 1,
-    //   project: { id: 1 } as Project,
-    //   performer: this.user,
-    //   branchHash: null,
-    //   buildAt: this.now,
-    //   buildStatus: 0,
-    //   commitHash: null,
-    //   duration: 10
-    // }, {
-    //   id: 2,
-    //   number: 2,
-    //   project: { id: 2 } as Project,
-    //   performer: this.user,
-    //   branchHash: null,
-    //   buildAt: new Date(2020, 7, 25),
-    //   buildStatus: 2,
-    //   commitHash: null,
-    //   duration: 19
-    // },
-    //   {
-    //     id: 3,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 1 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: 1,
-    //     commitHash: null,
-    //     duration: 19
-    //   },
-    //   {
-    //     id: 4,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 1 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: 2,
-    //     commitHash: null,
-    //     duration: 19
-    //   },
-    //   {
-    //     id: 5,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 2 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: 3,
-    //     commitHash: null,
-    //     duration: 19
-    //   });
+    this.user.builds = [];
+    this.user.builds.push({
+      id: 1,
+      number: 1,
+      project: { id: 1 } as Project,
+      performer: this.user,
+      branchHash: null,
+      buildAt: this.now,
+      buildStatus: 0,
+      commitHash: null,
+      duration: 10
+    }, {
+      id: 2,
+      number: 2,
+      project: { id: 2 } as Project,
+      performer: this.user,
+      branchHash: null,
+      buildAt: new Date(2020, 7, 25),
+      buildStatus: 2,
+      commitHash: null,
+      duration: 19
+    },
+      {
+        id: 3,
+        number: 2,
+        performer: this.user,
+        project: { id: 1 } as Project,
+        branchHash: null,
+        buildAt: new Date(2020, 7, 25),
+        buildStatus: 1,
+        commitHash: null,
+        duration: 19
+      },
+      {
+        id: 4,
+        number: 2,
+        performer: this.user,
+        project: { id: 1 } as Project,
+        branchHash: null,
+        buildAt: new Date(2020, 7, 25),
+        buildStatus: 2,
+        commitHash: null,
+        duration: 19
+      },
+      {
+        id: 5,
+        number: 2,
+        performer: this.user,
+        project: { id: 2 } as Project,
+        branchHash: null,
+        buildAt: new Date(2020, 7, 25),
+        buildStatus: 3,
+        commitHash: null,
+        duration: 19
+      });
     // end of mock
 
 
@@ -100,19 +101,22 @@ export class InsightsComponent implements OnInit {
   }
 
   getData(isMonth = false) {
-    const diff = this.diffDates(this.now, this.user.createdAt);
+    const diff = 10;
     if (diff <= 7) {
+      this.countedDate = this.user.createdAt;
       this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
     if (!(diff <= 7) && isMonth){
       // tslint:disable-next-line: no-shadowed-variable
       const date = new Date(this.now);
+      this.countedDate.setDate(this.now.getDate() - 30);
       date.setDate(date.getDate() - 30);
       this.fulfillCharts(date, 30);
       return;
     }
     const date = new Date(this.now);
+    this.countedDate.setDate(this.now.getDate() - 6);
     date.setDate(date.getDate() - 6);
     this.fulfillCharts(date, 6);
     return;
