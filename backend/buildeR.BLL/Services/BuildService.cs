@@ -105,7 +105,7 @@ namespace buildeR.BLL.Services
                 if (statusChange.Status != BuildStatus.InProgress)
                 {
                     buildHistory.BuildAt = DateTime.Now;
-                    buildHistory.Duration = (buildHistory.StartedAt - buildHistory.BuildAt).Value.Milliseconds;
+                    buildHistory.Duration = (buildHistory.BuildAt - buildHistory.StartedAt).Value.Milliseconds;
                 }
                 
                 await Context.SaveChangesAsync();
