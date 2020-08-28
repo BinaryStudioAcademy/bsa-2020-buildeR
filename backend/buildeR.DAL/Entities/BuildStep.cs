@@ -18,6 +18,7 @@ namespace buildeR.DAL.Entities
         public string WorkDirectory { get; set; }
         public LoggingVerbosity LoggingVerbosity { get; set; }
         public int ProjectId { get; set; }
+        public string DockerImageVersion { get; set; }
 
         public virtual PluginCommand PluginCommand { get; set; }
         public virtual Project Project { get; set; }

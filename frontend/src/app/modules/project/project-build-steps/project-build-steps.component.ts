@@ -31,15 +31,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   workDir: string;
   commandArguments: CommandArgument[] = new Array();
 
-  newEnvVariableKey: string = null;
-  newEnvVariableValue: string = null;
-
-  newCommandArgumentKey: string = null;
-  newCommandArgumentValue: string = null;
-
-  version: string;
-  versions: string[];
-
   constructor(
     private projectService: ProjectService,
     private buildStepService: BuildStepService,
@@ -51,7 +42,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     super();
     route.parent.params.subscribe((params) => this.projectId = params.projectId);
   }
-
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
@@ -115,48 +105,33 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  addBuildStep() {
-    this.isAdding = true;
-    this.newBuildStep = this.emptyBuildSteps[0];
+  addBuildStep(step: BuildStep) {
+    step.isAdding = !step.isAdding;
   }
 
-  cancelBuildStep() {
-    this.newBuildStep = null;
-    this.isAdding = false;
-    this.workDir = null;
-    this.commandArguments = null;
-    this.version = null;
-
-    this.clearNewCommandArgument();
+  addCommandArgument(step: BuildStep) {
+    step.newCommandArgumentKey = '';
+    step.newCommandArgumentValue = '';
   }
 
-  addCommandArgument() {
-    this.newCommandArgumentKey = '';
-    this.newCommandArgumentValue = '';
-  }
-
-  saveCommandArgument() {
+  saveCommandArgument(step: BuildStep) {
     const newCommandArgument = {
-      key: this.newCommandArgumentKey,
-      value: this.newCommandArgumentValue
+      buildStepId: step.id,
+      key: step.newCommandArgumentKey,
+      value: step.newCommandArgumentValue
     } as CommandArgument;
-    if (!this.commandArguments) {
-      this.commandArguments = new Array();
-    }
-    this.commandArguments.push(newCommandArgument);
-    this.clearNewCommandArgument();
+    step.commandArguments.push(newCommandArgument);
+    this.clearNewCommandArgument(step);
   }
 
-  removeNewCommandArgument(key: string) {
-    this.commandArguments = this.commandArguments.filter(commandArgument => commandArgument.key !== key);
+
+  clearNewCommandArgument(step: BuildStep) {
+    step.newCommandArgumentKey = undefined;
+    step.newCommandArgumentValue = undefined;
   }
 
-  clearNewCommandArgument() {
-    this.newCommandArgumentKey = null;
-    this.newCommandArgumentValue = null;
-  }
-
-  removeExistingCommandArgument(buildStep: BuildStep, argumentId: number) {
+  removeExistingCommandArgument(step: BuildStep, argumentId: number, key: string) {
+    step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.key !== key);
     this.isLoading = true;
     this.commandArgumentService
       .removeCommandArgument(argumentId)
@@ -164,7 +139,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .subscribe(
         () => {
           this.isLoading = false;
-          buildStep.commandArguments = buildStep.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+          step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
         },
         (error) => {
           this.isLoading = false;
@@ -173,49 +148,42 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  getVersions(buildPluginName: string, versionTerm: string) {
-    if (versionTerm.length < 2) {
-      return;
-    }
-
+  editCommandArgument(arg: CommandArgument) {
     this.isLoading = true;
-    this.buildPluginService
-      .getVersionsOfBuildPlugin(buildPluginName, versionTerm)
+    this.commandArgumentService.updateCommandArgument(arg)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
           this.isLoading = false;
-          this.versions = resp.body;
-          console.log(this.versions);
         },
         (error) => {
           this.isLoading = false;
           this.toastrService.showError(error);
-        }
+        });
+  }
+
+  public searchFunctionFactory(step: BuildStep): (text: Observable<string>) => Observable<string[]> {
+    const search = (text$: Observable<string>) => {
+      return text$.pipe(
+          debounceTime(200),
+          distinctUntilChanged(),
+          switchMap(term => term.length < 2
+            ? [] : this.buildPluginService.versionsLookup(step.pluginCommand.plugin.dockerRegistryName, term))
       );
-  }
+    };
+    return search;
+}
 
-  search = (text$: Observable<string>) => {
-    return text$.pipe(
-        debounceTime(200),
-        distinctUntilChanged(),
-        switchMap(term => term.length < 2
-          ? [] : this.buildPluginService.versionsLookup(this.newBuildStep.buildPlugin.dockerRegistryName, term))
-    );
-  }
-
-  saveBuildStep() {
+  saveBuildStep(step: EmptyBuildStep) {
     const buildStep = {
-      pluginCommand: this.newBuildStep.pluginCommand,
+      pluginCommand: step.pluginCommand,
       index: this.buildSteps.length,
-      buildStepName: this.newBuildStep.buildStepName,
-      pluginCommandId: this.newBuildStep.pluginCommand.id,
+      buildStepName: step.buildStepName,
+      pluginCommandId: step.pluginCommand.id,
       projectId: this.projectId,
       workDirectory: this.workDir,
       commandArguments: this.commandArguments
     } as BuildStep;
-    buildStep.pluginCommand.plugin.version = this.version;
-    this.cancelBuildStep();
 
     this.isLoading = true;
     this.buildStepService
@@ -225,12 +193,29 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.buildSteps.push(resp);
+          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+  }
+
+  updateAllSteps() {
+    this.isLoading = true;
+    this.buildSteps.forEach(step =>
+      this.buildStepService.updateBuildStep(step)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          this.getProjectBuildSteps(this.projectId);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }));
   }
 
   removeBuildStep(buildStep: BuildStep) {
@@ -271,5 +256,17 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.toastrService.showError(error);
         }
       );
+  }
+
+  expandAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = true;
+    });
+  }
+
+  collapseAll() {
+    this.buildSteps.forEach(step => {
+      step.isAdding = false;
+    });
   }
 }

@@ -4,11 +4,16 @@ import { CommonModule } from '@angular/common';
 import { GroupListComponent } from './group-list/group-list.component';
 import { GroupResolverService } from '../../core/resolvers/group.resolver';
 import { GroupComponent } from './group/group.component';
+import { GroupCreateComponent } from './group-create/group-create.component';
 
 const routes: Routes = [
   {
     path: '',
     component: GroupListComponent,
+  },
+  {
+    path: 'new',
+    component: GroupCreateComponent,
   },
   {
     path: ':groupId',

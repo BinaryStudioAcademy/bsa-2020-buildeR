@@ -134,6 +134,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("BuildStepName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DockerImageVersion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Index")
                         .HasColumnType("int");
 
@@ -205,6 +208,9 @@ namespace buildeR.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
@@ -465,6 +471,9 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MemberRole")
                         .HasColumnType("int");

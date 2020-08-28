@@ -10,4 +10,8 @@ export interface BuildStep {
   workDirectory: string;
   projectId: number;
   commandArguments: CommandArgument[];
+  newCommandArgumentKey: string;
+  newCommandArgumentValue: string;
+  isAdding: boolean;
+  dockerImageVersion: string;
 }

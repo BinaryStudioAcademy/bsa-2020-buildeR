@@ -1,10 +1,10 @@
 <div class="container-fluid">
   <div class="header-main">
     <h2 *ngIf="currentUser?.username" class="first-message">How can we help
-      <strong *ngIf="currentUser?.firstName.length >= 0; else elseBlock">{{currentUser?.firstName}}</strong>?
+      <strong *ngIf="currentUser?.firstName; else elseBlock">{{currentUser?.firstName}}</strong>
       <ng-template #elseBlock>
-        <strong>{{currentUser?.username}}</strong>?
-      </ng-template>
+        <strong>{{currentUser?.username}}</strong>
+      </ng-template>?
     </h2>
     <h2 *ngIf="!currentUser?.username" class="first-message">How can we help?</h2>
     <h2 class="second-message">

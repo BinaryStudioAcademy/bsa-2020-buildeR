@@ -23,16 +23,23 @@ namespace buildeR.API.Controllers
             _synchronizationService = synchronizationService;
         }
 
+        [HttpPost("user/exist")]
+        public async Task<bool> CheckIfUserExist([FromBody] Credentials credentials)
+        {
+            return await _synchronizationService.CheckIfUserExist(credentials);
+        }
+
         [HttpGet("user/{userId}/credentials")]
         public async Task<Credentials> GetUserCredentials(int userId)
         {
             return await _synchronizationService.GetUserCredentials(userId);
         }
 
-        [HttpPost("user/exist")]
-        public async Task<bool> CheckIfUserExist([FromBody]Credentials credentials)
+        [HttpGet("user/{userId}/credentials/username")]
+        public async Task<object> GetUsernameFromCredentials(int userId)
         {
-            return await _synchronizationService.CheckIfUserExist(credentials);
+            var credentials = await _synchronizationService.GetUserCredentials(userId);
+            return new { Username = credentials.Username };
         }
 
         [HttpGet("user/{userId}/credentials/exist")]
