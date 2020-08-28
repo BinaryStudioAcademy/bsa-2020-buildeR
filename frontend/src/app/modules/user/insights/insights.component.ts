@@ -34,61 +34,61 @@ export class InsightsComponent implements OnInit {
 
   ngOnInit(): void {
     // mock
-    this.user.builds = [];
-    this.user.builds.push({
-      id: 1,
-      number: 1,
-      project: { id: 1 } as Project,
-      performer: this.user,
-      branchHash: null,
-      buildAt: this.now,
-      buildStatus: 0,
-      commitHash: null,
-      duration: 10
-    }, {
-      id: 2,
-      number: 2,
-      project: { id: 2 } as Project,
-      performer: this.user,
-      branchHash: null,
-      buildAt: new Date(2020, 7, 25),
-      buildStatus: 2,
-      commitHash: null,
-      duration: 19
-    },
-      {
-        id: 3,
-        number: 2,
-        performer: this.user,
-        project: { id: 1 } as Project,
-        branchHash: null,
-        buildAt: new Date(2020, 7, 25),
-        buildStatus: 1,
-        commitHash: null,
-        duration: 19
-      },
-      {
-        id: 4,
-        number: 2,
-        performer: this.user,
-        project: { id: 1 } as Project,
-        branchHash: null,
-        buildAt: new Date(2020, 7, 25),
-        buildStatus: 2,
-        commitHash: null,
-        duration: 19
-      },
-      {
-        id: 5,
-        number: 2,
-        performer: this.user,
-        project: { id: 2 } as Project,
-        branchHash: null,
-        buildAt: new Date(2020, 7, 25),
-        buildStatus: 3,
-        commitHash: null,
-        duration: 19
-      });
+    // this.user.builds = [];
+    // this.user.builds.push({
+    //   id: 1,
+    //   number: 1,
+    //   project: { id: 1 } as Project,
+    //   performer: this.user,
+    //   branchHash: null,
+    //   buildAt: this.now,
+    //   buildStatus: BuildStatus.Success,
+    //   commitHash: null,
+    //   duration: 10
+    // }, {
+    //   id: 2,
+    //   number: 2,
+    //   project: { id: 2 } as Project,
+    //   performer: this.user,
+    //   branchHash: null,
+    //   buildAt: new Date(2020, 7, 25),
+    //   buildStatus: BuildStatus.Failure,
+    //   commitHash: null,
+    //   duration: 19
+    // },
+    //   {
+    //     id: 3,
+    //     number: 2,
+    //     performer: this.user,
+    //     project: { id: 1 } as Project,
+    //     branchHash: null,
+    //     buildAt: new Date(2020, 7, 25),
+    //     buildStatus: BuildStatus.Canceled,
+    //     commitHash: null,
+    //     duration: 19
+    //   },
+    //   {
+    //     id: 4,
+    //     number: 2,
+    //     performer: this.user,
+    //     project: { id: 1 } as Project,
+    //     branchHash: null,
+    //     buildAt: new Date(2020, 7, 25),
+    //     buildStatus: BuildStatus.Success,
+    //     commitHash: null,
+    //     duration: 19
+    //   },
+    //   {
+    //     id: 5,
+    //     number: 2,
+    //     performer: this.user,
+    //     project: { id: 2 } as Project,
+    //     branchHash: null,
+    //     buildAt: new Date(2020, 7, 25),
+    //     buildStatus: BuildStatus.Success,
+    //     commitHash: null,
+    //     duration: 19
+    //   });
     // end of mock
 
 
