@@ -33,6 +33,13 @@ namespace buildeR.BLL.Services
         {
             return await base.GetAllAsync();
         }
+        public async Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId)
+        {
+            var groups = await Context.Groups.Include(g => g.TeamMembers).ThenInclude(m => m.User)
+                                                .Include(g => g.ProjectGroups).ToListAsync();
+            var userGroups = groups.Where(x => x.TeamMembers.Any(t => t.User.Id == userId));
+            return Mapper.Map<IEnumerable<GroupDTO>>(userGroups);
+        }
         public async Task<IEnumerable<GroupDTO>> GetGroupsWithMembersAndProjects()
         {
             var groups = await Context.Groups.Include(g => g.TeamMembers)
@@ -90,7 +97,6 @@ namespace buildeR.BLL.Services
         public async Task<IEnumerable<TeamMemberDTO>> GetGroupMembers(int id)
         {
             var group = await Context.Groups.AsNoTracking().Include(g => g.TeamMembers).ThenInclude(m=>m.User).FirstOrDefaultAsync(g => g.Id == id);
-           // var users = group.TeamMembers.Select(m => m.User);
             var members = Mapper.Map<IEnumerable<TeamMemberDTO>>(group.TeamMembers);
             return members;
         }

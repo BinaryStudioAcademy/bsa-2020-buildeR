@@ -23,6 +23,11 @@ namespace buildeR.API.Controllers
         {
            return await _groupService.GetGroupsWithMembersAndProjects();
         }
+        [HttpGet("getGroupsByUserId/{userId:int}")]
+        public async Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId)
+        {
+            return await _groupService.GetGroupsByUserId(userId);
+        }
 
         [HttpGet("{id}")]
         public async Task<GroupDTO> GetById(int id)
