@@ -32,6 +32,17 @@ namespace buildeR.Processor.Services
         private readonly string _pathToProjects;
         private readonly IElasticClient _elk;
 
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
+        {
+            var statusChange = new StatusChangeDto
+            {
+                Status = BuildStatus.InProgress,
+                Time = DateTime.Now,
+                BuildHistoryId = buildHistoryId
+            };
+            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
+        }
+
         public ProcessorService(IConfiguration config, IConsumer consumer, IProducer buildStatusesProducer, IElasticClient elk)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
@@ -51,23 +62,11 @@ namespace buildeR.Processor.Services
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
-            var statusChange = new StatusChangeDto
-            {
-                Status = BuildStatus.InProgress,
-                Time = DateTime.Now,
-                BuildHistoryId = executeBuild.BuildHistoryId
-            };
-            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
+            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId);
             // mock success
             await BuildProjectAsync(executeBuild).ContinueWith(t =>
             {
-                statusChange = new StatusChangeDto
-                {
-                    Status = BuildStatus.Success,
-                    Time = DateTime.Now,
-                    BuildHistoryId = executeBuild.BuildHistoryId
-                };
-                _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
+                SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId);
             });
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
