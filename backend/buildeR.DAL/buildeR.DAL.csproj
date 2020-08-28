@@ -25,6 +25,8 @@
     <Compile Remove="Migrations\20200805183921_AddSeeding.Designer.cs" />
     <Compile Remove="Migrations\20200810082859_AddIndexToStepAndUsePluginCommandInsteadOfPluginInStep.cs" />
     <Compile Remove="Migrations\20200810082859_AddIndexToStepAndUsePluginCommandInsteadOfPluginInStep.Designer.cs" />
+    <Compile Remove="Migrations\20200827110214_Configure relation between buildstep and commandarguments.cs" />
+    <Compile Remove="Migrations\20200827110214_Configure relation between buildstep and commandarguments.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

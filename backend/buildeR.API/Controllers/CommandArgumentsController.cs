@@ -1,5 +1,5 @@
 ﻿using buildeR.BLL.Interfaces;
-
+using buildeR.Common.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
@@ -20,6 +20,12 @@ namespace buildeR.API.Controllers
         public async Task Delete(int id)
         {
             await _commandArgumentService.RemoveAsync(id);
+        }
+
+        [HttpPut]
+        public async Task Update(CommandArgumentDTO commandArgument)
+        {
+            await _commandArgumentService.UpdateAsync(commandArgument);
         }
     }
 }
