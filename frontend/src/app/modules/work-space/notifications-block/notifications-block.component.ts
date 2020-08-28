@@ -13,32 +13,42 @@ export class NotificationsBlockComponent implements OnInit {
   public NotificationType = NotificationType;
   public showAllNotifications = false;
   public showRead = false;
-
+  public counter: number;
+  @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
+
 
   constructor() {
     this.seed();
     this.addOnInterval();
-  }
-
-  // Change type of notification to read, push it into array of read notifications and delete from general array
-  clearOne(notification: Notification) {
-    notification.isRead = true;
-    }
-
-  // Change type of all notifications to read, push them inro  array of read notifications and delete from general array
-  clearAll() {
-    this.notifications.forEach(notification => {
-      notification.isRead = true;
-    });
-    this.cashedNotifications = this.notifications;
+    this.onCountChange();
   }
 
   ngOnInit(): void {
     this.cashedNotifications = this.lastThreeNotifications(this.notifications);
   }
 
+   // Change type of notification to read, push it into array of read notifications and delete from general array
+   clearOne(notification: Notification) {
+    notification.isRead = true;
+    this.cashedNotifications = this.lastThreeNotifications(this.notifications.filter(x => x.isRead === false));
+    this.onCountChange();
+  }
+  onCountChange() {
+    this.counter = this.notifications?.filter(x => x.isRead === false)?.length;
+    this.counterNotifications.emit(this.counter);
+  }
+  // Change type of all notifications to read, push them inro  array of read notifications and delete from general array
+  clearAll() {
+    this.notifications.forEach(notification => {
+      notification.isRead = true;
+    });
+    this.cashedNotifications = this.notifications;
+    this.onCountChange();
+  }
+
   toggle() {
+    this.onCountChange();
     this.toggleNotifications.emit();
   }
 
@@ -102,6 +112,8 @@ export class NotificationsBlockComponent implements OnInit {
       }
       else {
         this.cashedNotifications = this.notifications;
-      } }, 10000);
+      }
+      this.onCountChange();
+     }, 10000);
   }
 }

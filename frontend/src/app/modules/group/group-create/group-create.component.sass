@@ -1,3 +1,7 @@
+.row 
+    display: flex
+    flex-direction: column
+
 .input-area
   justify-self: start
   margin: 0 0 20px
@@ -26,7 +30,7 @@ input[type='radio']
 
 .form-check
     display: block
-    position:relative
+    position: relative
     padding-left: 1.25rem
 
 .form-check-input
@@ -46,9 +50,15 @@ input[type='radio']
 .group-settings-sidebar
     h4
         margin-top: 0.5rem
+        border-bottom: 1px solid #dbdbdb
+        padding-bottom: 16px
     p
-        margin-top: 0
-        margin-bottom: 1rem
+        margin: 0
+        font-size: 16px
+        color: gray
+        text-align: center
+        border-bottom: 1px solid #dbdbdb
+        padding-bottom: 16px
 
 .buttons
     align-items: center
@@ -64,7 +74,6 @@ input[type='radio']
     margin-bottom: -16px
     padding-top: 16px
     paddinf-bottom: 16px
-    border-top: 1px solid #dbdbdb
     align-items: center
     justify-content: center
     display: flex
@@ -86,7 +95,45 @@ h4
     font-size: .75em
     margin-top: 0.1rem
 
-@media (min-width: 992px)
-.col-lg-9 
-    flex: 0 0 75%
-    max-width: 75%
+.input-block
+    display: flex
+    justify-content: center
+
+.in-col
+    flex-direction: column
+    margin-left: 9rem
+
+form
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    .form-body
+        border-bottom: 1px solid #dbdbdb
+        padding: 0 16px 8px 16px
+        padding-bottom: 0
+
+.offset
+    margin-left: 1rem
+
+.field-label
+    margin-right: 1rem
+
+.bottom
+    margin-bottom: 8px
+
+@media screen and (max-width: 991px)
+    .in-col 
+        margin-left: 6.75rem
+
+@media screen and (max-width: 772px)
+    .col-lg-9 
+        flex: 0 0 75%
+        max-width: 75%
+    .text
+        flex-direction: column
+    .offset
+        margin-left: 0
+    .in-col 
+        margin-left: 0
+
