@@ -36,7 +36,7 @@ namespace buildeR.Processor.Services
         {
             var statusChange = new StatusChangeDto
             {
-                Status = BuildStatus.InProgress,
+                Status = status,
                 Time = DateTime.Now,
                 BuildHistoryId = buildHistoryId
             };
