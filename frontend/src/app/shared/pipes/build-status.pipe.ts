@@ -7,7 +7,7 @@ import { BuildStatus } from '../models/build-status';
 })
 export class BuildStatusPipe implements PipeTransform {
   transform(value: number): string {
-    if (value <= BuildStatus.Pending) {
+    if (value <= BuildStatus.Canceled) {
       return BuildStatus[value];
     }
     if (value === BuildStatus.InProgress) {
