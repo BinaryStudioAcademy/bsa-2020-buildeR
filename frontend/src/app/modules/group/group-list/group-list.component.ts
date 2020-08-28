@@ -6,6 +6,9 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '../../../shared/models/user/user';
 import { UserRole } from '../../../shared/models/group/user-role';
+import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-group-list',
@@ -17,7 +20,12 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   loadingGroups = false;
   groups: Group[];
   currentUser: User;
-  constructor(private groupService: GroupService, private authService: AuthenticationService) { super(); }
+  constructor(
+    private groupService: GroupService,
+    private authService: AuthenticationService,
+    private modalService: NgbModal,
+    private toastrService: ToastrNotificationsService
+  ) { super(); }
 
   ngOnInit(): void {
     this.loadingGroups = true;
@@ -44,9 +52,32 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     }
     return member.memberRole;
   }
+
   deleteGroup(groupId: number) {
-    this.groupService.deleteGroup(groupId).subscribe(() => {
-      this.groups = this.groups.filter(group => group.id !== groupId);
-    });
+    const modalRef = this.modalService.open(ModalContentComponent);
+    const data = {
+      title: 'Group deletion',
+      message: 'Are you sure you want to delete this group?',
+      text:
+        'All information associated to this group will be permanently deleted. This operation can not be undone.',
+    };
+    modalRef.componentInstance.content = data;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.groupService
+            .deleteGroup(groupId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(() => {
+              this.groups = this.groups.filter(
+                (group) => group.id !== groupId
+              );
+              this.toastrService.showSuccess('Group is deleted');
+            });
+        }
+      })
+      .catch((error) => {
+        this.toastrService.showError(error.message, error.name);
+      });
   }
 }
