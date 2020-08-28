@@ -1,4 +1,5 @@
 using buildeR.Processor.Extensions;
+using buildeR.Processor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,8 @@ namespace builder.Processor
             services.RegisterServices(Configuration);
 
             services.AddElasticsearch(Configuration);
+
+            services.AddHostedService<ProcessorService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,8 +44,6 @@ namespace builder.Processor
             }
 
             app.UseRouting();
-
-            app.UseProcessorService();
 
             app.UseEndpoints(endpoints =>
             {
