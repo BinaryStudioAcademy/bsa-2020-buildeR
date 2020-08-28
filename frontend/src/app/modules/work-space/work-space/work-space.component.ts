@@ -23,6 +23,7 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   user: User;
   groups: Group[];
   groupsLoaded: Promise<boolean>;
+  countNotifications = -1;
   constructor(
     private signalR: SignalRService,
     private httpService: HttpService,
@@ -62,5 +63,9 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
 
   showNotifications() {
     this.isShowNotifications = !this.isShowNotifications;
+  }
+  counterNotifications(count: number) {
+    console.log(count);
+    this.countNotifications = count;
   }
 }
