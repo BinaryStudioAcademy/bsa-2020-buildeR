@@ -90,6 +90,10 @@ export class ProjectService {
     envVar);
   }
 
+  validateProjectName(userId: number, projectName: string): Observable<boolean> {
+    return this.httpService.getRequest<boolean>(`${this.routePrefix}/projectNameValidation/${userId}/${projectName}`);
+  }
+
   editEnvVarEvent(envVar: EnviromentVariable) {
     this.envVariable$.next(envVar);
   }

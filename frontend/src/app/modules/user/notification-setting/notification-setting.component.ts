@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationSetting } from 'src/app/shared/models/notification-setting/notification-setting';
 import { NotificationDescription } from 'src/app/shared/models/notification-setting/notification-description';
-import { NotificationSettingType } from '@shared/models/notification-setting/notification-setting-type';
+import { NotificationType } from '@shared/models/notification-type';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { NotificationSettingService } from '@core/services/notification-setting.service';
 import { map } from 'rxjs/operators';
@@ -19,8 +19,8 @@ export class NotificationSettingComponent implements OnInit {
   setting: NotificationSetting = {} as NotificationSetting;
   descriptions: NotificationDescription [] =
   [
-    { notificationType: NotificationSettingType.buildSuccess,  description: 'When build of project was successful'},
-    { notificationType: NotificationSettingType.buildFailed, description: 'When build of project was failed'},
+    { notificationType: NotificationType.buildSuccess,  description: 'When build of project was successful'},
+    { notificationType: NotificationType.buildFailed, description: 'When build of project was failed'},
   ];
   constructor(
     private settingService: NotificationSettingService,
@@ -59,6 +59,16 @@ export class NotificationSettingComponent implements OnInit {
     if (res) {
       res = false;
       this.settingService.updateNotificationSettings(this.setting)
+      .pipe(
+        map(setting =>
+          {
+            setting.notificationSettingOptions.map(option =>
+              {
+                option.description = this.descriptions.find(d => d.notificationType === option.notificationType).description;
+                return option;
+              });
+            return setting;
+          }))
       .subscribe(
         (data) =>
         {

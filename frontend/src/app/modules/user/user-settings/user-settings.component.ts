@@ -98,6 +98,12 @@ export class UserSettingsComponent implements OnInit {
 
   onSubmit(user: User) {
     user.id = this.details.id;
+    if(!user.firstName){
+      user.firstName = null;
+    }
+    if(!user.lastName){
+      user.lastName = null;
+    }
     this.userService.updateUser(user).subscribe(updateUser => {
       this.details = updateUser;
       this.isChanged = true;
@@ -127,6 +133,7 @@ export class UserSettingsComponent implements OnInit {
 
   private isValidUrl(url: string) {
     try {
+      // tslint:disable-next-line: no-unused-expression
       new URL(url);
     } catch (_) {
       return false;

@@ -9,7 +9,6 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { firebase } from '../../environments/firebase.config';
 
 import { ModalContentComponent } from './components/modal-content/modal-content.component';
-import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { RegistrationDialogComponent } from './components/registration-dialog/registration-dialog.component';
@@ -23,7 +22,6 @@ import { EmailVerificationModalComponent } from './components/email-verification
 @NgModule({
   declarations: [
     ModalContentComponent,
-    LandingPageComponent,
     SignInComponent,
     SignUpComponent,
     RegistrationDialogComponent,
@@ -43,7 +41,6 @@ import { EmailVerificationModalComponent } from './components/email-verification
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
   ],
   exports: [
-    LandingPageComponent,
     SignInComponent,
     SignUpComponent,
   ]

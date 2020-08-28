@@ -9,4 +9,5 @@ export interface TeamMember {
   memberRole: UserRole;
   user: User;
   group: Group;
+  joinedDate: Date;
 }
