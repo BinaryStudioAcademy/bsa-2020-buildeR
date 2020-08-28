@@ -4,11 +4,12 @@ import { GroupRoutingModule } from './group-routing.module';
 import { GroupListComponent } from './group-list/group-list.component';
 import { GroupComponent } from './group/group.component';
 import { SharedModule } from '@shared/shared.module';
+import { GroupCreateComponent } from './group-create/group-create.component';
 
 
 
 @NgModule({
-  declarations: [GroupListComponent, GroupComponent],
+  declarations: [GroupListComponent, GroupComponent, GroupCreateComponent],
   imports: [
     CommonModule,
     GroupRoutingModule,

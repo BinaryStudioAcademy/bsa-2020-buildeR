@@ -1,7 +1,4 @@
 ﻿using buildeR.DAL.Entities.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace buildeR.DAL.Entities
 {

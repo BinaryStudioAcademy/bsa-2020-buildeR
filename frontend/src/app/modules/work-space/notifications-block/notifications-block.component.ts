@@ -9,8 +9,10 @@ import { NotificationType } from '../../../shared/models/notification-type';
 })
 export class NotificationsBlockComponent implements OnInit {
   public notifications: Notification[];
-  public readNotifications: Notification[] = [];
+  public cashedNotifications: Notification[] = [];
   public NotificationType = NotificationType;
+  public showAllNotifications = false;
+  public showRead = false;
 
   @Output() toggleNotifications = new EventEmitter<void>();
 
@@ -22,63 +24,84 @@ export class NotificationsBlockComponent implements OnInit {
   // Change type of notification to read, push it into array of read notifications and delete from general array
   clearOne(notification: Notification) {
     notification.isRead = true;
-    this.readNotifications.push(notification);
-
-    const index = this.notifications.indexOf(notification);
-    this.notifications.splice(index, 1);
     }
 
   // Change type of all notifications to read, push them inro  array of read notifications and delete from general array
   clearAll() {
     this.notifications.forEach(notification => {
       notification.isRead = true;
-      this.readNotifications.push(notification);
     });
-    this.notifications = [];
+    this.cashedNotifications = this.notifications;
   }
 
   ngOnInit(): void {
+    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
   }
 
   toggle() {
     this.toggleNotifications.emit();
   }
 
-  // First 3 notifications with different types (can be more types: just need to add class to styles)
+  // First 2 notifications with different types (can be more types: just need to add class to styles)
   seed() {
     const seedData: Notification[] = [
       {
-        message: 'First notification',
+        message: 'Build success',
         date: Date.now(),
         isRead: false,
-        type: NotificationType.personal
+        type: NotificationType.buildSuccess
       },
       {
-        message: 'Second notification',
+        message: 'Build failed',
         date: Date.now(),
         isRead: false,
-        type: NotificationType.group
+        type: NotificationType.buildFailed
       },
       {
-        message: 'Third notification',
+        message: 'Build success',
         date: Date.now(),
         isRead: false,
-        type: NotificationType.build
+        type: NotificationType.buildSuccess
+      },
+      {
+        message: 'Build failed',
+        date: Date.now(),
+        isRead: false,
+        type: NotificationType.buildFailed
       }
     ];
     this.notifications = seedData;
+    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
+  }
+  lastThreeNotifications(notifications: Notification[]): Notification[] {
+    return notifications.filter(x => x.isRead === false).slice(-3);
+  }
+  showAll() {
+    this.cashedNotifications = this.notifications;
+    this.showAllNotifications = true;
   }
 
-  // Add more notifications each 3 seconds
+  showLast() {
+    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
+    this.showAllNotifications = false;
+    this.showRead = false;
+  }
+  // Add more notifications each 10 seconds
   addOnInterval() {
-    setInterval(() => { this.notifications
+    setInterval(() => {
+      this.notifications
         .push(
           {
-            message: 'Another notification',
+            message: 'Build failed',
             date: Date.now(),
             isRead: false,
-            type: NotificationType.build
+            type: NotificationType.buildFailed
           });
-        }, 3000);
+      if (!this.showAllNotifications) {
+        this.cashedNotifications = this.lastThreeNotifications(this.notifications);
+      }
+      else {
+        this.cashedNotifications = this.notifications;
+      } }, 10000);
   }
 }

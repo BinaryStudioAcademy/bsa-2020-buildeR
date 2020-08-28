@@ -1,12 +1,8 @@
-
-.logo
-   height: 40px
-
 button
   border: none
 
-:focus
-  outline:0 !important
+  :focus
+    outline:0 !important
 
 /* Cards block */
 .card-body
@@ -88,13 +84,6 @@ button
     &:first-child:after
       content: none
 
-// Navbar
-
-nav.navbar
-  position: sticky
-  top: 0
-  z-index: 99
-
 // title
 
 .main-title
@@ -136,29 +125,6 @@ nav.navbar
 
         &:nth-child(4)
           animation-delay: 7.5s
-
-@keyframes rollDown
-  0%
-    opacity: 0
-
-  5%
-    opacity: 0
-    transform: translateY(-75px)
-
-  10%
-    opacity: 1
-    transform: translateY(0)
-
-  30%
-    opacity: 1
-    transform: translateY(0)
-
-  40%
-    opacity: 0
-    transform: translateY(75px)
-
-  100%
-    opacity: 0
 
 #features
   padding-top: 2rem

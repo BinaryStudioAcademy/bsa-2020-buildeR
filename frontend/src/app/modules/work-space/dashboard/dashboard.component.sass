@@ -20,7 +20,6 @@ span.title
 
 .fa-bars
   display: inline-block
-  height: 1.5em
   vertical-align: middle
   color: gray
 
@@ -76,6 +75,31 @@ span.title
     min-width: 150px
     font-size: .9em
 
+.project-wr
+  padding-left: 30px
+
+.owner-wr
+  display: flex
+  justify-content: flex-start
+  align-items: center
+  .avatar-wr
+    display: block
+    min-width: fit-content
+    .owner-avatar
+      width: 26px
+      height: 26px
+      border-radius: 13px
+  // h6
+  //   margin-right: 2px
+
+.actions
+  display: flex
+  justify-content: center
+  align-items: center
+  min-width: 100px !important
+  div
+    height: min-content
+
 .fas.fa-star
   color: #edde3f
 
@@ -89,11 +113,14 @@ span.title
   height: 100%
 
 .star
-  font-size: 2rem
+  margin: 6px 0px 0 10px
+  font-size: 1.4rem
   overflow: visible
 
 /* MEDIA QUERIES */
 @media only screen and (min-width: 767px)
+  .project-wr
+    padding-left: 20px
   .row-bottom:after
     content: ""
     display: block
@@ -105,10 +132,14 @@ span.title
     background: linear-gradient(-90deg, #fff 30%, rgba(255, 255, 255, 0) 100%)
 
 @media (min-width: 992px)
+  .project-wr
+    padding-left: 25px
   .row
     min-height: 5rem
 
 @media (max-width: 991px)
+  .project-wr
+    padding-left: 20px
   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-12
     padding-left: 0 !important
     padding-right: 0 !important
@@ -121,9 +152,12 @@ span.title
     font-size: 1rem
 
 @media (max-width: 767px)
+  .project-wr
+    padding-left: 5px
   .star-area
     margin-left: 1% !important
     margin-right: 2% !important
+    min-width: 40px !important
   .trigger-area
     position: absolute
     top: 25%
@@ -155,7 +189,6 @@ span.title
     top: 0
     right: 5%
     width: 10%
-
   .row-cols-sm-2, .row-cols-2
     padding-left: 5px !important
 
@@ -165,7 +198,8 @@ span.title
   .star-btn
     padding: 0
   .star
-    font-size: 1.5rem
+    margin: 6px 0 0 2px
+    font-size: 1rem
   .btn
     font-size: 0.8rem
   span

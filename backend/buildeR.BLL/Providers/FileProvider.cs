@@ -1,33 +1,35 @@
 ﻿using buildeR.BLL.Interfaces;
-using buildeR.Common.DTO.User;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Providers
 {
     public class FileProvider : IFileProvider
     {
-        private readonly string BaseUrl = Environment.GetEnvironmentVariable(nameof(BaseUrl));
-
         public async Task<string> UploadUserPhoto(IFormFile file)
         {
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             var folderName = Path.Combine("Resources", "Avatars");
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            return await SaveFile(folderName, file);
+        }
 
-            var fullPath = Path.Combine(pathToSave, fileName);
-            var dbPath = Path.Combine(BaseUrl, folderName, fileName);
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+        private async Task<string> SaveFile(string relativePath, IFormFile file)
+        {
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
+
+            if (!Directory.Exists(directoryPath))
             {
-                await file.CopyToAsync(stream);
+                Directory.CreateDirectory(directoryPath);
             }
-            return dbPath;
-            
+
+            var filePath = Path.Combine(directoryPath, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return Path.Combine(relativePath, fileName);
         }
     }
 }
