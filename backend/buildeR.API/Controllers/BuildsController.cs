@@ -39,12 +39,6 @@ namespace buildeR.API.Controllers
             return await _buildService.GetBuildById(id);
         }
 
-        [HttpPost("{id}/status/{status:int}")]
-        public async Task<BuildHistoryDTO> ChangeStatus(int id, int status)
-        {
-            return await _buildService.ChangeStatus(id, status);
-        }
-
         [HttpPost]
         public async Task<BuildHistoryDTO> Create(NewBuildHistoryDTO buildHistory)
         {

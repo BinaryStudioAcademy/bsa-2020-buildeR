@@ -2,6 +2,7 @@
 using buildeR.Common.DTO.BuildHistory;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using buildeR.Common.DTO;
 
 namespace buildeR.BLL.Interfaces
 {
@@ -13,6 +14,6 @@ namespace buildeR.BLL.Interfaces
         Task Update(BuildHistoryDTO build);
         Task Delete(int id);
         Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id);
-        Task<BuildHistoryDTO> ChangeStatus(int buildHistoryId, int status);
+        Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange);
     }
 }

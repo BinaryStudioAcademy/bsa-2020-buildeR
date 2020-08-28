@@ -6,7 +6,7 @@ using System;
 
 namespace buildeR.RabbitMq.Realization
 {
-    class Consumer : IConsumer
+    public class Consumer : IConsumer
     {
         private readonly EventingBasicConsumer _consumer;
         public event EventHandler<BasicDeliverEventArgs> Received

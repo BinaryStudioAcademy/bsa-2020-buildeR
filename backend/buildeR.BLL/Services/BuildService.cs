@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using buildeR.Common.DTO;
 using buildeR.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1;
@@ -56,6 +57,7 @@ namespace buildeR.BLL.Services
 
             history.Number = lastNumber + 1;
             history.BuildStatus = BuildStatus.Pending;
+            history.StartedAt = DateTime.Now;
 
             await Context.SaveChangesAsync();
 
@@ -92,17 +94,24 @@ namespace buildeR.BLL.Services
                     .ToListAsync());
         }
 
-        public async Task<BuildHistoryDTO> ChangeStatus(int buildHistoryId, int status)
+        public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)
         {
             // TODO add checking
-            var buildHistory = await Context.BuildHistories.FindAsync(buildHistoryId);
+            var buildHistory = await Context.BuildHistories.FindAsync(statusChange.BuildHistoryId);
             if (buildHistory != null)
             {
-                buildHistory.BuildStatus = (BuildStatus) status;
+                buildHistory.BuildStatus = statusChange.Status;
+
+                if (statusChange.Status != BuildStatus.InProgress)
+                {
+                    buildHistory.BuildAt = DateTime.Now;
+                    buildHistory.Duration = (buildHistory.StartedAt - buildHistory.BuildAt).Milliseconds;
+                }
+                
                 await Context.SaveChangesAsync();
             }
 
-            return await GetBuildById(buildHistoryId);
+            return await GetBuildById(statusChange.BuildHistoryId);
         }
     }
 }
