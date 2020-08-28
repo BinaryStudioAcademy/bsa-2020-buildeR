@@ -10,6 +10,7 @@ namespace buildeR.Common.DTO.Synchronization.Github
         public string Name { get; set; }
         public string Description { get; set; }
         public bool Private { get; set; }
+        public string Html_Url { get; set; }
         public GithubUser Owner { get; set; }
     }
 }

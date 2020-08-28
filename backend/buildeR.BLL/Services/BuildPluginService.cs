@@ -38,7 +38,7 @@ namespace buildeR.BLL.Services
             }
 
             return result
-                .Where(version => version.Name.Equals(partOfVersionWord) || version.Name.Contains(partOfVersionWord))
+                .Where(version => version.Name.Equals(partOfVersionWord, StringComparison.InvariantCultureIgnoreCase) || version.Name.StartsWith(partOfVersionWord, StringComparison.InvariantCultureIgnoreCase))
                 .Take(10)
                 .Select(version => version.Name);
         }

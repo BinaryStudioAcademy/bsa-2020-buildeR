@@ -18,9 +18,9 @@ export class UserComponent implements OnInit {
   googleClick = false;
 
   tabRoutes: TabRoute[] = [
-    { name: 'Profile', route: '' },
-    { name: 'Notification settings', route: 'notificationsettings' },
+    { name: 'Profile', route: './' },
     { name: 'Insights', route: 'insights'},
+    { name: 'Notification settings', route: 'notificationsettings' },
     { name: 'Credential settings', route: 'credentialsettings' }
   ];
 

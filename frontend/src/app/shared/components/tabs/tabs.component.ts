@@ -12,7 +12,7 @@ export class TabsComponent implements OnInit {
 
   currentPath: string;
   tab = 0;
-  @Input('tabRoutes') tabRoutes: TabRoute[] = [];
+  @Input() tabRoutes: TabRoute[] = [];
 
   constructor(private route: ActivatedRoute){}
 
