@@ -24,7 +24,7 @@ namespace buildeR.Processor.Extensions
 
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ProcessorService>(serviceProvider => ProcessServiceFactory(serviceProvider, configuration));
+            services.AddHostedService<ProcessorService>(serviceProvider => ProcessServiceFactory(serviceProvider, configuration));
         }
 
         private static ProcessorService ProcessServiceFactory(IServiceProvider serviceProvider, IConfiguration configuration)

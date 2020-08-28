@@ -98,6 +98,8 @@ namespace buildeR.BLL.Services
                                     .Include(p => p.Repository)
                                     .Include(p => p.BuildSteps)
                                         .ThenInclude(s => s.BuildPluginParameters)
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.CommandArguments)
                                     .FirstOrDefaultAsync(p => p.Id == projectId);
 
             if (project == null)

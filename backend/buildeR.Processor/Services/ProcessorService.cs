@@ -21,12 +21,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using buildeR.Common.Enums;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
 
 namespace buildeR.Processor.Services
 {
-    public class ProcessorService
+    public class ProcessorService : IHostedService
     {
         private readonly IConsumer _consumer;
+        private Task _executingTask;
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
         private readonly IProducer _buildStatusesProducer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
@@ -71,14 +75,16 @@ namespace buildeR.Processor.Services
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
 
-        public void Register()
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _consumer.Consume();
+            return Task.CompletedTask;
         }
 
-        public void Unregister()
+        public Task StopAsync(CancellationToken cancellationToken)
         {
-            Log.Information(" >>>> Unregistered");
+            Log.Information("Processor stopped");
+            return Task.CompletedTask;
         }
 
         #region Build and output
@@ -240,7 +246,7 @@ namespace buildeR.Processor.Services
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
             var template = Template.Parse(
-                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest\r\n" +
+                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
