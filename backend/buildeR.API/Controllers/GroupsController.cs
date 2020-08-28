@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.Group;
+using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.TeamMember;
 using Microsoft.AspNetCore.Mvc;
 
 namespace buildeR.API.Controllers
@@ -20,6 +22,11 @@ namespace buildeR.API.Controllers
         public async Task<IEnumerable<GroupDTO>> GetAll()
         {
            return await _groupService.GetGroupsWithMembersAndProjects();
+        }
+        [HttpGet("getGroupsByUserId/{userId:int}")]
+        public async Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId)
+        {
+            return await _groupService.GetGroupsByUserId(userId);
         }
 
         [HttpGet("{id}")]
@@ -44,6 +51,16 @@ namespace buildeR.API.Controllers
         public async Task Delete(int id)
         {
             await _groupService.Delete(id);
+        }
+        [HttpGet("getProjectsByGroupId/{groupId:int}")]
+        public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByGroup(int groupId)
+        {
+            return await _groupService.GetGroupProjects(groupId);
+        }
+        [HttpGet("getMembersByGroupId/{groupId:int}")]
+        public async Task<IEnumerable<TeamMemberDTO>> GetMembersByGroup(int groupId)
+        {
+            return await _groupService.GetGroupMembers(groupId);
         }
     }
 }

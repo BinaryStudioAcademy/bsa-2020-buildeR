@@ -4,19 +4,20 @@ import {
   Renderer2,
   AfterViewInit,
   Input,
+  OnChanges,
 } from '@angular/core';
 import { BuildStatus } from '@shared/models/build-status';
 
 @Directive({
   selector: '[appBuildHistoryStatus]',
 })
-export class BuildHistoryStatusDirective implements AfterViewInit {
+export class BuildHistoryStatusDirective implements OnChanges {
   @Input('appBuildHistoryStatus') status: BuildStatus;
   private statusColor: string;
 
   constructor(private elRef: ElementRef, private renderer: Renderer2) {}
 
-  ngAfterViewInit(): void {
+  ngOnChanges(): void {
     switch (this.status) {
       case BuildStatus.Success:
         this.statusColor = '#39aa56';

@@ -11,7 +11,7 @@ namespace buildeR.DAL.Context.EntityConfigurations
         {
             entity.HasOne(e => e.Group)
                 .WithMany(g => g.TeamMembers)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.User)
                 .WithMany(g => g.TeamMembers)

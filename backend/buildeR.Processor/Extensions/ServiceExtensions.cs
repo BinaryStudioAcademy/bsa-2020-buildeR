@@ -31,10 +31,11 @@ namespace buildeR.Processor.Extensions
         {
             var connectionProvider = serviceProvider.GetService<IProducerConsumerWrapper>();
             var consumer = connectionProvider.GetConsumer(configuration.Bind<QueueSettings>("Queues:FromAPIToProcessor"));
+            var buildStatusesProducer = connectionProvider.GetProducer(configuration.Bind<QueueSettings>("Queues:BuildStatuses"));
 
             var elasticClient = serviceProvider.GetService<IElasticClient>();
 
-            return new ProcessorService(configuration, consumer, elasticClient);
+            return new ProcessorService(configuration, consumer, buildStatusesProducer, elasticClient);
         }
         public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
         {
