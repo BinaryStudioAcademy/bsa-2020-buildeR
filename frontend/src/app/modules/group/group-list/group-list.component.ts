@@ -27,7 +27,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   getGroups() {
     this.loadingGroups = true;
     this.groupService
-      .getAllGroups()
+      .getUserGroups(this.currentUser.id)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
@@ -43,5 +43,10 @@ export class GroupListComponent extends BaseComponent implements OnInit {
       return null;
     }
     return member.memberRole;
+  }
+  deleteGroup(groupId: number) {
+    this.groupService.deleteGroup(groupId).subscribe(() => {
+      this.groups = this.groups.filter(group => group.id !== groupId);
+    });
   }
 }

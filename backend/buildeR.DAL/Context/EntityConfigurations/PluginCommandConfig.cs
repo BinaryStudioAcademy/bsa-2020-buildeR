@@ -9,9 +9,6 @@ namespace buildeR.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<PluginCommand> entity)
         {
-            entity.HasOne(e => e.Plugin)
-                .WithMany(p => p.PluginCommands)
-                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

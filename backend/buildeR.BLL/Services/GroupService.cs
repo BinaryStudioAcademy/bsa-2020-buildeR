@@ -5,11 +5,13 @@ using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Group;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.Enums;
+using buildeR.Common.DTO.Project;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
@@ -30,6 +32,13 @@ namespace buildeR.BLL.Services
         public async Task<IEnumerable<GroupDTO>> GetAll()
         {
             return await base.GetAllAsync();
+        }
+        public async Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId)
+        {
+            var groups = await Context.Groups.Include(g => g.TeamMembers).ThenInclude(m => m.User)
+                                                .Include(g => g.ProjectGroups).ToListAsync();
+            var userGroups = groups.Where(x => x.TeamMembers.Any(t => t.User.Id == userId));
+            return Mapper.Map<IEnumerable<GroupDTO>>(userGroups);
         }
         public async Task<IEnumerable<GroupDTO>> GetGroupsWithMembersAndProjects()
         {
@@ -74,6 +83,22 @@ namespace buildeR.BLL.Services
                 throw new NotFoundException(nameof(Group), id);
             }
             await base.RemoveAsync(id);
+        }
+
+        public async Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id)
+        {
+            var group = await Context.Groups.AsNoTracking().Include(g => g.ProjectGroups).ThenInclude(p=>p.Project)
+                .Include(g => g.TeamMembers).FirstOrDefaultAsync(g => g.Id == id);
+            var projects = group.ProjectGroups.Select(x => x.Project);
+            var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
+            return projectInfos;
+        }
+
+        public async Task<IEnumerable<TeamMemberDTO>> GetGroupMembers(int id)
+        {
+            var group = await Context.Groups.AsNoTracking().Include(g => g.TeamMembers).ThenInclude(m=>m.User).FirstOrDefaultAsync(g => g.Id == id);
+            var members = Mapper.Map<IEnumerable<TeamMemberDTO>>(group.TeamMembers);
+            return members;
         }
     }
 }

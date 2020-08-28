@@ -3,6 +3,7 @@ import { BuildStatus } from '../models/build-status';
 
 @Pipe({
   name: 'buildStatus',
+  // pure: false
 })
 export class BuildStatusPipe implements PipeTransform {
   transform(value: number): string {

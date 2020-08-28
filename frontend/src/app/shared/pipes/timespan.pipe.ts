@@ -8,8 +8,11 @@ export class TimespanPipe implements PipeTransform {
   // value - timespan in seconds
   transform(value: number): string {
     value /= 1000;
-    if (value < 1) {
+    if (value === 0) {
       return "—";
+    }
+    if (value < 1) {
+      return "< 1 sec";
     }
     if (value < 60) {
       return new DatePipe('en-US').transform(value * 1000, "ss 'sec'");

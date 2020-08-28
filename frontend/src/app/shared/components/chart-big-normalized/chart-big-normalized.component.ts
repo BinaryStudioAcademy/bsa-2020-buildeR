@@ -42,8 +42,8 @@ export class ChartBigNormalizedComponent implements OnInit {
   showLegend = false;
   showXAxisLabel = false;
   xAxisLabel = '';
-  showYAxisLabel = true;
-  yAxisLabel = 'Build Statuses';
+  showYAxisLabel = false;
+  yAxisLabel = '';
   legendTitle = 'Statuses';
 
   colorScheme = {
@@ -51,6 +51,9 @@ export class ChartBigNormalizedComponent implements OnInit {
   };
 
   constructor() {
+
+  }
+  ngOnInit(): void {
     if (window.innerWidth < 400){
       this.view = [window.innerWidth - 50, 300];
       this.showYAxisLabel = true;
@@ -59,9 +62,6 @@ export class ChartBigNormalizedComponent implements OnInit {
       this.view = [window.innerWidth - 300, 300];
       this.showYAxisLabel = true;
     }
-  }
-  ngOnInit(): void {
-
     window.onresize = () => {
     if (window.innerWidth < 400){
       this.view = [window.innerWidth - 50, 300];

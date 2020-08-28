@@ -2,7 +2,7 @@
   <div class="date-with-options">
     <div class="date">
 
-     <label for=""> <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small></label>
+     <label for=""> <small> {{countedDate | date:'mediumDate'}} - {{now | date:'mediumDate'}}</small></label>
     </div>
     <div class="week-month">
       <nav>
@@ -27,7 +27,7 @@
   <div class="charts">
 
     <div class="first-chart border">
-      <h6 style="padding-left: 32%">Total builds</h6>
+      <h6> Total builds</h6>
       <h5>{{totalBuilds}}</h5>
       <div>
         <app-chart-small [results]="buildsData">
@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="second-chart border">
-      <h6 style="padding-left: 25%">Total job minutes</h6>
+      <h6 >Total job minutes</h6>
       <h5>{{totalDuration}}</h5>
       <div class="chart">
         <app-chart-small [results]="durationData">
@@ -43,22 +43,23 @@
       </div>
     </div>
     <div class="third-chart border">
-      <h6 style="padding-left: 18%">Build Success Rate</h6>
+      <h6 >Build Success Rate</h6>
       <h5>{{buildSuccessRate}}%</h5>
       <app-chart-small [results]="successData">
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
-      <h6 style="padding-left: 26%">Active Projects</h6>
+      <h6>Active Projects</h6>
       <h5>{{activeProjects}}</h5>
       <app-chart-small [results]="projectData">
       </app-chart-small>
     </div>
   </div>
-  <div class="big-chart-wrap container">
-    <div class="big-chart">
-      <app-chart-big-normalized [results]="bigChartData">
+  <div style="text-align: center;">
+    <h5>Build Statuses</h5>
+      <app-chart-big-normalized [hidden]="!month" [results]="bigChartData">
       </app-chart-big-normalized>
+      <app-chart-big-grouped [hidden]="month" [results]="bigChartData">
+      </app-chart-big-grouped>
     </div>
-  </div>
 </div>

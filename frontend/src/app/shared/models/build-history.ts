@@ -7,8 +7,9 @@ export interface BuildHistory {
   project: Project;
   number: number;
   performer: User;
-  duration: number;
-  buildAt: Date;
+  duration: number | null;
+  buildAt: Date | null;
+  startedAt: Date;
   branchHash: string;
   commitHash: string;
   buildStatus: BuildStatus;

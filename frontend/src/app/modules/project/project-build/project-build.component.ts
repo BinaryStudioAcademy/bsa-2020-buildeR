@@ -32,4 +32,8 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       );
     });
   }
+
+  getCommit(bh: BuildHistory) {
+    return bh.commitHash?.substring(0, 6) ?? "—";
+  }
 }

@@ -11,5 +11,6 @@ namespace buildeR.Common.DTO.Synchronization
         public string Description { get; set; }
         public bool Private { get; set; }
         public string Owner { get; set; }
+        public string Url { get; set; }
     }
 }
