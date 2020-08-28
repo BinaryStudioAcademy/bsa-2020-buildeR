@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Net.Http;
 using System.Reflection;
 using buildeR.Common.DTO;
+using buildeR.HostedServices;
 
 namespace buildeR.API.Extensions
 {
@@ -64,8 +65,10 @@ namespace buildeR.API.Extensions
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
-            var queueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
-            services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), queueSettings));
+            var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
+            services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), toProcessorQueueSettings));
+            
+            services.AddHostedService<BuildStatusesQueueConsumerService>();
         }
         public static void RegisterHttpCients(this IServiceCollection services)
         {

@@ -6,6 +6,9 @@ import { NewProject } from '@shared/models/project/new-project';
 import { Observable, Subject } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
+import { BuildHistory } from '@shared/models/build-history';
+import { Branch } from '@core/models/Branch';
+import { NewBuildHistory } from '@shared/models/new-build-history';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -41,10 +44,10 @@ export class ProjectService {
   public updateProject(project: Project): Observable<Project> {
     return this.httpService.putRequest<Project>(`${this.routePrefix}`, project);
   }
-  public startProjectBuild(projectId: number): Observable<any> {
-    return this.httpService.postRequest<any>(
-      `${this.routePrefix}/${projectId}/build`,
-      null
+  public startProjectBuild(history: NewBuildHistory): Observable<BuildHistory> {
+    return this.httpService.postRequest<BuildHistory>(
+      `${this.routePrefix}/build`,
+      history
     );
   }
 

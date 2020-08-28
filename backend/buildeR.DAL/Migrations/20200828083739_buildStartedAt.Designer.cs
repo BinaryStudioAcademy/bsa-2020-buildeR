@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200828083739_buildStartedAt")]
+    partial class buildStartedAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("BranchHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("BuildAt")
+                    b.Property<DateTime>("BuildAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("BuildStatus")
@@ -38,7 +40,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("CommitHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Duration")
+                    b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<int>("Number")
@@ -135,9 +137,6 @@ namespace buildeR.DAL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("BuildStepName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DockerImageVersion")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Index")
@@ -658,9 +657,9 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.BuildPlugin", "Plugin")
-                        .WithMany()
+                        .WithMany("PluginCommands")
                         .HasForeignKey("PluginId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -678,7 +677,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Group", "Group")
                         .WithMany("ProjectGroups")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
@@ -711,7 +710,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.Group", "Group")
                         .WithMany("TeamMembers")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.User", "User")

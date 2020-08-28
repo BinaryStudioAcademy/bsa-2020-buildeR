@@ -8,7 +8,7 @@
   <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
     <div class='user-commit'>
       <a><i class="fas fa-user-tie"></i> Author: {{buildHistory.performer.username}}</a>
-      <p><i class="fas fa-code"></i> Commit <span class="commit">{{buildHistory.commitHash.substring(0, 6)}}</span></p>
+      <p><i class="fas fa-code"></i> Commit <span class="commit">{{ getCommit(buildHistory) }}</span></p>
       <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
     </div>
     <div class="build-info">
