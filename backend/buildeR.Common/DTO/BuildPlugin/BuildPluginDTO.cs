@@ -11,7 +11,5 @@ namespace buildeR.Common.DTO.BuildPlugin
         public string Command { get; set; }
         public string DockerImageName { get; set; }
         public string DockerRegistryName { get; set; }
-
-        public ICollection<PluginCommandDTO> PluginCommands { get; set; } //is needed?
     }
 }
