@@ -1,105 +1,103 @@
 <div class="container">
-    <div class="row">
-        <div class="create-group">
-            <div class="group-settings-sidebar col-sm-12">
-                <h4>
-                    New group
-                </h4>
-                <p>
-                    Groups allow you to manage and collaborate across multiple projects. Members of a group have access
-                    to
-                    all of its projects.
-                </p>
-                <p>
-                    Groups can also be nested by creating subgroups.
-                </p>
-                <p>
-                    Projects that belong to a group are prefixed with the group namespace. Existing projects may be
-                    moved
-                    into a group.
-                </p>
-            </div>
-            <div class="create-group-body">
-                <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
-                    <div class="field">
-                        <span>Group name</span>
-                        <span class="required">*</span>
-                    </div>
-                    <div class="input-area">
-                        <input type="text" class="form-control form-control-sm" formControlName="name"
-                            placeholder="My Awesome Group">
-                        <div *ngIf="groupForm.controls['name'].errors">
-                            <div class="error" *ngIf="groupForm.controls['name'].errors.minlength">
-                                The minimum length is 4 characters
-                            </div>
-                            <div class="error" *ngIf="groupForm.controls['name'].errors.maxlength">
-                                The maximum length is 32 characters
-                            </div>
-                            <div class="error" *ngIf="groupForm.controls['name'].errors.pattern">
-                                Group name must have only latin letters, digits
-                                and can't start<br> or finish with these
-                                characters ' - ', ' . '
+    <div class="create-group">
+        <div class="group-settings-sidebar col-sm-12">
+            <h4>
+                New group
+            </h4>
+            <p>
+                Groups allow you to manage and collaborate across multiple projects. Members of a group have access
+                to all of its projects.<br>Groups can also be nested by creating subgroups.<br>Projects that belong to a
+                group are prefixed with the group namespace. Existing projects may be
+                moved into a group.
+            </p>
+        </div>
+        <div class="create-group-body">
+            <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+                <div class="form-body">
+                    <div class="input-block text">
+                        <div class="field field-label">
+                            <span>Group name</span>
+                            <span class="required">*</span>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" class="form-control form-control-sm" formControlName="name"
+                                placeholder="My Awesome Group">
+                            <div *ngIf="groupForm.controls['name'].errors">
+                                <div class="error" *ngIf="groupForm.controls['name'].errors.minlength">
+                                    The minimum length is 4 characters
+                                </div>
+                                <div class="error" *ngIf="groupForm.controls['name'].errors.maxlength">
+                                    The maximum length is 32 characters
+                                </div>
+                                <div class="error" *ngIf="groupForm.controls['name'].errors.pattern">
+                                    Group name must have only latin letters, digits
+                                    and can't start<br> or finish with these
+                                    characters ' - ', ' . '
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="field">
-                        Description
-                    </div>
-                    <div class="input-area">
-                        <textarea type="text" rows="3" class="form-control form-control-sm"
-                            formControlName="description" placeholder="Description">
-                                 </textarea>
-                        <div *ngIf="groupForm.controls['description'].errors">
-                            <div class="error" *ngIf="groupForm.controls['description'].errors.maxlength">
-                                The maximum length is 300 characters
-                            </div>
-                            <div class="error" *ngIf="groupForm.controls['description'].errors.pattern">
-                                Description must have only latin letters, digits and special<br> characters
-                                <br>
+                    <div class="input-block text">
+                        <div class="field field-label">
+                            <span>Description</span>
+                        </div>
+                        <div class="input-area offset">
+                            <textarea type="text" rows="3" class="form-control form-control-sm"
+                                formControlName="description" placeholder="Description">
+                                         </textarea>
+                            <div *ngIf="groupForm.controls['description'].errors">
+                                <div class="error" *ngIf="groupForm.controls['description'].errors.maxlength">
+                                    The maximum length is 300 characters
+                                </div>
+                                <div class="error" *ngIf="groupForm.controls['description'].errors.pattern">
+                                    Description must have only latin letters, digits and special<br> characters
+                                    <br>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="field">
-                        Visibility level
-                    </div>
-                    <div class="input-area visibility-level-settings">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" formControlName="isPublic" id="privateLevel"
-                                value="false">
-                            <label class="form-check-label" for="privateLevel">
-                                <div class="icon">
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                                <div class="option-details">
-                                    <div class="option-title column">Private</div>
-                                    <div class="option-description column">
-                                        The group and its projects can only be viewed by members.</div>
-                                </div>
-                            </label>
+                    <div class="input-block in-col">
+                        <div class="field">
+                            Visibility level
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" formControlName="isPublic" id="publicLevel"
-                                value="true">
-                            <label class="form-check-label" for="publicLevel">
-                                <div class="icon">
-                                    <i class="fas fa-globe"></i>
-                                </div>
-                                <div class="option-details">
-                                    <div class="option-title column">Public</div>
-                                    <div class="option-description column">
-                                        The group and any public projects can be viewed without any authentication.
+                        <div class="input-area bottom visibility-level-settings">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="isPublic"
+                                    id="privateLevel" value="false">
+                                <label class="form-check-label" for="privateLevel">
+                                    <div class="icon">
+                                        <i class="fas fa-lock"></i>
                                     </div>
-                                </div>
-                            </label>
+                                    <div class="option-details">
+                                        <div class="option-title column">Private</div>
+                                        <div class="option-description column">
+                                            The group and its projects can only be viewed by members.</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="isPublic" id="publicLevel"
+                                    value="true">
+                                <label class="form-check-label" for="publicLevel">
+                                    <div class="icon">
+                                        <i class="fas fa-globe"></i>
+                                    </div>
+                                    <div class="option-details">
+                                        <div class="option-title column">Public</div>
+                                        <div class="option-description column">
+                                            The group and any public projects can be viewed without any authentication.
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Create
-                            group</button>
-                        <button type=" button" class="btn btn-warning"  [routerLink]="'/portal/groups'">Cancel</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Create</button>
+                    <button type=" button" class="btn btn-warning" [routerLink]="'/portal/groups'">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
