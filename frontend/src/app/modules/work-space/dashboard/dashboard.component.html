@@ -64,7 +64,7 @@
                 <div class="col-md-12 col-sm-5 text-muted small row-top">
                   <p class="status"
                     [routerLink]="['/portal/projects', project.id, 'history', project.lastBuildHistory.id]"
-                    ><i class="fas fa-hammer"></i>
+                    [appBuildHistoryStatus]="project.lastBuildHistory.buildStatus"><i class="fas fa-hammer"></i>
                     #{{project.lastBuildHistory.number}} {{project.lastBuildHistory.buildStatus | buildStatus}}</p>
                 </div>
               </div>
@@ -282,7 +282,7 @@
               <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
                 <p class="status"
                   [routerLink]="['/portal/projects', project.id, 'history', project.lastBuildHistory.id]"
-                  ><i class="fas fa-hammer"></i>
+                  [appBuildHistoryStatus]="project.lastBuildHistory.buildStatus"><i class="fas fa-hammer"></i>
                   #{{project.lastBuildHistory.number}} {{project.lastBuildHistory.buildStatus | buildStatus}}</p>
               </div>
             </div>
