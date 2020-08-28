@@ -40,5 +40,8 @@ export class GroupService {
   createGroup(newGroup: NewGroup) {
     return this.httpService.postRequest<Group>(`${this.routePrefix}`, newGroup);
   }
+  updateGroup(group: Group) {
+    return this.httpService.putRequest<Group>(`${this.routePrefix}`, group);
+  }
 
 }

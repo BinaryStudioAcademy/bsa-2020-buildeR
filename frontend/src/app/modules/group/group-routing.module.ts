@@ -22,7 +22,7 @@ const routes: Routes = [
     path: ':groupId',
     component: GroupComponent,
     resolve: {
-      project: GroupResolverService,
+      group: GroupResolverService,
     },
     children: [
       {

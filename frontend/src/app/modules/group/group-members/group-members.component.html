@@ -1,4 +1,4 @@
-<label for="typeahead-basic">Search for a state:</label>
+<label for="typeahead-basic">Search for a user by username or email:</label>
 <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
   [resultFormatter]="formatter" />
 <hr>
@@ -13,7 +13,7 @@
         <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
       </div>
       <div class="col-md-4 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
-        <p class="text-dark">Member since ADD!!!</p>
+        <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
       </div>
     </div>
     <div class="col-lg-1 col-md-2 col-sm-1 col-1 area role">
