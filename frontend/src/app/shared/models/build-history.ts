@@ -9,6 +9,7 @@ export interface BuildHistory {
   performer: User;
   duration: number;
   buildAt: Date;
+  startedAt: Date;
   branchHash: string;
   commitHash: string;
   buildStatus: BuildStatus;

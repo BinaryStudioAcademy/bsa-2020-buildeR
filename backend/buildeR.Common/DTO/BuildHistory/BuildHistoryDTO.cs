@@ -13,6 +13,7 @@ namespace buildeR.Common.DTO.BuildHistory
         public int BuildStatus { get; set; }
         public int Duration { get; set; }
         public DateTime BuildAt { get; set; }
+        public DateTime StartedAt { get; set; }
         public string BranchHash { get; set; }
         public string CommitHash { get; set; }
         public int Number { get; set; }
