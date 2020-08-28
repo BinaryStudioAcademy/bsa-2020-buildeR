@@ -8,6 +8,5 @@ namespace buildeR.Common.DTO
         public string Key { get; set; }
         public string Value { get; set; }
         public int BuildStepId { get; set; }
-        public BuildStepDTO BuildStep { get; set; }
     }
 }
