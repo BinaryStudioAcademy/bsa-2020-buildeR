@@ -27,7 +27,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   getGroups() {
     this.loadingGroups = true;
     this.groupService
-      .getAllGroups()
+      .getUserGroups(this.currentUser.id)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {

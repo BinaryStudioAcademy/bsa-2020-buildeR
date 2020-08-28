@@ -20,6 +20,9 @@ export class GroupService {
   getAllGroups(): Observable<Group[]> {
     return this.httpService.getRequest<Group[]>(this.routePrefix);
   }
+  getUserGroups(userId: number): Observable<Group[]> {
+    return this.httpService.getRequest<Group[]>(`${this.routePrefix}/getGroupsByUserId/${userId}`);
+  }
   deleteGroup(groupId: number) {
     return this.httpService.deleteFullRequest<Group>(`${this.routePrefix}/` + groupId);
   }
