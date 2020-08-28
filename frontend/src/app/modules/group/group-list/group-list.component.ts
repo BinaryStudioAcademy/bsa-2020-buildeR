@@ -44,4 +44,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     }
     return member.memberRole;
   }
+  deleteGroup(groupId: number) {
+    this.groupService.deleteGroup(groupId).subscribe();
+  }
 }
