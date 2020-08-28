@@ -219,12 +219,12 @@ namespace buildeR.Processor.Services
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
             var template = Template.Parse(
-                 "FROM {{ this.build_plugin.docker_image }}:latest AS {{ this.build_step_name }}\r\n" +
+                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.plugin_command.name }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
                  "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
-                 "RUN {{ this.build_plugin.runner }} {{ this.plugin_command.name }} {{ for arg in this.plugin_command.args }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
+                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
 
             foreach (var step in buildSteps)
                 dockerfile += template.Render(step);
