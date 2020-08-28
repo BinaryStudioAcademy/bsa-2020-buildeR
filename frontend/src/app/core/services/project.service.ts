@@ -62,29 +62,29 @@ export class ProjectService {
     );
   }
 
-  changeProjectName(projectName: string){
+  changeProjectName(projectName: string) {
     this.projectName$.next(projectName);
   }
 
-  public getEnvironmentVariables(projectId: number): Observable<any>{
+  public getEnvironmentVariables(projectId: number): Observable<any> {
     return this.httpService.getRequest<EnviromentVariable[]>
-    (`${this.routePrefix}/envVar/${projectId}`);
+      (`${this.routePrefix}/envVar/${projectId}`);
   }
 
-  public addEnvironmentVariable(envVar: EnviromentVariable){
+  public addEnvironmentVariable(envVar: EnviromentVariable) {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}/envVar`,
       envVar
     );
   }
-  public deleteEnviromentVariable(envVar: EnviromentVariable){
+  public deleteEnviromentVariable(envVar: EnviromentVariable) {
     return this.httpService.postRequest(`${this.routePrefix}/envVar/delete`,
-    envVar);
+      envVar);
   }
 
-  public updateEnviromentVariable(envVar: EnviromentVariable){
+  public updateEnviromentVariable(envVar: EnviromentVariable) {
     return this.httpService.putRequest(`${this.routePrefix}/envVar`,
-    envVar);
+      envVar);
   }
 
   validateProjectName(userId: number, projectName: string): Observable<boolean> {
@@ -95,7 +95,7 @@ export class ProjectService {
     this.envVariable$.next(envVar);
   }
 
-  deleteEnvVarEvent(envVar: EnviromentVariable){
+  deleteEnvVarEvent(envVar: EnviromentVariable) {
     this.deleteEnvVariable$.next(envVar);
   }
 }

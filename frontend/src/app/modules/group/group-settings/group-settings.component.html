@@ -1,26 +1,8 @@
 <div class="container">
   <div class="row">
     <div class="create-group">
-      <div class="group-settings-sidebar col-sm-12">
-        <h4>
-          New group
-        </h4>
-        <p>
-          Groups allow you to manage and collaborate across multiple projects. Members of a group have access
-          to
-          all of its projects.
-        </p>
-        <p>
-          Groups can also be nested by creating subgroups.
-        </p>
-        <p>
-          Projects that belong to a group are prefixed with the group namespace. Existing projects may be
-          moved
-          into a group.
-        </p>
-      </div>
       <div class="create-group-body">
-        <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="groupForm" (ngSubmit)="onSubmit(groupForm.value)">
           <div class="field">
             <span>Group name</span>
             <span class="required">*</span>
@@ -92,7 +74,7 @@
             </div>
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Create
+            <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Update
               group</button>
             <button type=" button" class="btn btn-warning" [routerLink]="'/portal/groups'">Cancel</button>
           </div>
