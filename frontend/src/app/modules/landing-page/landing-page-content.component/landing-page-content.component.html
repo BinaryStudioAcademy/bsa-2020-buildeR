@@ -1,36 +1,4 @@
-<!-- Navbar -->
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
-    <button (click)="isMenuCollapsed = !isMenuCollapsed" class="navbar-toggler" type="button" data-toggle="collapse"
-      data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="#"><img class="logo" src="../../../../assets/images/logo.png" /></a>
-    <div class="d-flex order-lg-1 ml-auto pr-2">
-      <button type="button" class="btn btn-success" [routerLink]="'/signin'">
-        Sign in
-      </button>
-    </div>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isMenuCollapsed">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#features">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#flow">Flow</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
 <!-- Main content container -->
-
 <div class="container mt-5 mb-5">
   <!-- Top block -->
 
@@ -151,7 +119,6 @@
   </div>
   <div>&nbsp;</div>
 </div>
-
 <footer class="footer mt-auto py-3 text-center bg-light">
   <div class="container">
     <span class="text-muted">Powered by Binary Studio Academy</span>

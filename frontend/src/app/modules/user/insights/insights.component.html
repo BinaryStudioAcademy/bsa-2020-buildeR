@@ -1,0 +1,64 @@
+<div class="container line-bottom ">
+  <div class="date-with-options">
+    <div class="date">
+
+     <label for=""> <small> {{this.user.createdAt | date:'mediumDate'}} - {{this.now | date:'mediumDate'}}</small></label>
+    </div>
+    <div class="week-month">
+      <nav>
+        <ul class="list-group list-group-horizontal ">
+          <li *ngFor="let mode of weekMonth; let i = index" class="list-group-item"[ngClass]="{ active: tab == i }">
+            <a (click)="changeMode(i)">
+              {{mode.name}}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="build-history-select">
+      <label style="margin-top: 2px"> View:</label>
+      <select class="form-control form-control-sm selecter">
+        <option>public and private builds</option>
+        <option>public builds</option>
+        <option>private builds</option>
+      </select>
+    </div>
+  </div>
+  <div class="charts">
+
+    <div class="first-chart border">
+      <h6 style="padding-left: 32%">Total builds</h6>
+      <h5>{{totalBuilds}}</h5>
+      <div>
+        <app-chart-small [results]="buildsData">
+        </app-chart-small>
+      </div>
+    </div>
+    <div class="second-chart border">
+      <h6 style="padding-left: 25%">Total job minutes</h6>
+      <h5>{{totalDuration}}</h5>
+      <div class="chart">
+        <app-chart-small [results]="durationData">
+        </app-chart-small>
+      </div>
+    </div>
+    <div class="third-chart border">
+      <h6 style="padding-left: 18%">Build Success Rate</h6>
+      <h5>{{buildSuccessRate}}%</h5>
+      <app-chart-small [results]="successData">
+      </app-chart-small>
+    </div>
+    <div class="fourth-chart border">
+      <h6 style="padding-left: 26%">Active Projects</h6>
+      <h5>{{activeProjects}}</h5>
+      <app-chart-small [results]="projectData">
+      </app-chart-small>
+    </div>
+  </div>
+  <div class="big-chart-wrap container">
+    <div class="big-chart">
+      <app-chart-big-normalized [results]="bigChartData">
+      </app-chart-big-normalized>
+    </div>
+  </div>
+</div>

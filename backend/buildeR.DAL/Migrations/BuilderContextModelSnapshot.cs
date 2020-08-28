@@ -209,6 +209,9 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -468,6 +471,9 @@ namespace buildeR.DAL.Migrations
 
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MemberRole")
                         .HasColumnType("int");

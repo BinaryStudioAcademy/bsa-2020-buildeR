@@ -37,10 +37,8 @@ export class ProjectTriggersComponent implements OnInit {
     this.projectSerivce.getProjectById(this.route.parent.snapshot.params.projectId)
       .subscribe(project => {
         this.project = project;
-        if (this.syncService.isGithubAccessable()) {
-          this.syncService.getRepositoryBranches(project.id)
+        this.syncService.getRepositoryBranches(project.id)
             .subscribe(branches => this.branches = branches);
-        }
       });
     this.getTriggers(this.route.parent.snapshot.params.projectId);
   }
