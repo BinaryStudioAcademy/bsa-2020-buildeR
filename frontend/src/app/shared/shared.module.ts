@@ -20,6 +20,7 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
 import { ChartSmallComponent } from './components/chart-small/chart-small.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartBigNormalizedComponent } from './components/chart-big-normalized/chart-big-normalized.component';
+import { ChartBigGroupedComponent } from './components/chart-big-grouped/chart-big-grouped.component';
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
 @NgModule({
@@ -38,6 +39,7 @@ import { ChartBigNormalizedComponent } from './components/chart-big-normalized/c
     LoadingSpinnerComponent,
     ChartSmallComponent,
     ChartBigNormalizedComponent,
+    ChartBigGroupedComponent,
   ],
   imports: [
     CommonModule,
@@ -70,7 +72,8 @@ import { ChartBigNormalizedComponent } from './components/chart-big-normalized/c
     TabsComponent,
     LoadingSpinnerComponent,
     ChartSmallComponent,
-    ChartBigNormalizedComponent
+    ChartBigNormalizedComponent,
+    ChartBigGroupedComponent
   ],
 })
 export class SharedModule {}

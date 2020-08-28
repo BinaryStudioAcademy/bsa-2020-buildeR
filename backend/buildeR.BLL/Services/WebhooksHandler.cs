@@ -26,7 +26,8 @@ namespace buildeR.BLL.Services
             //I parse this property in branch name in the next line:
             var updatedBranch = payload.Ref.Substring(11);
 
-            await _builder.StartBuild(projectId);
+            // TODO: replace fake build history id
+            await _builder.StartBuild(projectId, 1);
         }
     }
 }

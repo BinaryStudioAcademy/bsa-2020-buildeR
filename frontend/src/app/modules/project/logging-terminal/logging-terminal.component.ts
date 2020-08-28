@@ -10,6 +10,7 @@ import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -47,7 +48,8 @@ export class LoggingTerminalComponent extends BaseComponent
 
   constructor(
     private buildService: BuildLogService,
-    private logsService: ProjectLogsService
+    private logsService: ProjectLogsService,
+    private router: Router
   ) {
     super();
   }
@@ -57,8 +59,9 @@ export class LoggingTerminalComponent extends BaseComponent
     //   .getTestBuildLog()
     //   .pipe(delay(0))
     //   .subscribe((line) => this.buildLog(line));
+    var projectId = this.router.url.replace(/\D/g, '');
     this.logsService.buildConnection();
-    this.logsService.startConnectionAndJoinGroup('111'); // '111' is buildId of our demo project
+    this.logsService.startConnectionAndJoinGroup(projectId); // '111' is buildId of our demo project
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));

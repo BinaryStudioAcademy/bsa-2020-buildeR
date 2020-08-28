@@ -6,11 +6,11 @@ namespace buildeR.Common.Enums
 {
     public enum BuildStatus
     {
-        Success,
-        Failure,
         Error,
-        Canceled,
+        Failure,
         Pending,
-        InProgress,
+        Success,
+        Canceled,
+        InProgress
     }
 }

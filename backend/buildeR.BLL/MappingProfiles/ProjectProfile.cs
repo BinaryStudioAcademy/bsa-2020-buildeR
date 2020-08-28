@@ -18,7 +18,7 @@ namespace buildeR.BLL.MappingProfiles
                     src => src
                         .MapFrom(project => project
                             .BuildHistories
-                            .OrderByDescending(prj => prj.BuildAt)
+                            .OrderByDescending(prj => prj.Number)
                             .FirstOrDefault()));
 
             CreateMap<ProjectDTO, Project>()
