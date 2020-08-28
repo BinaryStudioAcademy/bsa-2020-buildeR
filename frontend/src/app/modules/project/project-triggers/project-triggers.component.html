@@ -17,12 +17,12 @@
     </div>
     <div class="switch-wr">
       <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="runOnShedule"
-          (change)="onToggle(runOnShedule)">
-        <label class="custom-control-label" for="customSwitch1">Run on shedule </label>
+        <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="runOnSchedule"
+          (change)="onToggle(runOnSchedule)">
+        <label class="custom-control-label" for="customSwitch1">Run on schedule </label>
       </div>
     </div>
-    <div [hidden]='!runOnShedule'>
+    <div [hidden]='!runOnSchedule'>
       <!-- Show Triggers -->
       <ng-container *ngFor="let trigger of triggers">
         <div class="border trigger-group my-2 p-2">

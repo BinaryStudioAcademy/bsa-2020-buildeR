@@ -1,12 +1,10 @@
 h6
   margin: 7px
   color: #666
-  padding-left: 20%
 
 h5
   margin: 10px
   color: #666
-  padding-left: 37%
 
 
 .date-with-options
@@ -87,17 +85,18 @@ h5
 
 
 .charts
+  text-align: center
   display: grid
   grid-template-columns: 4
   grid-template-rows: 2
-  max-height: 170px
+  margin-bottom: 20px
+
 
 .first-chart
   grid-column-start: 1
   grid-column-end: 1
   grid-row-start: 1
-  margin:10px
-  max-height: 150px
+  margin:15px
   width: 95%
   justify-self: center
 
@@ -105,8 +104,7 @@ h5
   grid-column-start: 2
   grid-column-end: 2
   grid-row-start: 1
-  margin:10px
-  max-height: 150px
+  margin:15px
   width: 95%
   justify-self: center
 
@@ -114,8 +112,7 @@ h5
   grid-column-start: 3
   grid-column-end: 3
   grid-row-start: 1
-  margin:10px
-  max-height: 150px
+  margin:15px
   width: 95%
   justify-self: center
 
@@ -123,8 +120,7 @@ h5
   grid-column-start: 4
   grid-column-end: 4
   grid-row-start: 1
-  margin:10px
-  max-height: 150px
+  margin:15px
   width: 95%
   justify-self: center
 
@@ -135,6 +131,21 @@ a
   justify-self: center
 
 
+@media screen and (max-width: 1150px)
+  .charts
+    grid-template-columns: 3
+  .fourth-chart
+    grid-column-start: 1
+    grid-column-end: 1
+    grid-row-start: 2
+
+@media screen and (max-width: 945px)
+  .charts
+    grid-template-columns: 2
+  .third-chart
+    grid-column-start: 2
+    grid-column-end: 2
+    grid-row-start: 2
 
 @media screen and (max-width: 416px)
   a
@@ -157,6 +168,7 @@ a
   .charts
     grid-template-columns: 2
     max-height: 100%
+    margin-bottom: 10px
   .second-chart
     grid-column-start: 1
     grid-column-end: 1

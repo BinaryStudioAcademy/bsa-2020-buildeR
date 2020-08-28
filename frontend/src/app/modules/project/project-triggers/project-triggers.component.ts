@@ -19,7 +19,7 @@ export class ProjectTriggersComponent implements OnInit {
   project: Project;
   branches: Branch[];
   selectedBranch: string;
-  runOnShedule = false;
+  runOnSchedule = false;
   triggers: ProjectTriggerInfo[] = [];
 
   cronConfig: CronJobsConfig = {quartz: true, option: { minute: false, year: false } };
