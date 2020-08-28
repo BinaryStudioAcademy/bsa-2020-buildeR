@@ -62,6 +62,7 @@ export class FirebaseSignInService {
       const credential = result.credential;
       localStorage.setItem('github-access-token', credential[`accessToken`]);
       const user = result.user;
+      this.authService.setFirebaseUser(user);
       const linkUser = ({
         userId: this.authService.getCurrentUser().id,
         providerName: Providers.Github,
@@ -94,6 +95,7 @@ export class FirebaseSignInService {
       const result = await fireUser.linkWithPopup(googleProvider);
       const credential = result.credential;
       const user = result.user;
+      this.authService.setFirebaseUser(user);
       const linkUser = ({
         userId: this.authService.getCurrentUser().id,
         providerName: Providers.Google,
@@ -222,6 +224,7 @@ export class FirebaseSignInService {
     try {
       const result = await fireUser.linkWithPopup(githubProvider);
       const credential = result.credential;
+      this.authService.setFirebaseUser(result.user);
       localStorage.setItem('github-access-token', credential[`accessToken`]);
       return 'ok';
     }
