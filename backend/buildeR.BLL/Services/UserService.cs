@@ -112,7 +112,9 @@ namespace buildeR.BLL.Services
         public async Task<UserDTO> Update(UserDTO userDTO)
         {
             var user = _mapper.Map<User>(userDTO);
-            var existing = await _context.Users.FirstOrDefaultAsync(x => x.Id == userDTO.Id);
+            var existing = await _context.Users
+                .Include(u => u.UserSocialNetworks)
+                .FirstOrDefaultAsync(x => x.Id == userDTO.Id);
             if (existing == null)
             {
                 throw new NotFoundException("user", userDTO.Id);
