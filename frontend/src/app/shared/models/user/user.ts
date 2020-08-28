@@ -9,7 +9,6 @@ export interface User {
   firstName: string;
   lastName: string;
   bio: string;
-  location: string;
   avatarUrl: string;
   createdAt: Date;
   userSocialNetworks: UserSocialNetwork[];

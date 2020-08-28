@@ -6,7 +6,7 @@ import { User } from '@shared/models/user/user';
 import { filter, tap, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { from, of } from 'rxjs';
-import { auth } from 'firebase';
+import { UserInfo } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -100,6 +100,12 @@ export class AuthenticationService {
     return this.firebaseUser;
   }
 
+  setFirebaseUser(user: firebase.User)
+  {
+    this.firebaseUser = user;
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
   setUser(user: User) {
     this.currentUser = user;
   }
@@ -123,7 +129,7 @@ export class AuthenticationService {
   }
 
   isGithubAddedInFirebase() {
-    const check = (item) => item.providerId === 'github.com';
+    const check = (item: UserInfo) => item.providerId === 'github.com';
     return this.firebaseUser.providerData.some(check);
   }
 }
