@@ -60,52 +60,55 @@
             <!-- Existing command arguments, that can be edited or deleted -->
           <div class="mt-2" *ngFor="let arg of buildStep.commandArguments">
             <div class="row">
-              <div class="col-4 offset-1 input-group new-step-input">
+              <div class="col-5 offset-1 input-group new-step-input">
                 <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
                     <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity">
               </div>
-              <div class="col-4 input-group new-step-input">
+              <div class="col-5 input-group new-step-input">
                 <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
-                  <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal">
+                <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal">
+                <div class="new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
+                  <button class="btn" (click)="editCommandArgument(arg)" [disabled]="!arg.id">
+                    <i class="fas fa-pencil-alt text-warning"></i>
+                  </button>
+                </div>
+                <div class="new-step-input">
+                  <button class="btn" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
+                    <i class="fa fa-times text-danger"></i>
+                  </button>
+                </div>
               </div>
-              <div class="col-1 new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
-                <button class="btn" (click)="editCommandArgument(arg)" [disabled]="!arg.id">
-                  <i class="fas fa-pencil-alt text-warning"></i>
-                </button>
-              </div>
-              <div class="col-1 new-step-input">
-                <button class="btn" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
-                  <i class="fa fa-times text-danger"></i>
-                </button>
-              </div>
+
+
             </div>
           </div>
 
           <!-- Form for adding new argument commands -->
           <div class="row mt-2" *ngIf="buildStep.newCommandArgumentValue !== undefined && buildStep.newCommandArgumentKey !== undefined">
-            <div class="col-4 offset-1 input-group new-step-input">
+            <div class="col-5 offset-1 input-group new-step-input">
               <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
                   <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentKey" placeholder="--verbosity">
             </div>
-            <div class="col-4 input-group new-step-input">
+            <div class="col-5 input-group new-step-input">
               <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
-                  <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
+              <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
+              <div class="new-step-input">
+                <button class="btn" [disabled]="!buildStep.newCommandArgumentValue || !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
+                  <i class="fas fa-check text-success"></i>
+                </button>
+              </div>
+              <div class="new-step-input">
+                <button class="btn" (click)="clearNewCommandArgument(buildStep)">
+                  <i class="fa fa-times text-danger"></i>
+                </button>
+              </div>
             </div>
-            <div class="col-1 new-step-input">
-              <button class="btn" [disabled]="!buildStep.newCommandArgumentValue || !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
-                <i class="fas fa-check text-success"></i>
-              </button>
-            </div>
-            <div class="col-1 new-step-input">
-              <button class="btn" (click)="clearNewCommandArgument(buildStep)">
-                <i class="fa fa-times text-danger"></i>
-              </button>
-            </div>
+
 
           </div>
               <div class="row">
                 <div class="col-4 offset-1 text-left mt-3">
-                  <button class="btn btn-info"
+                  <button class="btn btn-success"
                     [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey"
                     (click)="addCommandArgument(buildStep)">Add command argument</button>
                 </div>
@@ -121,7 +124,7 @@
               <div  ngbDropdownMenu aria-labelledby="allEmptySteps">
                 <button *ngFor="let step of emptyBuildSteps" (click)="saveBuildStep(step)" ngbDropdownItem>{{ step.buildStepName }}</button>
               </div>
-              <button class="btn save-btn" (click)="updateAllSteps()" [disabled]="!buildSteps || buildSteps.length === 0">
+              <button class="btn btn-success" (click)="updateAllSteps()" [disabled]="!buildSteps || buildSteps.length === 0">
                 Save
               </button>
             </div>

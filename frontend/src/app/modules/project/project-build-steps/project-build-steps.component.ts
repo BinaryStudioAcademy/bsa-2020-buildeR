@@ -162,7 +162,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         });
   }
 
-  public searchFunctionFactory(step: BuildStep): (text: Observable<string>) => Observable<any[]> {
+  public searchFunctionFactory(step: BuildStep): (text: Observable<string>) => Observable<string[]> {
     const search = (text$: Observable<string>) => {
       return text$.pipe(
           debounceTime(200),
