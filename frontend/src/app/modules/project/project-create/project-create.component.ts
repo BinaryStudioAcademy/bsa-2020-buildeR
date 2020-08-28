@@ -103,7 +103,9 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject.description = this.projectForm.controls['description'].value;
     this.newProject.isPublic = this.projectForm.controls['isPublic'].value;
     this.newProject.repository = this.projectForm.controls['_repository']?.value ?? this.newProject.repository;
-    this.newProject.repository.url = this.projectForm.controls['repositoryURL']?.value;
+    this.newProject.repository.url = this.projectForm.controls['repositoryURL']?.value ?
+                                     this.projectForm.controls['repositoryURL']?.value :
+                                     this.projectForm.controls['_repository']?.value.url;
 
     this.newProject.ownerId = this.user.id;
 
