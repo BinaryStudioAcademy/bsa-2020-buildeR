@@ -25,18 +25,19 @@
     <div [hidden]='!runOnSchedule'>
       <!-- Show Triggers -->
       <ng-container *ngFor="let trigger of triggers">
-        <div class="border trigger-group my-2 p-2">
-          <div class="barnch-column mr-2">
+        <div class="trigger-group border rounded my-2">
+          <div class="barnch-column">
             <span class="mr-2">Branch </span>
             <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
               <option *ngFor="let branch of branches" [ngValue]='branch.name' [selected]="trigger.branchHash === branch.name">{{branch.name}}
               </option>
             </select>
           </div>
-          <div class="cron-job-column mr-2">
-            <cron-jobs [config]="cronConfig" [(ngModel)]="trigger.cronExpression"> </cron-jobs>
+          <div class="cron-job-column">
+            <span class="mr-2">Every: </span>
+            <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="trigger.cronExpression"> </cron-jobs>
           </div>
-          <div class="fire-time-column mr-2">
+          <div class="fire-time-column">
             <div class="fire-time-wr">
               <div class="pre-fire-time">
                 <span class="mr-sm-2 text">previous fire time: </span>
@@ -52,10 +53,9 @@
               </div>
             </div>
           </div>
-          <div class="button-column">
-            <button (click)="updateTrigger(trigger)" class="btn btn-success mr-2"><i
-                class="fas fa-save fa-lg"></i></button>
-            <button (click)="deleteTrigger(trigger)" class="btn btn-danger"><i class="fas fa-trash fa-lg"></i></button>
+          <div class="buttons-wr">
+            <button (click)="updateTrigger(trigger)" class="btn btn-update"><i class="far fa-save"></i></button>
+            <button (click)="deleteTrigger(trigger)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
           </div>
         </div>
 
@@ -73,9 +73,7 @@
         </div>
         <div class="mr-sm-2">
           <h5 class="text-over">Set up period of builds:</h5>
-          <div class="cron-wr">
-            <cron-jobs [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
-          </div>
+          <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
         </div>
         <button (click)="createTrigger(cronResult)" class="btn btn-info btn-add"
           [disabled]="!cronResult || !selectedBranch">Add </button>
