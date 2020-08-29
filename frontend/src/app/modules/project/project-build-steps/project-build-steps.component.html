@@ -60,18 +60,13 @@
             <!-- Existing command arguments, that can be edited or deleted -->
           <div class="mt-2" *ngFor="let arg of buildStep.commandArguments">
             <div class="row">
-              <div class="col-5 offset-1 input-group new-step-input">
+              <div class="col-5 offset-1 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
                 <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
-                    <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity">
+                    <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity" [disabled]="!arg.id">
               </div>
-              <div class="col-5 input-group new-step-input">
+              <div class="col-5 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
                 <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
-                <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal">
-                <div class="new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
-                  <button class="btn" (click)="editCommandArgument(arg)" [disabled]="!arg.id">
-                    <i class="fas fa-pencil-alt text-warning"></i>
-                  </button>
-                </div>
+                <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal" [disabled]="!arg.id">
                 <div class="new-step-input">
                   <button class="btn" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
                     <i class="fa fa-times text-danger"></i>
@@ -93,7 +88,7 @@
               <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
               <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
               <div class="new-step-input">
-                <button class="btn" [disabled]="!buildStep.newCommandArgumentValue || !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
+                <button class="btn" [disabled]="!buildStep.newCommandArgumentValue && !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
                   <i class="fas fa-check text-success"></i>
                 </button>
               </div>

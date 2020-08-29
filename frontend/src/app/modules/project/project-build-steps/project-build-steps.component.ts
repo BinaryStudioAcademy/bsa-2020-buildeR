@@ -132,20 +132,22 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 
   removeExistingCommandArgument(step: BuildStep, argumentId: number, key: string) {
     step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.key !== key);
-    this.isLoading = true;
-    this.commandArgumentService
-      .removeCommandArgument(argumentId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        () => {
-          this.isLoading = false;
-          step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }
-      );
+    if (argumentId) {
+      this.isLoading = true;
+      this.commandArgumentService
+        .removeCommandArgument(argumentId)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(
+          () => {
+            this.isLoading = false;
+            step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.showError(error);
+          }
+        );
+    }
   }
 
   editCommandArgument(arg: CommandArgument) {
