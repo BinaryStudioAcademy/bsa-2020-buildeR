@@ -54,5 +54,8 @@ export class GroupSettingsComponent implements OnInit {
       this.toastrService.showError(err);
     });
   }
+  reset() {
+    this.groupForm.reset(this.group);
+  }
 
 }
