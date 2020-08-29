@@ -26,8 +26,10 @@ export class GroupSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.route.parent.params.subscribe(
       (params) => this.groupId = params.groupId);
+
     this.route.parent.data.subscribe(data => {
       this.group = data.group;
+      console.log(this.group);
       this.groupForm = new FormGroup({
         name: new FormControl(this.group.name,
           [
@@ -41,7 +43,7 @@ export class GroupSettingsComponent implements OnInit {
             Validators.maxLength(32),
             Validators.pattern('[^А-яа-я]*')
           ]),
-        isPublic: new FormControl(this.group.isPublic, Validators.required)
+        isPublic: new FormControl(`${this.group.isPublic}`, Validators.required)
       });
     });
   }
