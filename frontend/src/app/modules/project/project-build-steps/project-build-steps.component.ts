@@ -252,6 +252,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         () => {
           this.isLoading = false;
           moveItemInArray(this.buildSteps, oldIndex, newIndex);
+          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;
