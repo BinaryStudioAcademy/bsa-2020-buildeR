@@ -1,3 +1,4 @@
+<h4>Invite member</h4>
 <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
   <label for="typeahead-basic">Search for a user by username or email:</label>
   <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"

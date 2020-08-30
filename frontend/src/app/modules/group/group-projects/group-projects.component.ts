@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectInfo } from '../../../shared/models/project-info';
 import { GroupService } from '../../../core/services/group.service';
-import { runInThisContext } from 'vm';
+import { BaseComponent } from '@core/components/base/base.component';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-group-projects',
   templateUrl: './group-projects.component.html',
   styleUrls: ['./group-projects.component.sass']
 })
-export class GroupProjectsComponent implements OnInit {
+export class GroupProjectsComponent extends BaseComponent implements OnInit {
   projects: ProjectInfo[];
   groupId: number;
   constructor(private groupService: GroupService, private route: ActivatedRoute) {
+    super();
     route.parent.params.subscribe(
       (params) => this.groupId = params.groupId);
   }
@@ -21,8 +23,7 @@ export class GroupProjectsComponent implements OnInit {
     this.getGroupProjects(this.groupId);
   }
   getGroupProjects(groupId: number) {
-    this.groupService.getProjectsByGroup(groupId).subscribe(res => this.projects = res.body);
+    this.groupService.getProjectsByGroup(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.projects = res.body);
   }
-  openCreateProjectModal()
-  {}
+  openCreateProjectModal() { }
 }

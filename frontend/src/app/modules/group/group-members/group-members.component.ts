@@ -4,19 +4,20 @@ import { ActivatedRoute } from '@angular/router';
 import { TeamMember } from '../../../shared/models/group/team-member';
 import { UserRole } from '../../../shared/models/group/user-role';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { User } from '../../../shared/models/user/user';
 import { UserService } from '../../../core/services/user.service';
 import { TeamMemberService } from '../../../core/services/team-member.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-group-members',
   templateUrl: './group-members.component.html',
   styleUrls: ['./group-members.component.sass']
 })
-export class GroupMembersComponent implements OnInit {
+export class GroupMembersComponent extends BaseComponent implements OnInit {
   groupId: number;
   model: any;
   members: TeamMember[];
@@ -37,6 +38,7 @@ export class GroupMembersComponent implements OnInit {
     private teamMemberService: TeamMemberService,
     private toastrService: ToastrNotificationsService,
   ) {
+    super();
     route.parent.params.subscribe(
       (params) => this.groupId = params.groupId);
   }
@@ -50,14 +52,14 @@ export class GroupMembersComponent implements OnInit {
   }
 
   getGroupMembers(groupId: number) {
-    this.groupService.getMembersByGroup(groupId).subscribe(res => this.members = res.body);
+    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.members = res.body);
   }
   getUsers() {
-    this.userService.getUsers().subscribe(res => this.users = res.body);
+    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body);
   }
   changeMemberRole(member: TeamMember, newUserRole: UserRole) {
     member.memberRole = newUserRole;
-    this.teamMemberService.updateMember(member).subscribe(() =>
+    this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$)).subscribe(() =>
       this.toastrService.showSuccess('Member role successfully changed'),
       (err) => {
         this.toastrService.showError(err);
@@ -69,7 +71,13 @@ export class GroupMembersComponent implements OnInit {
     this.newTeamMember.groupId = this.groupId;
     this.newTeamMember.userId = this.memberForm.controls.user.value.id;
     this.newTeamMember.memberRole = this.memberForm.controls.dropdown.value;
-    this.teamMemberService.createMember(this.newTeamMember).subscribe(() => this.getGroupMembers(this.groupId));
+    this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.getGroupMembers(this.groupId); this.toastrService.showSuccess('Member was successfully added');
+      },
+        (err) => {
+          this.toastrService.showError(err);
+        });
   }
   search = (text$: Observable<string>) =>
     text$.pipe(

@@ -28,7 +28,7 @@ else loaded;
           <div class="col-md-12 col-sm-12 text-dark">
             <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
             <i *ngIf="group.isPublic" class="fas fa-globe"></i>
-            {{group.name}}
+            <a class="text-dark" [routerLink]="['../../groups', group?.id, 'projects']">{{group.name}}</a>
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
