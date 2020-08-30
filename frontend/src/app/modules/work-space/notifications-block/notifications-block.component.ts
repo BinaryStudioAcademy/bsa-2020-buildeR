@@ -12,7 +12,7 @@ export class NotificationsBlockComponent implements OnInit {
   public cashedNotifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
-  public showRead = false;
+  public isShowRead = false;
   public counter: number;
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
@@ -25,13 +25,42 @@ export class NotificationsBlockComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
+    this.cashedNotifications = this.useConditions();
+  }
+  useConditions() {
+    if (this.showAllNotifications) {
+     return this.allNotifications();
+    }
+    return this.lastThreeNotifications();
+  }
+  lastThreeNotifications(): Notification[] {
+    return this.showRead().slice(-3);
+  }
+  allNotifications(): Notification[] {
+    return this.showRead();
+  }
+  showRead() {
+    if (!this.isShowRead) {
+      return this.notifications.filter(x => x.isRead === false);
+    }
+    return this.notifications;
+  }
+  toggleShowRead() {
+    this.cashedNotifications = this.useConditions();
+  }
+  toggleShowAll() {
+    this.showAllNotifications = true;
+    this.cashedNotifications = this.useConditions();
   }
 
+  toggleShowLast() {
+    this.showAllNotifications = false;
+    this.cashedNotifications = this.useConditions();
+  }
    // Change type of notification to read, push it into array of read notifications and delete from general array
    clearOne(notification: Notification) {
     notification.isRead = true;
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications.filter(x => x.isRead === false));
+    this.cashedNotifications = this.useConditions();
     this.onCountChange();
   }
   onCountChange() {
@@ -43,7 +72,7 @@ export class NotificationsBlockComponent implements OnInit {
     this.notifications.forEach(notification => {
       notification.isRead = true;
     });
-    this.cashedNotifications = this.notifications;
+    this.cashedNotifications = this.useConditions();
     this.onCountChange();
   }
 
@@ -81,20 +110,7 @@ export class NotificationsBlockComponent implements OnInit {
       }
     ];
     this.notifications = seedData;
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-  }
-  lastThreeNotifications(notifications: Notification[]): Notification[] {
-    return notifications.filter(x => x.isRead === false).slice(-3);
-  }
-  showAll() {
-    this.cashedNotifications = this.notifications;
-    this.showAllNotifications = true;
-  }
-
-  showLast() {
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-    this.showAllNotifications = false;
-    this.showRead = false;
+    this.cashedNotifications = this.useConditions();
   }
   // Add more notifications each 10 seconds
   addOnInterval() {
@@ -107,12 +123,7 @@ export class NotificationsBlockComponent implements OnInit {
             isRead: false,
             type: NotificationType.buildFailed
           });
-      if (!this.showAllNotifications) {
-        this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-      }
-      else {
-        this.cashedNotifications = this.notifications;
-      }
+      this.cashedNotifications = this.useConditions();
       this.onCountChange();
      }, 10000);
   }

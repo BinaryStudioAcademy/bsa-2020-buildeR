@@ -33,33 +33,19 @@ select
   margin: 20px 0
 
 .trigger-group
-  display: grid
-  grid-template-columns: minmax(auto, max-content) minmax(auto, max-content) minmax(auto, max-content) auto
-  grid-template-rows: repeat(1, auto)
+  display: flex
+  flex-wrap: wrap
   justify-items: start
   align-items: center
   position: relative
+  grid-gap: 8px
+  padding: 8px
+  padding-right: 54px
 
-.button-icons-wr
+.buttons-wr
   position: absolute
   top: 0px
   right: 0px
-
-.barnch-column
-  grid-column-start: 1/span 1
-  max-width: max-content
-
-.cron-job-column
-  grid-column-start: 2/span 1
-  max-width: max-content
-
-.fire-time-column
-  grid-column-start: 3/span 1
-  max-width: max-content
-
-.button-column
-  grid-column-start: 4/span 1
-  justify-self: right
 
 .fire-time-wr
   grid-template-columns: 1
@@ -75,32 +61,21 @@ select
   grid-row-end: 2
   justify-self: start
 
+.barnch-column,
+.cron-job-column
+  display: flex
+  flex-wrap: wrap
+  justify-items: start
+  align-items: center
+
+.btn-update,
+.btn-delete
+  color: #666
+  padding: 0px 6px
+  font-size: 18px
+  &:hover
+    background-color: rgba(9,30,66,.08)
+
 .btn-add
   align-self: flex-end
-
-@media screen and (max-width: 992px)
-  .trigger-group
-    display: grid
-    grid-template-columns: repeat(1, auto)
-    grid-template-rows: repeat(4, auto)
-    justify-items: start
-  .barnch-column
-    grid-column-start: 1/span 1
-    border-bottom: 1px solid #dee2e6
-    min-width: 100%
-    padding-bottom: 8px
-  .cron-job-column
-    grid-column-start: 1/span 1
-    border-bottom: 1px solid #dee2e6
-    min-width: 100%
-    padding: 8px 0
-  .fire-time-column
-    grid-column-start: 1/span 1
-    border-bottom: 1px solid #dee2e6
-    min-width: 100%
-    padding: 8px 0
-  .button-column
-    padding-top: 8px
-    grid-column-start: 1/span 1
-    justify-self: center
 

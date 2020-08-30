@@ -4,7 +4,6 @@ import { TabRoute } from '@shared/models/tabs/tab-route';
 import { ModalCropperService } from '../../core/services/modal-cropper.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../shared/models/user/user';
-import { UserAvatar } from '@shared/models/user/user-avatar';
 
 @Component({
   selector: 'app-user',
@@ -13,7 +12,6 @@ import { UserAvatar } from '@shared/models/user/user-avatar';
 })
 export class UserComponent implements OnInit {
   currentUser: User = {} as User;
-  avatar: UserAvatar = {} as UserAvatar;
   githubClick = false;
   googleClick = false;
 

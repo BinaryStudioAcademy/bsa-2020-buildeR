@@ -1,4 +1,5 @@
-﻿using buildeR.Common.DTO.NotificationSetting;
+﻿using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.NotificationSetting;
 using buildeR.Common.DTO.Project;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.DTO.UserSocialNetwork;
@@ -20,6 +21,8 @@ namespace buildeR.Common.DTO.User
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Bio { get; set; }
+        public ICollection<BuildHistoryDTO> BuildHistories { get; set; }
+
         public NotificationSettingDTO NotificationSetting { get; set; }
         public ICollection<ProjectDTO> Projects { get; set; }
         public ICollection<TeamMemberDTO> TeamMembers { get; set; }

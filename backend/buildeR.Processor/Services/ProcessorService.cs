@@ -5,21 +5,17 @@ using buildeR.Kafka;
 using buildeR.RabbitMq.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Nest;
 using Newtonsoft.Json;
 using Scriban;
 using Serilog;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using buildeR.Common.Enums;
 using Microsoft.Extensions.Hosting;
 using System.Threading;
@@ -29,12 +25,12 @@ namespace buildeR.Processor.Services
     public class ProcessorService : IHostedService
     {
         private readonly IConsumer _consumer;
-        private Task _executingTask;
-        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
         private readonly IProducer _buildStatusesProducer;
         private readonly KafkaProducer _kafkaProducer;
         private readonly string _pathToProjects;
         private readonly IElasticClient _elk;
+
+        private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
         private void SendBuildStatus(BuildStatus status, int buildHistoryId)
         {
@@ -97,18 +93,18 @@ namespace buildeR.Processor.Services
                 "ClonedRepository"
                 );
 
+            CloneRepository(build.RepositoryUrl, pathToClonedRepository);
+
             try
             {
-                CloneRepository(build.RepositoryUrl, pathToClonedRepository);
-
                 var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
                 await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
-                buildDockerImage(pathToClonedRepository, build.ProjectId);
+                BuildDockerImage(pathToClonedRepository, build.ProjectId);
             }
             catch (Exception e)
             {
-                Log.Error(e.Message);
+                Log.Error($"Error while building docker image. Reason: {e.Message}");
             }
             finally
             {
@@ -123,7 +119,7 @@ namespace buildeR.Processor.Services
             }
         }
 
-        public void buildDockerImage(string path, int projectId)
+        public void BuildDockerImage(string path, int projectId)
         {
             Process process = new Process();
             process.StartInfo.FileName = "docker";
@@ -132,9 +128,9 @@ namespace buildeR.Processor.Services
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             //* Set your output and error (asynchronous) handlers
-            process.OutputDataReceived += (Object _sender, DataReceivedEventArgs _args) =>
+            process.OutputDataReceived += (object _sender, DataReceivedEventArgs _args) =>
                 OutputHandler(_sender, _args, projectId);
-            process.ErrorDataReceived += (Object _sender, DataReceivedEventArgs _args) =>
+            process.ErrorDataReceived += (object _sender, DataReceivedEventArgs _args) =>
                 OutputHandler(_sender, _args, projectId);
             //* Start process and handlers
             process.Start();
@@ -145,6 +141,7 @@ namespace buildeR.Processor.Services
 
         private bool areDockerLogs = true;
         private int startLogging = 2;
+
         public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
         {
             // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
@@ -207,7 +204,7 @@ namespace buildeR.Processor.Services
             }
             catch (Exception e)
             {
-                Log.Error(e.Message);
+                Log.Error($"Cannot clone repo. Reason: {e.Message}");
             }
         }
 
@@ -216,7 +213,7 @@ namespace buildeR.Processor.Services
             var pathToParentDirectory = pathToClonedRepository.Remove(pathToClonedRepository.LastIndexOf(IsCurrentOsLinux ? "/" : "\\", StringComparison.Ordinal));
             DeleteFolderWithSubfolders(pathToParentDirectory);
         }
-        private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
         private void DeleteFolderWithSubfolders(string path)
         {
             foreach (var sub in Directory.EnumerateDirectories(path))
@@ -261,10 +258,11 @@ namespace buildeR.Processor.Services
 
         private async Task CreateDockerFileAsync(string content, string path)
         {
-            await using (var outputFile = new StreamWriter(Path.Combine(path, "Dockerfile")))
-            {
-                await outputFile.WriteAsync(content);
-            }
+            var dockerFilePath = Path.Combine(path, "Dockerfile");
+            Directory.CreateDirectory(dockerFilePath);
+
+            await using var outputFile = new StreamWriter(dockerFilePath);
+            await outputFile.WriteAsync(content);
         }
         #endregion
     }

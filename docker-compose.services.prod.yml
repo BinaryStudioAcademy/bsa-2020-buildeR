@@ -10,17 +10,16 @@ services:
         networks:
             - back
         environment:
-            VAULT_TOKEN: ${VAULT_TOKEN_ID}
             VAULT_ADDR: 'http://0.0.0.0:8200'
             VAULT_API_ADDR: 'http://0.0.0.0:8200'
             VAULT_ADDRESS: 'http://0.0.0.0:8200'
-            VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}}'
         volumes:
             - ./vault/config:/vault/config
             - ./vault/logs:/vault/logs
             - ./vault/file:/vault/file
         cap_add:
             - IPC_LOCK
+        command: server
 
     sql_server:
         image: mcr.microsoft.com/mssql/server:2017-latest
@@ -101,92 +100,9 @@ services:
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-    builder_api:
-        depends_on:
-            - sql_server
-            - rabbitmq
-            - kafka
-        image: bsa2020builder/builder_api:latest
-        container_name: 'builder_api'
-        restart: on-failure
-        networks:
-            - back
-        ports:
-            - "5050:5050"
-        environment:
-            ASPNETCORE_ENVIRONMENT: 'Production'
-            VAULT_ADDRESS: 'http://vault:8200'
-            VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
-        env_file:
-            - /etc/environment
-        volumes:
-           - ./resources:/app/Resources
-
-    builder_processor:
-        depends_on:
-            - vault
-            - rabbitmq
-            - kafka
-        image: bsa2020builder/builder_processor:latest
-        container_name: 'builder_processor'
-        restart: on-failure
-        networks:
-            - back
-        ports:
-            - "5060:5060"
-        environment:
-            ASPNETCORE_ENVIRONMENT: 'Production'
-            VAULT_ADDRESS: 'http://vault:8200'
-            VAULT_TOKEN_ID: ${VAULT_TOKEN_ID}
-        env_file:
-            - /etc/environment
-
-    builder_signalr:
-        depends_on:
-            - kafka
-        image: bsa2020builder/builder_signalr:latest
-        container_name: 'builder_signalr'
-        restart: on-failure
-        networks:
-            - back
-        ports:
-            - "5070:5070"
-        environment:
-            ASPNETCORE_ENVIRONMENT: 'Production'
-        env_file:
-            - /etc/environment
-
-    builder_frontend:
-        depends_on:
-            - builder_api
-            - builder_processor
-            - builder_signalr
-            - kibana
-        image: bsa2020builder/builder_frontend:latest
-        container_name: 'builder_frontend'
-        restart: on-failure
-        networks:
-            - back
-            - front
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-           - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-           - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem
-           - /etc/letsencrypt/live/bsa-builder.xyz/cert.pem:/etc/letsencrypt/live/bsa-builder.xyz/cert.pem
-           - /etc/letsencrypt/live/bsa-builder.xyz/chain.pem:/etc/letsencrypt/live/bsa-builder.xyz/chain.pem
-           - /etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem:/etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem
-           - /etc/letsencrypt/live/bsa-builder.xyz/privkey.pem:/etc/letsencrypt/live/bsa-builder.xyz/privkey.pem
-           - /var/log/nginx:/var/log/nginx
-
 networks:
     back:
-        driver: bridge
-    front:
         driver: bridge
 
 volumes:
     elasticsearch-data:
-    vault-data:
-
