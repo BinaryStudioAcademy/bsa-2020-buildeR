@@ -16,8 +16,19 @@
         <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
       </div>
     </div>
-    <div class="col-lg-1 col-md-2 col-sm-1 col-1 area role">
-      <a class="user-access-role" [routerLink]="">{{userRole[member.memberRole]}}</a>
+    <div class="col-lg-2 col-md-4 col-sm-1 col-1 area role">
+      <div ngbDropdown>
+        <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+          {{userRole[member.memberRole]}}
+        </div>
+        <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
+          container="body">
+          <div class="dropdown-header">Change permissions</div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(role)" container="body">
+            <span *ngIf="role===member.memberRole">&#10003;</span> {{userRole[role]}}</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

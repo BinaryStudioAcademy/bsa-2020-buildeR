@@ -20,11 +20,20 @@ export class GroupMembersComponent implements OnInit {
   members: TeamMember[];
   users: User[];
   userRole: typeof UserRole = UserRole;
+  roles = [
+    UserRole.Admin,
+    UserRole.Creator,
+    UserRole.Viewer,
+    UserRole.User
+  ];
   constructor(private groupService: GroupService, private route: ActivatedRoute, private userService: UserService) {
     route.parent.params.subscribe(
       (params) => this.groupId = params.groupId);
   }
 
+  changeMemberRole(newUserRole) {
+    this.userRole = newUserRole;
+  }
   ngOnInit(): void {
     this.getGroupMembers(this.groupId);
     this.getUsers();
