@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SignalRService } from '@core/services/signal-r.service';
 import { HttpService } from '@core/services/http.service';
 import { environment } from '@env/../environments/environment';
 import { AuthenticationService } from '@core/services/authentication.service';
@@ -25,7 +24,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   groupsLoaded: Promise<boolean>;
   countNotifications = -1;
   constructor(
-    private signalR: SignalRService,
     private httpService: HttpService,
     private authService: AuthenticationService,
     private router: Router,
@@ -36,9 +34,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.signalR.signalRecieved.subscribe(() => {
-      alert('You just received a test broadcast');
-    });
     this.user = this.authService.getCurrentUser();
     this.userService.userLogoUrl.subscribe(url => {
       console.log(url);
@@ -50,12 +45,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   public getGroups() {
     this.groupService.getUserGroups(this.user.id).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => { this.groups = res; this.groupsLoaded = Promise.resolve(true); });
-  }
-
-  broadcast() {
-    this.httpService
-      .getFullRequest(this.url)
-      .subscribe((res) => console.log(res));
   }
   logOut() {
     this.authService.logout();
