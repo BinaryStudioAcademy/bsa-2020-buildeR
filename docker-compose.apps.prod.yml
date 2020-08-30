@@ -1,0 +1,75 @@
+version: '3.8'
+services:
+
+    builder_api:
+        image: bsa2020builder/builder_api:latest
+        container_name: 'builder_api'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5050:5050"
+        environment:
+            - ASPNETCORE_ENVIRONMENT='Production'
+            - VAULT_ADDRESS='http://vault:8200'
+            - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
+        env_file:
+            - /etc/environment
+        volumes:
+           - ./resources:/app/Resources
+
+    builder_processor:
+        image: bsa2020builder/builder_processor:latest
+        container_name: 'builder_processor'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5060:5060"
+        environment:
+            - ASPNETCORE_ENVIRONMENT='Production'
+            - VAULT_ADDRESS='http://vault:8200'
+            - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
+        env_file:
+            - /etc/environment
+
+    builder_signalr:
+        image: bsa2020builder/builder_signalr:latest
+        container_name: 'builder_signalr'
+        restart: on-failure
+        networks:
+            - back
+        ports:
+            - "5070:5070"
+        environment:
+            ASPNETCORE_ENVIRONMENT: 'Production'
+
+    builder_frontend:
+        depends_on:
+            - builder_api
+            - builder_processor
+            - builder_signalr
+        image: bsa2020builder/builder_frontend:latest
+        container_name: 'builder_frontend'
+        restart: on-failure
+        networks:
+            - back
+            - front
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+           - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+           - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/cert.pem:/etc/letsencrypt/live/bsa-builder.xyz/cert.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/chain.pem:/etc/letsencrypt/live/bsa-builder.xyz/chain.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem:/etc/letsencrypt/live/bsa-builder.xyz/fullchain.pem
+           - /etc/letsencrypt/live/bsa-builder.xyz/privkey.pem:/etc/letsencrypt/live/bsa-builder.xyz/privkey.pem
+           - /var/log/nginx:/var/log/nginx
+
+networks:
+    back:
+        driver: bridge
+    front:
+        driver: bridge
+
