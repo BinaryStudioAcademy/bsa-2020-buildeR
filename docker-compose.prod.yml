@@ -14,7 +14,6 @@ services:
             VAULT_ADDR: 'http://0.0.0.0:8200'
             VAULT_API_ADDR: 'http://0.0.0.0:8200'
             VAULT_ADDRESS: 'http://0.0.0.0:8200'
-            VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}}'
         volumes:
             - ./vault/config:/vault/config
             - ./vault/logs:/vault/logs
@@ -106,6 +105,7 @@ services:
             - sql_server
             - rabbitmq
             - kafka
+            - vault
         image: bsa2020builder/builder_api:latest
         container_name: 'builder_api'
         restart: on-failure
@@ -124,7 +124,7 @@ services:
 
     builder_processor:
         depends_on:
-            - vault
+            - vault- vault
             - rabbitmq
             - kafka
         image: bsa2020builder/builder_processor:latest
