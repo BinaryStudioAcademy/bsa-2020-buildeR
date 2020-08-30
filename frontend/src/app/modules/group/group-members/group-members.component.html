@@ -25,7 +25,8 @@
           container="body">
           <div class="dropdown-header">Change permissions</div>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(role)" container="body">
+          <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+            container="body">
             <span *ngIf="role===member.memberRole">&#10003;</span> {{userRole[role]}}</button>
         </div>
       </div>

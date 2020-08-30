@@ -8,6 +8,8 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { UserInfo } from 'os';
 import { User } from '../../../shared/models/user/user';
 import { UserService } from '../../../core/services/user.service';
+import { TeamMemberService } from '../../../core/services/team-member.service';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-group-members',
@@ -26,13 +28,14 @@ export class GroupMembersComponent implements OnInit {
     UserRole.Viewer,
     UserRole.User
   ];
-  constructor(private groupService: GroupService, private route: ActivatedRoute, private userService: UserService) {
+  constructor(
+    private groupService: GroupService,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private teamMemberService: TeamMemberService,
+    private toastrService: ToastrNotificationsService) {
     route.parent.params.subscribe(
       (params) => this.groupId = params.groupId);
-  }
-
-  changeMemberRole(newUserRole) {
-    this.userRole = newUserRole;
   }
   ngOnInit(): void {
     this.getGroupMembers(this.groupId);
@@ -44,7 +47,15 @@ export class GroupMembersComponent implements OnInit {
   getUsers() {
     this.userService.getUsers().subscribe(res => this.users = res.body);
   }
-
+  changeMemberRole(member: TeamMember, newUserRole: UserRole) {
+    member.memberRole = newUserRole;
+    this.teamMemberService.updateMember(member).subscribe(() =>
+      this.toastrService.showSuccess('Member role successfully changed'),
+      (err) => {
+        this.toastrService.showError(err);
+      }
+    );
+  }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
