@@ -4,6 +4,8 @@ import { User } from '@shared/models/user/user';
 import { Project } from '@shared/models/project/project';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatus } from '@shared/models/build-status';
+import { BuildHistoryService } from '@core/services/build-history.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   templateUrl: './insights.component.html',
@@ -31,70 +33,14 @@ export class InsightsComponent implements OnInit {
     { name: 'Month' },
   ];
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService, private route: ActivatedRoute) {
+    this.route.parent.data.subscribe(data => this.user = data.user);
+   }
 
   ngOnInit(): void {
-    // mock
-    // this.user.builds = [];
-    // this.user.builds.push({
-    //   id: 1,
-    //   number: 1,
-    //   project: { id: 1 } as Project,
-    //   performer: this.user,
-    //   branchHash: null,
-    //   buildAt: this.now,
-    //   buildStatus: BuildStatus.Success,
-    //   commitHash: null,
-    //   duration: 10
-    // }, {
-    //   id: 2,
-    //   number: 2,
-    //   project: { id: 2 } as Project,
-    //   performer: this.user,
-    //   branchHash: null,
-    //   buildAt: new Date(2020, 7, 25),
-    //   buildStatus: BuildStatus.Failure,
-    //   commitHash: null,
-    //   duration: 19
-    // },
-    //   {
-    //     id: 3,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 1 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: BuildStatus.Canceled,
-    //     commitHash: null,
-    //     duration: 19
-    //   },
-    //   {
-    //     id: 4,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 1 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: BuildStatus.Success,
-    //     commitHash: null,
-    //     duration: 19
-    //   },
-    //   {
-    //     id: 5,
-    //     number: 2,
-    //     performer: this.user,
-    //     project: { id: 2 } as Project,
-    //     branchHash: null,
-    //     buildAt: new Date(2020, 7, 25),
-    //     buildStatus: BuildStatus.Success,
-    //     commitHash: null,
-    //     duration: 19
-    //   });
-    // end of mock
-
-
     this.totalBuilds = this.totalBuildsCount();
-    this.totalDuration = this.user.builds.map(this.duration).reduce(this.sum);
+    this.totalDuration = this.user.buildHistories.length ?
+    this.user.buildHistories.map(this.duration).reduce(this.sum) : 0;
     this.buildSuccessRate = this.buildSucceedCount();
     this.activeProjects = this.countActiveProjects();
     this.countActiveProjects();
@@ -104,7 +50,6 @@ export class InsightsComponent implements OnInit {
   getData(isMonth = false) {
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
-      this.countedDate = this.user.createdAt;
       this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
@@ -212,7 +157,7 @@ export class InsightsComponent implements OnInit {
   }
 
   countActiveProjects(){
-    return [...new Set(this.user.builds.map(item => item.project.id))].length;
+    return [...new Set(this.user.buildHistories.map(item => item.projectId))].length;
   }
 
   beautifyDate(newDay: Date) {
@@ -225,23 +170,23 @@ export class InsightsComponent implements OnInit {
 
   countActiveProjectsInDay(day: Date) {
     day = new Date(day);
-    return [...new Set(this.user.builds.filter(x => x.buildAt.getDate() === day.getDate())
-      .map(item => item.project.id))].length;
+    return [...new Set(this.user.buildHistories.filter(x => new Date(x.buildAt).getDate() === day.getDate())
+      .map(item => item.projectId))].length;
   }
   countBuildsInDay(day: Date) {
     day = new Date(day);
-    return this.user.builds.filter(x => x.buildAt.getDate() === day.getDate()).length;
+    return this.user.buildHistories.filter(x => new Date(x.buildAt).getDate() === day.getDate()).length;
   }
 
   countBuildsByStatus(day: Date, status: BuildStatus) {
     day = new Date(day);
-    return this.user.builds.filter(x => x.buildAt.getDate() === day.getDate()
+    return this.user.buildHistories.filter(x => new Date(x.buildAt).getDate() === day.getDate()
       && x.buildStatus === status).length;
   }
 
   countDurationInDay(day: Date) {
     day = new Date(day);
-    const builds = this.user.builds.filter(x => x.buildAt.getDate() === day.getDate());
+    const builds = this.user.buildHistories.filter(x => new Date(x.buildAt).getDate() === day.getDate());
     if (builds.length > 0) {
       return builds.map(this.duration).reduce(this.sum);
     }
@@ -249,16 +194,16 @@ export class InsightsComponent implements OnInit {
   }
 
   buildSucceedCount() {
-    if (this.user.builds.length) {
-      const total = this.user.builds.length;
-      const successBuilds = this.user.builds.filter(x => x.buildStatus === BuildStatus.Success).length;
+    if (this.user.buildHistories.length) {
+      const total = this.user.buildHistories.length;
+      const successBuilds = this.user.buildHistories.filter(x => x.buildStatus === BuildStatus.Success).length;
       return Math.round((successBuilds / total * 100));
     }
     return 0;
   }
   totalBuildsCount() {
-    if (this.user.builds.length) {
-      return this.user.builds.length;
+    if (this.user.buildHistories.length) {
+      return this.user.buildHistories.length;
     }
     return 0;
   }
