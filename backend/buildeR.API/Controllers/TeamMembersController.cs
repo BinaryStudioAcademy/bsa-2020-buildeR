@@ -19,8 +19,13 @@ namespace buildeR.API.Controllers
         {
             _teamMemberService = teamMemberService;
         }
+        [HttpPost]
+        public async Task<TeamMemberDTO> Create(NewTeamMemberDTO teamMember)
+        {
+            return await _teamMemberService.Create(teamMember);
+        }
         [HttpPut]
-        public async Task UpdateMemberRole(TeamMemberDTO teamMember)
+        public async Task UpdateMember(TeamMemberDTO teamMember)
         {
             await _teamMemberService.Update(teamMember);
         }

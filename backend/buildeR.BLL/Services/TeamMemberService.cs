@@ -19,7 +19,7 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
-
+            teamMember.JoinedDate = DateTime.Now;
             return await base.AddAsync(teamMember);
         }
 

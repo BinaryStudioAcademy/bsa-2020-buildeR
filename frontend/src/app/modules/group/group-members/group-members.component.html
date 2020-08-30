@@ -1,6 +1,24 @@
-<label for="typeahead-basic">Search for a user by username or email:</label>
-<input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-  [resultFormatter]="formatter" />
+<form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+  <label for="typeahead-basic">Search for a user by username or email:</label>
+  <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+    [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user" />
+  <label for="input-role">Choose a role permission:</label>
+  <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
+    <div>
+      <input type="text" class="form-control" data-toggle="dropdown" [value]="memberForm.controls['dropdown']?.value"
+        ngbDropdownToggle>
+    </div>
+    <ul ngbDropdownMenu>
+      <li *ngFor="let item of roles" ngbDropdownItem (click)="memberForm.controls['dropdown'].setValue(userRole[item])"
+        class="dropdown-item">
+        {{userRole[item]}}
+      </li>
+    </ul>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-success">Invite</button>
+  </div>
+</form>
 <hr>
 <div class="container">
   <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
