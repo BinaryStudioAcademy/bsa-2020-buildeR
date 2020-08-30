@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO;
-using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.Extensions;
 using buildeR.RabbitMq.Models;
 using Microsoft.Extensions.Hosting;
@@ -45,7 +44,7 @@ namespace buildeR.HostedServices
 
             using (var scope = _serviceProvider.CreateScope())
             {
-                var buildService = scope.ServiceProvider.GetService<IBuildService>();
+                using var buildService = scope.ServiceProvider.GetService<IBuildService>();
                 await buildService.ChangeStatus(statusChange);
             }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { Group } from '../../shared/models/group/group';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ProjectInfo } from '../../shared/models/project-info';
 import { HttpResponse } from '@angular/common/http';
 import { TeamMember } from '../../shared/models/group/team-member';
@@ -12,6 +12,11 @@ import { NewGroup } from '@shared/models/group/new-group';
 })
 export class GroupService {
   routePrefix = '/groups';
+  groupName$ = new Subject<string>();
+  groupIsPublic$ = new Subject<boolean>();
+  groupName = this.groupName$.asObservable();
+  groupIsPublic = this.groupIsPublic$.asObservable();
+
   constructor(private httpService: HttpService) { }
 
   getGroupById(groupId: number): Observable<Group> {
@@ -47,4 +52,9 @@ export class GroupService {
     return this.httpService.putRequest<Group>(`${this.routePrefix}`, group);
   }
 
+  changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
+    this.groupName$.next(groupName);
+    this.groupIsPublic$.next(groupIsPublic);
+    alert(groupName);
+  }
 }

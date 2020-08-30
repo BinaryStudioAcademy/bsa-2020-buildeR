@@ -30,6 +30,12 @@ export class GroupComponent implements OnInit {
     this.route.paramMap
       .pipe(switchMap((params) => params.getAll('groupId')))
       .subscribe((data) => (this.id = Number(data)));
+    this.groupService.groupName.subscribe((res) => {
+      this.group.name = res;
+    });
+    this.groupService.groupIsPublic.subscribe((res) => {
+      this.group.isPublic = res;
+    });
   }
 
   ngOnInit(): void {
