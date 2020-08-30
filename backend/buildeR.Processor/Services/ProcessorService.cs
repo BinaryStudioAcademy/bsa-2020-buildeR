@@ -93,10 +93,10 @@ namespace buildeR.Processor.Services
                 "ClonedRepository"
                 );
 
+            CloneRepository(build.RepositoryUrl, pathToClonedRepository);
+
             try
             {
-                CloneRepository(build.RepositoryUrl, pathToClonedRepository);
-
                 var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
                 await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
@@ -104,7 +104,7 @@ namespace buildeR.Processor.Services
             }
             catch (Exception e)
             {
-                Log.Error(e.Message);
+                Log.Error($"Error while building docker image. Reason: {e.Message}");
             }
             finally
             {
@@ -141,6 +141,7 @@ namespace buildeR.Processor.Services
 
         private bool areDockerLogs = true;
         private int startLogging = 2;
+
         public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
         {
             // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
@@ -257,7 +258,10 @@ namespace buildeR.Processor.Services
 
         private async Task CreateDockerFileAsync(string content, string path)
         {
-            await using var outputFile = new StreamWriter(Path.Combine(path, "Dockerfile"));
+            var dockerFilePath = Path.Combine(path, "Dockerfile");
+            Directory.CreateDirectory(dockerFilePath);
+
+            await using var outputFile = new StreamWriter(dockerFilePath);
             await outputFile.WriteAsync(content);
         }
         #endregion
