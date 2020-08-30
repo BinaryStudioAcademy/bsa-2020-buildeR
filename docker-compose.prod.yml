@@ -124,7 +124,7 @@ services:
 
     builder_processor:
         depends_on:
-            - vault- vault
+            - vault
             - rabbitmq
             - kafka
         image: bsa2020builder/builder_processor:latest
