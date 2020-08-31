@@ -1,5 +1,6 @@
 ﻿using buildeR.BLL.Interfaces;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace buildeR.BLL.Providers
 {
     public class FileProvider : IFileProvider
     {
+        private readonly string BaseUrl = Environment.GetEnvironmentVariable(nameof(BaseUrl));
         public async Task<string> UploadUserPhoto(IFormFile file)
         {
             var folderName = Path.Combine("Resources", "Avatars");
@@ -29,7 +31,7 @@ namespace buildeR.BLL.Providers
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            return Path.Combine(relativePath, fileName);
+            return Path.Combine(BaseUrl, relativePath, fileName);
         }
     }
 }

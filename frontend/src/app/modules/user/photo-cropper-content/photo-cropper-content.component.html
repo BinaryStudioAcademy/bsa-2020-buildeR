@@ -4,11 +4,12 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-  <input type="file" (change)="fileChangeEvent($event)" />
-
+  <input type="file" (change)="fileChangeEvent($event)"/>
+  
   <image-cropper
   [imageChangedEvent]="imageChangedEvent"
   [maintainAspectRatio]="true"
+  [imageURL]="content"
   [aspectRatio]="4 / 4"
   format="png"
   [roundCropper]	= "true"
