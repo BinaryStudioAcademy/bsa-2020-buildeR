@@ -23,9 +23,9 @@ namespace buildeR.BLL.Services
             _client = factory.CreateClient("github");
         }
 
-        public async Task<GithubUser> GetUserFromCredentials(string username, string password)
+        public async Task<GithubUser> GetUserFromToken(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
             var endpoint = $"user";
             var response = await _client.GetAsync(endpoint);
@@ -33,9 +33,9 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<GithubUser>(content);
         }
-        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string username, string password)
+        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
             var allRepos = new List<GithubRepository>();
             var lastLoadedRepos = new List<GithubRepository>();
@@ -61,11 +61,11 @@ namespace buildeR.BLL.Services
 
             return allRepos;
         }
-        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string username, string password)
+        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
-            var user = await GetUserFromCredentials(username, password);
+            var user = await GetUserFromToken(token);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
             var response = await _client.GetAsync(endpoint);
@@ -81,28 +81,28 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
         }
-        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string username = null, string password = null)
+        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string token = null)
         {
-            if (username != null && password != null)
-                SetUpHttpClient(username, password);
+            if (token != null)
+                SetUpHttpClient(token);
 
             var endpoint = $"repos/{repoOwner}/{repoName}";
             var response = await _client.GetAsync(endpoint);
 
             return response.IsSuccessStatusCode;
         }
-        public async Task<bool> CheckIfUserExist(string username, string password)
+        public async Task<bool> CheckIfTokenValid(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
             var endpoint = $"user";
             var response = await _client.GetAsync(endpoint);
 
             return response.IsSuccessStatusCode;
         }
-        public async Task CreateWebhook(string repositoryName, string callback, string username, string password)
+        public async Task CreateWebhook(string repositoryName, string callback, string token)
         {
-            var user = await GetUserFromCredentials(username, password);
+            var user = await GetUserFromToken(token);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
 
@@ -116,12 +116,9 @@ namespace buildeR.BLL.Services
             var response = await _client.PostAsync(endpoint, content);
         }
 
-        private void SetUpHttpClient(string username, string password)
+        private void SetUpHttpClient(string token)
         {
-            var authenticationString = $"{username}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
         }
     }
 }
