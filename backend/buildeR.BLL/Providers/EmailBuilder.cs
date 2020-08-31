@@ -54,7 +54,7 @@ namespace buildeR.BLL.Providers
         {
             string subject = userSubject;
             string title = $@"<b style=""font-size: 20px"">Hello, {userName}!</b>";
-            string body = @$"We want to thank you for your feedback!<br><br>Each of your reviews is very important to us! 
+            string body = @$"We want to thank you for your letter!<br><br>Each of your letters is very important to us! 
                           We have received your letter and will contact you as soon as possible.
                           <br><br>Cheers,<br>buildeR team";
             return new EmailModel()
