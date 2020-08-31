@@ -33,7 +33,7 @@ export class GroupCreateComponent implements OnInit {
         ]),
       description: new FormControl('',
         [
-          Validators.maxLength(32),
+          Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
       isPublic: new FormControl('false', Validators.required)
