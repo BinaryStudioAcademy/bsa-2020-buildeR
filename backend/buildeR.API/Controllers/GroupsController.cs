@@ -23,6 +23,7 @@ namespace buildeR.API.Controllers
         {
            return await _groupService.GetGroupsWithMembersAndProjects();
         }
+
         [HttpGet("getGroupsByUserId/{userId:int}")]
         public async Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId)
         {
@@ -52,11 +53,13 @@ namespace buildeR.API.Controllers
         {
             await _groupService.Delete(id);
         }
+
         [HttpGet("getProjectsByGroupId/{groupId:int}")]
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByGroup(int groupId)
         {
             return await _groupService.GetGroupProjects(groupId);
         }
+
         [HttpGet("getMembersByGroupId/{groupId:int}")]
         public async Task<IEnumerable<TeamMemberDTO>> GetMembersByGroup(int groupId)
         {

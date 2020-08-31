@@ -1,13 +1,10 @@
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
-  <div class="ml-auto" ngbDropdown>
-    
+  <div class="ml-auto" *ngIf="isAdmin" ngbDropdown>
     <button class="btn btn-info" ngbDropdownToggle  id="Dropdown">
       <i class="fas fa-plus"></i>
     </button>
     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right"aria-labelledby="Dropdown">
-      <a ngbDropdownItem >Settings</a>
-      <a ngbDropdownItem >Broadcast</a>
-      <a ngbDropdownItem >Logout</a>
+      <a *ngFor="let project of userProjects" (click)="addProject(project)">{{project.name}}</a>
     </div>
   </div>
 </div>
