@@ -9,6 +9,7 @@ namespace buildeR.DAL.Entities
         {
             ProjectGroups = new HashSet<ProjectGroup>();
             TeamMembers = new HashSet<TeamMember>();
+            GroupInvitations = new HashSet<GroupInvite>();
         }
 
         public bool IsPublic { get; set; }
@@ -17,5 +18,6 @@ namespace buildeR.DAL.Entities
 
         public virtual ICollection<ProjectGroup> ProjectGroups { get; set; }
         public virtual ICollection<TeamMember> TeamMembers { get; set; }
+        public virtual ICollection<GroupInvite> GroupInvitations { get; set; }
     }
 }
