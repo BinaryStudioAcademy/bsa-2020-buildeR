@@ -7,7 +7,8 @@
   </div>
   <div class="value">
     <div class="input-area">
-      <input type="text" class="form-control form-control form-control-ev val"
+      <i class="fas fa-low-vision"(click)="toggleFieldTextType()"></i>
+      <input type="text" [type]="fieldTextType ? 'password' : 'text'" class="form-control form-control form-control-ev val"
       formControlName="value">
     </div>
   </div>
