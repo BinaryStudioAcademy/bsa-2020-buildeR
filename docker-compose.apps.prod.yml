@@ -32,6 +32,8 @@ services:
             - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
         env_file:
             - /etc/environment
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
 
     builder_signalr:
         image: bsa2020builder/builder_signalr:latest
