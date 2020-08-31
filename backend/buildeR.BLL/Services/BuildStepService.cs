@@ -64,6 +64,8 @@ namespace buildeR.BLL.Services
                 var arg = Mapper.Map<CommandArgument>(argDTO);
                 if (!base.Context.CommandArguments.Contains(arg))
                     base.Context.CommandArguments.Add(arg);
+                else
+                    base.Context.CommandArguments.Update(arg);
             }
 
             await base.UpdateAsync(buildStep);
