@@ -5,7 +5,7 @@ import { Group } from '../../../shared/models/group/group';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '../../../shared/models/user/user';
-import { UserRole } from '../../../shared/models/group/user-role';
+import { GroupRole } from '../../../shared/models/group/group-role';
 import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
@@ -16,7 +16,7 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
   styleUrls: ['./group-list.component.sass']
 })
 export class GroupListComponent extends BaseComponent implements OnInit {
-  userRole: typeof UserRole = UserRole;
+  groupRole: typeof GroupRole = GroupRole;
   loadingGroups = false;
   groups: Group[];
   currentUser: User;

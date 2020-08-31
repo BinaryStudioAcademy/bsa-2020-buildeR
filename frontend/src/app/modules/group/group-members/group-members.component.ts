@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GroupService } from '../../../core/services/group.service';
 import { ActivatedRoute } from '@angular/router';
 import { TeamMember } from '../../../shared/models/group/team-member';
-import { UserRole } from '../../../shared/models/group/user-role';
+import { GroupRole } from '../../../shared/models/group/group-role';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { User } from '../../../shared/models/user/user';
@@ -23,12 +23,12 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   members: TeamMember[];
   newTeamMember: TeamMember;
   users: User[];
-  userRole: typeof UserRole = UserRole;
+  groupRole: typeof GroupRole = GroupRole;
   roles = [
-    UserRole.Admin,
-    UserRole.Creator,
-    UserRole.Viewer,
-    UserRole.User
+    GroupRole.Owner,
+    GroupRole.Contributor,
+    GroupRole.Builder,
+    GroupRole.Guest
   ];
   memberForm: FormGroup;
   constructor(
@@ -47,7 +47,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.getUsers();
     this.memberForm = new FormGroup({
       user: new FormControl(),
-      dropdown: new FormControl(this.userRole[UserRole.User])
+      dropdown: new FormControl(this.groupRole[GroupRole.Guest])
     });
   }
 
@@ -57,7 +57,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   getUsers() {
     this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body);
   }
-  changeMemberRole(member: TeamMember, newUserRole: UserRole) {
+  changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
     this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$)).subscribe(() =>
       this.toastrService.showSuccess('Member role successfully changed'),
@@ -81,7 +81,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   }
   search = (text$: Observable<string>) =>
     text$.pipe(
-      debounceTime(200),
+      debounceTime(300),
       distinctUntilChanged(),
       map(term => term.length < 2 ? []
         : this.users.filter(v => v.username.toLowerCase().indexOf(term.toLowerCase()) > -1 ||

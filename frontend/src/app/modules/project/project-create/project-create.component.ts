@@ -66,7 +66,7 @@ export class ProjectCreateComponent implements OnInit {
           Validators.minLength(4),
           Validators.maxLength(32),
           Validators.required,
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ],
         [
           projectNameAsyncValidator(this.projectService, this.user)
@@ -76,7 +76,7 @@ export class ProjectCreateComponent implements OnInit {
           Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
-      isPublic: new FormControl(this.newProject.isPublic, []),
+      isPublic: new FormControl(this.newProject.isPublic.toString(), []),
     });
 
     this.syncService.checkIfUserHasCredentials(this.user.id)
@@ -92,7 +92,7 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject = {
       name: '',
       description: '',
-      isPublic: true,
+      isPublic: false,
       ownerId: this.user.id,
       repository: {} as NewRepository
     };

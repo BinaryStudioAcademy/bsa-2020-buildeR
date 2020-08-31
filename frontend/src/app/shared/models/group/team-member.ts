@@ -1,12 +1,12 @@
 import { User } from '../user/user';
 import { Group } from './group';
-import { UserRole } from './user-role';
+import { GroupRole } from './group-role';
 
 export interface TeamMember {
   id: number;
   userId: number;
   groupId: number;
-  memberRole: UserRole;
+  memberRole: GroupRole;
   user: User;
   group: Group;
   joinedDate: Date;
