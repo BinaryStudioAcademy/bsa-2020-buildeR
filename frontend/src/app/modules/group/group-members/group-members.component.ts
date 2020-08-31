@@ -55,7 +55,9 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.members = res.body);
   }
   getUsers() {
-    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body);
+    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body.filter(
+      (user) => !this.members.some(x => x.userId === user.id)
+    ));
   }
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
