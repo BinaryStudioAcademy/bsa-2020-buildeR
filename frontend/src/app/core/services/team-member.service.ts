@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
-import { UserRole } from '../../shared/models/group/user-role';
 import { TeamMember } from '../../shared/models/group/team-member';
 
 @Injectable({

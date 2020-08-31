@@ -58,7 +58,7 @@ namespace buildeR.BLL.Services
             var teamMember = new TeamMember
             {
                 UserId = group.CreatorId,
-                MemberRole = UserRole.Creator,
+                MemberRole = GroupRole.Owner,
                 GroupId = newGroup.Id,
                 JoinedDate = DateTime.Now
             };
