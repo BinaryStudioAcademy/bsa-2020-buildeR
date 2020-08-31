@@ -1,25 +1,52 @@
-<h4>Invite member</h4>
-<form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
-  <label for="typeahead-basic">Search for a user by username or email:</label>
-  <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-    [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user" />
-  <label for="input-role">Choose a role permission:</label>
-  <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
-    <div>
-      <input type="text" class="form-control" data-toggle="dropdown" [value]="memberForm.controls['dropdown']?.value"
-        ngbDropdownToggle>
+<div class="invite">
+  <h4>Invite member</h4>
+  <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <ng-template #rt let-r="result" let-t="term">
+          <div class="row my-3">
+            <div class="item area">
+              <img [src]="r.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+                class="avatar" />
+            </div>
+            <div class="user">
+              <div class="row-top">
+                {{r.firstName}}
+                {{r.lastName}}
+                ({{ r.username}})
+              </div>
+              <div class="row-bottom gray">
+                {{r.email}}
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        <label for="typeahead-basic">Search user:</label>
+        <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+          [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
+          placeholder="Username or email" [resultTemplate]="rt" />
+      </div>
+      <div class="col-md-6">
+        <label for="input-role">Choose a role permission:</label>
+        <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
+          <div>
+            <input type="text" class="form-control" data-toggle="dropdown"
+              [value]="memberForm.controls['dropdown']?.value" ngbDropdownToggle>
+          </div>
+          <ul ngbDropdownMenu>
+            <li *ngFor="let item of roles" ngbDropdownItem
+              (click)="memberForm.controls['dropdown'].setValue(groupRole[item])" class="dropdown-item">
+              {{groupRole[item]}}
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <ul ngbDropdownMenu>
-      <li *ngFor="let item of roles" ngbDropdownItem (click)="memberForm.controls['dropdown'].setValue(groupRole[item])"
-        class="dropdown-item">
-        {{groupRole[item]}}
-      </li>
-    </ul>
-  </div>
-  <div class="form-actions">
-    <button type="submit" class="btn btn-success">Invite</button>
-  </div>
-</form>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">Invite</button>
+    </div>
+  </form>
+</div>
 <hr>
 <div class="container">
   <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
@@ -31,7 +58,7 @@
       <div class="row-top">
         <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
       </div>
-      <div class="align-text-top row-bottom">
+      <div class="align-text-top row-bottom gray">
         <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
       </div>
     </div>
