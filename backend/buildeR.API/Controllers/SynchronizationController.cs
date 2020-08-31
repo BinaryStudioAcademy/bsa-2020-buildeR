@@ -24,7 +24,7 @@ namespace buildeR.API.Controllers
             return await _synchronizationService.CheckIfTokenValid(token.Token);
         }
 
-        [HttpGet("user/{userId}/credentials/exist")]
+        [HttpGet("user/{userId}/token/exist")]
         public async Task<bool> CheckIfUserHasToken(int userId)
         {
             return await _synchronizationService.CheckIfUserHasToken(userId);
