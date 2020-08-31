@@ -3,6 +3,5 @@ export interface UserLetter {
   userEmail: string,
   subject: string,
   description: string,
-  rating: number,
   isRespond: boolean
 }
