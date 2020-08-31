@@ -259,10 +259,9 @@ namespace buildeR.Processor.Services
         private async Task CreateDockerFileAsync(string content, string path)
         {
             var dockerFilePath = Path.Combine(path, "Dockerfile");
-            Directory.CreateDirectory(dockerFilePath);
 
-            await using var outputFile = new StreamWriter(dockerFilePath);
-            await outputFile.WriteAsync(content);
+            using var fileStream = File.CreateText(dockerFilePath);
+            await fileStream.WriteAsync(content);
         }
         #endregion
     }

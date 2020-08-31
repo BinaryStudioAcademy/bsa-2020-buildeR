@@ -187,10 +187,7 @@ namespace buildeR
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
-                context.Database.Migrate();
-
-                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
-                contextQuartz.Database.Migrate();
+                context.Database.MigrateAsync();
             };
         }
     }
