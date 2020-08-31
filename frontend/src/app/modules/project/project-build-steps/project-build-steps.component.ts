@@ -97,6 +97,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.buildSteps = resp.body;
+          console.log(this.buildSteps);
         },
         (error) => {
           this.isLoading = false;
@@ -186,7 +187,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       workDirectory: this.workDir,
       commandArguments: this.commandArguments
     } as BuildStep;
-
+    this.addEmptyCommand(buildStep);
     this.isLoading = true;
     this.buildStepService
       .createBuildStep(buildStep)
@@ -203,6 +204,17 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         }
       );
   }
+
+  addEmptyCommand(step: BuildStep) {
+    if (step.buildStepName === 'Custom command: ') {
+      const newCommandArgument = {
+        buildStepId: step.id,
+        key: ''
+      } as CommandArgument;
+      step.commandArguments.push(newCommandArgument);
+    }
+  }
+
 
   updateAllSteps() {
     this.isLoading = true;
