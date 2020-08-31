@@ -184,11 +184,17 @@
             <input type="text" class="form-control form-control-sm" formControlName="name"
             required autocomplete="off" placeholder="Project name">
           </div>
+          <div class="error" [hidden]="!projectForm.get('name').errors?.minlength || projectForm.get('name').untouched">
+            The minimum length is 4 characters
+          </div>
+          <div class="error" [hidden]="!projectForm.get('name').errors?.maxlength || projectForm.get('name').untouched">
+            The maximum length is 32 characters
+          </div>
           <div class="error" [hidden]="!projectForm.get('name').errors?.required || projectForm.get('name').untouched">
             Project name is required
           </div>
           <div class="error" [hidden]="!projectForm.get('name').errors?.pattern || projectForm.get('name').untouched">
-            Name must have only latin letters, digits and can't start<br> or finish with these characters ' - ', ' . '
+            Name must have only latin letters, digits and these symbols ' - ', ' . ', ' _ '<br> which can't be at the start or the end of the name except ' _ '
           </div>
           <div class="error" [hidden]="!projectForm.get('name').errors?.isProjectNameTaken">
             Project with name '{{projectForm.get('name').value}}' alredy exist

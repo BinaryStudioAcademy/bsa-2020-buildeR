@@ -66,7 +66,7 @@ export class ProjectCreateComponent implements OnInit {
           Validators.minLength(4),
           Validators.maxLength(32),
           Validators.required,
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ],
         [
           projectNameAsyncValidator(this.projectService, this.user)
