@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.Synchronization;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -19,9 +18,15 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("token/valid")]
-        public async Task<bool> CheckIfTokenValid([FromBody]AccessTokenDTO token)
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid([FromBody]AccessTokenDTO token)
         {
             return await _synchronizationService.CheckIfTokenValid(token.Token);
+        }
+
+        [HttpGet("{userId}/token")]
+        public async Task<AccessTokenDTO> GetUserAccessToken(int userId)
+        {
+            return await _synchronizationService.GetUserAccessToken(userId);
         }
 
         [HttpGet("user/{userId}/token/exist")]
