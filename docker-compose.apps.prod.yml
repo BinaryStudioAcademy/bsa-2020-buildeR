@@ -43,6 +43,8 @@ services:
             - "5070:5070"
         environment:
             ASPNETCORE_ENVIRONMENT: 'Production'
+        env_file:
+            - /etc/environment
 
     builder_frontend:
         depends_on:
