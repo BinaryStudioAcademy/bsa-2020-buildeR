@@ -52,7 +52,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
 
-            services.AddSingleton<ISchedulerFactory>(GetSchedulerFactory(configuration));
+            services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
 
             services.RegisterAutoMapper();
@@ -82,7 +82,7 @@ namespace buildeR.API.Extensions
             });
         }
 
-        private static ISchedulerFactory GetSchedulerFactory(IConfiguration configuration)
+        private static IScheduler GetScheduler(IConfiguration configuration)
         {
             var properties = new NameValueCollection
             {
@@ -99,7 +99,9 @@ namespace buildeR.API.Extensions
                 ["quartz.plugin.timezoneConverter.type"] = "Quartz.Plugin.TimeZoneConverter.TimeZoneConverterPlugin, Quartz.Plugins.TimeZoneConverter"
             };
 
-            return new StdSchedulerFactory(properties);
+            var schedularFactory =  new StdSchedulerFactory(properties);
+
+            return schedularFactory.GetScheduler().GetAwaiter().GetResult();
         }
     }
 }

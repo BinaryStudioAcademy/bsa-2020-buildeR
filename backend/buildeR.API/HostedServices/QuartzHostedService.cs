@@ -7,24 +7,21 @@ namespace buildeR.API.HostedServices
 {
     public class QuartzHostedService : IHostedService
     {
-        private readonly ISchedulerFactory _schedulerFactory;
-        public IScheduler Scheduler { get; set; }
+        private readonly IScheduler _scheduler;
 
-
-        public QuartzHostedService(ISchedulerFactory schedulerFactory)
+        public QuartzHostedService(IScheduler scheduler)
         {
-            _schedulerFactory = schedulerFactory;
+            _scheduler = scheduler;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            Scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-            await Scheduler.Start(cancellationToken);
+            await _scheduler?.Start(cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await Scheduler?.Shutdown(cancellationToken);
+            await _scheduler?.Shutdown(cancellationToken);
         }
     }
 }
