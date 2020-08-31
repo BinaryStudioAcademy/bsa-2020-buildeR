@@ -15,11 +15,10 @@ namespace buildeR.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IFileProvider _fileProvider;
+
         public UsersController(IUserService userService, IFileProvider fileProvider)
         {
             _userService = userService;
-            _fileProvider = fileProvider;
         }
 
         [HttpGet]

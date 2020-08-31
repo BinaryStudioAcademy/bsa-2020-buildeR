@@ -1,23 +1,54 @@
-<label for="typeahead-basic">Search for a user by username or email:</label>
-<input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-  [resultFormatter]="formatter" />
+<h4>Invite member</h4>
+<form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+  <label for="typeahead-basic">Search for a user by username or email:</label>
+  <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+    [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user" />
+  <label for="input-role">Choose a role permission:</label>
+  <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
+    <div>
+      <input type="text" class="form-control" data-toggle="dropdown" [value]="memberForm.controls['dropdown']?.value"
+        ngbDropdownToggle>
+    </div>
+    <ul ngbDropdownMenu>
+      <li *ngFor="let item of roles" ngbDropdownItem (click)="memberForm.controls['dropdown'].setValue(userRole[item])"
+        class="dropdown-item">
+        {{userRole[item]}}
+      </li>
+    </ul>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-success">Invite</button>
+  </div>
+</form>
 <hr>
 <div class="container">
   <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
-    <div class="col-md-1 col-sm-2 col-2 area">
+    <div class="item area">
       <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
         class="avatar" />
     </div>
-    <div class="col-md-9 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-      <div class="col-md-12 col-sm-5 col-5 row-top">
+    <div class="user">
+      <div class="row-top">
         <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
       </div>
-      <div class="col-md-4 col-sm-5 col-5 offset-2 offset-md-0 align-text-top row-bottom">
+      <div class="align-text-top row-bottom">
         <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
       </div>
     </div>
-    <div class="col-lg-1 col-md-2 col-sm-1 col-1 area role">
-      <a class="user-access-role" [routerLink]="">{{userRole[member.memberRole]}}</a>
+    <div class="item area role">
+      <div ngbDropdown>
+        <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+          {{userRole[member.memberRole]}}
+        </div>
+        <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
+          container="body">
+          <div class="dropdown-header">Change permissions</div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+            container="body">
+            <span *ngIf="role===member.memberRole">&#10003;</span> {{userRole[role]}}</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

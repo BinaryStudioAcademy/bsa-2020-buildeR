@@ -19,11 +19,7 @@ export class GroupResolverService implements Resolve<Group>{
     const id = parseInt(route.paramMap.get('groupId'), 10);
     return this.groupService.getGroupById(id).pipe(
       tap((group) => {
-        if (group) {
-          return group;
-        } else {
-          return EMPTY;
-        }
+        return group ?? EMPTY;
       }),
       catchError(() => {
         console.log(this.router.url);

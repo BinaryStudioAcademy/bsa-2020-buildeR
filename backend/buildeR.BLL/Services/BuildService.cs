@@ -94,6 +94,16 @@ namespace buildeR.BLL.Services
                     .ToListAsync());
         }
 
+        public async Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id)
+        {
+           var res = Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
+                await Context.BuildHistories.AsNoTracking()
+                    .Where(bh => bh.PerformerId == id).Where(t => t.StartedAt > DateTime.Today.AddMonths(-1))
+                    .Include(bh => bh.Performer)
+                    .ToListAsync());
+            return res;
+        }
+
         public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)
         {
             // TODO add checking

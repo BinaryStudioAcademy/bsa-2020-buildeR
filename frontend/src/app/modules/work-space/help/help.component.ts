@@ -20,7 +20,6 @@ export class HelpComponent extends BaseComponent
 
   currentUser: User = {} as User;
   userHelp: UserLetter = {} as UserLetter;
-  currentRate: number = 0;
   isShowSpinner = false;
 
   public helpForm: FormGroup;
@@ -78,7 +77,6 @@ export class HelpComponent extends BaseComponent
   }
 
   onSubmit(letter: UserLetter): void {
-    letter.rating = this.currentRate;
 
     if(this.currentUser) {
       this.currentUser.firstName ? letter.userName = this.currentUser.firstName :

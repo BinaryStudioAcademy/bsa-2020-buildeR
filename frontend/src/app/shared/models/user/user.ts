@@ -12,5 +12,5 @@ export interface User {
   avatarUrl: string;
   createdAt: Date;
   userSocialNetworks: UserSocialNetwork[];
-  builds: BuildHistory[];
+  buildHistories: BuildHistory[];
 }

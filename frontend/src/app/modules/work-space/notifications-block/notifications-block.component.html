@@ -1,5 +1,6 @@
 <div class="notifications-background" (click)="toggle()">
 </div>
+<div class="arrow"><i class="fas fa-sort-up"></i></div>
 <div class="notifications-block">
   <a title="Mark all as read" (click)="clearAll()"><svg viewBox="0 0 16 16"
       class="mark-all-as-read-icon bi bi-check-all" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -16,7 +17,7 @@
       There are no notifications
     </div>
     <ng-container *ngFor="let notification of cashedNotifications">
-      <div *ngIf="notification.isRead == false || showRead" class="notification" [ngClass]="{
+      <div *ngIf="notification.isRead == false || isShowRead" class="notification" [ngClass]="{
         'isNotRead': !notification.isRead,
         'build-failed text-danger': notification.type == NotificationType.buildFailed,
         'build-success text-success': notification.type == NotificationType.buildSuccess
@@ -40,16 +41,14 @@
       </div>
     </ng-container>
   </div>
-  <div *ngIf="showAllNotifications; else elseShowLast" class="notifications-footer">
-    <span class="mr-2" (click)="showLast()">show only last notifications</span>
+  <div class="notifications-footer">
     <div class="custom-control custom-switch">
-      <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="showRead">
+      <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="isShowRead" (change)="toggleShowRead()">
       <label class="custom-control-label" for="customSwitch1">Show read</label>
     </div>
+    <span *ngIf="showAllNotifications; else elseShowLast" class="mr-2" (click)="toggleShowLast()">show only last notifications</span>
+    <ng-template #elseShowLast>
+      <span (click)="toggleShowAll()">show all notifications</span>
+    </ng-template>
   </div>
-  <ng-template #elseShowLast>
-    <div class="notifications-footer">
-      <span (click)="showAll()">show all notifications</span>
-    </div>
-  </ng-template>
 </div>

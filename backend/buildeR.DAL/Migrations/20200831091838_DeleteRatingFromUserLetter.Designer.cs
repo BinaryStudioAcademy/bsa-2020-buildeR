@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200831091838_DeleteRatingFromUserLetter")]
+    partial class DeleteRatingFromUserLetter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,12 +103,6 @@ namespace buildeR.DAL.Migrations
                             DockerImageName = "node",
                             DockerRegistryName = "node",
                             PluginName = "Node.js"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Command = "sh",
-                            PluginName = "Custom command"
                         });
                 });
 
@@ -346,11 +342,6 @@ namespace buildeR.DAL.Migrations
                             Id = 3,
                             Name = "install",
                             PluginId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            PluginId = 3
                         });
                 });
 

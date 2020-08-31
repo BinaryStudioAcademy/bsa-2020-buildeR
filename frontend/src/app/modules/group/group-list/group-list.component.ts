@@ -77,7 +77,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         }
       })
       .catch((error) => {
-        this.toastrService.showError(error.message, error.name);
+        console.log(error);
       });
   }
 }
