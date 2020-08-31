@@ -272,7 +272,7 @@ namespace buildeR.DAL.Context
 
             var teamMemberFake = new Faker<TeamMember>()
                 .RuleFor(tm => tm.Id, _ => teamMemberId++)
-                .RuleFor(tm => tm.MemberRole, f => f.PickRandom<UserRole>())
+                .RuleFor(tm => tm.MemberRole, f => f.PickRandom<GroupRole>())
                 .RuleFor(tm => tm.GroupId, f => f.PickRandom(groups).Id)
                 .RuleFor(tm => tm.UserId, f => f.PickRandom(users).Id);
 

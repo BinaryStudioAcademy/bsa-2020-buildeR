@@ -10,9 +10,9 @@
         ngbDropdownToggle>
     </div>
     <ul ngbDropdownMenu>
-      <li *ngFor="let item of roles" ngbDropdownItem (click)="memberForm.controls['dropdown'].setValue(userRole[item])"
+      <li *ngFor="let item of roles" ngbDropdownItem (click)="memberForm.controls['dropdown'].setValue(groupRole[item])"
         class="dropdown-item">
-        {{userRole[item]}}
+        {{groupRole[item]}}
       </li>
     </ul>
   </div>
@@ -38,7 +38,7 @@
     <div class="item area role">
       <div ngbDropdown>
         <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-          {{userRole[member.memberRole]}}
+          {{groupRole[member.memberRole]}}
         </div>
         <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
           container="body">
@@ -46,7 +46,7 @@
           <div class="dropdown-divider"></div>
           <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
             container="body">
-            <span *ngIf="role===member.memberRole">&#10003;</span> {{userRole[role]}}</button>
+            <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
         </div>
       </div>
     </div>
