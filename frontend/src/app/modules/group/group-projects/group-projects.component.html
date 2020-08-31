@@ -1,8 +1,14 @@
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
-  <div class="ml-auto">
-    <button class="btn btn-info" (click)="openCreateProjectModal()">
+  <div class="ml-auto" ngbDropdown>
+    
+    <button class="btn btn-info" ngbDropdownToggle  id="Dropdown">
       <i class="fas fa-plus"></i>
     </button>
+    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right"aria-labelledby="Dropdown">
+      <a ngbDropdownItem >Settings</a>
+      <a ngbDropdownItem >Broadcast</a>
+      <a ngbDropdownItem >Logout</a>
+    </div>
   </div>
 </div>
 <div class="container" *ngIf="projects">
