@@ -29,12 +29,12 @@ namespace buildeR.BLL.Services
         {
             var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
-            var credentials = await GetUserCredentials(project.OwnerId);
+            var token = await GetUserAccessToken(project.OwnerId);
             
             IEnumerable<GithubBranch> branches = null;
 
             if (repository.Private)
-                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, credentials.Username, credentials.Password);
+                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, token.Token);
             else
                 branches = await _githubClient.GetPublicRepositoryBranches(repository.Name, repository.Owner);
 
@@ -42,32 +42,32 @@ namespace buildeR.BLL.Services
         }
         public async Task<IEnumerable<Repository>> GetUserRepositories(int userId)
         {
-            var credentials = await GetUserCredentials(userId);
+            var token = await GetUserAccessToken(userId);
 
-            var repositories = await _githubClient.GetUserRepositories(credentials.Username, credentials.Password);
+            var repositories = await _githubClient.GetUserRepositories(token.Token);
 
             return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private, Description = r.Description, Url = r.Html_Url });
         }
         public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId)
         {
-            var credentials = await GetUserCredentials(userId);
+            var token = await GetUserAccessToken(userId);
 
             var repoName = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
             var repoOwner = _synchronizationHelper.GetRepositoryOwnerFromUrl(repoUrl);
 
-            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, credentials.Username, credentials.Password);
+            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, token.Token);
         }
-        public async Task<bool> CheckIfUserExist(Credentials credentials)
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid(string token)
         {
-            return await _githubClient.CheckIfUserExist(credentials.Username, credentials.Password);
+            return await _githubClient.CheckIfTokenValid(token);
         }
-        public async Task<bool> CheckIfUserHasCredentials(int userId)
+        public async Task<bool> CheckIfUserHasToken(int userId)
         {
             try
             {
-                var credentials = await GetUserCredentials(userId);
+                var token = await GetUserAccessToken(userId);
 
-                if (string.IsNullOrEmpty(credentials.Username) || string.IsNullOrEmpty(credentials.Password))
+                if (string.IsNullOrEmpty(token.Token))
                     return false;
 
                 return true;
@@ -83,33 +83,31 @@ namespace buildeR.BLL.Services
 
             var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
-            var credentials = await GetUserCredentials(project.OwnerId);
+            var token = await GetUserAccessToken(project.OwnerId);
 
-            await _githubClient.CreateWebhook(repository.Name, callback, credentials.Username, credentials.Password);
+            await _githubClient.CreateWebhook(repository.Name, callback, token.Token);
         }
-        public async Task SetUpUserCredentials(int userId, Credentials credentials)
+        public async Task SetUpUserToken(int userId, string token)
         {
             var credentialsDictionary = new Dictionary<string, string>();
 
-            credentialsDictionary.Add("username", credentials.Username);
-            credentialsDictionary.Add("password", credentials.Password);
+            credentialsDictionary.Add("token", token);
 
-            await _secretService.CreateSecretsAsync(credentialsDictionary, $"users/{userId}/credentials/github");
+            await _secretService.CreateSecretsAsync(credentialsDictionary, $"users/{userId}/token/github");
         }
-        public async Task<Credentials> GetUserCredentials(int userId)
+        public async Task<AccessTokenDTO> GetUserAccessToken(int userId)
         {
             try
             {
-                var dictionary = await _secretService.ReadSecretsAsync($"users/{userId}/credentials/github");
+                var dictionary = await _secretService.ReadSecretsAsync($"users/{userId}/token/github");
 
-                dictionary.TryGetValue("username", out string username);
-                dictionary.TryGetValue("password", out string password);
+                dictionary.TryGetValue("token", out string token);
 
-                return new Credentials { Username = username, Password = password };
+                return new AccessTokenDTO { Token = token};
             }
             catch(Exception)
             {
-                return new Credentials();
+                return new AccessTokenDTO { Token = "" };
             }
         }
     }
