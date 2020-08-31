@@ -245,16 +245,22 @@ namespace buildeR.Processor.Services
             ENV {{ key }}={{ value }} // if any
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
-            var template = Template.Parse(
-                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:{{if !this.docker_image_version; this.docker_image_version = 'latest'; end; this.docker_image_version }} AS {{ this.work_directory }}\r\n" +
+            var geneticTemplate = Template.Parse(
+                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
                  "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
-                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
+                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}");
 
-            foreach (var step in buildSteps.OrderBy(s => s.Index))
-                dockerfile += template.Render(step);
+            var customCommandTemplate = Template.Parse(
+                "&& {{ this.command_arguments[0].key }}\r\n\r\n");
+
+            foreach (var step in buildSteps)
+                if (step.BuildStepName != "Custom command: ")
+                    dockerfile += geneticTemplate.Render(step);
+                else
+                    dockerfile += customCommandTemplate.Render(step);
 
             return dockerfile;
         }
