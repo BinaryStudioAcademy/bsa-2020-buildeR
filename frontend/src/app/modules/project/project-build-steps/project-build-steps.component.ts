@@ -97,6 +97,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.buildSteps = resp.body;
+          console.log(this.buildSteps);
         },
         (error) => {
           this.isLoading = false;
@@ -132,20 +133,22 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 
   removeExistingCommandArgument(step: BuildStep, argumentId: number, key: string) {
     step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.key !== key);
-    this.isLoading = true;
-    this.commandArgumentService
-      .removeCommandArgument(argumentId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        () => {
-          this.isLoading = false;
-          step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }
-      );
+    if (argumentId) {
+      this.isLoading = true;
+      this.commandArgumentService
+        .removeCommandArgument(argumentId)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(
+          () => {
+            this.isLoading = false;
+            step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.showError(error);
+          }
+        );
+    }
   }
 
   editCommandArgument(arg: CommandArgument) {
@@ -184,7 +187,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       workDirectory: this.workDir,
       commandArguments: this.commandArguments
     } as BuildStep;
-
+    this.addEmptyCommand(buildStep);
     this.isLoading = true;
     this.buildStepService
       .createBuildStep(buildStep)
@@ -201,6 +204,17 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         }
       );
   }
+
+  addEmptyCommand(step: BuildStep) {
+    if (step.buildStepName === 'Custom command: ') {
+      const newCommandArgument = {
+        buildStepId: step.id,
+        key: ''
+      } as CommandArgument;
+      step.commandArguments.push(newCommandArgument);
+    }
+  }
+
 
   updateAllSteps() {
     this.isLoading = true;
@@ -250,6 +264,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         () => {
           this.isLoading = false;
           moveItemInArray(this.buildSteps, oldIndex, newIndex);
+          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;

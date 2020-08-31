@@ -50,6 +50,12 @@ namespace buildeR.DAL.Context
                 DockerImageName = "node",
                 DockerRegistryName = "node"
             };
+            var customCommandPlugin = new BuildPlugin()
+            {
+                Id = 3,
+                Command = "sh",
+                PluginName = "Custom command"
+            };
 
             var dotnetBuildCommand = new PluginCommand()
             {
@@ -72,6 +78,12 @@ namespace buildeR.DAL.Context
                 PluginId = nodeBuildPlugin.Id
             };
 
+            var customCommand = new PluginCommand()
+            {
+                Id = 4,
+                PluginId = customCommandPlugin.Id
+            };
+
             //var buildPlugins = GenerateRandomBuildPlugins();
             //var groups = GenerateRandomGroups();
             //var pluginCommands = GenerateRandomPluginCommands(buildPlugins);
@@ -86,9 +98,9 @@ namespace buildeR.DAL.Context
             //var teamMembers = GenerateRandomTeamMembers(groups, users);
             //var notifications = GenerateRandomNotifications();
 
-            modelBuilder.Entity<BuildPlugin>().HasData(dotnetBuildPlugin, nodeBuildPlugin);
+            modelBuilder.Entity<BuildPlugin>().HasData(dotnetBuildPlugin, nodeBuildPlugin, customCommandPlugin);
             //modelBuilder.Entity<Group>().HasData(groups);
-            modelBuilder.Entity<PluginCommand>().HasData(dotnetRestoreCommand, dotnetBuildCommand, npmInstallCommand);
+            modelBuilder.Entity<PluginCommand>().HasData(dotnetRestoreCommand, dotnetBuildCommand, npmInstallCommand, customCommand);
             //modelBuilder.Entity<User>().HasData(users);
             //modelBuilder.Entity<UserSocialNetwork>().HasData(userSocialNetworks);
             //modelBuilder.Entity<Project>().HasData(projects);
@@ -260,7 +272,7 @@ namespace buildeR.DAL.Context
 
             var teamMemberFake = new Faker<TeamMember>()
                 .RuleFor(tm => tm.Id, _ => teamMemberId++)
-                .RuleFor(tm => tm.MemberRole, f => f.PickRandom<UserRole>())
+                .RuleFor(tm => tm.MemberRole, f => f.PickRandom<GroupRole>())
                 .RuleFor(tm => tm.GroupId, f => f.PickRandom(groups).Id)
                 .RuleFor(tm => tm.UserId, f => f.PickRandom(users).Id);
 

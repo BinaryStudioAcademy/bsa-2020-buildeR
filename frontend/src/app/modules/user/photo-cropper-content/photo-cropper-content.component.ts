@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { log } from 'console';
 
 @Component({
   selector: 'app-photo-cropper-content',
@@ -8,11 +10,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./photo-cropper-content.component.sass']
 })
 export class PhotoCropperContentComponent implements OnInit {
+  constructor(private activeModal: NgbActiveModal, private toastr: ToastrNotificationsService) { }
+  @Input() content;
   imageChangedEvent;
   croppedImage;
   canSave = false;
   imageName = '';
-  constructor(private activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
@@ -33,11 +36,13 @@ cropperReady() {
     // cropper ready
 }
 loadImageFailed() {
-    alert('Loading image occures error');
+    this.toastr.showError('Loading image occures error');
 }
 
 save(){
-
+  if (!this.imageName){
+    this.imageName = this.makeName(10) + '.png';
+  }
   const file = this.base64ToFile(this.croppedImage, this.imageName);
   this.activeModal.close(file);
 }
@@ -48,9 +53,9 @@ base64ToFile(data, filename) {
   const mime = arr[0].match(/:(.*?);/)[1];
   const bstr = atob(arr[1]);
   let n = bstr.length;
-  let u8arr = new Uint8Array(n);
+  const u8arr = new Uint8Array(n);
 
-  while(n--){
+  while (n--){
       u8arr[n] = bstr.charCodeAt(n);
   }
 
@@ -59,5 +64,15 @@ base64ToFile(data, filename) {
 
 close(){
   this.activeModal.dismiss();
+}
+
+makeName(length) {
+  let result = '';
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }
 }

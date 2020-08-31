@@ -139,16 +139,47 @@
           </div>
         </div>
         <div class="form-control-wr">
-          <div class="input-wr">
-            <div class="label-wr">
-              <label>Public</label>
+          <div class="input-area bottom visibility-level-settings">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="isPublic"
+                     id="privateLevel" value="false">
+              <label class="form-check-label" for="privateLevel">
+                <div class="icon">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <div class="option-details">
+                  <div class="option-title column">Private</div>
+                  <div class="option-description column">
+                    The project can only be viewed by you.</div>
+                </div>
+              </label>
             </div>
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="customSwitches" value="true"
-              formControlName="isPublic">
-              <label class="custom-control-label" for="customSwitches"></label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="isPublic" id="publicLevel"
+                     value="true">
+              <label class="form-check-label" for="publicLevel">
+                <div class="icon">
+                  <i class="fas fa-globe"></i>
+                </div>
+                <div class="option-details">
+                  <div class="option-title column">Public</div>
+                  <div class="option-description column">
+                    The project can be viewed by all the users in system.
+                  </div>
+                </div>
+              </label>
             </div>
           </div>
+<!--          <div class="input-wr">-->
+<!--            <div class="label-wr">-->
+<!--              <label>Public</label>-->
+<!--            </div>-->
+<!--            <div class="custom-control custom-switch">-->
+<!--              <input type="checkbox" class="custom-control-input" id="customSwitches" value="true"-->
+<!--              formControlName="isPublic">-->
+<!--              <label class="custom-control-label" for="customSwitches"></label>-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
         <div class="btn-wr">
           <button type="submit" class="btn btn-success" [disabled]="!isFormValid()">
