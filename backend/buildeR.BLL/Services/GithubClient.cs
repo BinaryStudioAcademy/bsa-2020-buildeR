@@ -1,13 +1,16 @@
 ﻿using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.Synchronization.Github;
 using buildeR.Common.DTO.Webhooks.Github.NewWebhook;
 using buildeR.Common.Enums;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -91,14 +94,49 @@ namespace buildeR.BLL.Services
 
             return response.IsSuccessStatusCode;
         }
-        public async Task<bool> CheckIfTokenValid(string token)
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid(string token)
         {
             SetUpHttpClient(token);
 
-            var endpoint = $"user";
-            var response = await _client.GetAsync(endpoint);
+            var checkDTO = new AccessTokenCheckDTO();
 
-            return response.IsSuccessStatusCode;
+            var response = await _client.GetAsync("");
+
+            checkDTO.IsSucceed = response.IsSuccessStatusCode;
+            if (checkDTO.IsSucceed)
+                checkDTO.Message = "All required scopes are seted up";
+            else
+                checkDTO.Message = "Access token does not exist";
+
+            if(checkDTO.IsSucceed)
+            {
+                var scopes = response.Headers.GetValues("X-OAuth-Scopes").Single().Split(", ");
+                var missingScopes = new List<string>();
+
+                if(!scopes.Contains("read:user"))
+                {
+                    missingScopes.Add("read:user");
+                }
+
+                if(!scopes.Contains("repo"))
+                {
+                    missingScopes.Add("repo");
+                }
+
+                if(!scopes.Contains("write:repo_hook"))
+                {
+                    missingScopes.Add("write:repo_hook");
+                }
+
+                if(missingScopes.Count != 0)
+                {
+                    checkDTO.IsSucceed = false;
+                    checkDTO.Message = "Those scopes are missed: \n";
+                    checkDTO.Message += missingScopes.Aggregate((a, b) => a + ", " + b);
+                }
+            }
+
+            return checkDTO;
         }
         public async Task CreateWebhook(string repositoryName, string callback, string token)
         {

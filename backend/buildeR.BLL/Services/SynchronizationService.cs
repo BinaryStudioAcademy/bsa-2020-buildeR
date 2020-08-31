@@ -34,7 +34,7 @@ namespace buildeR.BLL.Services
             IEnumerable<GithubBranch> branches = null;
 
             if (repository.Private)
-                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, token);
+                branches = await _githubClient.GetPrivateRepositoryBranches(repository.Name, token.Token);
             else
                 branches = await _githubClient.GetPublicRepositoryBranches(repository.Name, repository.Owner);
 
@@ -44,7 +44,7 @@ namespace buildeR.BLL.Services
         {
             var token = await GetUserAccessToken(userId);
 
-            var repositories = await _githubClient.GetUserRepositories(token);
+            var repositories = await _githubClient.GetUserRepositories(token.Token);
 
             return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private, Description = r.Description, Url = r.Html_Url });
         }
@@ -55,9 +55,9 @@ namespace buildeR.BLL.Services
             var repoName = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
             var repoOwner = _synchronizationHelper.GetRepositoryOwnerFromUrl(repoUrl);
 
-            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, token);
+            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, token.Token);
         }
-        public async Task<bool> CheckIfTokenValid(string token)
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid(string token)
         {
             return await _githubClient.CheckIfTokenValid(token);
         }
@@ -67,7 +67,7 @@ namespace buildeR.BLL.Services
             {
                 var token = await GetUserAccessToken(userId);
 
-                if (string.IsNullOrEmpty(token))
+                if (string.IsNullOrEmpty(token.Token))
                     return false;
 
                 return true;
@@ -85,7 +85,7 @@ namespace buildeR.BLL.Services
             var repository = await _projectService.GetRepository(projectId);
             var token = await GetUserAccessToken(project.OwnerId);
 
-            await _githubClient.CreateWebhook(repository.Name, callback, token);
+            await _githubClient.CreateWebhook(repository.Name, callback, token.Token);
         }
         public async Task SetUpUserToken(int userId, string token)
         {
@@ -95,7 +95,7 @@ namespace buildeR.BLL.Services
 
             await _secretService.CreateSecretsAsync(credentialsDictionary, $"users/{userId}/token/github");
         }
-        public async Task<string> GetUserAccessToken(int userId)
+        public async Task<AccessTokenDTO> GetUserAccessToken(int userId)
         {
             try
             {
@@ -103,11 +103,11 @@ namespace buildeR.BLL.Services
 
                 dictionary.TryGetValue("token", out string token);
 
-                return token;
+                return new AccessTokenDTO { Token = token};
             }
             catch(Exception)
             {
-                return "";
+                return new AccessTokenDTO { Token = "" };
             }
         }
     }

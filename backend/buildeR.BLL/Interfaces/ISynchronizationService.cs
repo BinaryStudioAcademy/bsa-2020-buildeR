@@ -8,8 +8,9 @@ namespace buildeR.BLL.Interfaces
     {
         Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId);
         Task<IEnumerable<Repository>> GetUserRepositories(int userId);
+        Task<AccessTokenDTO> GetUserAccessToken(int userId);
         Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId);
-        Task<bool> CheckIfTokenValid(string token);
+        Task<AccessTokenCheckDTO> CheckIfTokenValid(string token);
         Task<bool> CheckIfUserHasToken(int userId);
         Task RegisterWebhook(int projectId, string callback);
         Task SetUpUserToken(int userId, string token);

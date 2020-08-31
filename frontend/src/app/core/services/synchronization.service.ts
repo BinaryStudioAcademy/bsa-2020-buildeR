@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
-import { SynchronizedUser } from '../models/SynchronizedUser';
+import { AccessTokenCheck } from '../models/AccessTokenCheck';
 import { Repository } from '../models/Repository';
 import { Branch } from '../models/Branch';
 import { AuthenticationService } from './authentication.service';
@@ -16,12 +16,16 @@ export class SynchronizationService {
 
   constructor(private httpService: HttpService, private authService: AuthenticationService) { }
 
-  checkIfTokenValid(accessToken: AccessToken): Observable<boolean> {
-    return this.httpService.postRequest<boolean>(`${this.endpoint}/token/valid`, { token: accessToken});
+  checkIfTokenValid(accessToken: AccessToken): Observable<AccessTokenCheck> {
+    return this.httpService.postRequest<AccessTokenCheck>(`${this.endpoint}/token/valid`, accessToken);
   }
 
   checkIfUserHasToken(userId: number): Observable<boolean> {
     return this.httpService.getRequest<boolean>(`${this.endpoint}/user/${userId}/token/exist`);
+  }
+
+  getUserAccessToken(userId: number): Observable<AccessToken> {
+    return this.httpService.getRequest<AccessToken>(`${this.endpoint}/${userId}/token`);
   }
 
   getUserRepositories(userId: number): Observable<Repository[]> {
