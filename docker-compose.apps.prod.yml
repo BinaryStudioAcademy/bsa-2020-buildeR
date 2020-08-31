@@ -22,6 +22,7 @@ services:
         image: bsa2020builder/builder_processor:latest
         container_name: 'builder_processor'
         restart: on-failure
+        privileged: true
         networks:
             - back
         ports:
