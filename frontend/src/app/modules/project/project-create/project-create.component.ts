@@ -27,7 +27,7 @@ export class ProjectCreateComponent implements OnInit {
   projectForm: FormGroup;
   credentialUsername = '';
 
-  userHasCredentials = false;
+  userHasToken = false;
   githubRepoSection = false;
   urlSection = false;
 
@@ -79,9 +79,9 @@ export class ProjectCreateComponent implements OnInit {
       isPublic: new FormControl(this.newProject.isPublic.toString(), []),
     });
 
-    this.syncService.checkIfUserHasCredentials(this.user.id)
+    this.syncService.checkIfUserHasToken(this.user.id)
       .subscribe(res => {
-        this.userHasCredentials = res;
+        this.userHasToken = res;
         if (res) {
           this.synchronize();
         }
@@ -113,7 +113,7 @@ export class ProjectCreateComponent implements OnInit {
       (resp) => {
         this.toastrService.showSuccess('Project created!');
         this.activeModal.close('Saved');
-        if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
+        if (this.syncService.checkIfUserHasToken(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
         }
@@ -128,9 +128,6 @@ export class ProjectCreateComponent implements OnInit {
   synchronize() {
     this.syncService.getUserRepositories(this.user.id)
                 .subscribe(repos => this.repositories = repos);
-
-    this.syncService.getUsernameFromCredentials(this.user.id)
-          .subscribe(res => this.credentialUsername = res.username);
   }
 
   cancel() {
@@ -141,7 +138,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   githubRadioClicked() {
-    if (!this.userHasCredentials) {
+    if (!this.userHasToken) {
       return;
     }
 
