@@ -17,6 +17,11 @@ export class BuildHistoryService {
     return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/project/${projectId}`);
   }
 
+  getBuildHistoriesOfUser(userId: number): Observable<HttpResponse<BuildHistory[]>> {
+    return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/user/${userId}`);
+  }
+
+
   getBuildHistory(buildId: number): Observable<BuildHistory> {
     return this.httpService.getRequest<BuildHistory>(`${this.routePrefix}/${buildId}`);
   }
