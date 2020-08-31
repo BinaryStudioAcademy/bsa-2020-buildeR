@@ -41,7 +41,7 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> GetUserById(int id)
         {
-            var user = await _context.Users.Include(u => u.UserSocialNetworks).Include(h => h.BuildHistories)
+            var user = await _context.Users.Include(u => u.UserSocialNetworks)
                 .FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {

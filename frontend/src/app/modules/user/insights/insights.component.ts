@@ -33,18 +33,20 @@ export class InsightsComponent implements OnInit {
     { name: 'Month' },
   ];
 
-  constructor(private authService: AuthenticationService, private route: ActivatedRoute) {
-    this.route.parent.data.subscribe(data => this.user = data.user);
+  constructor(private authService: AuthenticationService, private buildService: BuildHistoryService) {
    }
 
   ngOnInit(): void {
-    this.totalBuilds = this.totalBuildsCount();
-    this.totalDuration = this.user.buildHistories.length ?
-    this.user.buildHistories.map(this.duration).reduce(this.sum) : 0;
-    this.buildSuccessRate = this.buildSucceedCount();
-    this.activeProjects = this.countActiveProjects();
-    this.countActiveProjects();
-    this.getData();
+    this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
+      this.user.buildHistories = res.body;
+      this.totalBuilds = this.totalBuildsCount();
+      this.totalDuration = this.user.buildHistories.length ?
+      this.user.buildHistories.map(this.duration).reduce(this.sum) : 0;
+      this.buildSuccessRate = this.buildSucceedCount();
+      this.activeProjects = this.countActiveProjects();
+      this.countActiveProjects();
+      this.getData();
+  });
   }
 
   getData(isMonth = false) {
