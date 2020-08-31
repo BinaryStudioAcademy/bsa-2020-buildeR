@@ -55,6 +55,5 @@ export class GroupService {
   changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
     this.groupName$.next(groupName);
     this.groupIsPublic$.next(groupIsPublic);
-    alert(groupName);
   }
 }

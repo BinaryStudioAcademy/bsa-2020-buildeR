@@ -6,7 +6,6 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
@@ -20,7 +19,7 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
-
+            teamMember.JoinedDate = DateTime.Now;
             return await base.AddAsync(teamMember);
         }
 
@@ -36,12 +35,16 @@ namespace buildeR.BLL.Services
 
         public Task<TeamMemberDTO> GetById(int id)
         {
-            throw new NotImplementedException();
+            return base.GetAsync(id);
         }
 
-        public Task Update(TeamMemberDTO teamMember)
+        public async Task Update(TeamMemberDTO teamMember)
         {
-            throw new NotImplementedException();
+            if (teamMember == null)
+            {
+                throw new ArgumentNullException();
+            }
+            await base.UpdateAsync(teamMember);
         }
     }
 }
