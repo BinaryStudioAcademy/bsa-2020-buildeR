@@ -12,10 +12,12 @@ namespace buildeR.BLL.Services
     public class QuartzService : IQuartzService
     {
         private readonly IScheduler _scheduler;
+
         public QuartzService(IScheduler scheduler)
         {
             _scheduler = scheduler;
         }
+
         public async Task<List<QuartzInfoDTO>> GetAllTriggersByProjectId(string projectId)
         {
             List<QuartzInfoDTO> infos = new List<QuartzInfoDTO>();
