@@ -27,7 +27,7 @@ export class ProjectCreateComponent implements OnInit {
   projectForm: FormGroup;
   credentialUsername = '';
 
-  userHasCredentials = false;
+  userHasToken = false;
   githubRepoSection = false;
   urlSection = false;
 
@@ -66,7 +66,7 @@ export class ProjectCreateComponent implements OnInit {
           Validators.minLength(4),
           Validators.maxLength(32),
           Validators.required,
-          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ],
         [
           projectNameAsyncValidator(this.projectService, this.user)
@@ -76,12 +76,12 @@ export class ProjectCreateComponent implements OnInit {
           Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
-      isPublic: new FormControl(this.newProject.isPublic, []),
+      isPublic: new FormControl(this.newProject.isPublic.toString(), []),
     });
 
-    this.syncService.checkIfUserHasCredentials(this.user.id)
+    this.syncService.checkIfUserHasToken(this.user.id)
       .subscribe(res => {
-        this.userHasCredentials = res;
+        this.userHasToken = res;
         if (res) {
           this.synchronize();
         }
@@ -92,7 +92,7 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject = {
       name: '',
       description: '',
-      isPublic: true,
+      isPublic: false,
       ownerId: this.user.id,
       repository: {} as NewRepository
     };
@@ -113,7 +113,7 @@ export class ProjectCreateComponent implements OnInit {
       (resp) => {
         this.toastrService.showSuccess('Project created!');
         this.activeModal.close('Saved');
-        if (this.syncService.checkIfUserHasCredentials(this.user.id)) {
+        if (this.syncService.checkIfUserHasToken(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
             .subscribe(() => resp.id);
         }
@@ -128,9 +128,6 @@ export class ProjectCreateComponent implements OnInit {
   synchronize() {
     this.syncService.getUserRepositories(this.user.id)
                 .subscribe(repos => this.repositories = repos);
-
-    this.syncService.getUsernameFromCredentials(this.user.id)
-          .subscribe(res => this.credentialUsername = res.username);
   }
 
   cancel() {
@@ -141,7 +138,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   githubRadioClicked() {
-    if (!this.userHasCredentials) {
+    if (!this.userHasToken) {
       return;
     }
 
