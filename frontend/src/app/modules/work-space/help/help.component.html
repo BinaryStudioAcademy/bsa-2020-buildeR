@@ -110,16 +110,6 @@
           </div>
         </div>
       </div>
-      <div class="field label-rating">
-        <span>Rate us</span>
-      </div>
-      <ngb-rating [(rate)]="currentRate" class="rating-container">
-        <ng-template let-fill="fill" let-index="index">
-            <span class="star" [class.filled]="fill === 100">
-              &#9733;
-            </span>
-        </ng-template>
-      </ngb-rating>
       <div class="save-button-container">
         <button type="submit" class="btn btn-success"
                 [disabled]="helpForm.invalid || !helpForm.dirty">Submit
