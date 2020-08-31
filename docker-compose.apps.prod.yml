@@ -10,7 +10,7 @@ services:
         ports:
             - "5050:5050"
         environment:
-            - ASPNETCORE_ENVIRONMENT='Production'
+            - ASPNETCORE_ENVIRONMENT='Development'
             - VAULT_ADDRESS='http://vault:8200'
             - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
         env_file:
@@ -27,7 +27,7 @@ services:
         ports:
             - "5060:5060"
         environment:
-            - ASPNETCORE_ENVIRONMENT='Production'
+            - ASPNETCORE_ENVIRONMENT='Development'
             - VAULT_ADDRESS='http://vault:8200'
             - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
         env_file:
@@ -42,7 +42,7 @@ services:
         ports:
             - "5070:5070"
         environment:
-            ASPNETCORE_ENVIRONMENT: 'Production'
+            ASPNETCORE_ENVIRONMENT: 'Development'
         env_file:
             - /etc/environment
 
