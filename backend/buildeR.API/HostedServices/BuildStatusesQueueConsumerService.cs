@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace buildeR.HostedServices
+namespace buildeR.API.HostedServices
 {
     public class BuildStatusesQueueConsumerService : BackgroundService
     {

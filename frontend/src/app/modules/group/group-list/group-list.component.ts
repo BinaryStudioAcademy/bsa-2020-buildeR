@@ -75,6 +75,9 @@ export class GroupListComponent extends BaseComponent implements OnInit {
               this.toastrService.showSuccess('Group is deleted');
             });
         }
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 }

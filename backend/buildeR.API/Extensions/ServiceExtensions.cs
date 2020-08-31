@@ -10,14 +10,12 @@ using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
-using Quartz.Impl;
 using System;
-using System.Collections.Specialized;
-using System.Net.Http;
 using System.Reflection;
-using buildeR.Common.DTO;
-using buildeR.HostedServices;
+using Quartz.Impl;
+using Quartz;
+using System.Collections.Specialized;
+using buildeR.API.HostedServices;
 
 namespace buildeR.API.Extensions
 {
@@ -33,7 +31,6 @@ namespace buildeR.API.Extensions
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ITriggerService, TriggerService>();
-            services.AddSingleton(provider => GetScheduler(configuration));
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<ICommandArgumentService, CommandArgumentService>();
@@ -45,7 +42,6 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
 
-
             services.AddTransient<IHttpClient, BuilderHttpClient>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
@@ -56,13 +52,18 @@ namespace buildeR.API.Extensions
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
 
+            services.AddSingleton<ISchedulerFactory>(GetSchedulerFactory(configuration));
+            services.AddHostedService<QuartzHostedService>();
+
             services.RegisterAutoMapper();
         }
+
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserLetterProfile)));
         }
+
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
@@ -70,6 +71,7 @@ namespace buildeR.API.Extensions
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }
+
         public static void RegisterHttpCients(this IServiceCollection services)
         {
             services.AddHttpClient("github", c =>
@@ -80,7 +82,7 @@ namespace buildeR.API.Extensions
             });
         }
 
-        private static IScheduler GetScheduler(IConfiguration configuration)
+        private static ISchedulerFactory GetSchedulerFactory(IConfiguration configuration)
         {
             var properties = new NameValueCollection
             {
@@ -93,12 +95,11 @@ namespace buildeR.API.Extensions
                 ["quartz.jobStore.tablePrefix"] = "QRTZ_",
                 ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz",
                 ["quartz.dataSource.default.provider"] = "SqlServer",
-                ["quartz.dataSource.default.connectionString"] = configuration["ConnectionStrings:QuartzDBConnection"] // "Server=localhost;Database=QuartzDB;Trusted_Connection=true;"
+                ["quartz.dataSource.default.connectionString"] = configuration["ConnectionStrings:QuartzDBConnection"],
+                ["quartz.plugin.timezoneConverter.type"] = "Quartz.Plugin.TimeZoneConverter.TimeZoneConverterPlugin, Quartz.Plugins.TimeZoneConverter"
             };
-            var schedulerFactory = new StdSchedulerFactory(properties);
-            var scheduler = schedulerFactory.GetScheduler().Result;
-            scheduler.Start();
-            return scheduler;
+
+            return new StdSchedulerFactory(properties);
         }
     }
 }
