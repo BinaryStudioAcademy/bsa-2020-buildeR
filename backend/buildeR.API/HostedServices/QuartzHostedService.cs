@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using buildeR.DAL.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Quartz;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,24 +10,33 @@ namespace buildeR.API.HostedServices
 {
     public class QuartzHostedService : IHostedService
     {
-        private readonly ISchedulerFactory _schedulerFactory;
-        public IScheduler Scheduler { get; set; }
+        private readonly IScheduler _scheduler;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-
-        public QuartzHostedService(ISchedulerFactory schedulerFactory)
+        public QuartzHostedService(IScheduler scheduler, IServiceScopeFactory serviceScopeFactory)
         {
-            _schedulerFactory = schedulerFactory;
+            _scheduler = scheduler;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            Scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-            await Scheduler.Start(cancellationToken);
+            await InitDatabase();
+            await _scheduler?.Start(cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await Scheduler?.Shutdown(cancellationToken);
+            await _scheduler?.Shutdown(cancellationToken);
+        }
+
+        private async Task InitDatabase()
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
+                await contextQuartz.Database.MigrateAsync();
+            };
         }
     }
 }

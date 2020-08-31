@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="header-main">
-    <h2 *ngIf="currentUser?.username" class="first-message">How can we help
+    <h2 *ngIf="currentUser?.username" class="first-message">How can we help,
       <strong *ngIf="currentUser?.firstName; else elseBlock">{{currentUser?.firstName}}</strong>
       <ng-template #elseBlock>
         <strong>{{currentUser?.username}}</strong>
@@ -8,7 +8,6 @@
     </h2>
     <h2 *ngIf="!currentUser?.username" class="first-message">How can we help?</h2>
     <h2 class="second-message">
-      Want to give us a feedback?<br>
       Please, send us a letter, we will answer you as soon as possible!
     </h2>
   </div>
@@ -110,16 +109,6 @@
           </div>
         </div>
       </div>
-      <div class="field label-rating">
-        <span>Rate us</span>
-      </div>
-      <ngb-rating [(rate)]="currentRate" class="rating-container">
-        <ng-template let-fill="fill" let-index="index">
-            <span class="star" [class.filled]="fill === 100">
-              &#9733;
-            </span>
-        </ng-template>
-      </ngb-rating>
       <div class="save-button-container">
         <button type="submit" class="btn btn-success"
                 [disabled]="helpForm.invalid || !helpForm.dirty">Submit
