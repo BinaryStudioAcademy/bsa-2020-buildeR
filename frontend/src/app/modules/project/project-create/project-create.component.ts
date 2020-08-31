@@ -76,7 +76,7 @@ export class ProjectCreateComponent implements OnInit {
           Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
-      isPublic: new FormControl(this.newProject.isPublic, []),
+      isPublic: new FormControl(this.newProject.isPublic.toString(), []),
     });
 
     this.syncService.checkIfUserHasCredentials(this.user.id)
@@ -92,7 +92,7 @@ export class ProjectCreateComponent implements OnInit {
     this.newProject = {
       name: '',
       description: '',
-      isPublic: true,
+      isPublic: false,
       ownerId: this.user.id,
       repository: {} as NewRepository
     };
