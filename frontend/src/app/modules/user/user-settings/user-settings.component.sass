@@ -70,15 +70,18 @@ textarea
   align-items: center
   color: #fff
 
+.link-buttons-wrap
+  position: relative
+  left: 40px
+  margin-bottom: 10px
+  .link-buttons-text
+    text-align: center
+
 .link-buttons
   display: flex
   position: relative
   justify-content: center
   align-items: center
-  flex-direction: row
-  margin: 5px
-  left: 40px
-  margin-bottom: 10px
 
 .btn-google
   background-color: #bb4b39
@@ -129,8 +132,9 @@ textarea
     justify-self: center
     margin-left: 0
     margin-right: 0
+  .link-buttons-wrap
+    left: 0px
   .link-buttons
-    left: 0
     flex-direction: column
   .text-content
     h1

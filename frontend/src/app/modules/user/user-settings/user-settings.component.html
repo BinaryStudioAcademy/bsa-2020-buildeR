@@ -1,10 +1,6 @@
 <div class="container-fluid">
   <div class="scroll-container">
-    <div class="text-content container">
-      <h1>Let's get acquainted! Upload profile photo from your device or add a photo link. <br>
-      Enter your name and some facts in bio to let other people know more about you. <br>
-      Link your profile with Github or Google account.</h1>
-    </div>
+    <div class="link-buttons-wrap">
     <div class="link-buttons">
       <button class="btn btn-sm btn-github"
         *ngIf="!((isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()) else linkedGithub"
@@ -50,6 +46,10 @@
           <div class="button-text">Linked with Google</div>
         </button>
       </ng-template>
+    </div>
+      <div class="link-buttons-text">
+        <small>Link your profile with Github or Google account</small>
+      </div>
     </div>
     <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
       <div class="group">
@@ -99,6 +99,7 @@
           <div class="input-group-append">
             <button class="btn btn-sm btn-outline-secondary" (click)="upload()" type="button">Upload</button>
           </div>
+          <small>Upload profile photo from your device or URL</small>
         </div>
         <div class="field">
           Username
