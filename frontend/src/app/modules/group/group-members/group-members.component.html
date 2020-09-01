@@ -48,34 +48,68 @@
   </form>
 </div>
 <hr>
-<div class="container">
-  <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
-    <div class="item area">
-      <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
-        class="avatar" />
-    </div>
-    <div class="user">
-      <div class="row-top">
-        <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+<div *ngIf="
+      pendingMembers?.length;
+      then pendMembers;
+    ">
+</div>
+<ng-template #pendMembers>
+  <div class="container">
+    <div class="row my-3 border rounded member-wr" *ngFor="let member of pendingMembers">
+      <div class="item area">
+        <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+          alt="Avatar" class="avatar" />
       </div>
-      <div class="align-text-top row-bottom gray">
-        <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
-      </div>
-    </div>
-    <div class="item area role">
-      <div ngbDropdown>
-        <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-          {{groupRole[member.memberRole]}}
+      <div class="user">
+        <div class="row-top">
+          <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
         </div>
-        <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
-          container="body">
-          <div class="dropdown-header">Change permissions</div>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+        <div class="align-text-top row-bottom gray">
+          <p class="text-dark">Pending to accept invitation </p>
+        </div>
+      </div>
+      <div class="item area role">
+        <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div *ngIf="
+      members?.length;
+      then existMembers;
+    ">
+</div>
+<ng-template #existMembers>
+  <div class="container">
+    <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
+      <div class="item area">
+        <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+          alt="Avatar" class="avatar" />
+      </div>
+      <div class="user">
+        <div class="row-top">
+          <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+        </div>
+        <div class="align-text-top row-bottom gray">
+          <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
+        </div>
+      </div>
+      <div class="item area role">
+        <div ngbDropdown>
+          <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+            {{groupRole[member.memberRole]}}
+          </div>
+          <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
             container="body">
-            <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
+            <div class="dropdown-header">Change permissions</div>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+              container="body">
+              <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</ng-template>

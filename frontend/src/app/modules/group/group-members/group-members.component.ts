@@ -21,6 +21,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   groupId: number;
   model: any;
   members: TeamMember[];
+  pendingMembers: TeamMember[];
   newTeamMember: TeamMember;
   users: User[];
   groupRole: typeof GroupRole = GroupRole;
@@ -52,7 +53,11 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   }
 
   getGroupMembers(groupId: number) {
-    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.members = res.body);
+    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(res => {
+        this.members = res.body.filter((t => t.isAccepted));
+        this.pendingMembers = res.body.filter((t => !t.isAccepted));
+      });
   }
   getUsers() {
     this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body.filter(
@@ -81,6 +86,15 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         (err) => {
           this.toastrService.showError(err);
         });
+  }
+
+  deleteMember(memberId: number) {
+    this.teamMemberService.deleteMember(memberId).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.pendingMembers = this.pendingMembers.filter(
+          (m) => m.id !== memberId
+        );
+      });
   }
   search = (text$: Observable<string>) =>
     text$.pipe(
