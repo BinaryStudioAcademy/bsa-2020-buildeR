@@ -52,36 +52,6 @@ export class FirebaseSignInService {
     );
   }
 
-  // async linkWithGithub(): Promise<string> {
-  //   try {
-  //     return this.linkWithProvider(Providers.Github);
-  //   }
-  //   catch (err) {
-  //     console.log(err);
-  //     switch (err.code) {
-  //       case 'auth/credential-already-in-use': {
-  //         return 'This account is already added to BuildeR!';
-  //       }
-  //       default: { return err.code; }
-  //     }
-  //   }
-  // }
-
-  // async linkWithGoogle(): Promise<string> {
-  //   try {
-  //     return this.linkWithProvider(Providers.Google);
-  //   }
-  //   catch (err) {
-  //     console.log(err);
-  //     switch (err.code) {
-  //       case 'auth/credential-already-in-use': {
-  //         return 'This account is already added to BuildeR!';
-  //       }
-  //       default: return err.code;
-  //     }
-  //   }
-  // }
-
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
       .subscribe((resp) => {
