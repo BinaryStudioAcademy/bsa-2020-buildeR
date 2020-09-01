@@ -29,5 +29,11 @@ namespace buildeR.API.Controllers
         {
             await _teamMemberService.Update(teamMember);
         }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteMember(int id)
+        {
+            await _teamMemberService.Delete(id);
+        }
     }
 }

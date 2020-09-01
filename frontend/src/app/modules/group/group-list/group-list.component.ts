@@ -9,6 +9,7 @@ import { GroupRole } from '../../../shared/models/group/group-role';
 import { ModalContentComponent } from '../../../core/components/modal-content/modal-content.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { TeamMemberService } from '../../../core/services/team-member.service';
 
 @Component({
   selector: 'app-group-list',
@@ -19,12 +20,14 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   groupRole: typeof GroupRole = GroupRole;
   loadingGroups = false;
   groups: Group[];
+  groupInvites: Group[];
   currentUser: User;
   constructor(
     private groupService: GroupService,
     private authService: AuthenticationService,
     private modalService: NgbModal,
-    private toastrService: ToastrNotificationsService
+    private toastrService: ToastrNotificationsService,
+    private teamMemberService: TeamMemberService
   ) { super(); }
 
   ngOnInit(): void {
@@ -40,7 +43,8 @@ export class GroupListComponent extends BaseComponent implements OnInit {
       .subscribe(
         (resp) => {
           this.loadingGroups = false;
-          this.groups = resp;
+          this.groupInvites = resp.filter((g => g.teamMembers.filter(t => !t.isAccepted && t.userId === this.currentUser.id).length !== 0));
+          this.groups = resp.filter((g => g.teamMembers.filter(t => t.isAccepted && t.userId === this.currentUser.id).length !== 0));
         }
       );
   }
@@ -52,6 +56,37 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     }
     return member.memberRole;
   }
+  getCurrentUserRoleInvite(groupId: number) {
+    const group = this.groupInvites.find(g => g.id === groupId);
+    const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
+    if (!member) {
+      return null;
+    }
+    return member.memberRole;
+  }
+
+  accept(group: Group) {
+    const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
+    member.isAccepted = true;
+    this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.getGroups(); this.toastrService.showSuccess('You became a member of this group');
+      },
+        (err) => {
+          this.toastrService.showError(err);
+        });
+  }
+  decline(group: Group) {
+    const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
+    this.teamMemberService.deleteMember(member.id).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.groupInvites = this.groupInvites.filter(
+          (g) => g.id !== group.id
+        );
+      });
+  }
+
+
 
   deleteGroup(groupId: number) {
     const modalRef = this.modalService.open(ModalContentComponent);

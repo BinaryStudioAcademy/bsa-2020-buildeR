@@ -15,4 +15,7 @@ export class TeamMemberService {
   updateMember(teamMember: TeamMember) {
     return this.httpService.putRequest<TeamMember>(`${this.routePrefix}`, teamMember);
   }
+  deleteMember(memberId: number) {
+    return this.httpService.deleteRequest<TeamMember>(`${this.routePrefix}/` + memberId);
+  }
 }

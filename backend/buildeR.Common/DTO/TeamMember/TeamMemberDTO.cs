@@ -13,6 +13,8 @@ namespace buildeR.Common.DTO.TeamMember
         public GroupRole MemberRole { get; set; }
         public DateTime JoinedDate { get; set; }
 
+        public bool IsAccepted { get; set; }
+
         public GroupDTO Group { get; set; }
         public UserDTO User { get; set; }
     }

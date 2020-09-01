@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using buildeR.BLL.Exceptions;
 using buildeR.BLL.Interfaces;
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.TeamMember;
@@ -23,9 +24,14 @@ namespace buildeR.BLL.Services
             return await base.AddAsync(teamMember);
         }
 
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            var member = await base.GetAsync(id);
+            if (member == null)
+            {
+                throw new NotFoundException(nameof(TeamMember), id);
+            }
+            await base.RemoveAsync(id);
         }
 
         public Task<IEnumerable<TeamMemberDTO>> GetAll()

@@ -25,7 +25,6 @@ namespace buildeR.DAL.Context
         public DbSet<NotificationSetting> NotificationSettings { get; private set; }
         public DbSet<NotificationSettingOption> NotificationSettingOptions { get; private set; }
         public DbSet<Repository> Repositories { get; private set; }
-        public DbSet<GroupInvite> GroupInvites { get; private set; }
         public BuilderContext(DbContextOptions<BuilderContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

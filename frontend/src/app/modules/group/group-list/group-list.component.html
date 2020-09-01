@@ -8,11 +8,62 @@ else loaded;
 </ng-template>
 <ng-template #loaded>
   <div *ngIf="
+          groupInvites?.length;
+          then existInvites;
+        ">
+
+  </div>
+  <div *ngIf="
       groups?.length;
       then existGroups;
       else emptyGroups
     ">
   </div>
+
+  <ng-template #existInvites>
+    <div class="container d-flex flex-row my-3">
+      <span class="my-auto title">Group invitations</span>
+    </div>
+    <div class="container" *ngIf="groupInvites">
+      <div class="row my-3 border rounded" *ngFor="let group of groupInvites">
+        <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
+          <div class="col-md-12 col-sm-12 text-dark">
+            <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
+            <i *ngIf="group.isPublic" class="fas fa-globe"></i>
+            <a class="text-dark" [routerLink]="['../../groups', group?.id, 'projects']">{{group.name}}</a>
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div *ngIf="getCurrentUserRoleInvite(group.id)" class="col-md-12 col-sm-12 text-muted small row-top">
+            Your role
+          </div>
+          <div class="col-md-12 col-sm-12 small row-bottom">
+            <span *ngIf="getCurrentUserRoleInvite(group.id)"
+              class="user-access-role">{{groupRole[getCurrentUserRoleInvite(group.id)]}}</span></div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Members
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="fas fa-users"></i> {{group.teamMembers.length}}
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Projects
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="far fa-bookmark"></i> {{group.projectGroups.length}}
+          </div>
+        </div>
+        <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
+          <button type="button" class="btn btn-success" (click)="accept(group)">Accept</button>
+          <button type="button" class="btn btn-warning" (click)="decline(group)">Decline</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
   <ng-template #existGroups>
     <div class="container d-flex flex-row my-3">
       <span class="my-auto title">Groups</span>

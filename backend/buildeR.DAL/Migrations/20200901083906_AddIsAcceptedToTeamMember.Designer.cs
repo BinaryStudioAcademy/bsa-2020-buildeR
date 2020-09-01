@@ -10,8 +10,8 @@ using buildeR.DAL.Context;
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    [Migration("20200831181140_AddGroupInviteEntity")]
-    partial class AddGroupInviteEntity
+    [Migration("20200901083906_AddIsAcceptedToTeamMember")]
+    partial class AddIsAcceptedToTeamMember
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -226,37 +226,6 @@ namespace buildeR.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.GroupInvite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FromUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ToUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromUserId");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("GroupInvites");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
@@ -508,6 +477,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
 
@@ -663,21 +635,6 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.BuildStep", "BuildStep")
                         .WithMany("CommandArguments")
                         .HasForeignKey("BuildStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.GroupInvite", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.User", "FromUser")
-                        .WithMany("GroupInvitations")
-                        .HasForeignKey("FromUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("buildeR.DAL.Entities.Group", "Group")
-                        .WithMany("GroupInvitations")
-                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

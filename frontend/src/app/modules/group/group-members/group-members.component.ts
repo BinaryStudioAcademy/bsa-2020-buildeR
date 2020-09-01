@@ -73,6 +73,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.groupId = this.groupId;
     this.newTeamMember.userId = this.memberForm.controls.user.value.id;
     this.newTeamMember.memberRole = this.memberForm.controls.dropdown.value;
+    this.newTeamMember.isAccepted = false;
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.getGroupMembers(this.groupId); this.toastrService.showSuccess('Member was successfully added');
