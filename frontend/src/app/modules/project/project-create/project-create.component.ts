@@ -180,7 +180,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   closeForm() {
-    this.activeModal.close();
+    this.activeModal.dismiss();
   }
 
   isFormValid() {
