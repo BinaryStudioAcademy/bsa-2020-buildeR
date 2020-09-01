@@ -29,5 +29,13 @@ namespace buildeR.BLL.Services
             // TODO: replace fake build history id
             await _builder.StartBuild(projectId, 1, updatedBranch);
         }
+
+        public async Task HandleGithubPullRequestEvent(int projectId, PullRequestGithubPayloadDTO payload)
+        {
+            if (payload.Action != "closed" || payload.Pull_Request?.Merged_At == null)
+                return;
+
+
+        }
     }
 }
