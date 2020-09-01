@@ -48,4 +48,7 @@ export class ModalCopyProjectComponent implements OnInit {
   onCancel() {
     this.activeModal.close();
   }
+  closeForm() {
+    this.activeModal.close();
+  }
 }
