@@ -27,7 +27,7 @@ namespace buildeR.BLL.Services
             var updatedBranch = payload.Ref.Substring(11);
 
             // TODO: replace fake build history id
-            await _builder.StartBuild(projectId, 1);
+            await _builder.StartBuild(projectId, 1, updatedBranch);
         }
     }
 }
