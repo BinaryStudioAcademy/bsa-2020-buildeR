@@ -32,17 +32,6 @@ namespace buildeR.Processor.Services
 
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
-        {
-            var statusChange = new StatusChangeDto
-            {
-                Time = DateTime.Now,
-                Status =status,
-                BuildHistoryId = buildHistoryId
-            };
-            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
-        }
-
         public ProcessorService(IConfiguration config, IConsumer consumer, IProducer buildStatusesProducer, IElasticClient elk)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
@@ -55,6 +44,17 @@ namespace buildeR.Processor.Services
             _consumer.Received += Consumer_Received;
 
             _buildStatusesProducer = buildStatusesProducer;
+        }
+
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
+        {
+            var statusChange = new StatusChangeDto
+            {
+                Time = DateTime.Now,
+                Status =status,
+                BuildHistoryId = buildHistoryId
+            };
+            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
         }
 
         private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
