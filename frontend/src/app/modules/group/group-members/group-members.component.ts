@@ -19,7 +19,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 })
 export class GroupMembersComponent extends BaseComponent implements OnInit {
   groupId: number;
-  model: any;
+  model;
   members: TeamMember[];
   newTeamMember: TeamMember;
   users: User[];
@@ -52,10 +52,12 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   }
 
   getGroupMembers(groupId: number) {
-    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.members = res.body);
+    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
+    .subscribe(res => this.members = res.body);
   }
   getUsers() {
-    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body);
+    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$))
+    .subscribe(res => this.users = res.body);
   }
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
@@ -73,7 +75,8 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.memberRole = this.memberForm.controls.dropdown.value;
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.getGroupMembers(this.groupId); this.toastrService.showSuccess('Member was successfully added');
+        this.getGroupMembers(this.groupId);
+        this.toastrService.showSuccess('Member was successfully added');
       },
         (err) => {
           this.toastrService.showError(err);
