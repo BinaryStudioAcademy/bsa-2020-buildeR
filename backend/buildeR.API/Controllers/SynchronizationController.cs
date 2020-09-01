@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.Synchronization;
-using buildeR.Common.DTO.Synchronization.Github;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace buildeR.API.Controllers
 {
-    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class SynchronizationController : ControllerBase
@@ -23,29 +17,22 @@ namespace buildeR.API.Controllers
             _synchronizationService = synchronizationService;
         }
 
-        [HttpPost("user/exist")]
-        public async Task<bool> CheckIfUserExist([FromBody] Credentials credentials)
+        [HttpPost("token/valid")]
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid([FromBody]AccessTokenDTO token)
         {
-            return await _synchronizationService.CheckIfUserExist(credentials);
+            return await _synchronizationService.CheckIfTokenValid(token.Token);
         }
 
-        [HttpGet("user/{userId}/credentials")]
-        public async Task<Credentials> GetUserCredentials(int userId)
+        [HttpGet("{userId}/token")]
+        public async Task<AccessTokenDTO> GetUserAccessToken(int userId)
         {
-            return await _synchronizationService.GetUserCredentials(userId);
+            return await _synchronizationService.GetUserAccessToken(userId);
         }
 
-        [HttpGet("user/{userId}/credentials/username")]
-        public async Task<object> GetUsernameFromCredentials(int userId)
+        [HttpGet("user/{userId}/token/exist")]
+        public async Task<bool> CheckIfUserHasToken(int userId)
         {
-            var credentials = await _synchronizationService.GetUserCredentials(userId);
-            return new { Username = credentials.Username };
-        }
-
-        [HttpGet("user/{userId}/credentials/exist")]
-        public async Task<bool> CheckIfUserHasCredentials(int userId)
-        {
-            return await _synchronizationService.CheckIfUserHasCredentials(userId);
+            return await _synchronizationService.CheckIfUserHasToken(userId);
         }
 
         [HttpGet("{userId}/repos")]
@@ -75,9 +62,9 @@ namespace buildeR.API.Controllers
         }
 
         [HttpPost("credentials/{userId}")]
-        public async Task SetUpCredentials(int userId, [FromBody]Credentials credentials)
+        public async Task SetUpAccessToken(int userId, [FromBody]AccessTokenDTO token)
         {
-            await _synchronizationService.SetUpUserCredentials(userId, credentials);
+            await _synchronizationService.SetUpUserToken(userId, token.Token);
         }
     }
 }

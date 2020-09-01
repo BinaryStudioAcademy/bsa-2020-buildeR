@@ -93,7 +93,7 @@ namespace buildeR.Processor.Services
                 "ClonedRepository"
                 );
 
-            CloneRepository(build.RepositoryUrl, pathToClonedRepository);
+            CloneRepository(build.RepositoryUrl, pathToClonedRepository, build.BranchName);
 
             try
             {
@@ -195,12 +195,12 @@ namespace buildeR.Processor.Services
 
         #region Directory and repository
 
-        private void CloneRepository(string repositoryUrl, string path)
+        private void CloneRepository(string repositoryUrl, string path, string branchName)
         {
             try
             {
                 Directory.CreateDirectory(path);
-                Repository.Clone(repositoryUrl, path);//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
+                Repository.Clone(repositoryUrl, path, new CloneOptions() { BranchName = branchName });//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
             }
             catch (Exception e)
             {
