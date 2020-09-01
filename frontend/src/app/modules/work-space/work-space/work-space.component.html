@@ -1,27 +1,24 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
-    <button (click)="isMenuCollapsed = !isMenuCollapsed" class="navbar-toggler" type="button" data-toggle="collapse"
+    <button (click)="showHideDropdownMenu()" class="navbar-toggler" type="button" data-toggle="collapse"
       data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" [routerLink]="['dashboard']">
+    <a class="navbar-brand" (click)="isMenuCollapsed = true" [routerLink]="['dashboard']">
       <img class="logo" src="../../../../assets/images/logo.png" />
     </a>
-    <div class="d-flex order-lg-1 ml-auto pr-2">
+    <div class="d-flex order-lg-1 ml-auto pr-2" (click)="isMenuCollapsed = true">
       <div class="nav-item">
         <a class="nav-link a-bell">
-          <svg (click)="showNotifications()" viewBox="0 0 16 16" class="notifications-icon bi bi-bell-fill"
-            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-          </svg>
+          <i class="fas fa-bell notifications-icon bi bi-bell-fill" (click)="showNotifications()"></i>
           <ng-container *ngIf="countNotifications > 0">
             <div class="counter">
               <span class="fas fa-layers-counter">{{countNotifications}}</span>
             </div>
           </ng-container>
-          <app-notifications-block *ngIf="isShowNotifications" (toggleNotifications)="showNotifications()" (counterNotifications)="counterNotifications($event)">
+          <app-notifications-block *ngIf="isShowNotifications" (toggleNotifications)="showNotifications()"
+            (counterNotifications)="counterNotifications($event)">
           </app-notifications-block>
         </a>
       </div>
@@ -38,26 +35,29 @@
       </div>
     </div>
     <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isMenuCollapsed">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['dashboard']">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <div *ngIf="groupsLoaded | async" class="nav-item" ngbDropdown>
-            <a class="nav-link" [routerLink]="['groups']" ngbDropdownToggle>Groups</a>
-            <div *ngIf="groups.length > 0" ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
-              <a *ngFor="let group of groups" ngbDropdownItem
-                [routerLink]="['groups', group.id, 'projects']">{{group.name}}</a>
+      <div class="container">
+        <ul class="navbar-nav mr-auto" (click)="showHideDropdownMenu()">
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['dashboard']">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <div *ngIf="groupsLoaded | async" class="nav-item" ngbDropdown>
+              <a class="nav-link" [routerLink]="['groups']" ngbDropdownToggle>Groups</a>
+              <div *ngIf="groups.length > 0" ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
+                <a *ngFor="let group of groups" ngbDropdownItem
+                  [routerLink]="['groups', group.id, 'projects']">{{group.name}}</a>
+              </div>
             </div>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['help']">Help</a>
-        </li>
-      </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['help']">Help</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
-<div class="work-wrapper" [ngStyle]="isMenuCollapsed ? {'margin-top': '71px'} : {'margin-top': '121.50px'}">
+<div class="work-wrapper" (click)="isMenuCollapsed = true"
+  [ngStyle]="isMenuCollapsed ? {'margin-top': '71px'} : {'margin-top': '170px'}">
   <router-outlet></router-outlet>
 </div>

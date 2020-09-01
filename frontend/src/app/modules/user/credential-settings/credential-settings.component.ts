@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Credentials } from '@core/models/Credentials';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { userCredentialsAsyncValidator } from '@core/validators/user-credentials.async-validator';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { AccessToken } from '@core/models/AccessToken';
+import { userCredentialsAsyncValidator } from '@core/validators/user-credentials.async-validator';
 
 @Component({
   selector: 'app-credential-settings',
@@ -14,34 +14,31 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 export class CredentialSettingsComponent implements OnInit {
 
   user = this.authService.getCurrentUser();
-  credentials = {} as Credentials;
-  credentialsForm: FormGroup;
+  token = {} as AccessToken;
+  tokenForm: FormGroup;
 
   constructor(private syncService: SynchronizationService,
               private authService: AuthenticationService,
               private toastrService: ToastrNotificationsService) { }
 
   ngOnInit(): void {
-    this.syncService.getUsernameFromCredentials(this.user.id)
-      .subscribe(credentials => {
-        this.credentialsForm.controls.username.setValue(credentials.username);
+    this.syncService.getUserAccessToken(this.user.id)
+      .subscribe(accesToken => {
+        this.tokenForm.controls.token.setValue(accesToken.token);
       });
 
-    this.credentialsForm = new FormGroup({
-      username: new FormControl(this.credentials.username, [
+    this.tokenForm = new FormGroup({
+      token: new FormControl(this.token.token, [
         Validators.required
-      ]),
-      password: new FormControl(this.credentials.password, [
-        Validators.required
-      ]),
+      ])
     }, {
       asyncValidators: userCredentialsAsyncValidator(this.syncService)
     });
   }
 
   saveCredentials() {
-    this.syncService.setUpCredentials(this.user.id, this.credentialsForm.value as Credentials)
-      .subscribe(() => this.toastrService.showSuccess('Your cedentials saved!'),
+    this.syncService.setUpUserToken(this.user.id, this.tokenForm.value as AccessToken)
+      .subscribe(() => this.toastrService.showSuccess('Your token was saved!'),
                  error => this.toastrService.showError('Something went wrong'));
   }
 }
