@@ -35,7 +35,7 @@
 .text-near
   margin-top: -10px
 
-input
+input[type=text]
   width: 300px
 
 .custom-control-input
@@ -164,6 +164,15 @@ select.form-control
 .addSwitch
   padding-top: 25px
 
+// styles for radio buttons
+
+.form-check-label
+  .option-description
+    font-weight: 300
+
+.group .input-area:nth-last-child(2)
+  margin-top: 2px
+
 //.add-cron
 // margin-left: 30px
 
@@ -191,9 +200,12 @@ select.form-control
 .tab
   display: table
 
-.settings-section:last-of-type
-  .input-area
-    margin: 0px
+.group
+  .input-area:nth-last-child(2)
+    width: 300px
+    margin-top: 2px
+  .input-area:nth-last-child(1)
+    width: 300px
 
 @media screen and (max-width: 675px)
   .container
@@ -236,4 +248,6 @@ select.form-control
     margin-left: 0
   .options-env-vars
     justify-self: start
-
+  .form-check-label
+    .option-description
+      font-size: 14px

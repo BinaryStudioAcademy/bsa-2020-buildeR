@@ -31,7 +31,7 @@ jobs:
         repository: bsa2020builder/builder_processor
         tags: latest
         path: ./backend
-        build_args: PROJECT_NAME=Processor,PROJECT_PORT=5060
+        dockerfile: ./backend/Dockerfile.Processor
         push: true
 
   build_signalr:
