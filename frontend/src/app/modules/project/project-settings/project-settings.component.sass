@@ -169,12 +169,11 @@ select.form-control
 .form-check
   display: block
   position: relative
-  padding: 0
 
 .form-check-input
   position: absolute
   margin-top: 0.3rem
-  margin-left: -0.8rem
+  margin-left: -1.25rem
 
 .form-check-label
   position: relative
@@ -184,6 +183,9 @@ select.form-control
     margin-right: .5rem
   .option-description
     font-weight: 300
+
+.group .input-area:nth-last-child(2)
+  margin-top: 2px
 
 //.add-cron
 // margin-left: 30px
@@ -212,9 +214,12 @@ select.form-control
 .tab
   display: table
 
-.settings-section:last-of-type
-  .input-area
-    margin: 0px
+.group
+  .input-area:nth-last-child(2)
+    width: 300px
+    margin-top: 2px
+  .input-area:nth-last-child(1)
+    width: 300px
 
 @media screen and (max-width: 675px)
   .container
@@ -255,8 +260,6 @@ select.form-control
       margin: 28px 0px 5px 0px
   .form-control-ev
     margin-left: 0
-  .form-check-input
-    margin-left: 0 !important
   .options-env-vars
     justify-self: start
   .form-check-label
