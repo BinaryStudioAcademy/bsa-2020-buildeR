@@ -31,7 +31,7 @@ jobs:
         repository: bsa2020builder/builder_processor
         tags: latest
         path: ./backend
-        dockerfile: /backend/Dockerfile.Processor
+        dockerfile: ./backend/Dockerfile.Processor
         push: true
 
   build_signalr:
