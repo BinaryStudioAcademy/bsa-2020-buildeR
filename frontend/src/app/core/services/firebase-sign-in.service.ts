@@ -52,35 +52,35 @@ export class FirebaseSignInService {
     );
   }
 
-  async linkWithGithub(): Promise<string> {
-    try {
-      return this.linkWithProvider(Providers.Github);
-    }
-    catch (err) {
-      console.log(err);
-      switch (err.code) {
-        case 'auth/credential-already-in-use': {
-          return 'This account is already added to BuildeR!';
-        }
-        default: { return err.code; }
-      }
-    }
-  }
+  // async linkWithGithub(): Promise<string> {
+  //   try {
+  //     return this.linkWithProvider(Providers.Github);
+  //   }
+  //   catch (err) {
+  //     console.log(err);
+  //     switch (err.code) {
+  //       case 'auth/credential-already-in-use': {
+  //         return 'This account is already added to BuildeR!';
+  //       }
+  //       default: { return err.code; }
+  //     }
+  //   }
+  // }
 
-  async linkWithGoogle(): Promise<string> {
-    try {
-      return this.linkWithProvider(Providers.Google);
-    }
-    catch (err) {
-      console.log(err);
-      switch (err.code) {
-        case 'auth/credential-already-in-use': {
-          return 'This account is already added to BuildeR!';
-        }
-        default: return err.code;
-      }
-    }
-  }
+  // async linkWithGoogle(): Promise<string> {
+  //   try {
+  //     return this.linkWithProvider(Providers.Google);
+  //   }
+  //   catch (err) {
+  //     console.log(err);
+  //     switch (err.code) {
+  //       case 'auth/credential-already-in-use': {
+  //         return 'This account is already added to BuildeR!';
+  //       }
+  //       default: return err.code;
+  //     }
+  //   }
+  // }
 
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
@@ -179,6 +179,40 @@ export class FirebaseSignInService {
   }
 
   async linkWithProvider(provider: Providers) {
+    try {
+      const fireProvider = this.setFirebaseProvider(provider);
+
+      const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(fireProvider);
+      const credential = result.credential;
+      const user = result.user;
+      this.authService.setFirebaseUser(user);
+      const linkUser = ({
+        userId: this.authService.getCurrentUser().id,
+        providerName: provider,
+        providerUrl: credential.providerId,
+        uId: user.uid
+      } as LinkProvider);
+
+      this.userService.linkProvider(linkUser)
+        .subscribe((resp) => {
+          if (resp) {
+            this.authService.setUser(resp);
+          }
+        });
+      return 'ok';
+    }
+    catch (err) {
+      console.log(err);
+      switch (err.code) {
+        case 'auth/credential-already-in-use': {
+          return 'This account is already added to BuildeR!';
+        }
+        default: return err.code;
+      }
+    }
+  }
+
+  setFirebaseProvider(provider: Providers) {
     let fireProvider;
     switch (provider) {
       case Providers.Google: {
@@ -192,32 +226,15 @@ export class FirebaseSignInService {
         break;
       }
     }
-    const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(fireProvider);
-    const credential = result.credential;
-    const user = result.user;
-    this.authService.setFirebaseUser(user);
-    const linkUser = ({
-      userId: this.authService.getCurrentUser().id,
-      providerName: provider,
-      providerUrl: credential.providerId,
-      uId: user.uid
-    } as LinkProvider);
-    this.userService.linkProvider(linkUser)
-      .subscribe((resp) => {
-        if (resp) {
-          this.authService.setUser(resp);
-        }
-      });
-    return 'ok';
+    return fireProvider;
   }
 
   async linkGithubOnlyInFirebase() {
     const githubProvider = new auth.GithubAuthProvider();
     githubProvider.addScope('admin:hooks');
     githubProvider.addScope('repo');
-    const fireUser = this.authService.getFireUser();
     try {
-      const result = await fireUser.linkWithPopup(githubProvider);
+      const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(githubProvider);
       const credential = result.credential;
       this.authService.setFirebaseUser(result.user);
       localStorage.setItem('github-access-token', credential[`accessToken`]);

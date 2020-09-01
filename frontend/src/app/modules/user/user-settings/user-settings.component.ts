@@ -153,7 +153,7 @@ export class UserSettingsComponent implements OnInit {
 
   linkWithGithub() {
     if (!this.isGithubAddedInFirebase() && !this.isProviderAdded(Providers.Github)) {
-      this.fbr.linkWithGithub().then((result) => {
+      this.fbr.linkWithProvider(Providers.Github).then((result) => {
         if (result === 'ok') {
           this.githubClick = true;
         }
@@ -167,7 +167,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   linkWithGoogle() {
-    this.fbr.linkWithGoogle().then((result) => {
+    this.fbr.linkWithProvider(Providers.Google).then((result) => {
       if (result === 'ok') {
         this.googleClick = true;
       }
