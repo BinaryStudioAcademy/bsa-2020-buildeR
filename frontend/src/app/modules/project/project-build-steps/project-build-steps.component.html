@@ -7,17 +7,18 @@
   <div class="container px-0 mx-auto">
     <!-- Titles of steps -->
     <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="drop($event)">
-      <div class="project-build-step row" *ngFor="let buildStep of buildSteps; let i = index" cdkDrag>
+      <div class="project-build-step row" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
         <!-- Template for generic plugins -->
         <div class="container">
           <div class="row">
             <div class="col-1 text-left">
-              <button type="button" class="btn expand-button" (click)="addBuildStep(buildStep)">
-                <i class="expand-icon" [ngClass]="(buildStep.isAdding) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
+              <button type="button" class="btn expand-button" (click)="editBuildStep(buildStep)">
+                <i class="expand-icon" [ngClass]="(buildStep.isEditing) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
               </button>
             </div>
             <div class="col-4 text-left m-auto" cdkDragHandle>
-              Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span><span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
+              Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
+              <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
             </div>
             <div class="col-1 offset-6">
               <button class="btn pl-0" (click)="removeBuildStep(buildStep)">
@@ -28,7 +29,7 @@
           </div>
 
         <!-- First block of advanced parameters -->
-        <div class="container" hidden="true" [hidden]="!buildStep.isAdding">
+        <div class="container" hidden="true" [hidden]="!buildStep.isEditing">
           <div class="row">
             <div class="col-10 offset-1"><hr class="mb-4"></div>
           </div>
@@ -127,14 +128,20 @@
         <div class="row">
           <div class="col-6 pl-0">
             <div ngbDropdown class="d-inline-block">
-              <button class="btn add-build-btn" id="allEmptySteps" ngbDropdownToggle>Add build step</button>
-              <div  ngbDropdownMenu aria-labelledby="allEmptySteps">
-                <button *ngFor="let step of emptyBuildSteps" (click)="saveBuildStep(step)" ngbDropdownItem><span>{{ step.buildPlugin.pluginName }}</span><span *ngIf="step.pluginCommand.name" >: {{ step.pluginCommand.name }}</span></button>
+              <button class="btn add-build-btn" id="allEmptySteps"
+                      ngbDropdownToggle>Add build step</button>
+              <div ngbDropdownMenu aria-labelledby="allEmptySteps">
+                <button *ngFor="let step of emptyBuildSteps"
+                        (click)="addNewBuildStep(step)"
+                        ngbDropdownItem>
+                        <span>{{ step.buildPlugin.pluginName }}</span>
+                        <span *ngIf="step.pluginCommand.name" >: {{ step.pluginCommand.name }}</span>
+                  </button>
               </div>
-              <button class="btn btn-success" (click)="updateAllSteps()" [disabled]="!buildSteps || buildSteps.length === 0">
-                Save
-              </button>
             </div>
+            <button class="btn btn-success" (click)="updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
+              Save changes
+            </button>
           </div>
           <div class="col-6 text-right">
             <button class="btn save-btn mr-2 all-button" (click)="expandAll()">
