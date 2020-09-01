@@ -40,7 +40,7 @@ export class ProjectSettingsComponent implements OnInit {
         [
           Validators.required
         ]),
-        isPublic: new FormControl(this.project.isPublic),
+        isPublic: new FormControl(this.project.isPublic.toString()),
         description: new FormControl(this.project.description,
           [
             Validators.required

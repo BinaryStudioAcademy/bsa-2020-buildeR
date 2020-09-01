@@ -12,6 +12,7 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<BuildStepDTO>> GetAll();
         Task<BuildStepDTO> Create(NewBuildStepDTO buildStep);
         Task Update(BuildStepDTO buildStep);
+        Task BulkUpdate(BuildStepDTO[] buildSteps);
         Task Delete(int id);
 
         Task<IEnumerable<EmptyBuildStepDTO>> GetEmptyBuildStepsAsync();
