@@ -32,13 +32,15 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
               private projectService: ProjectService,
               private toastr: ToastrService) {
     super();
-    this.route.parent.params.subscribe(
-      (params) => this.groupId = params.groupId);
+    this.route.parent.data.subscribe((data) => {
+      this.group = data.group;
+      this.groupId = this.group.id;
+      this.getGroupProjects();
+      });
     this.getCurrentUserRole();
   }
 
   ngOnInit(): void {
-    this.getGroupProjects();
   }
 
   addProject(project: ProjectInfo){
@@ -86,7 +88,6 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.projectService.getProjectsByUser(userId).pipe(takeUntil(this.unsubscribe$))
     .subscribe(res => {
       this.userProjects = res.body;
-      console.log(this.userProjects);
     });
   }
 
