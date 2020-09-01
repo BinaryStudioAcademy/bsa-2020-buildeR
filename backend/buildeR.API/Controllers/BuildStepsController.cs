@@ -42,6 +42,12 @@ namespace buildeR.API.Controllers
             await _buildStepService.Update(buildStep);
         }
 
+        [HttpPut("bulk")]
+        public async Task Update(BuildStepDTO[] buildSteps)
+        {
+            await _buildStepService.BulkUpdate(buildSteps);
+        }
+
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
