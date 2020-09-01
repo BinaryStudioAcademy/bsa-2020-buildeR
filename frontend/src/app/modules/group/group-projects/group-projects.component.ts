@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectInfo } from '../../../shared/models/project-info';
-import { GroupService } from '../../../core/services/group.service';
+import { ProjectInfo } from '@shared/models/project-info';
+import { GroupService } from '@core/services/group.service';
 import { BaseComponent } from '@core/components/base/base.component';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Group } from '@shared/models/group/group';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
-import { UserService } from '@core/services/user.service';
 import { ProjectService } from '@core/services/project.service';
+import { ProjectGroupService } from '@core/services/project-group.service';
 import { ProjectGroup } from '@shared/models/group/project-group';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { ModalService } from '@core/services/modal.service';
 
 @Component({
   selector: 'app-group-projects',
@@ -30,35 +31,38 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
               private route: ActivatedRoute,
               private authService: AuthenticationService,
               private projectService: ProjectService,
-              private toastr: ToastrService) {
+              private toastr: ToastrNotificationsService,
+              private projectGroupService: ProjectGroupService,
+              private modalService: ModalService) {
     super();
     this.route.parent.data.subscribe((data) => {
       this.group = data.group;
       this.groupId = this.group.id;
       this.getGroupProjects();
       });
-    this.getCurrentUserRole();
   }
 
   ngOnInit(): void {
+    this.getCurrentUserRole();
   }
 
   addProject(project: ProjectInfo){
     const projectGroup = {} as  ProjectGroup;
-    this.projects.push(project);
-    this.groupService.getGroupById(this.groupId).subscribe((res) => {
-      projectGroup.groupId = this.groupId;
-      projectGroup.projectId = project.id;
-      res.projectGroups.push(projectGroup);
-      this.groupService.updateGroup(res).subscribe(() => {
-        this.toastr.success('Group successfully added');
-      });
+    projectGroup.groupId = this.groupId;
+    projectGroup.projectId = project.id;
+    this.projectGroupService.addProject(projectGroup).subscribe(() => {
+      this.getGroupProjects();
+      this.projects.push(project);
+      this.toastr.showSuccess('Project successfully added');
     });
   }
 
   getGroupProjects(groupId: number = this.groupId) {
     this.groupService.getProjectsByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
-    .subscribe(res => this.projects = res.body);
+    .subscribe(res => {
+      this.projects = res.body;
+      console.log(res.body);
+    });
   }
 
   getCurrentUserRole(groupId: number = this.groupId){
@@ -91,6 +95,16 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     });
   }
 
+  async delete(groupId: number, projectId: number){
+    const confirm = await this.modalService.open('Do you really want to delete this project?',
+    'This action cannot be undone.');
+    if (confirm) {
+      this.projectGroupService.removeProject(groupId, projectId).subscribe(() => {
+        this.toastr.showSuccess('Project removed successfully');
+        this.getGroupProjects();
+      }, (err) => this.toastr.showError(err));
+    }
 
+}
   openCreateProjectModal() { }
 }
