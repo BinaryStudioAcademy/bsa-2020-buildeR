@@ -21,10 +21,11 @@ namespace buildeR.BLL.Services
             throw new NotImplementedException();
         }
 
-        public async Task StartBuild(int projectId, int buildHistoryId)
+        public async Task StartBuild(int projectId, int buildHistoryId, string branchName)
         {
             var build = await _projectService.GetExecutiveBuild(projectId);
             build.BuildHistoryId = buildHistoryId;
+            build.BranchName = branchName;
             _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
         }
     }
