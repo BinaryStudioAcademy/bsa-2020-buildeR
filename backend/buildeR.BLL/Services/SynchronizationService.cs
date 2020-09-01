@@ -77,13 +77,17 @@ namespace buildeR.BLL.Services
         }
         public async Task RegisterWebhook(int projectId, string callback)
         {
-            callback += $"/{projectId}/github";
+            callback = $"http://5451f9723672.ngrok.io/webhooks/{projectId}/github";
+
+            var pushCallback = callback + "/push";
+            var pullRequestCallback = callback + "/pull_request";
 
             var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
             var token = await GetUserAccessToken(project.OwnerId);
 
-            await _githubClient.CreateWebhook(repository.Name, callback, token.Token);
+            await _githubClient.CreateWebhook(repository.Name, "push", pushCallback, token.Token);
+            await _githubClient.CreateWebhook(repository.Name, "pull_request", pullRequestCallback, token.Token);
         }
         public async Task SetUpUserToken(int userId, string token)
         {
