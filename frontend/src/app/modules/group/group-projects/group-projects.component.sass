@@ -36,9 +36,40 @@
   margin-top: 1%
   margin-bottom: 1%
 
+.label-wr
+  width: 100%
+  display: flex
+  justify-content: flex-start
+  span
+    display: block
+
+.group
+  display: grid
+  grid-template-columns: 2
+  grid-template-rows: 2
+
+.field
+  grid-column-start: 0
+  grid-column-end: 1
+  justify-self: end
+
+.input-area
+  grid-column-start: 1
+  grid-column-end: 2
+  justify-self: start
+  margin: 0 10px 20px
+  
+.btn-wr
+  width: 100%
+  display: flex
+  justify-content: flex-end
+  align-items: center
+
+  button
+    margin: 5px    
+
 a
   cursor: pointer
-  margin-left: 10px
 
 .row > p.text-center
   font-size: 1.5rem
@@ -60,3 +91,18 @@ span.title
 
 .btn-info
   margin-right: 4%
+
+.branch-select
+  button
+    margin: 5px
+
+.branches-loading-wrp
+  height: 3rem
+
+select
+  width: 300px    
+
+
+@media screen and ( min-width: 1100px )
+  .dropdown-menu
+    margin-left: -120px

@@ -12,6 +12,10 @@ import { ProjectGroupService } from '@core/services/project-group.service';
 import { ProjectGroup } from '@shared/models/group/project-group';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ModalService } from '@core/services/modal.service';
+import { Branch } from '@core/models/Branch';
+import { SynchronizationService } from '@core/services/synchronization.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NewBuildHistory } from '@shared/models/new-build-history';
 
 @Component({
   selector: 'app-group-projects',
@@ -27,13 +31,20 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
   isContributor = false;
   isBuilder = false;
   userProjects: ProjectInfo[];
+
+  selectedProjectBranches: Branch[];
+  loadingSelectedProjectBranches = false;
+  selectedProjectBranch: string;
+
   constructor(private groupService: GroupService,
               private route: ActivatedRoute,
               private authService: AuthenticationService,
               private projectService: ProjectService,
               private toastr: ToastrNotificationsService,
               private projectGroupService: ProjectGroupService,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private syncService: SynchronizationService,
+              private ngbModalService: NgbModal) {
     super();
     this.route.parent.data.subscribe((data) => {
       this.group = data.group;
@@ -106,5 +117,53 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     }
 
 }
-  openCreateProjectModal() { }
+openBranchSelectionModal(content, projectId: number) {
+  this.loadProjectBranches(projectId);
+  this.ngbModalService
+    .open(content)
+    .result.then(() => {})
+    .catch(() => {});
+}
+triggerBuild(project: ProjectInfo) {
+  const newBuildHistory = {
+    branchHash: this.selectedProjectBranch,
+    performerId: this.user.id,
+    projectId: project.id,
+    commitHash: null,
+  } as NewBuildHistory;
+  this.closeModal();
+  this.toastr.showSuccess(
+    `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${project.name}. Hold tight, it might take a moment to show up.`
+  );
+  this.projectService
+    .startProjectBuild(newBuildHistory)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(
+      (buildHistory) => {
+        project.lastBuildHistory = buildHistory;
+      },
+      (error) => this.toastr.showError(error)
+    );
+}
+
+closeModal() {
+  this.ngbModalService.dismissAll('Closed');
+}
+
+loadProjectBranches(projectId: number) {
+  this.loadingSelectedProjectBranches = true;
+  this.syncService
+    .getRepositoryBranches(projectId)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(
+      (resp) => {
+        this.selectedProjectBranches = resp;
+        this.loadingSelectedProjectBranches = false;
+      },
+      (error) => {
+        this.toastr.showError(error);
+        this.loadingSelectedProjectBranches = false;
+      }
+    );
+}
 }

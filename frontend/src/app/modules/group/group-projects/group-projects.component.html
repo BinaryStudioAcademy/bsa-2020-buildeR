@@ -1,27 +1,72 @@
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
   <div class="ml-auto" *ngIf="isAdmin" ngbDropdown>
-    <button class="btn btn-info" ngbDropdownToggle  id="Dropdown">
+    <button tabindex="0" class="btn btn-info" ngbDropdownToggle  id="Dropdown" role="button">
       <i  class="fas fa-plus"></i>
     </button>
-    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right"aria-labelledby="Dropdown">
-      <a *ngFor="let project of userProjects" (click)="addProject(project)">{{project.name}}</a>
+    <div ngbDropdownMenu aria-labelledby="Dropdown" class="dropdown-menu dropdown-menu-right" >
+      <a ngbDropdownItem class="dropdown-item"  *ngFor="let project of userProjects" (click)="addProject(project)">
+        {{project.name}}</a>
     </div>
   </div>
 </div>
+
 <div class="container" *ngIf="projects">
   <div class="row my-3 border rounded project-wr" *ngFor="let project of projects">
     <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto area">
       <i class="far fa-bookmark"></i>
       <a class="text-dark" [routerLink]="['../../../projects', project?.id, 'details']">{{project.name}}</a>
     </div>
-    <div *ngIf="isContributor" class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto actions">
-      <ng-template #popContent>
-        <button class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
+    <div *ngIf="isBuilder" class="col-lg-1 col-md-1 col-sm-1 col-1 my-auto actions">
+    <ng-template #popContent>
+      <button class="btn btn-success dropdown-item"(click)="openBranchSelectionModal(branchSelectModal, project.id)">
+        <i class="fas fa-play-circle"></i>
+        <!-- (click)="openBranchSelectionModal(branchSelectModal, project.id)" -->
+                  Run</button>
+        <button *ngIf="isContributor" class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
             class="fas fa-cog"></i>
           Settings</button>
         <div class="dropdown-divider"></div>
         <button *ngIf="isAdmin" class="btn btn-danger dropdown-item" (click)="delete(groupId, project.id)">
           <i class="far fa-trash-alt"></i> Delete</button>
+      </ng-template>
+      <ng-template #branchSelectModal let-modal>
+        <div class="modal-header">
+          <h4 style="color: #17a2b8;">Run build</h4>
+          <div (click)="modal.dismiss()">
+            <i id="cross" class="fas fa-times"></i>
+          </div>
+        </div>
+        <div class="modal-body branch-modal">
+          <div class="group">
+            <div class="field">
+              <div class="label-wr">
+                <span>Select a branch:</span>
+              </div>
+            </div>
+            <div class="input-area" *ngIf="!loadingSelectedProjectBranches else loadingBranches">
+              <select class="form-control form-control-sm branch-select"
+                [(ngModel)]="selectedProjectBranch">
+                <option *ngFor="let branch of selectedProjectBranches" [ngValue]='branch.name'>
+                  {{branch.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-wr">
+            <button class="btn btn-success" [disabled]="!selectedProjectBranch"
+              (click)="triggerBuild(project)">Select</button>
+            <button class="btn btn-warning" (click)="closeModal()">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <ng-template #loadingBranches>
+          <div class="spinner-wrp">
+            <app-loading-spinner position="absolute" margin="0" size="4px">
+            </app-loading-spinner>
+          </div>
+        </ng-template>
       </ng-template>
       <button type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
         <i class="fas fa-bars"></i>
