@@ -34,11 +34,11 @@ else loaded;
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-          <div *ngIf="getCurrentUserRoleInvite(group.id)" class="col-md-12 col-sm-12 text-muted small row-top">
+          <div *ngIf="getCurrentUserRoleInvite(group.id) != null" class="col-md-12 col-sm-12 text-muted small row-top">
             Your role
           </div>
           <div class="col-md-12 col-sm-12 small row-bottom">
-            <span *ngIf="getCurrentUserRoleInvite(group.id)"
+            <span *ngIf="getCurrentUserRoleInvite(group.id) != null"
               class="user-access-role">{{groupRole[getCurrentUserRoleInvite(group.id)]}}</span></div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
@@ -95,7 +95,8 @@ else loaded;
             Members
           </div>
           <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-            <i class="fas fa-users" [routerLink]="['../../groups', group?.id, 'members']"></i> {{group.teamMembers.length}}
+            <i class="fas fa-users" [routerLink]="['../../groups', group?.id, 'members']"></i>
+            {{group.teamMembers.length}}
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
@@ -103,7 +104,8 @@ else loaded;
             Projects
           </div>
           <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-            <i class="far fa-bookmark" [routerLink]="['../../groups', group?.id, 'projects']"></i> {{group.projectGroups.length}}
+            <i class="far fa-bookmark" [routerLink]="['../../groups', group?.id, 'projects']"></i>
+            {{group.projectGroups.length}}
           </div>
         </div>
         <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">

@@ -9,7 +9,7 @@ import { User } from '../../../shared/models/user/user';
 import { UserService } from '../../../core/services/user.service';
 import { TeamMemberService } from '../../../core/services/team-member.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
@@ -18,6 +18,7 @@ import { BaseComponent } from '@core/components/base/base.component';
   styleUrls: ['./group-members.component.sass']
 })
 export class GroupMembersComponent extends BaseComponent implements OnInit {
+  loadingUsers = false;
   groupId: number;
   model;
   members: TeamMember[];
@@ -44,25 +45,32 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       (params) => this.groupId = params.groupId);
   }
   ngOnInit(): void {
+    this.loadingUsers = true;
     this.getGroupMembers(this.groupId);
     this.getUsers();
     this.memberForm = new FormGroup({
-      user: new FormControl(),
-      dropdown: new FormControl(this.groupRole[GroupRole.Guest])
+      user: new FormControl(' ', [Validators.required]),
+      dropdown: new FormControl(this.groupRole[GroupRole.Guest], [Validators.required])
     });
   }
 
   getGroupMembers(groupId: number) {
+    this.loadingUsers = true;
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
+        this.loadingUsers = false;
         this.members = res.body.filter((t => t.isAccepted));
         this.pendingMembers = res.body.filter((t => !t.isAccepted));
       });
   }
   getUsers() {
-    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => this.users = res.body.filter(
-      (user) => !this.members.some(x => x.userId === user.id)
-    ));
+    this.loadingUsers = true;
+    this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => {
+      this.loadingUsers = false;
+      this.users = res.body.filter(
+        (user) => !this.members.some(x => x.userId === user.id) && !this.pendingMembers.some(x => x.userId === user.id)
+      );
+    });
   }
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
@@ -78,10 +86,15 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.groupId = this.groupId;
     this.newTeamMember.userId = this.memberForm.controls.user.value.id;
     this.newTeamMember.memberRole = this.memberForm.controls.dropdown.value;
+    console.log(this.newTeamMember.memberRole);
+    if (!this.newTeamMember.memberRole) {
+      this.newTeamMember.memberRole = GroupRole.Guest;
+    }
     this.newTeamMember.isAccepted = false;
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.getGroupMembers(this.groupId);
+        this.getUsers();
         this.toastrService.showSuccess('Member was successfully added');
       },
         (err) => {

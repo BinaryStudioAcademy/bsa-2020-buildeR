@@ -1,115 +1,127 @@
-<div class="invite">
-  <h4>Invite member</h4>
-  <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
-    <div class="row">
-      <div class="col-md-6">
-        <ng-template #rt let-r="result" let-t="term">
-          <div class="row my-3" style="width: 32em">
-            <div class="item area">
-              <img [src]="r.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-                class="avatar" />
-            </div>
-            <div class="user">
-              <div class="row-top">
-                {{r.firstName}}
-                {{r.lastName}}
-                ({{ r.username}})
+<div *ngIf="
+loadingUsers ;
+then loading;
+else loaded;
+"></div>
+<ng-template #loading>
+  <app-loading-spinner size="20px"></app-loading-spinner>
+</ng-template>
+<ng-template #loaded>
+
+  <div class="invite">
+    <h4>Invite member</h4>
+    <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <ng-template #rt let-r="result" let-t="term">
+            <div class="row my-3">
+              <div class="item area">
+                <img [src]="r.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+                  class="avatar" />
               </div>
-              <div class="row-bottom gray">
-                {{r.email}}
+              <div class="user">
+                <div class="row-top">
+                  {{r.firstName}}
+                  {{r.lastName}}
+                  ({{ r.username}})
+                </div>
+                <div class="row-bottom gray">
+                  {{r.email}}
+                </div>
               </div>
             </div>
+          </ng-template>
+          <label for="typeahead-basic">Search user:</label>
+          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+            [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
+            placeholder="Username or email" [resultTemplate]="rt" />
+        </div>
+        <div class="col-md-6">
+          <label for="input-role">Choose a role permission:</label>
+          <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
+            <div>
+              <input type="text" class="form-control" data-toggle="dropdown"
+                [value]="memberForm.controls['dropdown']?.value" ngbDropdownToggle
+                placeholder="Chose role from dropdown">
+            </div>
+            <ul ngbDropdownMenu>
+              <li *ngFor="let item of roles" ngbDropdownItem
+                (click)="memberForm.controls['dropdown'].setValue(groupRole[item])" class="dropdown-item">
+                {{groupRole[item]}}
+              </li>
+            </ul>
           </div>
-        </ng-template>
-        <label for="typeahead-basic">Search user:</label>
-        <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-          [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
-          placeholder="Username or email" [resultTemplate]="rt" />
-      </div>
-      <div class="col-md-6">
-        <label for="input-role">Choose a role permission:</label>
-        <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
-          <div>
-            <input type="text" class="form-control" data-toggle="dropdown"
-              [value]="memberForm.controls['dropdown']?.value" ngbDropdownToggle>
-          </div>
-          <ul ngbDropdownMenu>
-            <li *ngFor="let item of roles" ngbDropdownItem
-              (click)="memberForm.controls['dropdown'].setValue(groupRole[item])" class="dropdown-item">
-              {{groupRole[item]}}
-            </li>
-          </ul>
         </div>
       </div>
-    </div>
-    <div class="form-actions">
-      <button type="submit" class="btn btn-success">Invite</button>
-    </div>
-  </form>
-</div>
-<hr>
-<div *ngIf="
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success" [disabled]="memberForm.invalid">Invite</button>
+      </div>
+    </form>
+  </div>
+  <hr>
+  <div *ngIf="
       pendingMembers?.length;
       then pendMembers;
     ">
-</div>
-<ng-template #pendMembers>
-  <div class="container">
-    <div class="row my-3 border rounded member-wr" *ngFor="let member of pendingMembers">
-      <div class="item area">
-        <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-          alt="Avatar" class="avatar" />
-      </div>
-      <div class="user">
-        <div class="row-top">
-          <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+  </div>
+  <ng-template #pendMembers>
+    <div class="container">
+      <div class="row my-3 border rounded member-wr" *ngFor="let member of pendingMembers">
+        <div class="item-avatar area">
+          <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+            alt="Avatar" class="avatar" />
         </div>
-        <div class="align-text-top row-bottom gray">
-          <p class="text-dark">Pending to accept invitation </p>
+        <div class="user">
+          <div class="row-top">
+            <h5><a class="text-dark" [routerLink]="">{{member?.user.username}}</a></h5>
+          </div>
+          <div class="align-text-top row-bottom gray">
+            <p class="gray">Pending to accept invitation </p>
+          </div>
         </div>
-      </div>
-      <div class="item area">
-        <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+        <div class="item area">
+          <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+        </div>
       </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
 
-<div *ngIf="
+  <div *ngIf="
       members?.length;
       then existMembers;
     ">
-</div>
-<ng-template #existMembers>
-  <div class="container">
-    <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
-      <div class="item area">
-        <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-          alt="Avatar" class="avatar" />
-      </div>
-      <div class="user">
-        <div class="row-top">
-          <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+  </div>
+  <ng-template #existMembers>
+    <div class="container">
+      <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
+        <div class="item-avatar area">
+          <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+            alt="Avatar" class="avatar" />
         </div>
-        <div class="align-text-top row-bottom gray">
-          <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
-        </div>
-      </div>
-      <div class="item area role">
-        <div ngbDropdown>
-          <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-            {{groupRole[member.memberRole]}}
+        <div class="user">
+          <div class="row-top">
+            <h5><a class="text-dark" [routerLink]="">{{member?.user.username}}</a></h5>
           </div>
-          <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
-            container="body">
-            <div class="dropdown-header">Change permissions</div>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+          <div class="align-text-top row-bottom gray">
+            <p class="gray">Member since {{member.joinedDate | date:'mediumDate'}}</p>
+          </div>
+        </div>
+        <div class="item area role">
+          <div ngbDropdown>
+            <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+              {{groupRole[member.memberRole]}}
+            </div>
+            <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
               container="body">
-              <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
+              <div class="dropdown-header">Change permissions</div>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+                container="body">
+                <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-template>
 </ng-template>
