@@ -1,14 +1,16 @@
 <div class="container center-block">
   <div class="modal-header">
+    <h4>Upload photo</h4>
   <button type="button" class="close" aria-label="Close" (click)="close()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-  <input type="file" (change)="fileChangeEvent($event)" />
-
+  <input *ngIf="!content" type="file" (change)="fileChangeEvent($event)"/>
+  
   <image-cropper
   [imageChangedEvent]="imageChangedEvent"
   [maintainAspectRatio]="true"
+  [imageURL]="content"
   [aspectRatio]="4 / 4"
   format="png"
   [roundCropper]	= "true"

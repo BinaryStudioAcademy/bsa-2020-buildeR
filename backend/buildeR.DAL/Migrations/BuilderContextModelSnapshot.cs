@@ -101,6 +101,12 @@ namespace buildeR.DAL.Migrations
                             DockerImageName = "node",
                             DockerRegistryName = "node",
                             PluginName = "Node.js"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Command = "sh",
+                            PluginName = "Custom command"
                         });
                 });
 
@@ -340,6 +346,11 @@ namespace buildeR.DAL.Migrations
                             Id = 3,
                             Name = "install",
                             PluginId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            PluginId = 3
                         });
                 });
 

@@ -23,13 +23,13 @@ import { Observable } from 'rxjs';
 export class ProjectBuildStepsComponent extends BaseComponent implements OnInit, OnDestroy {
   projectId: number;
   project: Project = {} as Project;
+
+  allBuildSteps: BuildStep[] = new Array();
   buildSteps: BuildStep[];
   emptyBuildSteps: EmptyBuildStep[];
+  newBuildSteps: BuildStep[] = new Array();
+
   isLoading = true;
-  isAdding = false;
-  newBuildStep: EmptyBuildStep = {} as EmptyBuildStep;
-  workDir: string;
-  commandArguments: CommandArgument[] = new Array();
 
   constructor(
     private projectService: ProjectService,
@@ -95,8 +95,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
-          this.isLoading = false;
           this.buildSteps = resp.body;
+          this.newBuildSteps = [];
+          this.allBuildSteps = [];
+          this.allBuildSteps = this.allBuildSteps.concat(this.buildSteps);
+          this.isLoading = false;
         },
         (error) => {
           this.isLoading = false;
@@ -105,8 +108,23 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
-  addBuildStep(step: BuildStep) {
-    step.isAdding = !step.isAdding;
+  addNewBuildStep(step: EmptyBuildStep) {
+    const newStep = {
+      pluginCommand: step.pluginCommand,
+      buildStepName: step.buildStepName,
+      pluginCommandId: step.pluginCommand.id,
+      projectId: this.projectId,
+      index: this.allBuildSteps.length,
+      commandArguments: [],
+      isEditing: true
+    } as BuildStep;
+    this.addEmptyCommand(newStep);
+    this.newBuildSteps.push(newStep);
+    this.allBuildSteps.push(newStep);
+  }
+
+  editBuildStep(step: BuildStep) {
+    step.isEditing = !step.isEditing;
   }
 
   addCommandArgument(step: BuildStep) {
@@ -132,20 +150,22 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 
   removeExistingCommandArgument(step: BuildStep, argumentId: number, key: string) {
     step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.key !== key);
-    this.isLoading = true;
-    this.commandArgumentService
-      .removeCommandArgument(argumentId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        () => {
-          this.isLoading = false;
-          step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }
-      );
+    if (argumentId) {
+      this.isLoading = true;
+      this.commandArgumentService
+        .removeCommandArgument(argumentId)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(
+          () => {
+            this.isLoading = false;
+            step.commandArguments = step.commandArguments.filter(commandArgument => commandArgument.id !== argumentId);
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.showError(error);
+          }
+        );
+    }
   }
 
   editCommandArgument(arg: CommandArgument) {
@@ -174,51 +194,68 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     return search;
 }
 
-  saveBuildStep(step: EmptyBuildStep) {
-    const buildStep = {
-      pluginCommand: step.pluginCommand,
-      index: this.buildSteps.length,
-      buildStepName: step.buildStepName,
-      pluginCommandId: step.pluginCommand.id,
-      projectId: this.projectId,
-      workDirectory: this.workDir,
-      commandArguments: this.commandArguments
-    } as BuildStep;
-
-    this.isLoading = true;
-    this.buildStepService
-      .createBuildStep(buildStep)
+  saveNewBuildSteps() {
+    this.newBuildSteps.forEach(step => {
+      this.buildStepService
+      .createBuildStep(step)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
-          this.isLoading = false;
           this.buildSteps.push(resp);
-          this.getProjectBuildSteps(this.projectId);
         },
         (error) => {
           this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+    });
   }
+
+  addEmptyCommand(step: BuildStep) {
+    if (step.buildStepName === 'Custom command: ') {
+      const newCommandArgument = {
+        key: ''
+      } as CommandArgument;
+      step.commandArguments.push(newCommandArgument);
+    }
+  }
+
 
   updateAllSteps() {
     this.isLoading = true;
-    this.buildSteps.forEach(step =>
-      this.buildStepService.updateBuildStep(step)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (resp) => {
-          this.isLoading = false;
-          this.getProjectBuildSteps(this.projectId);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }));
+    if (this.newBuildSteps !== []) {
+      this.saveNewBuildSteps();
+    }
+    this.buildStepService.bulkUpdate(this.buildSteps)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(
+      (resp) => {
+        this.getProjectBuildSteps(this.projectId)
+       },
+      (error) => {
+        this.isLoading = false;
+        this.toastrService.showError(error);
+      });
+    // this.buildSteps.forEach(step =>
+    //   this.buildStepService.updateBuildStep(step)
+    //   .pipe(takeUntil(this.unsubscribe$))
+    //   .subscribe(
+    //     (resp) => {
+    //       this.getProjectBuildSteps(this.projectId);
+    //     },
+    //     (error) => {
+    //       this.isLoading = false;
+    //       this.toastrService.showError(error);
+    //     }));
+
   }
 
   removeBuildStep(buildStep: BuildStep) {
+    if (!buildStep.id) {
+      this.newBuildSteps = this.newBuildSteps.filter(step => buildStep.index !== step.index);
+      this.allBuildSteps = this.allBuildSteps.filter(step => buildStep.index !== step.index);
+    }
+    else {
     this.isLoading = true;
     this.buildStepService
       .removeBuildStep(buildStep)
@@ -227,12 +264,14 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         () => {
           this.isLoading = false;
           this.buildSteps = this.buildSteps.filter(step => buildStep.id !== step.id);
+          this.allBuildSteps = this.allBuildSteps.filter(step => buildStep.id !== step.id);
         },
         (error) => {
           this.isLoading = false;
           this.toastrService.showError(error);
         }
       );
+    }
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -242,31 +281,21 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   }
 
   increaseIndexesOfBuildStepsFrom(projectId: number, newIndex: number, oldIndex: number) {
-    this.isLoading = true;
-    this.buildStepService
-      .udpateIndexesOfBuildSteps(projectId, newIndex, oldIndex)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        () => {
-          this.isLoading = false;
-          moveItemInArray(this.buildSteps, oldIndex, newIndex);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }
-      );
+    moveItemInArray(this.allBuildSteps, oldIndex, newIndex);
+    this.allBuildSteps.forEach(element => {
+      element.index = this.allBuildSteps.indexOf(element);
+    });
   }
 
   expandAll() {
-    this.buildSteps.forEach(step => {
-      step.isAdding = true;
+    this.allBuildSteps.forEach(step => {
+      step.isEditing = true;
     });
   }
 
   collapseAll() {
-    this.buildSteps.forEach(step => {
-      step.isAdding = false;
+    this.allBuildSteps.forEach(step => {
+      step.isEditing = false;
     });
   }
 }

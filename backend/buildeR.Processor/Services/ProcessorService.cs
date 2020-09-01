@@ -93,7 +93,7 @@ namespace buildeR.Processor.Services
                 "ClonedRepository"
                 );
 
-            CloneRepository(build.RepositoryUrl, pathToClonedRepository);
+            CloneRepository(build.RepositoryUrl, pathToClonedRepository, build.BranchName);
 
             try
             {
@@ -195,12 +195,12 @@ namespace buildeR.Processor.Services
 
         #region Directory and repository
 
-        private void CloneRepository(string repositoryUrl, string path)
+        private void CloneRepository(string repositoryUrl, string path, string branchName)
         {
             try
             {
                 Directory.CreateDirectory(path);
-                Repository.Clone(repositoryUrl, path);//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
+                Repository.Clone(repositoryUrl, path, new CloneOptions() { BranchName = branchName });//TODO: add an ability to clone by commit and to clone from private repos (Vault?)
             }
             catch (Exception e)
             {
@@ -242,16 +242,22 @@ namespace buildeR.Processor.Services
             ENV {{ key }}={{ value }} // if any
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
-            var template = Template.Parse(
-                 "FROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
+            var genericTemplate = Template.Parse(
+                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
                  "{{ if this.env_variable }}ENV {{ this.env_variable.key }}={{ this.env_variable.value }} {{ end }}\r\n" +
-                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}\r\n\r\n");
+                 "RUN {{ this.plugin_command.plugin.command }} {{ this.plugin_command.name }} {{ for arg in this.command_arguments }} {{ arg.key }} {{ arg.value }} {{ end }}");
+
+            var customCommandTemplate = Template.Parse(
+                "&& {{ this.command_arguments[0].key }} ");
 
             foreach (var step in buildSteps)
-                dockerfile += template.Render(step);
+                if (step.BuildStepName != "Custom command: ")
+                    dockerfile += genericTemplate.Render(step);
+                else
+                    dockerfile += customCommandTemplate.Render(step);
 
             return dockerfile;
         }
@@ -259,10 +265,9 @@ namespace buildeR.Processor.Services
         private async Task CreateDockerFileAsync(string content, string path)
         {
             var dockerFilePath = Path.Combine(path, "Dockerfile");
-            Directory.CreateDirectory(dockerFilePath);
 
-            await using var outputFile = new StreamWriter(dockerFilePath);
-            await outputFile.WriteAsync(content);
+            using var fileStream = File.CreateText(dockerFilePath);
+            await fileStream.WriteAsync(content);
         }
         #endregion
     }

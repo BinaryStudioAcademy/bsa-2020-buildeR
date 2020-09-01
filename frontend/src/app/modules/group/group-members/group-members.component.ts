@@ -19,7 +19,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 })
 export class GroupMembersComponent extends BaseComponent implements OnInit {
   groupId: number;
-  model: any;
+  model;
   members: TeamMember[];
   pendingMembers: TeamMember[];
   newTeamMember: TeamMember;
@@ -81,7 +81,8 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.isAccepted = false;
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.getGroupMembers(this.groupId); this.toastrService.showSuccess('Member was successfully added');
+        this.getGroupMembers(this.groupId);
+        this.toastrService.showSuccess('Member was successfully added');
       },
         (err) => {
           this.toastrService.showError(err);

@@ -4,7 +4,7 @@ import { timer } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { ValidateUser } from '../../shared/models/user/validate-user';
 
-export const usernameAsyncValidator = (userService: UserService, userId: number = 0, time: number = 500) => {
+export const usernameAsyncValidator = (userService: UserService, userId: number = 0, time: number = 800) => {
   return (input: FormControl) => {
     const user = { id: userId, username: input.value} as ValidateUser;
     return timer(time).pipe(
