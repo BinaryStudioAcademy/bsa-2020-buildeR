@@ -53,29 +53,8 @@ export class FirebaseSignInService {
   }
 
   async linkWithGithub(): Promise<string> {
-    const githubProvider = new auth.GithubAuthProvider();
-    githubProvider.addScope('admin:hooks');
-    githubProvider.addScope('repo');
-    const fireUser = this.authService.getFireUser();
     try {
-      const result = await fireUser.linkWithPopup(githubProvider);
-      const credential = result.credential;
-      localStorage.setItem('github-access-token', credential[`accessToken`]);
-      const user = result.user;
-      this.authService.setFirebaseUser(user);
-      const linkUser = ({
-        userId: this.authService.getCurrentUser().id,
-        providerName: Providers.Github,
-        providerUrl: credential.providerId,
-        uId: user.uid
-      } as LinkProvider);
-      this.userService.linkProvider(linkUser)
-        .subscribe((resp) => {
-          if (resp) {
-            this.authService.setUser(resp);
-          }
-        });
-      return 'ok';
+      return this.linkWithProvider(Providers.Github);
     }
     catch (err) {
       console.log(err);
@@ -89,26 +68,8 @@ export class FirebaseSignInService {
   }
 
   async linkWithGoogle(): Promise<string> {
-    const googleProvider = new auth.GoogleAuthProvider();
-    const fireUser = this.authService.getFireUser();
     try {
-      const result = await fireUser.linkWithPopup(googleProvider);
-      const credential = result.credential;
-      const user = result.user;
-      this.authService.setFirebaseUser(user);
-      const linkUser = ({
-        userId: this.authService.getCurrentUser().id,
-        providerName: Providers.Google,
-        providerUrl: credential.providerId,
-        uId: user.uid
-      } as LinkProvider);
-      this.userService.linkProvider(linkUser)
-        .subscribe((resp) => {
-          if (resp) {
-            this.authService.setUser(resp);
-          }
-        });
-      return 'ok';
+      return this.linkWithProvider(Providers.Google);
     }
     catch (err) {
       console.log(err);
@@ -133,7 +94,7 @@ export class FirebaseSignInService {
         if (resp) {
           if (credential.credential.providerId === 'google.com') {
             if (!this.isProviderAdded(resp, Providers.Google)) {
-              this.linkUser(resp, credential, Providers.Google);
+              this.linkUserGoogleAdditional(resp, credential);
             }
           }
 
@@ -146,6 +107,7 @@ export class FirebaseSignInService {
               }
               else {
                 this.giveAccessToUser(resp, user, redirectUrl);
+                // this.giveAccessToUser(resp, this.authService.getFireUser(), redirectUrl);
               }
             });
         }
@@ -200,7 +162,7 @@ export class FirebaseSignInService {
     return user.userSocialNetworks?.some(check);
   }
 
-  linkUser(user: User, credential: auth.UserCredential, provider: Providers) {
+  linkUserGoogleAdditional(user: User, credential: auth.UserCredential) {
     const linkUser = ({
       userId: user.id,
       providerName: Providers.Google,
@@ -214,6 +176,39 @@ export class FirebaseSignInService {
           user = response;
         }
       });
+  }
+
+  async linkWithProvider(provider: Providers) {
+    let fireProvider;
+    switch (provider) {
+      case Providers.Google: {
+        fireProvider = new auth.GoogleAuthProvider();
+        break;
+      }
+      case Providers.Github: {
+        fireProvider = new auth.GithubAuthProvider();
+        fireProvider.addScope('admin:hooks');
+        fireProvider.addScope('repo');
+        break;
+      }
+    }
+    const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(fireProvider);
+    const credential = result.credential;
+    const user = result.user;
+    this.authService.setFirebaseUser(user);
+    const linkUser = ({
+      userId: this.authService.getCurrentUser().id,
+      providerName: provider,
+      providerUrl: credential.providerId,
+      uId: user.uid
+    } as LinkProvider);
+    this.userService.linkProvider(linkUser)
+      .subscribe((resp) => {
+        if (resp) {
+          this.authService.setUser(resp);
+        }
+      });
+    return 'ok';
   }
 
   async linkGithubOnlyInFirebase() {
