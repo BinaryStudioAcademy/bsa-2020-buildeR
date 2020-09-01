@@ -50,12 +50,10 @@ namespace buildeR.BLL.Services
         }
         public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId)
         {
-            var token = await GetUserAccessToken(userId);
-
             var repoName = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
             var repoOwner = _synchronizationHelper.GetRepositoryOwnerFromUrl(repoUrl);
 
-            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner, token.Token);
+            return await _githubClient.CheckIfRepositoryAccessable(repoName, repoOwner);
         }
         public async Task<AccessTokenCheckDTO> CheckIfTokenValid(string token)
         {
