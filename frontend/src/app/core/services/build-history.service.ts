@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../core/services/http.service';
 import { Observable } from 'rxjs';
-import {BuildHistory} from '../../shared/models/build-history'
+import {BuildHistory} from '../../shared/models/build-history';
 import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
