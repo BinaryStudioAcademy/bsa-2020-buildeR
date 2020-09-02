@@ -88,9 +88,8 @@ namespace buildeR.BLL.Services
         public async Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id)
         {
             var group = await Context.Groups.AsNoTracking()
-                .Include(g => g.ProjectGroups)
-                .ThenInclude(p=>p.Project)
-                .ThenInclude(o => o.Owner)
+                .Include(g => g.ProjectGroups).ThenInclude(p => p.Project).ThenInclude(o => o.Owner)
+                .Include(g => g.ProjectGroups).ThenInclude(p => p.Project).ThenInclude(b => b.BuildHistories)
                 .Include(g => g.TeamMembers)
                 .FirstOrDefaultAsync(g => g.Id == id);
             var projects = group.ProjectGroups.Select(x => x.Project);
