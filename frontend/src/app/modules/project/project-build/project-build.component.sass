@@ -49,6 +49,7 @@ a.back
     flex-direction: column
     justify-content: space-evenly
     gap: 0.5rem
+    position: relative
 
     p
       margin: 0
@@ -59,6 +60,12 @@ a.back
 
       &:last-of-type
         width: 15rem
+
+    .restart-button
+      color: #17a2b8
+      position: absolute
+      right: 5px
+      top: 5px
 
 @media (max-width:500px)
 
@@ -71,3 +78,12 @@ a.back
       padding-left: 2rem
       width: 100%
       float: unset
+
+  .restart-button
+    position: absolute
+    right: 10px
+    top: 5px
+
+@media (max-width:768px)
+  .button-text
+    display: none
