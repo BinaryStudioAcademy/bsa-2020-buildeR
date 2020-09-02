@@ -11,7 +11,9 @@
 </div>
 
 <div class="container" *ngIf="projects">
-  <div class="row my-3 border rounded project-wr" *ngFor="let project of projects">
+<app-projects-display [activeProjects]="projects"></app-projects-display>
+  
+  <!-- <div class="row my-3 border rounded project-wr" *ngFor="let project of projects">
     <div class="col-md-11 mx-10 px-0 col-sm-6 col-6 my-auto area">
       <i class="far fa-bookmark"></i>
       <a class="text-dark" [routerLink]="['../../../projects', project?.id, 'details']">{{project.name}}</a>
@@ -20,7 +22,6 @@
     <ng-template #popContent>
       <button class="btn btn-success dropdown-item"(click)="openBranchSelectionModal(branchSelectModal, project.id)">
         <i class="fas fa-play-circle"></i>
-        <!-- (click)="openBranchSelectionModal(branchSelectModal, project.id)" -->
                   Run</button>
         <button *ngIf="isContributor" class="btn dropdown-item" [routerLink]="['../../../projects', project?.id, 'settings']"><i
             class="fas fa-cog"></i>
@@ -72,5 +73,5 @@
         <i class="fas fa-bars"></i>
       </button>
     </div>
-  </div>
+  </div> -->
 </div>
