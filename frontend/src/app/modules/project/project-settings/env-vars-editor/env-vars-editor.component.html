@@ -25,8 +25,8 @@
     </div>
     </div>
     <div class="options-env-vars">
-      <button class="btn btn-warning add-cron" [disabled]="envVarsEditForm.untouched
-      && !envVarsEditForm.errors" (click)="edit()">Edit</button>
+      <button class="btn btn-warning add-cron" [disabled]="envVarsEditForm.pristine
+      || envVarsEditForm.invalid" (click)="edit()">Edit</button>
       <button class="btn btn-danger add-cron" (click)="delete()">Delete</button>
     </div>
   </form>
