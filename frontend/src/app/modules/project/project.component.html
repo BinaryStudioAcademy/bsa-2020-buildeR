@@ -25,7 +25,7 @@
         </svg>
       </span>
       <h1 class="user-project-names">
-        <a [routerLink]="">{{ project.owner?.username }} </a>/
+        <a [routerLink]="'/portal/user/' + project?.owner.id">{{ project.owner?.username }} </a>/
         <a [routerLink]="">{{ project.name }} </a>
       </h1>
     </div>

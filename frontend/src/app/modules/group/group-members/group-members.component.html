@@ -24,12 +24,12 @@
 <div class="container">
   <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
     <div class="item area">
-      <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
+      <img [routerLink]="'/portal/user/' + member?.user.id" [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
         class="avatar" />
     </div>
     <div class="user">
       <div class="row-top">
-        <a class="text-dark" [routerLink]="">{{member?.user.username}}</a>
+        <a class="text-dark" [routerLink]="'/portal/user/5' + member?.user.id">{{member?.user.username}}</a>
       </div>
       <div class="align-text-top row-bottom">
         <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>

@@ -1,17 +1,16 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { UserComponent } from './user.component';
 import { CommonModule } from '@angular/common';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { UserResolverService } from '../../core/resolvers/user.resolver';
-import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
-import { InsightsComponent } from './insights/insights.component';
 import { CredentialSettingsComponent } from './credential-settings/credential-settings.component';
+import { InsightsComponent } from './insights/insights.component';
+import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { UserComponent } from './user.component';
 
 
-@NgModule({
-  imports: [CommonModule, RouterModule.forChild([{
+const routes: Routes = [
+  {
     path: '',
     component: UserComponent,
     resolve: {
@@ -45,8 +44,34 @@ import { CredentialSettingsComponent } from './credential-settings/credential-se
         user: UserResolverService
       }
     }
-  ]
-  }])],
+    ]
+  },
+  {
+    path: ':userId',
+    component: UserComponent,
+    resolve: {
+      user: UserResolverService
+    },
+    children: [{
+      path: '',
+      component: UserSettingsComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    },
+    {
+      path: 'insights',
+      component: InsightsComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    }
+    ]
+  }
+];
+
+@NgModule({
+  imports: [CommonModule, RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class UserRoutingModule { }
