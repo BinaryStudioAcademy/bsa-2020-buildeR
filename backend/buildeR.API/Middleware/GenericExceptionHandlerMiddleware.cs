@@ -42,6 +42,11 @@ namespace buildeR.API.Middleware
                         context.Response.StatusCode = 400;
                         break;
                     }
+                case NullDTOException _:
+                    {
+                        context.Response.StatusCode = 400;
+                        break;
+                    }
                 default:
                     {
                         context.Response.StatusCode = 500;
