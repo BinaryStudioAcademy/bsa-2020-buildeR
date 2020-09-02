@@ -5,8 +5,6 @@ import { NgbModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BuildStatusPipe } from './pipes/build-status.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
-import { BuildStatusColorDirective } from './directives/build-status-color.directive';
-import { BuildStatusIconDirective } from './directives/build-status-icon.directive';
 import { RouterModule } from '@angular/router';
 import { CronJobsModule } from 'ngx-cron-jobs';
 import { CronBuilderComponent } from './components/cron-builder/cron-builder.component';
@@ -27,8 +25,6 @@ import { ChartBigGroupedComponent } from './components/chart-big-grouped/chart-b
   declarations: [
     BuildStatusPipe,
     DateAgoPipe,
-    BuildStatusColorDirective,
-    BuildStatusIconDirective,
     LogLevelDirective,
     CronBuilderComponent,
     NotFoundComponent,
@@ -62,8 +58,6 @@ import { ChartBigGroupedComponent } from './components/chart-big-grouped/chart-b
     BuildStatusPipe,
     DateAgoPipe,
     TimespanPipe,
-    BuildStatusColorDirective,
-    BuildStatusIconDirective,
     LogLevelDirective,
     NotFoundComponent,
     CronBuilderComponent,
