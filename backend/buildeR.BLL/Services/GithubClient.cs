@@ -138,14 +138,14 @@ namespace buildeR.BLL.Services
 
             return checkDTO;
         }
-        public async Task CreateWebhook(string repositoryName, string callback, string token)
+        public async Task CreateWebhook(string repositoryName, string eventName, string callback, string token)
         {
             var user = await GetUserFromToken(token);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
 
             var hook = new NewGithubWebhookDTO();
-            hook.events.Add("push");
+            hook.events.Add(eventName);
             hook.config.url = callback;
 
             var serializedHook = JsonConvert.SerializeObject(hook);

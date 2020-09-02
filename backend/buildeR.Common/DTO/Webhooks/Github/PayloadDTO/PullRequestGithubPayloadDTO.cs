@@ -2,9 +2,10 @@
 
 namespace buildeR.Common.DTO.Webhooks.Github.PayloadDTO
 {
-    public class PushGithubPayloadDTO
+    public class PullRequestGithubPayloadDTO
     {
-        public string Ref { get; set; }
+        public string Action { get; set; }
+        public PullRequestGithubDTO Pull_Request { get; set; }
         public UserGithubDTO Sender { get; set; }
     }
 }
