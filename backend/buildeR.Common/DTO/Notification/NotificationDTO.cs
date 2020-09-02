@@ -11,6 +11,6 @@ namespace buildeR.Common.DTO.Notification
         public DateTime Date { get; set; }
         public bool IsRead { get; set; }
         public NotificationType Type { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

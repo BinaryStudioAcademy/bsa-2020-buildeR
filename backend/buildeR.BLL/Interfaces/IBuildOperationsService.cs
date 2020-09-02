@@ -5,7 +5,7 @@ namespace buildeR.BLL.Interfaces
 {
     public interface IBuildOperationsService
     {
-        Task StartBuild(int projectId, int buildHistoryId, string branchName, int userId);
+        Task StartBuild(int projectId, int buildHistoryId, string branchName, int? userId);
         Task CancelBuild(int projectId);
         Task<BuildHistory> PrepareBuild(int projectId, string buildAuthorUsername);
     }

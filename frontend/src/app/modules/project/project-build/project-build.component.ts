@@ -3,7 +3,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { ActivatedRoute } from '@angular/router';
 import { BuildHistory } from '@shared/models/build-history';
-import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
 import { BuildStatus } from '@shared/models/build-status';
 import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
@@ -33,7 +33,9 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
-    route.parent.params.subscribe((params) => this.projectId = params.projectId);
+    route.parent.params.subscribe(
+      (params) => (this.projectId = params.projectId)
+    );
   }
 
   ngOnInit(): void {
@@ -69,20 +71,24 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      if (statusChange.Status != BuildStatus.InProgress) {
-        this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-          if (bh.id == this.buildHistory.id) {
-            this.buildHistory = bh;
-          }
-        });
-      } else {
-        this.buildHistory.buildStatus = statusChange.Status
+      if (statusChange.BuildHistoryId == this.buildHistory.id) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              if (bh.id == this.buildHistory.id) {
+                this.buildHistory = bh;
+              }
+            });
+        } else {
+          this.buildHistory.buildStatus = statusChange.Status;
+        }
       }
     });
   }
 
   getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? "—";
+    return bh.commitHash?.substring(0, 6) ?? '—';
   }
 
   restartBuild() {
@@ -99,8 +105,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (buildHistory) => {
-        },
+        (buildHistory) => {},
         (error) => this.toastrService.showError(error)
       );
   }

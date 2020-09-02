@@ -32,14 +32,14 @@ namespace buildeR.Processor.Services
 
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        private void SendBuildStatus(BuildStatus status, int buildHistoryId, int userId)
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId, int? userId)
         {
             var statusChange = new StatusChangeDto
             {
                 Time = DateTime.Now,
                 Status = status,
                 BuildHistoryId = buildHistoryId,
-                UserId = userId
+                UserId = userId.GetValueOrDefault(31) // replace with user id's taken from the project if run from git
             };
             _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
         }

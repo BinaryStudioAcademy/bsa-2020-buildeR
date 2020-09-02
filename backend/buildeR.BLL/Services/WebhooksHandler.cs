@@ -37,7 +37,7 @@ namespace buildeR.BLL.Services
 
             var rebuild = await _builder.PrepareBuild(projectId, payload.Sender.Login);
 
-            await _builder.StartBuild(projectId, rebuild.Id, updatedBranch);
+            await _builder.StartBuild(projectId, rebuild.Id, updatedBranch, rebuild.PerformerId);
         }
 
         public async Task HandleGithubPullRequestEvent(int projectId, PullRequestGithubPayloadDTO payload)

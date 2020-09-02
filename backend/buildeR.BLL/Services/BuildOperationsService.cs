@@ -47,7 +47,7 @@ namespace buildeR.BLL.Services
 
             return build;
         }
-        public async Task StartBuild(int projectId, int buildHistoryId, string branchName, int userId)
+        public async Task StartBuild(int projectId, int buildHistoryId, string branchName, int? userId)
         {
             var build = await _projectService.GetExecutiveBuild(projectId);
             build.BuildHistoryId = buildHistoryId;
