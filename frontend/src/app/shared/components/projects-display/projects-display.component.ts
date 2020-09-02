@@ -19,6 +19,10 @@ import { SynchronizationService } from '@core/services/synchronization.service';
 
 export class ProjectsDisplayComponent implements OnInit  {
   @Input() activeProjects: ProjectInfo[];
+  @Input() permissions = false;
+  @Input() isAdmin = false;
+  @Input() isContributor = false;
+  @Input() isBuilder = false;
   user: User = this.authService.getCurrentUser();
   loadingSelectedProjectBranches = false;
 
@@ -31,6 +35,7 @@ export class ProjectsDisplayComponent implements OnInit  {
               private syncService: SynchronizationService) { }
 
   ngOnInit(): void {
+    console.log(this.permissions);
   }
 
   getCommit(bh: BuildHistory) {
