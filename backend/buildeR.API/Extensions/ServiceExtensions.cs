@@ -61,12 +61,13 @@ namespace buildeR.API.Extensions
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
-            services.AddAutoMapper(Assembly.GetAssembly(typeof(UserLetterProfile)));
         }
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
+            var notificationsQueueSettings = configuration.Bind<QueueSettings>("Queues:NotificationsToSignalR");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), toProcessorQueueSettings));
+            services.AddTransient(sp => new NotificationsProducer(OwnConnectionFactory.GetConnectionFactory(configuration), notificationsQueueSettings));
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }

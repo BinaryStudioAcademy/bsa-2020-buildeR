@@ -19,8 +19,8 @@ export class NotificationSettingComponent implements OnInit {
   setting: NotificationSetting = {} as NotificationSetting;
   descriptions: NotificationDescription [] =
   [
-    { notificationType: NotificationType.buildSuccess,  description: 'When build of project was successful'},
-    { notificationType: NotificationType.buildFailed, description: 'When build of project was failed'},
+    { notificationType: NotificationType.BuildSucceeded,  description: 'When build of project was successful'},
+    { notificationType: NotificationType.BuildFailed, description: 'When build of project was failed'},
   ];
   constructor(
     private settingService: NotificationSettingService,

@@ -37,6 +37,7 @@ namespace buildeR.SignalR
             });
             services.AddHostedService<Worker>();
             services.AddHostedService<BuildStatusesQueueConsumerService>();
+            services.AddHostedService<NotificationsQueueConsumerService>();
             services.AddSignalR();
             services.AddControllers();
             services.AddHealthChecks();
@@ -60,6 +61,7 @@ namespace buildeR.SignalR
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapHub<LogsHub>("/logshub");
                 endpoints.MapHub<BuildStatusesHub>("/buildstatuseshub");
+                endpoints.MapHub<BuildStatusesHub>("/notificationshub");
             });
         }
 

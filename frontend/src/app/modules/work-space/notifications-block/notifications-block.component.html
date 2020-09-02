@@ -15,17 +15,19 @@
     <div *ngIf="notifications?.length==0" class="no-notifications">
       There are no notifications
     </div>
-    <ng-container *ngFor="let notification of cashedNotifications">
+    <ng-container *ngFor="let notification of cachedNotifications">
       <div *ngIf="notification.isRead == false || showRead" class="notification" [ngClass]="{
         'isNotRead': !notification.isRead,
-        'build-failed text-danger': notification.type == NotificationType.buildFailed,
-        'build-success text-success': notification.type == NotificationType.buildSuccess
+        'build-errored text-danger': notification.type == NotificationType.BuildErrored,
+        'build-failed text-danger': notification.type == NotificationType.BuildFailed,
+        'build-success text-success': notification.type == NotificationType.BuildSucceeded
         }">
         <div class="notification-type">
           <div class="notification-type-icon">
             <i class="fas" [ngClass]="{
-            'fa-exclamation-triangle text-danger': notification.type == NotificationType.buildFailed,
-            'fa-check text-success': notification.type == NotificationType.buildSuccess
+            'fa-times text-danger': notification.type == NotificationType.BuildErrored,
+            'fa-exclamation-triangle text-danger': notification.type == NotificationType.BuildFailed,
+            'fa-check text-success': notification.type == NotificationType.BuildSucceeded
             }">&nbsp;
             </i></div>
         </div>
@@ -40,16 +42,10 @@
       </div>
     </ng-container>
   </div>
-  <div *ngIf="showAllNotifications; else elseShowLast" class="notifications-footer">
-    <span class="mr-2" (click)="showLast()">show only last notifications</span>
+  <div class="notifications-footer">
     <div class="custom-control custom-switch">
       <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="showRead">
       <label class="custom-control-label" for="customSwitch1">Show read</label>
     </div>
   </div>
-  <ng-template #elseShowLast>
-    <div class="notifications-footer">
-      <span (click)="showAll()">show all notifications</span>
-    </div>
-  </ng-template>
 </div>

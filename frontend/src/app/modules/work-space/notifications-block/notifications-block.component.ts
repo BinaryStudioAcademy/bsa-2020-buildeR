@@ -1,15 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Notification } from '../../../shared/models/notification';
 import { NotificationType } from '../../../shared/models/notification-type';
+import { NotificationsService } from '@core/services/notifications.service';
+import { BuildStatus } from '@shared/models/build-status';
 
 @Component({
   selector: 'app-notifications-block',
   templateUrl: './notifications-block.component.html',
-  styleUrls: ['./notifications-block.component.sass']
+  styleUrls: ['./notifications-block.component.sass'],
 })
 export class NotificationsBlockComponent implements OnInit {
-  public notifications: Notification[];
-  public cashedNotifications: Notification[] = [];
+  public notifications: Notification[] = [];
+  public cachedNotifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
   public showRead = false;
@@ -17,33 +19,36 @@ export class NotificationsBlockComponent implements OnInit {
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
 
-
-  constructor() {
-    this.seed();
-    this.addOnInterval();
+  constructor(
+    private notificationService: NotificationsService
+  ) {
     this.onCountChange();
   }
 
   ngOnInit(): void {
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
+    this.notificationService.listen()
+    .subscribe(
+      (notification) => this.notifications.push(notification)
+    )
   }
 
-   // Change type of notification to read, push it into array of read notifications and delete from general array
-   clearOne(notification: Notification) {
+  // Change type of notification to read, push it into array of read notifications and delete from general array
+  clearOne(notification: Notification) {
     notification.isRead = true;
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications.filter(x => x.isRead === false));
     this.onCountChange();
   }
   onCountChange() {
-    this.counter = this.notifications?.filter(x => x.isRead === false)?.length;
+    this.counter = this.notifications?.filter(
+      (x) => x.isRead === false
+    )?.length;
     this.counterNotifications.emit(this.counter);
   }
   // Change type of all notifications to read, push them inro  array of read notifications and delete from general array
   clearAll() {
-    this.notifications.forEach(notification => {
+    this.notifications.forEach((notification) => {
       notification.isRead = true;
     });
-    this.cashedNotifications = this.notifications;
+    this.cachedNotifications = this.notifications;
     this.onCountChange();
   }
 
@@ -53,67 +58,8 @@ export class NotificationsBlockComponent implements OnInit {
   }
 
   // First 2 notifications with different types (can be more types: just need to add class to styles)
-  seed() {
-    const seedData: Notification[] = [
-      {
-        message: 'Build success',
-        date: Date.now(),
-        isRead: false,
-        type: NotificationType.buildSuccess
-      },
-      {
-        message: 'Build failed',
-        date: Date.now(),
-        isRead: false,
-        type: NotificationType.buildFailed
-      },
-      {
-        message: 'Build success',
-        date: Date.now(),
-        isRead: false,
-        type: NotificationType.buildSuccess
-      },
-      {
-        message: 'Build failed',
-        date: Date.now(),
-        isRead: false,
-        type: NotificationType.buildFailed
-      }
-    ];
-    this.notifications = seedData;
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-  }
-  lastThreeNotifications(notifications: Notification[]): Notification[] {
-    return notifications.filter(x => x.isRead === false).slice(-3);
-  }
   showAll() {
-    this.cashedNotifications = this.notifications;
+    this.cachedNotifications = this.notifications;
     this.showAllNotifications = true;
-  }
-
-  showLast() {
-    this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-    this.showAllNotifications = false;
-    this.showRead = false;
-  }
-  // Add more notifications each 10 seconds
-  addOnInterval() {
-    setInterval(() => {
-      this.notifications
-        .push(
-          {
-            message: 'Build failed',
-            date: Date.now(),
-            isRead: false,
-            type: NotificationType.buildFailed
-          });
-      if (!this.showAllNotifications) {
-        this.cashedNotifications = this.lastThreeNotifications(this.notifications);
-      }
-      else {
-        this.cashedNotifications = this.notifications;
-      }
-      this.onCountChange();
-     }, 10000);
   }
 }
