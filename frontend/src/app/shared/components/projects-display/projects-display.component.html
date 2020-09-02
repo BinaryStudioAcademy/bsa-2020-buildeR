@@ -186,7 +186,8 @@
           <div>
             <button *ngIf="!permissions" class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
               (click)="changeFavoriteStateOfProject(project)">
-              <i *ngIf="!permissions" class="far fa-star star"></i>
+              <i *ngIf="!permissions && !project.isFavorite" class="far fa-star star"></i>
+              <i *ngIf="!permissions && project.isFavorite" class="fas fa-lg fa-star star"></i>
             </button>
           </div>
         </div>
