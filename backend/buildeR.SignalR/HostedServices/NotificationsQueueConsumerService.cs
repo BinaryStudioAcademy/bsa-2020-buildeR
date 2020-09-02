@@ -1,28 +1,28 @@
-using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO;
+using buildeR.Common.DTO.Notification;
 using buildeR.Common.Extensions;
 using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
+using buildeR.SignalR.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
-namespace buildeR.API.HostedServices
+namespace buildeR.SignalR.HostedServices
 {
-    public class BuildStatusesQueueConsumerService : BackgroundService
+    public class NotificationsQueueConsumerService : BackgroundService
     {
         private readonly Consumer _consumer;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IHubContext<NotificationsHub> _hub;
 
-        public BuildStatusesQueueConsumerService(IConfiguration configuration, IServiceProvider serviceProvider)
+        public NotificationsQueueConsumerService(IConfiguration configuration, IHubContext<NotificationsHub> hub)
         {
-            _serviceProvider = serviceProvider;
-            var settings = configuration.Bind<QueueSettings>("Queues:BuildStatusesToApi");
+            _hub = hub;
+            var settings = configuration.Bind<QueueSettings>("Queues:NotificationsToSignalR");
             _consumer = new Consumer(OwnConnectionFactory.GetConnectionFactory(configuration), settings);
         }
 
@@ -39,13 +39,9 @@ namespace buildeR.API.HostedServices
         private async void ConsumerReceived(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
-            var statusChange = JsonConvert.DeserializeObject<StatusChangeDto>(message);
+            var statusChange = JsonConvert.DeserializeObject<NotificationDTO>(message);
 
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                using var buildService = scope.ServiceProvider.GetService<IBuildService>();
-                await buildService.ChangeStatus(statusChange);
-            }
+            await _hub.Clients.Group(statusChange.UserId.ToString()).SendAsync("getNotification", message);
 
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }

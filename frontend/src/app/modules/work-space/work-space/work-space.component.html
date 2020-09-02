@@ -17,8 +17,8 @@
               <span class="fas fa-layers-counter">{{countNotifications}}</span>
             </div>
           </ng-container>
-          <app-notifications-block *ngIf="isShowNotifications" (toggleNotifications)="showNotifications()"
-            (counterNotifications)="counterNotifications($event)">
+          <app-notifications-block (toggleNotifications)="showNotifications()"
+            (counterNotifications)="counterNotifications($event)" [hidden]="!isShowNotifications">
           </app-notifications-block>
         </a>
       </div>
@@ -29,7 +29,7 @@
         </a>
         <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right">
           <a ngbDropdownItem [routerLink]="['user']">Settings</a>
-          <a ngbDropdownItem (click)="broadcast()">Broadcast</a>
+          <a ngbDropdownItem>Broadcast</a>
           <a ngbDropdownItem (click)="logOut()">Logout</a>
         </div>
       </div>

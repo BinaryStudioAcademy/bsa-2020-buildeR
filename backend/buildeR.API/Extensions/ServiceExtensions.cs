@@ -12,10 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
+using buildeR.API.HostedServices;
+using buildeR.Common.DTO;
 using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
-using buildeR.API.HostedServices;
 
 namespace buildeR.API.Extensions
 {
@@ -42,6 +43,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
             services.AddScoped<IProjectGroupService, ProjectGroupService>();
+            services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
@@ -62,13 +64,14 @@ namespace buildeR.API.Extensions
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
-            services.AddAutoMapper(Assembly.GetAssembly(typeof(UserLetterProfile)));
         }
 
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
+            var notificationsQueueSettings = configuration.Bind<QueueSettings>("Queues:NotificationsToSignalR");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), toProcessorQueueSettings));
+            services.AddTransient(sp => new NotificationsProducer(OwnConnectionFactory.GetConnectionFactory(configuration), notificationsQueueSettings));
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }

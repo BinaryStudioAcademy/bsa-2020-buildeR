@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
-namespace buildeR.SignalR
+namespace buildeR.SignalR.HostedServices
 {
     public class Worker : BackgroundService
     {
