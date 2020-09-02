@@ -32,13 +32,14 @@ namespace buildeR.Processor.Services
 
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId, int userId)
         {
             var statusChange = new StatusChangeDto
             {
                 Time = DateTime.Now,
-                Status =status,
-                BuildHistoryId = buildHistoryId
+                Status = status,
+                BuildHistoryId = buildHistoryId,
+                UserId = userId
             };
             _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
         }
@@ -62,12 +63,8 @@ namespace buildeR.Processor.Services
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
-            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId);
-            // mock success
-            await BuildProjectAsync(executeBuild).ContinueWith(t =>
-            {
-                SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId);
-            });
+            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId, executeBuild.UserId);
+            await BuildProjectAsync(executeBuild).ContinueWith(t => SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId, executeBuild.UserId));
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
 
@@ -104,6 +101,7 @@ namespace buildeR.Processor.Services
             }
             catch (Exception e)
             {
+                SendBuildStatus(BuildStatus.Error, build.BuildHistoryId, build.UserId); 
                 Log.Error($"Error while building docker image. Reason: {e.Message}");
             }
             finally

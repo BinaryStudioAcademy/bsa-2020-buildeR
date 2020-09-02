@@ -15,6 +15,10 @@ import { ProjectCreateComponent } from '@modules/project/project-create/project-
 import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { BuildHistory } from '@shared/models/build-history';
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
+import { StatusChange } from '@shared/models/status-change'
+import { BuildStatus } from '@shared/models/build-status'
+import { BuildHistoryService } from '@core/services/build-history.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,7 +45,9 @@ export class DashboardComponent
     private authService: AuthenticationService,
     private githubService: SynchronizationService,
     private modalService: NgbModal,
-    private syncService: SynchronizationService
+    private syncService: SynchronizationService,
+    private buildHistoryService: BuildHistoryService,
+    private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
   }
@@ -50,6 +56,23 @@ export class DashboardComponent
     this.loadingProjects = true;
     this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
+    this.configureBuildStatusesSignalR();
+  }
+
+  private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+      const project = [...this.starredProjects, ...this.activeProjects].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
+      if (project) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
+            project.lastBuildHistory = bh;
+          });
+        } else {
+          delete project.lastBuildHistory.buildStatus;
+          project.lastBuildHistory.buildStatus = statusChange.Status;
+        }
+      }
+    });
   }
 
   getUserProjects(userId: number) {
@@ -185,7 +208,7 @@ export class DashboardComponent
   }
 
   getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? "—";
+    return bh.commitHash?.substring(0, 6) ?? '—';
   }
 
   loadProjectBranches(projectId: number) {
