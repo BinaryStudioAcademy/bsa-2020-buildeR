@@ -40,6 +40,10 @@ export class ProjectComponent implements OnInit {
     this.projectService.projectName.subscribe((res) => {
       this.project.name = res;
     });
+    this.route.data.subscribe((res) => {
+      console.log(res.project);
+      this.project = res.project;
+    });
   }
 
   ngOnInit(): void {
