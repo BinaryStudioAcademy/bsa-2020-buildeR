@@ -113,14 +113,23 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   delete(envVar: EnviromentVariable){
-    this.projectService.deleteEnviromentVariable(envVar).subscribe(() => {
-     this.loadEnvVars();
-   });
+    this.projectService.deleteEnviromentVariable(envVar).subscribe(
+      () => {
+        this.envVariables = this.envVariables.filter(x => x.id !== envVar.id);
+        this.toastrService.showSuccess('Enviroment Variable deleted');
+      },
+      (error) => this.toastrService.showError(error.message, error.name)
+    );
   }
 
   edit(envVar: EnviromentVariable){
-    this.projectService.updateEnviromentVariable(envVar).subscribe(() => {
-      this.loadEnvVars();
-    });
+    const index = this.envVariables.findIndex(x => x.id === envVar.id);
+    this.projectService.updateEnviromentVariable(envVar).subscribe(
+      () => {
+        this.envVariables.splice(index, 1, envVar);
+        this.toastrService.showSuccess('Enviroment Variable updated');
+      },
+      (error) => this.toastrService.showError(error.message, error.name)
+    );
   }
 }

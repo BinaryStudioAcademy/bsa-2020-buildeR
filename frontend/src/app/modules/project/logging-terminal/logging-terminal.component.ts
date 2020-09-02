@@ -10,7 +10,7 @@ import { BuildLogService } from '../../../core/services/build-log.service';
 import { delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -31,6 +31,7 @@ export class LoggingTerminalComponent extends BaseComponent
   private log = new Subject<string>();
   private step = 1;
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
+  private projectId: number;
 
   @ViewChild('bottom') private bottom: ElementRef;
 
@@ -49,9 +50,11 @@ export class LoggingTerminalComponent extends BaseComponent
   constructor(
     private buildService: BuildLogService,
     private logsService: ProjectLogsService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     super();
+    route.parent.params.subscribe((params) => this.projectId = params.projectId);
   }
 
   ngOnInit(): void {
@@ -59,9 +62,8 @@ export class LoggingTerminalComponent extends BaseComponent
     //   .getTestBuildLog()
     //   .pipe(delay(0))
     //   .subscribe((line) => this.buildLog(line));
-    var projectId = this.router.url.replace(/\D/g, '');
     this.logsService.buildConnection();
-    this.logsService.startConnectionAndJoinGroup(projectId); // '111' is buildId of our demo project
+    this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));

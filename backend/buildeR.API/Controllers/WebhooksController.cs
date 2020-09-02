@@ -24,10 +24,16 @@ namespace buildeR.API.Controllers
             //please, don't touch it :3
         }
 
-        [HttpPost("{projectId}/github")]
-        public async Task GithubWebhookCallback(int projectId, [FromBody]PushGithubPayloadDTO payload)
+        [HttpPost("{projectId}/github/push")]
+        public async Task GithubWebhookPushCallback(int projectId, [FromBody]PushGithubPayloadDTO payload)
         {
             await _handler.HandleGithubPushEvent(projectId, payload);
+        }
+
+        [HttpPost("{projectId}/github/pull_request")]
+        public async Task GithubWebhookPullRequestCallback(int projectId, [FromBody]PullRequestGithubPayloadDTO payload)
+        {
+            await _handler.HandleGithubPullRequestEvent(projectId, payload);
         }
     }
 }

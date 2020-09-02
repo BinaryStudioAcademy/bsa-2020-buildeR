@@ -6,7 +6,7 @@
           <input hidden class="file-hide" #file accept="image/*" type="file" >
           <img class="avatar avatar-style" src="{{currentUser.avatarUrl}}"
                onerror="this.src='../../../../assets/images/Avatar-default.png'">
-          <div class="img-text">
+          <div class="img-text" *ngIf="isOwner">
             Change
           </div>
         </div>
@@ -15,7 +15,7 @@
           <div class="date-since"> Member since {{currentUser.createdAt | date:'mediumDate'}} </div>
         </div>
       </div>
-    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
+    <app-tabs [tabRoutes]="isOwner ? tabRoutesOwner : tabRoutesGuest"></app-tabs>
   </div>
   <!-- /#sidebar-wrapper -->
 

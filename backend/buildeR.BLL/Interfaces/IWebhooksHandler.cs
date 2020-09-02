@@ -6,5 +6,6 @@ namespace buildeR.BLL.Interfaces
     public interface IWebhooksHandler
     {
         Task HandleGithubPushEvent(int projectId, PushGithubPayloadDTO payload);
+        Task HandleGithubPullRequestEvent(int projectId, PullRequestGithubPayloadDTO payload);
     }
 }

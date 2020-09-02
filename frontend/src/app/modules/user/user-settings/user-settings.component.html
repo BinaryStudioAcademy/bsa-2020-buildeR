@@ -1,172 +1,178 @@
 <div class="container-fluid">
   <div class="scroll-container">
-    <div class="link-buttons-wrap">
-    <div class="link-buttons">
-      <button class="btn btn-sm btn-github"
-        *ngIf="!((isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()) else linkedGithub"
-        [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
-        <div class="icon">
-          <i class="fab fa-github" aria-hidden="true"></i>
-        </div>
-        <div class="button-text">
-          Link with Github
-        </div>
-      </button>
-      <ng-template #linkedGithub>
+    <div class="link-buttons-wrap" *ngIf="isOwner">
+      <div class="link-buttons">
         <button class="btn btn-sm btn-github"
+          *ngIf="!((isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()) else linkedGithub"
           [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
-          <div class="check-icon">
-            <i class="fas fa-check"></i>
-          </div>
-          <div class="verticalLine"></div>
-          <div class="icon icon-link">
+          <div class="icon">
             <i class="fab fa-github" aria-hidden="true"></i>
           </div>
-          <div class="button-text">Linked with Github</div>
-        </button>
-      </ng-template>
-      <button class="btn btn-sm btn-google" *ngIf="!(isProviderAdded(1) || googleClick) else linkedGoogle"
-        [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
-        <div class="icon">
-          <i class="fab fa-google" aria-hidden="true"></i>
-        </div>
-        <div class="button-text">
-          Link with Google
-        </div>
-      </button>
-      <ng-template #linkedGoogle>
-        <button class="btn btn-sm btn-google" [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
-          <div class="check-icon">
-            <i class="fas fa-check"></i>
+          <div class="button-text">
+            Link with Github
           </div>
-          <div class="verticalLine"></div>
-          <div class="icon icon-link">
+        </button>
+        <ng-template #linkedGithub>
+          <button class="btn btn-sm btn-github"
+            [disabled]="(isProviderAdded(0) || githubClick) && isGithubAddedInFirebase()" (click)="linkWithGithub()">
+            <div class="check-icon">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="verticalLine"></div>
+            <div class="icon icon-link">
+              <i class="fab fa-github" aria-hidden="true"></i>
+            </div>
+            <div class="button-text">Linked with Github</div>
+          </button>
+        </ng-template>
+        <button class="btn btn-sm btn-google" *ngIf="!(isProviderAdded(1) || googleClick) else linkedGoogle"
+          [disabled]="isProviderAdded(1) || googleClick" (click)="linkWithGoogle()">
+          <div class="icon">
             <i class="fab fa-google" aria-hidden="true"></i>
           </div>
-          <div class="button-text">Linked with Google</div>
+          <div class="button-text">
+            Link with Google
+          </div>
         </button>
-      </ng-template>
-    </div>
-      <div class="link-buttons-text">
+        <ng-template #linkedGoogle>
+          <button class="btn btn-sm btn-google" [disabled]="isProviderAdded(1) || googleClick"
+            (click)="linkWithGoogle()">
+            <div class="check-icon">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="verticalLine"></div>
+            <div class="icon icon-link">
+              <i class="fab fa-google" aria-hidden="true"></i>
+            </div>
+            <div class="button-text">Linked with Google</div>
+          </button>
+        </ng-template>
+      </div>
+      <div class="link-buttons-text" *ngIf="isOwner">
         <small>Link your profile with Github or Google account</small>
       </div>
     </div>
     <form [formGroup]="settingsForm" (ngSubmit)="onSubmit(settingsForm.value)">
-      <div class="group">
-        <div class="field">
-          <span>First Name</span>
-        </div>
-        <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="firstName" placeholder="Name">
-          <small>Use your real name so people can recognize you</small>
-          <div *ngIf="settingsForm.controls['firstName'].errors">
-            <div class="error" *ngIf="settingsForm.controls['firstName'].errors.minlength">
-              The minimum length is 2 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['firstName'].errors.maxlength">
-              The maximum length is 30 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['firstName'].errors.pattern">
-              First name must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '
-              and space<br>
+      <fieldset [disabled]="!isOwner">
+        <div class="group">
+          <div class="field">
+            <span>First Name</span>
+          </div>
+          <div class="input-area">
+            <input type="text" class="form-control form-control-sm" formControlName="firstName"
+              [placeholder]="isOwner ? 'Name' : ''">
+            <small *ngIf="isOwner">Use your real name so people can recognize you</small>
+            <div *ngIf="settingsForm.controls['firstName'].errors">
+              <div class="error" *ngIf="settingsForm.controls['firstName'].errors.minlength">
+                The minimum length is 2 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['firstName'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['firstName'].errors.pattern">
+                First name must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '
+                and space<br>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="field">
-          <span>Last Name</span>
-        </div>
-        <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="lastName" placeholder="Last name">
-          <div *ngIf="settingsForm.controls['lastName'].errors">
-            <div class="error" *ngIf="settingsForm.controls['lastName'].errors.minlength">
-              The minimum length is 2 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['lastName'].errors.maxlength">
-              The maximum length is 30 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['lastName'].errors.pattern">
-              Last name must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '
-              and space<br>
+          <div class="field">
+            <span>Last Name</span>
+          </div>
+          <div class="input-area">
+            <input type="text" class="form-control form-control-sm" formControlName="lastName"
+              [placeholder]="isOwner ? 'Last name' : ''">
+            <div *ngIf="settingsForm.controls['lastName'].errors">
+              <div class="error" *ngIf="settingsForm.controls['lastName'].errors.minlength">
+                The minimum length is 2 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['lastName'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['lastName'].errors.pattern">
+                Last name must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '
+                and space<br>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="field">
-          <span>Photo URL</span>
-        </div>
-        <div class="input-group mb-3">
-          <input type="url" class="form-control form-control-sm upload" formControlName="avatarUrl"
-            placeholder="http://avatar.link" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-sm btn-outline-secondary" (click)="upload()" type="button">Upload</button>
+          <div class="field" *ngIf="isOwner">
+            <span>Photo URL</span>
           </div>
-        </div>
-        <div class="field">
-          Username
-        </div>
-        <div class="input-area">
-          <input type="text" class="form-control form-control-sm" formControlName="username"
-            placeholder="Your username">
-          <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
-            *ngIf="settingsForm.controls['username'].status === 'PENDING'">
-          </app-loading-spinner>
-          <div *ngIf="settingsForm.controls['username'].errors">
-            <div class="error" *ngIf="settingsForm.controls['username'].errors.required">
-              User name is required
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['username'].errors.minlength">
-              The minimum length is 3 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['username'].errors.maxlength">
-              The maximum length is 30 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['username'].errors.pattern">
-              Username must have only latin letters and can't start<br> or finish with these characters ' - ', ' . '<br>
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['username'].errors?.isUsernameExists">
-              Username has already been taken
+          <div class="input-group mb-3" *ngIf="isOwner">
+            <input type="url" class="form-control form-control-sm upload" formControlName="avatarUrl"
+              placeholder="http://avatar.link" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-outline-secondary" (click)="upload()" type="button">Upload</button>
             </div>
           </div>
-        </div>
-        <div class="field">
-          <span>Email</span>
-        </div>
-        <div class="input-area">
-          <input type="email" class="form-control form-control-sm" formControlName="email"
-            placeholder="example@mail.com">
-          <div *ngIf="settingsForm.controls['email'].errors">
-            <div class="error" *ngIf="settingsForm.controls['email'].errors.required">
-              Email is required
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern
-            || settingsForm.controls['email'].errors.email
-            || settingsForm.controls['email'].errors.notValid">
-              Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
-              '<br>
+          <div class="field" *ngIf="isOwner">
+            Username
+          </div>
+          <div class="input-area" *ngIf="isOwner">
+            <input type="text" class="form-control form-control-sm" formControlName="username"
+              placeholder="Your username">
+            <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+              *ngIf="settingsForm.controls['username'].status === 'PENDING'">
+            </app-loading-spinner>
+            <div *ngIf="settingsForm.controls['username'].errors">
+              <div class="error" *ngIf="settingsForm.controls['username'].errors.required">
+                User name is required
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['username'].errors.minlength">
+                The minimum length is 3 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['username'].errors.maxlength">
+                The maximum length is 30 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['username'].errors.pattern">
+                Username must have only latin letters and can't start<br> or finish with these characters ' - ', ' .
+                '<br>
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['username'].errors?.isUsernameExists">
+                Username has already been taken
+              </div>
             </div>
           </div>
-        </div>
-        <div class="field">
-          Bio
-        </div>
-        <div class="input-area">
-          <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio"
-            placeholder="Tell us something about yourself">
-               </textarea>
-          <div *ngIf="settingsForm.controls['bio'].errors">
-            <div class="error" *ngIf="settingsForm.controls['bio'].errors.maxlength">
-              The maximum length is 300 characters
-            </div>
-            <div class="error" *ngIf="settingsForm.controls['bio'].errors.pattern">
-              BIO must have only latin letters, digits and special<br> characters
-              <br>
+          <div class="field">
+            <span>Email</span>
+          </div>
+          <div class="input-area">
+            <input type="email" class="form-control form-control-sm" formControlName="email"
+              [placeholder]="isOwner ? 'example@mail.com' : ''">
+            <div *ngIf="settingsForm.controls['email'].errors">
+              <div class="error" *ngIf="settingsForm.controls['email'].errors.required">
+                Email is required
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['email'].errors.pattern
+              || settingsForm.controls['email'].errors.email
+              || settingsForm.controls['email'].errors.notValid">
+                Email must be like 'example12@gmail.com' and can't<br> start or finish with these characters ' - ', ' .
+                '<br>
+              </div>
             </div>
           </div>
+          <div class="field">
+            Bio
+          </div>
+          <div class="input-area">
+            <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="bio"
+              [placeholder]="isOwner ? 'Tell us something about yourself' : ''">
+                 </textarea>
+            <div *ngIf="settingsForm.controls['bio'].errors">
+              <div class="error" *ngIf="settingsForm.controls['bio'].errors.maxlength">
+                The maximum length is 300 characters
+              </div>
+              <div class="error" *ngIf="settingsForm.controls['bio'].errors.pattern">
+                BIO must have only latin letters, digits and special<br> characters
+                <br>
+              </div>
+            </div>
+          </div>
+          <div class="save-button-container" *ngIf="isOwner">
+            <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged
+              || settingsForm.controls['username'].status === 'PENDING'">Save</button>
+          </div>
         </div>
-        <div class="save-button-container">
-          <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged
-            || settingsForm.controls['username'].status === 'PENDING'">Save</button>
-        </div>
-      </div>
+      </fieldset>
     </form>
   </div>
 </div>
