@@ -50,9 +50,9 @@ export class DashboardComponent
     this.loadingProjects = true;
     this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
-    this.projectService.getStarProject().subscribe((res) => this.changeFavoriteStateOfProject(res));
-    this.projectService.getDeleteProject().subscribe((res) => this.deleteProject(res));
-    this.projectService.getCopyProject().subscribe((res) => this.copyProject(res));
+    this.projectService.getStarProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.changeFavoriteStateOfProject(res));
+    this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.deleteProject(res));
+    this.projectService.getCopyProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.copyProject(res));
   }
 
   getUserProjects(userId: number) {

@@ -9,6 +9,8 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { ProjectService } from '@core/services/project.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SynchronizationService } from '@core/services/synchronization.service';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-projects-display',
@@ -17,7 +19,7 @@ import { SynchronizationService } from '@core/services/synchronization.service';
 })
 
 
-export class ProjectsDisplayComponent implements OnInit  {
+export class ProjectsDisplayComponent extends BaseComponent implements OnInit   {
   @Input() activeProjects: ProjectInfo[];
   @Input() permissions = false;
   @Input() isAdmin = false;
@@ -32,10 +34,11 @@ export class ProjectsDisplayComponent implements OnInit  {
               private toastr: ToastrNotificationsService,
               private projectService: ProjectService,
               private modalService: NgbModal,
-              private syncService: SynchronizationService) { }
+              private syncService: SynchronizationService) {
+                super();
+               }
 
   ngOnInit(): void {
-    console.log(this.permissions);
   }
 
   getCommit(bh: BuildHistory) {
@@ -60,6 +63,7 @@ export class ProjectsDisplayComponent implements OnInit  {
     );
     this.projectService
       .startProjectBuild(newBuildHistory)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (buildHistory) => {
           project.lastBuildHistory = buildHistory;

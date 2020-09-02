@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProjectInfo } from '@shared/models/project-info';
 import { GroupService } from '@core/services/group.service';
 import { BaseComponent } from '@core/components/base/base.component';
@@ -19,7 +19,7 @@ import { Branch } from '@core/models/Branch';
   templateUrl: './group-projects.component.html',
   styleUrls: ['./group-projects.component.sass']
 })
-export class GroupProjectsComponent extends BaseComponent implements OnInit {
+export class GroupProjectsComponent extends BaseComponent implements OnInit, OnDestroy {
   projects: ProjectInfo[];
   dropdownProjects: ProjectInfo[];
   group: Group;
@@ -48,7 +48,8 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
       this.getGroupProjects();
       });
 
-    this.projectService.getDeleteProject().subscribe((res) => this.delete(this.groupId, res));
+    this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$))
+    .subscribe((res) => this.delete(this.groupId, res));
   }
 
   ngOnInit(): void {
@@ -76,7 +77,6 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.groupService.getProjectsByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
     .subscribe(res => {
       this.projects = res.body;
-      console.log(res.body);
       if (this.userProjects){
         this.updateDropdown();
       }
