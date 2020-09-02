@@ -21,6 +21,7 @@ import { Branch } from '@core/models/Branch';
 })
 export class GroupProjectsComponent extends BaseComponent implements OnInit {
   projects: ProjectInfo[];
+  dropdownProjects: ProjectInfo[];
   group: Group;
   user: User = this.authService.getCurrentUser();
   groupId: number;
@@ -54,6 +55,11 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.getCurrentUserRole();
   }
 
+  updateDropdown(){
+    this.dropdownProjects = this.userProjects
+    .filter(x => !this.projects.map(y => y.id).includes(x.id));
+  }
+
   addProject(project: ProjectInfo){
     const projectGroup = {} as  ProjectGroup;
     projectGroup.groupId = this.groupId;
@@ -62,6 +68,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
       this.getGroupProjects();
       this.projects.push(project);
       this.toastr.showSuccess('Project successfully added');
+      this.updateDropdown();
     });
   }
 
@@ -70,6 +77,9 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     .subscribe(res => {
       this.projects = res.body;
       console.log(res.body);
+      if (this.userProjects){
+        this.updateDropdown();
+      }
     });
   }
 
@@ -100,6 +110,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.projectService.getProjectsByUser(userId).pipe(takeUntil(this.unsubscribe$))
     .subscribe(res => {
       this.userProjects = res.body;
+      this.updateDropdown();
     });
   }
 

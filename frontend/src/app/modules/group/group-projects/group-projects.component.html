@@ -4,7 +4,7 @@
       <i  class="fas fa-plus"></i>
     </button>
     <div ngbDropdownMenu aria-labelledby="Dropdown" class="dropdown-menu dropdown-menu-right" >
-      <a ngbDropdownItem class="dropdown-item"  *ngFor="let project of userProjects" (click)="addProject(project)">
+      <a ngbDropdownItem class="dropdown-item"  *ngFor="let project of dropdownProjects" (click)="addProject(project)">
         {{project.name}}</a>
     </div>
   </div>

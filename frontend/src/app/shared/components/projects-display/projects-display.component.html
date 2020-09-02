@@ -13,8 +13,6 @@
           </div>
         </div>
       </div>
-
-
       <div *ngIf="
       project.lastBuildHistory;
       then existBuildBlock;
@@ -115,9 +113,9 @@
             </button>
           </div>
           <div>
-            <button class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
+            <button *ngIf="!permissions" class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
               (click)="changeFavoriteStateOfProject(project)">
-              <i class="far fa-star star"></i>
+              <i *ngIf="!permissions" class="far fa-star star"></i>
             </button>
           </div>
         </div>
@@ -187,7 +185,7 @@
           <div>
             <button *ngIf="!permissions" class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
               (click)="changeFavoriteStateOfProject(project)">
-              <i class="far fa-star star"></i>
+              <i *ngIf="!permissions" class="far fa-star star"></i>
             </button>
           </div>
         </div>
