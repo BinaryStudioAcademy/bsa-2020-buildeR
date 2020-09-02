@@ -19,7 +19,7 @@ export class UserResolverService implements Resolve<User>{
       userId = this.authService.getCurrentUser().id;
     }
     return this.userService.getUserByIdRequest(userId).pipe(tap((resp) => {
-      return resp;
+      return resp ?? EMPTY;
     }), catchError(() => {
       this.router.navigateByUrl('/portal/**', { skipLocationChange: true });
       return EMPTY;

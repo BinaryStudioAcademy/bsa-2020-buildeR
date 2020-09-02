@@ -29,7 +29,7 @@
     </div>
     <div class="user">
       <div class="row-top">
-        <a class="text-dark" [routerLink]="'/portal/user/5' + member?.user.id">{{member?.user.username}}</a>
+        <a class="text-dark" [routerLink]="'/portal/user/' + member?.user.id">{{member?.user.username}}</a>
       </div>
       <div class="align-text-top row-bottom">
         <p class="text-dark">Member since {{member.joinedDate | date:'mediumDate'}}</p>
