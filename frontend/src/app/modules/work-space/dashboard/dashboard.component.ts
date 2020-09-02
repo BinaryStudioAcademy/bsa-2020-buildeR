@@ -44,6 +44,7 @@ export class DashboardComponent
     private syncService: SynchronizationService
   ) {
     super();
+
   }
 
   ngOnInit(): void {
