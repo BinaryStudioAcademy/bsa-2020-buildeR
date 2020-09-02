@@ -5,6 +5,13 @@ import { ActivatedRoute } from '@angular/router';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
 import { BuildStatus } from '@shared/models/build-status';
+import { User } from '@shared/models/user/user';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { NewBuildHistory } from '@shared/models/new-build-history';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { ProjectService } from '@core/services/project.service';
+import { takeUntil } from 'rxjs/operators';
+import { Project } from '@shared/models/project/project';
 
 @Component({
   selector: 'app-project-build',
@@ -12,19 +19,31 @@ import { BuildStatus } from '@shared/models/build-status';
   styleUrls: ['./project-build.component.sass'],
 })
 export class ProjectBuildComponent extends BaseComponent implements OnInit {
-
+  currentUser: User;
   buildHistory: BuildHistory;
+  projectId: number;
+  project: Project;
 
   constructor(
     private buildHistoryService: BuildHistoryService,
     private route: ActivatedRoute,
+    private authService: AuthenticationService,
+    private toastrService: ToastrNotificationsService,
+    private projectService: ProjectService,
     private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
+    route.parent.params.subscribe((params) => this.projectId = params.projectId);
   }
 
   ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser();
     this.configureBuildStatusesSignalR();
+    this.getBuildHistory();
+    this.getProject();
+  }
+
+  getBuildHistory() {
     this.route.params.subscribe((params) => {
       this.buildHistoryService.getBuildHistory(params.buildId).subscribe(
         (response) => {
@@ -35,6 +54,17 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
         }
       );
     });
+  }
+
+  getProject() {
+    this.projectService.getProjectById(this.projectId).subscribe(
+      (response) => {
+        this.project = response;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   private configureBuildStatusesSignalR() {
@@ -53,5 +83,25 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
 
   getCommit(bh: BuildHistory) {
     return bh.commitHash?.substring(0, 6) ?? "—";
+  }
+
+  restartBuild() {
+    const newBuildHistory = {
+      branchHash: this.buildHistory.branchHash,
+      performerId: this.currentUser.id,
+      projectId: this.buildHistory.projectId,
+      commitHash: null,
+    } as NewBuildHistory;
+    this.toastrService.showSuccess(
+      `You’ve successfully restarted a build for ${newBuildHistory.branchHash} branch of ${this.project.name}. Hold tight, it might take a moment to show up.`
+    );
+    this.projectService
+      .startProjectBuild(newBuildHistory)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (buildHistory) => {
+        },
+        (error) => this.toastrService.showError(error)
+      );
   }
 }

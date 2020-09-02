@@ -45,7 +45,7 @@
               <a class="nav-link" [routerLink]="['groups']" ngbDropdownToggle>Groups</a>
               <div *ngIf="groups.length > 0" ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
                 <a *ngFor="let group of groups" ngbDropdownItem
-                  [routerLink]="['groups', group.id, 'projects']">{{group.name}}</a>
+                  [routerLink]="['groups', group.id, 'settings']">{{group.name}}</a>
               </div>
             </div>
           </li>

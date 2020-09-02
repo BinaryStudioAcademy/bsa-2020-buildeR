@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200902090827_MakePerformerIdInBuildHistoryNullable")]
+    partial class MakePerformerIdInBuildHistoryNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,24 +241,19 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
+                    b.Property<int>("EntityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NotificationMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NotificationTrigger")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -668,15 +665,6 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.BuildStep", "BuildStep")
                         .WithMany("CommandArguments")
                         .HasForeignKey("BuildStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
