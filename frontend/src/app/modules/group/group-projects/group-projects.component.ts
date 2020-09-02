@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProjectInfo } from '@shared/models/project-info';
 import { GroupService } from '@core/services/group.service';
 import { BaseComponent } from '@core/components/base/base.component';
@@ -13,17 +13,15 @@ import { ProjectGroup } from '@shared/models/group/project-group';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ModalService } from '@core/services/modal.service';
 import { Branch } from '@core/models/Branch';
-import { SynchronizationService } from '@core/services/synchronization.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NewBuildHistory } from '@shared/models/new-build-history';
 
 @Component({
   selector: 'app-group-projects',
   templateUrl: './group-projects.component.html',
   styleUrls: ['./group-projects.component.sass']
 })
-export class GroupProjectsComponent extends BaseComponent implements OnInit {
+export class GroupProjectsComponent extends BaseComponent implements OnInit, OnDestroy {
   projects: ProjectInfo[];
+  dropdownProjects: ProjectInfo[];
   group: Group;
   user: User = this.authService.getCurrentUser();
   groupId: number;
@@ -42,19 +40,25 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
               private projectService: ProjectService,
               private toastr: ToastrNotificationsService,
               private projectGroupService: ProjectGroupService,
-              private modalService: ModalService,
-              private syncService: SynchronizationService,
-              private ngbModalService: NgbModal) {
+              private modalService: ModalService) {
     super();
     this.route.parent.data.subscribe((data) => {
       this.group = data.group;
       this.groupId = this.group.id;
       this.getGroupProjects();
       });
+
+    this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$))
+    .subscribe((res) => this.delete(this.groupId, res));
   }
 
   ngOnInit(): void {
     this.getCurrentUserRole();
+  }
+
+  updateDropdown(){
+    this.dropdownProjects = this.userProjects
+    .filter(x => !this.projects.map(y => y.id).includes(x.id));
   }
 
   addProject(project: ProjectInfo){
@@ -65,6 +69,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
       this.getGroupProjects();
       this.projects.push(project);
       this.toastr.showSuccess('Project successfully added');
+      this.updateDropdown();
     });
   }
 
@@ -72,7 +77,9 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.groupService.getProjectsByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
     .subscribe(res => {
       this.projects = res.body;
-      console.log(res.body);
+      if (this.userProjects){
+        this.updateDropdown();
+      }
     });
   }
 
@@ -103,6 +110,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     this.projectService.getProjectsByUser(userId).pipe(takeUntil(this.unsubscribe$))
     .subscribe(res => {
       this.userProjects = res.body;
+      this.updateDropdown();
     });
   }
 
@@ -117,53 +125,5 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit {
     }
 
 }
-openBranchSelectionModal(content, projectId: number) {
-  this.loadProjectBranches(projectId);
-  this.ngbModalService
-    .open(content)
-    .result.then(() => {})
-    .catch(() => {});
-}
-triggerBuild(project: ProjectInfo) {
-  const newBuildHistory = {
-    branchHash: this.selectedProjectBranch,
-    performerId: this.user.id,
-    projectId: project.id,
-    commitHash: null,
-  } as NewBuildHistory;
-  this.closeModal();
-  this.toastr.showSuccess(
-    `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${project.name}. Hold tight, it might take a moment to show up.`
-  );
-  this.projectService
-    .startProjectBuild(newBuildHistory)
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe(
-      (buildHistory) => {
-        project.lastBuildHistory = buildHistory;
-      },
-      (error) => this.toastr.showError(error)
-    );
-}
 
-closeModal() {
-  this.ngbModalService.dismissAll('Closed');
-}
-
-loadProjectBranches(projectId: number) {
-  this.loadingSelectedProjectBranches = true;
-  this.syncService
-    .getRepositoryBranches(projectId)
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe(
-      (resp) => {
-        this.selectedProjectBranches = resp;
-        this.loadingSelectedProjectBranches = false;
-      },
-      (error) => {
-        this.toastr.showError(error);
-        this.loadingSelectedProjectBranches = false;
-      }
-    );
-}
 }
