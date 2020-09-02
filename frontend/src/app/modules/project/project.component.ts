@@ -57,7 +57,6 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       this.project.name = res;
     });
     this.route.data.subscribe((res) => {
-      console.log(res.project);
       this.project = res.project;
     });
   }
