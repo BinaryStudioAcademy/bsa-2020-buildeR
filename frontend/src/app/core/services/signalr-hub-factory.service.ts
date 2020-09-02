@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { SignalRHub } from './signalr-hub.service';
-import { environment } from './../../../environments/environment';
+import { SignalRHub } from '../models/signalr-hub';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SignalRHubConnectionService implements OnDestroy {
+export class SignalRHubFactoryService implements OnDestroy {
   private hubLookup = new Map<string, SignalRHub>();
 
   constructor() { }
