@@ -12,7 +12,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class BuildStatusesSignalRService
   implements OnDestroy {
   private buildStatusesHub: SignalRHub;
-  private buildStatusChanges = new Subject<StatusChange>();
+  private buildStatusChanges$ = new Subject<StatusChange>();
 
   private currentUser: User;
 
@@ -26,6 +26,7 @@ export class BuildStatusesSignalRService
 
   ngOnDestroy() {
     this.buildStatusesHub.disconnect();
+    this.buildStatusChanges$.unsubscribe();
   }
 
   private configureSignalR() {
@@ -41,11 +42,11 @@ export class BuildStatusesSignalRService
       .catch((err) => console.error(err));
     this.buildStatusesHub.listen('statusChange').subscribe((resp) => {
       const statusChange: StatusChange = JSON.parse(resp);
-      this.buildStatusChanges.next(statusChange);
+      this.buildStatusChanges$.next(statusChange);
     });
   }
 
   listen() {
-    return this.buildStatusChanges;
+    return this.buildStatusChanges$;
   }
 }

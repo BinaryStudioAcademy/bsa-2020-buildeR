@@ -124,13 +124,16 @@ namespace buildeR.BLL.Services
                 
                 await Context.SaveChangesAsync();
 
-                await _notificationsService.Create(new NewNotificationDTO
+                if (statusChange.Status != BuildStatus.InProgress)
                 {
-                    UserId = buildHistory.PerformerId,
-                    Message = $"{StatusToNotificationMessage(buildHistory, statusChange)}",
-                    Type = StatusToNotificationType(statusChange),
-                    Date = DateTime.Now
-                });
+                    await _notificationsService.Create(new NewNotificationDTO
+                    {
+                        UserId = buildHistory.PerformerId,
+                        Message = $"{StatusToNotificationMessage(buildHistory, statusChange)}",
+                        Type = StatusToNotificationType(statusChange),
+                        Date = DateTime.Now
+                    });
+                }
             }
 
             return await GetBuildById(statusChange.BuildHistoryId);
@@ -144,6 +147,7 @@ namespace buildeR.BLL.Services
                 BuildStatus.Canceled => NotificationType.BuildCanceled,
                 BuildStatus.Failure => NotificationType.BuildFailed,
                 BuildStatus.Success => NotificationType.BuildSucceeded,
+                BuildStatus.Pending => NotificationType.Information,
             };
         }
         
@@ -151,10 +155,11 @@ namespace buildeR.BLL.Services
         {
             string action = statusChange.Status switch
             {
-                BuildStatus.Error => $"Build errored",
-                BuildStatus.Canceled => $"Build canceled",
-                BuildStatus.Failure => $"Build failed",
-                BuildStatus.Success => $"Build succeeded"
+                BuildStatus.Error => "errored",
+                BuildStatus.Canceled => "canceled",
+                BuildStatus.Failure => "failed",
+                BuildStatus.Success => "succeeded",
+                BuildStatus.Pending => "is pending"
             };
             return $"Build {buildHistory.Number} of {buildHistory.Project.Name} {action} at {statusChange.Time:g}";
         }

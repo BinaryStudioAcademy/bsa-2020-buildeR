@@ -13,11 +13,11 @@
   </a>
 
   <div class="all-notifications">
-    <div *ngIf="notifications?.length==0" class="no-notifications">
+    <div *ngIf="notifications.length == 0" class="no-notifications">
       There are no notifications
     </div>
-    <ng-container *ngFor="let notification of cachedNotifications">
-      <div *ngIf="notification.isRead == false || isShowRead" class="notification" [ngClass]="{
+    <ng-container *ngFor="let notification of notifications">
+      <div *ngIf="notification.isRead === false || isShowingRead" class="notification" [ngClass]="{
         'isNotRead': !notification.isRead,
         'build-errored text-danger': notification.type == NotificationType.BuildErrored,
         'build-failed text-danger': notification.type == NotificationType.BuildFailed,
@@ -27,6 +27,7 @@
           <div class="notification-type-icon">
             <i class="fas" [ngClass]="{
             'fa-times text-danger': notification.type == NotificationType.BuildErrored,
+            'fa-info': notification.type == NotificationType.Information,
             'fa-exclamation-triangle text-danger': notification.type == NotificationType.BuildFailed,
             'fa-check text-success': notification.type == NotificationType.BuildSucceeded
             }">&nbsp;
@@ -45,7 +46,7 @@
   </div>
   <div class="notifications-footer">
     <div class="custom-control custom-switch">
-      <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="isShowRead" (change)="toggleShowRead()">
+      <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="isShowingRead">
       <label class="custom-control-label" for="customSwitch1">Show read</label>
     </div>
   </div>

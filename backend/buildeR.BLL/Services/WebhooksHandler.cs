@@ -5,15 +5,18 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using buildeR.BLL.Services.Abstract;
 
 namespace buildeR.BLL.Services
 {
     public class WebhooksHandler : IWebhooksHandler
     {
         private readonly IBuildOperationsService _builder;
+        private readonly IProjectService _projectService;
 
-        public WebhooksHandler(IBuildOperationsService builder)
+        public WebhooksHandler(IBuildOperationsService builder, IProjectService projectService)
         {
+            _projectService = projectService;
             _builder = builder;
         }
         public async Task HandleGithubPushEvent(int projectId, PushGithubPayloadDTO payload)
@@ -27,7 +30,7 @@ namespace buildeR.BLL.Services
             var updatedBranch = payload.Ref.Substring(11);
 
             // TODO: replace fake build history id and user id
-            await _builder.StartBuild(projectId, 1, updatedBranch, 1);
+            await _builder.StartBuild(projectId, 1, updatedBranch, (await _projectService.GetAsync(projectId)).OwnerId);
         }
     }
 }

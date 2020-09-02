@@ -40,7 +40,7 @@ namespace buildeR.SignalR.HostedServices
         {
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var statusChange = JsonConvert.DeserializeObject<NotificationDTO>(message);
-            
+
             await _hub.Clients.Group(statusChange.UserId.ToString()).SendAsync("getNotification", message);
 
             _consumer.SetAcknowledge(e.DeliveryTag, true);

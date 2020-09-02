@@ -10,6 +10,7 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace buildeR.BLL.Services
 {
@@ -18,6 +19,11 @@ namespace buildeR.BLL.Services
         private readonly BuilderContext _context;
         private readonly IMapper _mapper;
         private readonly NotificationsProducer _producer;
+
+        private static JsonSerializerSettings _camelCaseProperties = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver {NamingStrategy = new CamelCaseNamingStrategy()}
+        };
 
         public NotificationsService(BuilderContext context, IMapper mapper, NotificationsProducer producer)
         {
@@ -52,10 +58,12 @@ namespace buildeR.BLL.Services
             await _context.SaveChangesAsync();
 
             var createdEntity = await _context.Notifications.FindAsync(additionResult.Entity.Id);
-            
-            _producer.Send(JsonConvert.SerializeObject(createdEntity), createdEntity.GetType().Name);
 
-            return _mapper.Map<NotificationDTO>(createdEntity);
+            var dto = _mapper.Map<NotificationDTO>(createdEntity);
+
+            _producer.Send(JsonConvert.SerializeObject(dto, _camelCaseProperties), createdEntity.GetType().Name);
+
+            return dto;
         }
     }
 }

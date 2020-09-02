@@ -58,7 +58,7 @@ namespace buildeR.SignalR
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapHub<LogsHub>("/logshub");
                 endpoints.MapHub<BuildStatusesHub>("/buildstatuseshub");
-                endpoints.MapHub<BuildStatusesHub>("/notificationshub");
+                endpoints.MapHub<NotificationsHub>("/notificationshub");
             });
         }
 

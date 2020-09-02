@@ -21,7 +21,7 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   user: User;
   groups: Group[];
   groupsLoaded: Promise<boolean>;
-  countNotifications = -1;
+  countNotifications = 0;
   constructor(
     private httpService: HttpService,
     private authService: AuthenticationService,
@@ -51,9 +51,9 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   showNotifications() {
     this.isShowNotifications = !this.isShowNotifications;
   }
+
   counterNotifications(count: number) {
-    console.log(count);
-    this.countNotifications = count;
+    this.countNotifications += count;
   }
 
   showHideDropdownMenu() {
