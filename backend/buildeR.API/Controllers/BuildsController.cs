@@ -32,6 +32,11 @@ namespace buildeR.API.Controllers
         {
             return await _buildService.GetHistoryByProjectId(id);
         }
+        [HttpGet("user/{id}")]
+        public async Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id)
+        {
+            return await _buildService.GetMonthHistoryByUserId(id);
+        }
 
         [HttpGet("{id}")]
         public async Task<BuildHistoryDTO> GetById(int id)

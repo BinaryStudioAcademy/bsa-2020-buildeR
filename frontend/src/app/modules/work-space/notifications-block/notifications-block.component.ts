@@ -14,7 +14,7 @@ export class NotificationsBlockComponent implements OnInit {
   public cachedNotifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
-  public showRead = false;
+  public isShowRead = false;
   public counter: number;
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
@@ -27,14 +27,45 @@ export class NotificationsBlockComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.listen()
-    .subscribe(
-      (notification) => this.notifications.push(notification)
-    )
+      .subscribe(
+        (notification) => this.notifications.push(notification)
+      )
+    this.cachedNotifications = this.useConditions();
+  }
+  useConditions() {
+    if (this.showAllNotifications) {
+     return this.allNotifications();
+    }
+    return this.lastThreeNotifications();
+  }
+  lastThreeNotifications(): Notification[] {
+    return this.showRead().slice(-3);
+  }
+  allNotifications(): Notification[] {
+    return this.showRead();
+  }
+  showRead() {
+    if (!this.isShowRead) {
+      return this.notifications.filter(x => x.isRead === false);
+    }
+    return this.notifications;
+  }
+  toggleShowRead() {
+    this.cachedNotifications = this.useConditions();
+  }
+  toggleShowAll() {
+    this.showAllNotifications = true;
+    this.cachedNotifications = this.useConditions();
   }
 
+  toggleShowLast() {
+    this.showAllNotifications = false;
+    this.cachedNotifications = this.useConditions();
+  }
   // Change type of notification to read, push it into array of read notifications and delete from general array
   clearOne(notification: Notification) {
     notification.isRead = true;
+    this.cachedNotifications = this.useConditions();
     this.onCountChange();
   }
   onCountChange() {
@@ -48,7 +79,7 @@ export class NotificationsBlockComponent implements OnInit {
     this.notifications.forEach((notification) => {
       notification.isRead = true;
     });
-    this.cachedNotifications = this.notifications;
+    this.cachedNotifications = this.useConditions();
     this.onCountChange();
   }
 
@@ -58,8 +89,8 @@ export class NotificationsBlockComponent implements OnInit {
   }
 
   // First 2 notifications with different types (can be more types: just need to add class to styles)
-  showAll() {
-    this.cachedNotifications = this.notifications;
-    this.showAllNotifications = true;
-  }
+  // showAll() {
+  //   this.cachedNotifications = this.notifications;
+  //   this.showAllNotifications = true;
+  // }
 }

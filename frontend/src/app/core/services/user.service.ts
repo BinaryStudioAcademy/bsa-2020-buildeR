@@ -7,7 +7,6 @@ import { NewUser } from '../../shared/models/user/new-user';
 import { LinkProvider } from '../../shared/models/user/link-provider';
 import { ValidateUser } from '@shared/models/user/validate-user';
 import { HttpRequest } from '@angular/common/http';
-import { UserAvatar } from '@shared/models/user/user-avatar';
 import { UserLetter } from '@shared/models/user/user-letter';
 
 @Injectable({

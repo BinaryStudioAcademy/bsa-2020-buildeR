@@ -81,13 +81,14 @@ namespace buildeR.BLL.Services
 
         public async Task DeleteProject(int id)
         {
-            await _quartzService.DeleteAllSheduleJob(id.ToString());
             var project = await GetAsync(id);
             if (project == null)
             {
                 throw new NotFoundException(nameof(Project), id);
             }
-            await base.RemoveAsync(id);     
+
+            await _quartzService.DeleteAllSheduleJob(id.ToString());
+            await RemoveAsync(id);     
         }       
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {

@@ -100,8 +100,7 @@ export class AuthenticationService {
     return this.firebaseUser;
   }
 
-  setFirebaseUser(user: firebase.User)
-  {
+  setFirebaseUser(user: firebase.User) {
     this.firebaseUser = user;
     localStorage.setItem('user', JSON.stringify(user));
   }

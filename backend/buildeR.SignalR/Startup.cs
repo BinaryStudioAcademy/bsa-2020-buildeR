@@ -35,10 +35,10 @@ namespace buildeR.SignalR
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+            services.AddSignalR();
             services.AddHostedService<Worker>();
             services.AddHostedService<BuildStatusesQueueConsumerService>();
             services.AddHostedService<NotificationsQueueConsumerService>();
-            services.AddSignalR();
             services.AddControllers();
             services.AddHealthChecks();
         }
@@ -46,10 +46,7 @@ namespace buildeR.SignalR
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseRouting();
             app.UseCors(CORS_POLICY);

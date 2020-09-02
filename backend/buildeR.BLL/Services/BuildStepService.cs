@@ -64,9 +64,32 @@ namespace buildeR.BLL.Services
                 var arg = Mapper.Map<CommandArgument>(argDTO);
                 if (!base.Context.CommandArguments.Contains(arg))
                     base.Context.CommandArguments.Add(arg);
+                else
+                    base.Context.CommandArguments.Update(arg);
             }
 
             await base.UpdateAsync(buildStep);
+        }
+
+        public async Task BulkUpdate(BuildStepDTO[] buildSteps)
+        {
+            foreach(var buildStep in buildSteps)
+            {
+                if (buildStep == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                foreach (var argDTO in buildStep.CommandArguments)
+                {
+                    var arg = Mapper.Map<CommandArgument>(argDTO);
+                    if (!base.Context.CommandArguments.Contains(arg))
+                        base.Context.CommandArguments.Add(arg);
+                    else
+                        base.Context.CommandArguments.Update(arg);
+                }
+
+                await base.UpdateAsync(buildStep);
+            }
         }
         public async Task Delete(int id)
         {

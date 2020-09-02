@@ -1,13 +1,16 @@
 ﻿using buildeR.BLL.Interfaces;
+using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.Synchronization.Github;
 using buildeR.Common.DTO.Webhooks.Github.NewWebhook;
 using buildeR.Common.Enums;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -23,9 +26,9 @@ namespace buildeR.BLL.Services
             _client = factory.CreateClient("github");
         }
 
-        public async Task<GithubUser> GetUserFromCredentials(string username, string password)
+        public async Task<GithubUser> GetUserFromToken(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
             var endpoint = $"user";
             var response = await _client.GetAsync(endpoint);
@@ -33,9 +36,9 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<GithubUser>(content);
         }
-        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string username, string password)
+        public async Task<IEnumerable<GithubRepository>> GetUserRepositories(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
             var allRepos = new List<GithubRepository>();
             var lastLoadedRepos = new List<GithubRepository>();
@@ -61,11 +64,11 @@ namespace buildeR.BLL.Services
 
             return allRepos;
         }
-        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string username, string password)
+        public async Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
-            var user = await GetUserFromCredentials(username, password);
+            var user = await GetUserFromToken(token);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/branches";
             var response = await _client.GetAsync(endpoint);
@@ -81,28 +84,63 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
         }
-        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string username = null, string password = null)
+        public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string token = null)
         {
-            if (username != null && password != null)
-                SetUpHttpClient(username, password);
+            if (token != null)
+                SetUpHttpClient(token);
 
             var endpoint = $"repos/{repoOwner}/{repoName}";
             var response = await _client.GetAsync(endpoint);
 
             return response.IsSuccessStatusCode;
         }
-        public async Task<bool> CheckIfUserExist(string username, string password)
+        public async Task<AccessTokenCheckDTO> CheckIfTokenValid(string token)
         {
-            SetUpHttpClient(username, password);
+            SetUpHttpClient(token);
 
-            var endpoint = $"user";
-            var response = await _client.GetAsync(endpoint);
+            var checkDTO = new AccessTokenCheckDTO();
 
-            return response.IsSuccessStatusCode;
+            var response = await _client.GetAsync("");
+
+            checkDTO.IsSucceed = response.IsSuccessStatusCode;
+            if (checkDTO.IsSucceed)
+                checkDTO.Message = "All required scopes are seted up";
+            else
+                checkDTO.Message = "Access token does not exist";
+
+            if(checkDTO.IsSucceed)
+            {
+                var scopes = response.Headers.GetValues("X-OAuth-Scopes").Single().Split(", ");
+                var missingScopes = new List<string>();
+
+                if(!scopes.Contains("read:user"))
+                {
+                    missingScopes.Add("read:user");
+                }
+
+                if(!scopes.Contains("repo"))
+                {
+                    missingScopes.Add("repo");
+                }
+
+                if(!scopes.Contains("write:repo_hook"))
+                {
+                    missingScopes.Add("write:repo_hook");
+                }
+
+                if(missingScopes.Count != 0)
+                {
+                    checkDTO.IsSucceed = false;
+                    checkDTO.Message = "Those scopes are missed: \n";
+                    checkDTO.Message += missingScopes.Aggregate((a, b) => a + ", " + b);
+                }
+            }
+
+            return checkDTO;
         }
-        public async Task CreateWebhook(string repositoryName, string callback, string username, string password)
+        public async Task CreateWebhook(string repositoryName, string callback, string token)
         {
-            var user = await GetUserFromCredentials(username, password);
+            var user = await GetUserFromToken(token);
 
             var endpoint = $"repos/{user.Login}/{repositoryName}/hooks";
 
@@ -116,12 +154,9 @@ namespace buildeR.BLL.Services
             var response = await _client.PostAsync(endpoint, content);
         }
 
-        private void SetUpHttpClient(string username, string password)
+        private void SetUpHttpClient(string token)
         {
-            var authenticationString = $"{username}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
         }
     }
 }

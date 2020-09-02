@@ -19,7 +19,8 @@ export class ModalCopyProjectComponent implements OnInit {
       this.project = res; this.copyForm = new FormGroup({
         name: new FormControl(`${this.project.name}` + `-Copy`,
           [Validators.required]),
-        description: new FormControl(this.project.description)
+        description: new FormControl(this.project.description),
+        isPublic: new FormControl(this.project.isPublic.toString())
       });
     });
   }
@@ -38,13 +39,16 @@ export class ModalCopyProjectComponent implements OnInit {
     else {
       this.project.description = this.copyForm.value[`description`];
     }
-
+    this.project.isPublic = this.copyForm.value['isPublic'];
     this.projectService.copyProject(this.project).subscribe((result) => {
       this.project = result;
       this.activeModal.close(this.project);
     });
   }
   onCancel() {
+    this.activeModal.close();
+  }
+  closeForm() {
     this.activeModal.close();
   }
 }

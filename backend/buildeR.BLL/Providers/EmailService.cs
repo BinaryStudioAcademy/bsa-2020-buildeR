@@ -10,11 +10,13 @@ namespace buildeR.BLL.Providers
 {
     public class EmailService : IEmailService
     {
+        private readonly IEmailBuilder _builder;
+
         private readonly string _senderEmail;
         private readonly string _senderName;
         private readonly string _apiKey;
+
         public string SupportEmail { get; private set; }
-        private readonly IEmailBuilder _builder;
         
         public EmailService(IEmailBuilder builder, IConfiguration configuration)
         {

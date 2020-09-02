@@ -10,7 +10,7 @@
   grid-column-end: 1
   justify-self: end
 
-input
+input[type=text]
   width: 300px
 
 textarea
@@ -32,7 +32,7 @@ h3
 .group
     display: grid
     grid-template-columns: 2
-    grid-template-rows: 2
+    grid-template-rows: 4
 
 .input-area
   grid-column-start: 1
@@ -40,20 +40,10 @@ h3
   justify-self: start
   margin: 0 10px 20px
 
-input
-  width: 280px
-
-textarea
-  width: 280px
-
 .field
   grid-column-start: 0
   grid-column-end: 1
   justify-self: end
-  .label-wr
-  width: 100%
-  display: flex
-  justify-content: flex-start
   span
     display: block
 
@@ -75,6 +65,16 @@ textarea
 
 .btn
   margin: 10px
+
+// styles for radio buttons
+
+.form-check-label
+  .option-description
+    font-size: 0.75em
+
+.group .input-area:nth-last-child(2)
+  width: 300px
+  margin-top: 2px
 
 @media screen and (max-width: 675px)
   .field

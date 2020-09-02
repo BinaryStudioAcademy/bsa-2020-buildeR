@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
@@ -10,6 +10,8 @@ import { UserService } from '../../../core/services/user.service';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { HttpService } from '@core/services/http.service';
+import { ModalCropperService } from '@core/services/modal-cropper.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -27,6 +29,7 @@ export class UserSettingsComponent implements OnInit {
   public settingsForm: FormGroup;
   googleClick = false;
   githubClick = false;
+  @Output() image: EventEmitter<File> = new EventEmitter<File>();
 
   constructor(
     private settingsService: UserService,
@@ -34,7 +37,9 @@ export class UserSettingsComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private fbr: FirebaseSignInService,
-    private authService: AuthenticationService) { }
+    private authService: AuthenticationService,
+    private http: HttpService,
+    private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
 
@@ -117,21 +122,24 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  upload() {
+  async upload() {
     if (!this.isValidUrl(this.settingsForm.controls.avatarUrl.value)) {
       this.toastrService.showError('Invalaid URL');
       return;
     }
-    console.log('we here');
-    this.settingsService.updateUser(this.details).subscribe((res) => {
-      console.log(res);
-      this.userService.changeImageUrl(this.settingsForm.controls.avatarUrl.value);
-      this.details.avatarUrl = this.settingsForm.controls.avatarUrl.value;
-    },
-      (err) => {
-        console.log(err);
-      });
+    const file = await this.cropper.open(this.settingsForm.controls.avatarUrl.value);
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      this.userService.uploadAvatar(formData, this.details.id).subscribe((res) => {
+        console.log(res.avatarUrl);
+        this.details.avatarUrl = res.avatarUrl;
+        this.userService.changeImageUrl(res.avatarUrl);
+        this.details.avatarUrl = res.avatarUrl;
+      }, (er) => console.log(er));
+    }
   }
+
 
   private isValidUrl(url: string) {
     try {
@@ -145,7 +153,7 @@ export class UserSettingsComponent implements OnInit {
 
   linkWithGithub() {
     if (!this.isGithubAddedInFirebase() && !this.isProviderAdded(Providers.Github)) {
-      this.fbr.linkWithGithub().then((result) => {
+      this.fbr.linkWithProvider(Providers.Github).then((result) => {
         if (result === 'ok') {
           this.githubClick = true;
         }
@@ -159,7 +167,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   linkWithGoogle() {
-    this.fbr.linkWithGoogle().then((result) => {
+    this.fbr.linkWithProvider(Providers.Google).then((result) => {
       if (result === 'ok') {
         this.googleClick = true;
       }

@@ -121,10 +121,7 @@ namespace buildeR
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseCors("AnyOrigin");
 
@@ -169,10 +166,7 @@ namespace buildeR
         private void InitializeFileProvider(IApplicationBuilder app)
         {
             var resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
-            if (!Directory.Exists(resourcesPath))
-            {
-                Directory.CreateDirectory(resourcesPath);
-            }
+            Directory.CreateDirectory(resourcesPath);
 
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
@@ -188,9 +182,6 @@ namespace buildeR
             {
                 using var context = scope.ServiceProvider.GetRequiredService<BuilderContext>();
                 context.Database.Migrate();
-
-                using var contextQuartz = scope.ServiceProvider.GetRequiredService<QuartzDBContext>();
-                contextQuartz.Database.Migrate();
             };
         }
     }

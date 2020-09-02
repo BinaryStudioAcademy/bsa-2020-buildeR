@@ -30,6 +30,10 @@ export class BuildStepService {
     return this.httpService.putRequest<BuildStep>(`${this.routePrefix}`, buildStep);
   }
 
+  bulkUpdate(buildSteps: BuildStep[]): Observable<any> {
+    return this.httpService.putRequest<BuildStep>(`${this.routePrefix}/bulk`, buildSteps);
+  }
+
   removeBuildStep(buildStep: BuildStep) {
     return this.httpService.deleteRequest(`${this.routePrefix}/${buildStep.id}`);
   }

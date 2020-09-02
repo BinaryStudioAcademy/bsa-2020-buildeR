@@ -10,8 +10,8 @@ services:
         ports:
             - "5050:5050"
         environment:
-            - ASPNETCORE_ENVIRONMENT='Production'
-            - VAULT_ADDRESS='http://vault:8200'
+            - ASPNETCORE_ENVIRONMENT=Production
+            - VAULT_ADDRESS=http://vault:8200
             - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
         env_file:
             - /etc/environment
@@ -22,16 +22,19 @@ services:
         image: bsa2020builder/builder_processor:latest
         container_name: 'builder_processor'
         restart: on-failure
+        privileged: true
         networks:
             - back
         ports:
             - "5060:5060"
         environment:
-            - ASPNETCORE_ENVIRONMENT='Production'
-            - VAULT_ADDRESS='http://vault:8200'
+            - ASPNETCORE_ENVIRONMENT=Production
+            - VAULT_ADDRESS=http://vault:8200
             - VAULT_TOKEN_ID=${VAULT_TOKEN_ID}
         env_file:
             - /etc/environment
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
 
     builder_signalr:
         image: bsa2020builder/builder_signalr:latest
@@ -43,6 +46,8 @@ services:
             - "5070:5070"
         environment:
             ASPNETCORE_ENVIRONMENT: 'Production'
+        env_file:
+            - /etc/environment
 
     builder_frontend:
         depends_on:

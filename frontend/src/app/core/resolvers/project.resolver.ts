@@ -19,12 +19,7 @@ export class ProjectResolverService implements Resolve<Project> {
     const id = parseInt(route.paramMap.get('projectId'), 10);
     return this.projectService.getProjectById(id).pipe(
       tap((proj) => {
-        if (proj) {
-          return proj;
-        } else {
-          return EMPTY;
-        }
-        // accoridng to serer logic in case of null we getting exception
+        return proj ?? EMPTY;
       }),
       catchError(() => {
         console.log(this.router.url);

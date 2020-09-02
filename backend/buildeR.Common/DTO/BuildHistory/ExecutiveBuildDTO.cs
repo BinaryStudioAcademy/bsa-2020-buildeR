@@ -9,6 +9,7 @@ namespace buildeR.Common.DTO.BuildHistory
         public int BuildHistoryId { get; set; }
         public int ProjectId { get; set; }
         public string RepositoryUrl { get; set; }
+        public string BranchName { get; set; }
         public IEnumerable<BuildStepDTO> BuildSteps { get; set; }
         public int UserId { get; set; }
     }

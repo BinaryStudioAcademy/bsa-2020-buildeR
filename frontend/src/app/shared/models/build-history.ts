@@ -5,8 +5,10 @@ import { Project } from './project/project';
 export interface BuildHistory {
   id: number;
   project: Project;
+  projectId: number;
   number: number;
   performer: User;
+  performerId: number;
   duration: number | null;
   buildAt: Date | null;
   startedAt: Date;

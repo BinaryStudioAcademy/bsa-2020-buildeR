@@ -6,8 +6,10 @@ services:
         restart: on-failure
         ports:
             - 8200:8200
+        networks:
+            - back
         environment: 
-            - VAULT_DEV_ROOT_TOKEN_ID='buildeR_DEV_TOKEN'
+            - VAULT_DEV_ROOT_TOKEN_ID=buildeR_DEV_TOKEN
         cap_add:
             - IPC_LOCK
 
@@ -18,6 +20,8 @@ services:
         ports:
             - 5672:5672
             - 15672:15672
+        networks:
+            - back
         environment:
             - "RABBITMQ_DEFAULT_USER=guest"
             - "RABBITMQ_DEFAULT_PASS=guest"
@@ -27,6 +31,8 @@ services:
         container_name: elasticsearch
         ports:
             - 9200:9200
+        networks:
+            - back
         environment:
             - xpack.monitoring.enabled=true
             - xpack.watcher.enabled=false
@@ -40,6 +46,8 @@ services:
         container_name: kibana
         ports:
             - 5601:5601
+        networks:
+            - back
         environment:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
     
@@ -48,6 +56,8 @@ services:
         ports:
             - 2181:2181
             - 2000:2000
+        networks:
+            - back
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
@@ -58,6 +68,8 @@ services:
             - zookeeper
         ports:
             - 9092:9092
+        networks:
+            - back
         environment:
             KAFKA_BROKER_ID: 1
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -71,6 +83,12 @@ services:
         container_name: sql_server
         ports:
             - 1433:1433
+        networks:
+            - back
         environment:
             SA_PASSWORD: MySecretPassword!
             ACCEPT_EULA: "Y"
+
+networks:
+    back:
+        driver: bridge

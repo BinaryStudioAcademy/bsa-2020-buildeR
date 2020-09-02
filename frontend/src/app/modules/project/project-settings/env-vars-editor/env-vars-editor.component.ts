@@ -15,6 +15,7 @@ export class EnvVarsEditorComponent implements OnInit {
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   @Output()editing: EventEmitter<EnviromentVariable> = new EventEmitter<EnviromentVariable>();
   @Output()deleting: EventEmitter<EnviromentVariable> = new EventEmitter<EnviromentVariable>();
+  fieldTextType = true;
 
   constructor(private pojectService: ProjectService) { }
 
@@ -30,6 +31,9 @@ export class EnvVarsEditorComponent implements OnInit {
         ]),
         isSecret: new FormControl(this.envVar.data.isSecret)
     });
+    console.log(this.envVar);
+    this.fieldTextType = this.envVar.data.isSecret;
+
   }
 
   edit(){
@@ -40,5 +44,9 @@ export class EnvVarsEditorComponent implements OnInit {
   delete(){
     this.envVar.data = this.envVarsEditForm.value;
     this.pojectService.deleteEnvVarEvent(this.envVar);
+  }
+
+  toggleFieldTextType() {
+    this.fieldTextType = !this.fieldTextType;
   }
 }

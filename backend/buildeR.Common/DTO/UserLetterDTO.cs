@@ -6,7 +6,6 @@ namespace buildeR.Common.DTO
         public string UserEmail { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
-        public int Rating { get; set; }
         public bool IsRespond { get; set; }
     }
 }

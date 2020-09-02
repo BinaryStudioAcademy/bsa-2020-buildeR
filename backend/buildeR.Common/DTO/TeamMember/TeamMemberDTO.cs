@@ -10,7 +10,7 @@ namespace buildeR.Common.DTO.TeamMember
         public int Id { get; set; }
         public int UserId { get; set; }
         public int GroupId { get; set; }
-        public UserRole MemberRole { get; set; }
+        public GroupRole MemberRole { get; set; }
         public DateTime JoinedDate { get; set; }
 
         public GroupDTO Group { get; set; }

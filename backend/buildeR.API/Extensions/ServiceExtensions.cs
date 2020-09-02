@@ -10,14 +10,13 @@ using buildeR.RabbitMq.Models;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
-using Quartz.Impl;
 using System;
-using System.Collections.Specialized;
-using System.Net.Http;
 using System.Reflection;
 using buildeR.API.HostedServices;
 using buildeR.Common.DTO;
+using Quartz.Impl;
+using Quartz;
+using System.Collections.Specialized;
 
 namespace buildeR.API.Extensions
 {
@@ -33,7 +32,6 @@ namespace buildeR.API.Extensions
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ITriggerService, TriggerService>();
-            services.AddSingleton(provider => GetScheduler(configuration));
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IBuildStepService, BuildStepService>();
             services.AddScoped<ICommandArgumentService, CommandArgumentService>();
@@ -44,6 +42,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailBuilder, EmailBuilder>();
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
+            services.AddScoped<IProjectGroupService, ProjectGroupService>();
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
@@ -56,12 +55,17 @@ namespace buildeR.API.Extensions
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
 
+            services.AddSingleton(GetScheduler(configuration));
+            services.AddHostedService<QuartzHostedService>();
+
             services.RegisterAutoMapper();
         }
+
         public static void RegisterAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetAssembly(typeof(UserProfile)));
         }
+
         public static void RegisterRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
@@ -71,6 +75,7 @@ namespace buildeR.API.Extensions
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }
+
         public static void RegisterHttpCients(this IServiceCollection services)
         {
             services.AddHttpClient("github", c =>
@@ -94,12 +99,13 @@ namespace buildeR.API.Extensions
                 ["quartz.jobStore.tablePrefix"] = "QRTZ_",
                 ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz",
                 ["quartz.dataSource.default.provider"] = "SqlServer",
-                ["quartz.dataSource.default.connectionString"] = configuration["ConnectionStrings:QuartzDBConnection"] // "Server=localhost;Database=QuartzDB;Trusted_Connection=true;"
+                ["quartz.dataSource.default.connectionString"] = configuration["ConnectionStrings:QuartzDBConnection"],
+                ["quartz.plugin.timezoneConverter.type"] = "Quartz.Plugin.TimeZoneConverter.TimeZoneConverterPlugin, Quartz.Plugins.TimeZoneConverter"
             };
-            var schedulerFactory = new StdSchedulerFactory(properties);
-            var scheduler = schedulerFactory.GetScheduler().Result;
-            scheduler.Start();
-            return scheduler;
+
+            var schedularFactory =  new StdSchedulerFactory(properties);
+
+            return schedularFactory.GetScheduler().GetAwaiter().GetResult();
         }
     }
 }

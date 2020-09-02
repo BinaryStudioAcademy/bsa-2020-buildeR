@@ -1,4 +1,5 @@
 ﻿using buildeR.BLL.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,19 +13,24 @@ namespace buildeR.BLL.Services
 {
     public class SecretService: ISecretService
     {
-        private readonly IVaultClient vaultClient;
+        private readonly IConfiguration _configuration;
+
+        private IVaultClient Client => _lazyClient.Value;
+        private readonly Lazy<IVaultClient> _lazyClient;
+
         private string path;
 
-        public SecretService()
+        public SecretService(IConfiguration configuration)
         {
-            vaultClient = CreateVaultClient();
+            _lazyClient = new Lazy<IVaultClient>(() => CreateVaultClient());
+            _configuration = configuration;
         }
 
         public async Task<Dictionary<string, string>> CreateSecretsAsync(Dictionary<string, string> secrets, string path = null)
         {
             path = ValidatePath(path);
 
-            var result = await vaultClient.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
+            var result = await Client.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
 
             return result.Data;
         }
@@ -37,7 +43,7 @@ namespace buildeR.BLL.Services
 
             try
             {
-                result = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync<Dictionary<string, string>>(path, null, "secret");
+                result = await Client.V1.Secrets.KeyValue.V2.ReadSecretAsync<Dictionary<string, string>>(path, null, "secret");
             }
             catch (VaultApiException ex)
             {
@@ -53,7 +59,7 @@ namespace buildeR.BLL.Services
         {
             path = ValidatePath(path);
 
-            var result = await vaultClient.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
+            var result = await Client.V1.Secrets.KeyValue.V2.WriteSecretAsync(path, secrets, null, "secret/");
 
             return result.Data;
         }
@@ -61,13 +67,12 @@ namespace buildeR.BLL.Services
         public async Task DeleteSecretsAsync(string path = null)
         {
             path = ValidatePath(path);
-
-            await vaultClient.V1.Secrets.KeyValue.V2.DeleteSecretAsync(path, "secret");
+            await Client.V1.Secrets.KeyValue.V2.DeleteSecretAsync(path, "secret");
         }
 
         public void SetSecretsPath(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("Path is invalid (null or empty)");
 
             this.path = path;
@@ -75,22 +80,17 @@ namespace buildeR.BLL.Services
 
         private IVaultClient CreateVaultClient()
         {
-            var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN_ID");
-            var vaultAddress = Environment.GetEnvironmentVariable("VAULT_ADDRESS");
+            var authMethod = new TokenAuthMethodInfo(_configuration["VAULT_TOKEN_ID"]);
+            var vaultClientSettings = new VaultClientSettings(_configuration["VAULT_ADDRESS"], authMethod);
 
-            var authMethod = new TokenAuthMethodInfo(vaultToken);
-            var vaultClientSettings = new VaultClientSettings(vaultAddress, authMethod);
-
-            var vaultClient = new VaultClient(vaultClientSettings);
-
-            return vaultClient;
+            return new VaultClient(vaultClientSettings);
         }
 
         private string ValidatePath(string path)
         {
             var result = path ?? this.path;
 
-            if(string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
                 throw new InvalidOperationException("Cannot work with null or empty 'path'. Call 'SetSecretsPath' " +
                                                     "method, or pass 'path' directly to method.");
 

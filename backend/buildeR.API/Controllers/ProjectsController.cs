@@ -72,7 +72,7 @@ namespace buildeR.API.Controllers
         public async Task<BuildHistoryDTO> BuildProject([FromBody] NewBuildHistoryDTO history)
         {
             var buildHistory = await _buildService.Create(history);
-            await _builder.StartBuild(history.ProjectId, buildHistory.Id, buildHistory.PerformerId);
+            await _builder.StartBuild(history.ProjectId, buildHistory.Id, buildHistory.BranchHash, buildHistory.PerformerId);
             return buildHistory;
         }
 
