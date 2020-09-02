@@ -13,6 +13,10 @@ import { NewBuildHistory } from '@shared/models/new-build-history';
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   public routePrefix = '/projects';
+  private starProject$ = new Subject<ProjectInfo>();
+  private deleteProject$ = new Subject<number>();
+  private copyProject$ = new Subject<number>();
+  private buildProject$ = new Subject<number>();
   private projectName$ = new Subject<string>();
   private envVariable$ = new Subject<EnviromentVariable>();
   private deleteEnvVariable$ = new Subject<EnviromentVariable>();
@@ -49,6 +53,38 @@ export class ProjectService {
       `${this.routePrefix}/build`,
       history
     );
+  }
+  public sendBuldProject(projectId){
+    return this.buildProject$.next(projectId);
+  }
+
+  public getBuldProject(){
+    return this.buildProject$.asObservable();
+  }
+
+
+  public sendCopyProject(project: number){
+    return this.copyProject$.next(project);
+  }
+
+  public getCopyProject(){
+    return this.copyProject$.asObservable();
+  }
+
+  public sendDeleteProject(project: number){
+    return this.deleteProject$.next(project);
+  }
+
+  public getDeleteProject(){
+    return this.deleteProject$.asObservable();
+  }
+
+  public sendStarProject(project: ProjectInfo){
+    return this.starProject$.next(project);
+  }
+
+  public getStarProject(){
+    return this.starProject$.asObservable();
   }
 
   public changeFavoriteState(projectId: number) {

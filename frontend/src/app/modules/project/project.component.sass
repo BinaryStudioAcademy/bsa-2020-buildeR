@@ -4,6 +4,9 @@
   line-height: 1.45
   padding: 1.2em
 
+.project-main
+  position: relative
+
 .project-header
   display: flex
   flex-flow: row wrap
@@ -56,3 +59,56 @@
 
 nav
   margin-bottom: 1rem
+
+.spinner-wrp
+  height: 3rem
+  width: 300px
+
+.input-area
+  grid-column-start: 1
+  grid-column-end: 2
+  justify-self: start
+  margin: 0 10px 20px
+
+.field
+  grid-column-start: 0
+  grid-column-end: 1
+  justify-self: end
+
+.label-wr
+  width: 100%
+  display: flex
+  justify-content: flex-start
+
+  span
+    display: block
+
+select
+  width: 300px
+
+.branches-loading-wrp
+  height: 3rem
+
+.group
+  display: grid
+  grid-template-columns: 2
+  grid-template-rows: 2
+
+.btn-wr
+  width: 100%
+  display: flex
+  justify-content: flex-end
+  align-items: center
+
+  button
+    margin: 5px
+
+.trigger-button
+  color: #17a2b8
+  position: absolute
+  top: 15px
+  right: 0px
+
+@media (max-width:768px)
+  .trigger-button-text
+    display: none
