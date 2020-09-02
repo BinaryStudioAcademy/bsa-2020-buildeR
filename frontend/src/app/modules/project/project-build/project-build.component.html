@@ -17,6 +17,9 @@
       <p class="build-time"><i class="far fa-clock"></i> Duration {{buildHistory.duration | timespan}}</p>
       <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium'}}"><i
           class="far fa-calendar-alt"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
+      <button class="btn btn-link restart-button" (click)="restartBuild()" >
+        <i class="fas fa-redo"></i>
+        <span class="button-text"> Restart build</span></button>
     </div>
   </div>
   <app-logging-terminal></app-logging-terminal>

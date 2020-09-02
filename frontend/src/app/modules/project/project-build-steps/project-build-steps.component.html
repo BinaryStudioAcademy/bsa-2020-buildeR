@@ -139,7 +139,7 @@
                   </button>
               </div>
             </div>
-            <button class="btn btn-success" (click)="updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
+            <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
               Save changes
             </button>
           </div>

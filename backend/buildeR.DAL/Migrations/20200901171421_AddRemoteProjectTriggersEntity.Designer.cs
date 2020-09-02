@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200901171421_AddRemoteProjectTriggersEntity")]
+    partial class AddRemoteProjectTriggersEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PerformerId")
+                    b.Property<int>("PerformerId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -625,7 +627,8 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.User", "Performer")
                         .WithMany("BuildHistories")
                         .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildHistories")
@@ -721,7 +724,7 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.ProjectRemoteTrigger", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
-                        .WithMany("ProjectRemoteTriggers")
+                        .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
