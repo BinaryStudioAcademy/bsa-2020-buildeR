@@ -77,7 +77,7 @@ namespace buildeR.BLL.Services
         }
         public async Task RegisterWebhook(int projectId, string callback)
         {
-            callback = $"http://5451f9723672.ngrok.io/webhooks/{projectId}/github";
+            callback += $"/{projectId}/github";
 
             var pushCallback = callback + "/push";
             var pullRequestCallback = callback + "/pull_request";
