@@ -102,7 +102,7 @@ else loaded;
             <p class="gray">Member since {{member.joinedDate | date:'mediumDate'}}</p>
           </div>
         </div>
-        <div class="item area role">
+        <div class="item area role" *ngIf="member.user.id !== currentUser.id">
           <div ngbDropdown>
             <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
               {{groupRole[member.memberRole]}}
@@ -116,6 +116,9 @@ else loaded;
                 <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
             </div>
           </div>
+        </div>
+        <div class="area owner" *ngIf="member.user.id === currentUser.id">
+          <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
         </div>
       </div>
     </div>

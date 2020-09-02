@@ -34,12 +34,11 @@ else loaded;
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-          <div *ngIf="getCurrentUserRoleInvite(group.id) != null" class="col-md-12 col-sm-12 text-muted small row-top">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
             Your role
           </div>
           <div class="col-md-12 col-sm-12 small row-bottom">
-            <span *ngIf="getCurrentUserRoleInvite(group.id) != null"
-              class="user-access-role">{{groupRole[getCurrentUserRoleInvite(group.id)]}}</span></div>
+            <span class="user-access-role">{{groupRole[getCurrentUserRoleInvite(group.id)]}}</span></div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
           <div class="col-md-12 col-sm-12 text-muted small row-top">
@@ -83,12 +82,11 @@ else loaded;
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-          <div *ngIf="getCurrentUserRole(group.id)" class="col-md-12 col-sm-12 text-muted small row-top">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
             Your role
           </div>
           <div class="col-md-12 col-sm-12 small row-bottom">
-            <span *ngIf="getCurrentUserRole(group.id)"
-              class="user-access-role">{{groupRole[getCurrentUserRole(group.id)]}}</span></div>
+            <span class="user-access-role">{{groupRole[getCurrentUserRole(group.id)]}}</span></div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
           <div class="col-md-12 col-sm-12 text-muted small row-top">

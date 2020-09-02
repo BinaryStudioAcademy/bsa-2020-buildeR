@@ -11,6 +11,7 @@ import { TeamMemberService } from '../../../core/services/team-member.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { BaseComponent } from '@core/components/base/base.component';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-group-members',
@@ -28,10 +29,11 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   groupRole: typeof GroupRole = GroupRole;
   roles = [
     GroupRole.Guest,
-    GroupRole.Owner,
+    GroupRole.Admin,
     GroupRole.Contributor,
     GroupRole.Builder
   ];
+  currentUser: User;
   memberForm: FormGroup;
   constructor(
     private groupService: GroupService,
@@ -39,6 +41,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     private userService: UserService,
     private teamMemberService: TeamMemberService,
     private toastrService: ToastrNotificationsService,
+    private authService: AuthenticationService,
   ) {
     super();
     route.parent.params.subscribe(
@@ -48,6 +51,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.loadingUsers = true;
     this.getGroupMembers(this.groupId);
     this.getUsers();
+    this.currentUser = this.authService.getCurrentUser();
     this.memberForm = new FormGroup({
       user: new FormControl(' ', [Validators.required]),
       dropdown: new FormControl(this.groupRole[GroupRole.Guest], [Validators.required])
@@ -58,18 +62,21 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.loadingUsers = true;
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
-        this.loadingUsers = false;
         this.members = res.body.filter((t => t.isAccepted));
         this.pendingMembers = res.body.filter((t => !t.isAccepted));
+        console.log(this.members);
+        this.loadingUsers = false;
       });
   }
   getUsers() {
     this.loadingUsers = true;
     this.userService.getUsers().pipe(takeUntil(this.unsubscribe$)).subscribe(res => {
       this.loadingUsers = false;
-      this.users = res.body.filter(
-        (user) => !this.members.some(x => x.userId === user.id) && !this.pendingMembers.some(x => x.userId === user.id)
-      );
+      if (this.members) {
+        this.users = res.body.filter(
+          (user) => !this.members?.some(x => x.userId === user.id) && !this.pendingMembers.some(x => x.userId === user.id)
+        );
+      }
     });
   }
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
@@ -110,12 +117,13 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         );
       });
   }
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       map(term => term.length < 2 ? []
-        : this.users.filter(v => v.username.toLowerCase().indexOf(term.toLowerCase()) > -1 ||
+        : this.users?.filter(v => v.username.toLowerCase().indexOf(term.toLowerCase()) > -1 ||
           v.email.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
   formatter = (x: { username: string }) => x.username;
