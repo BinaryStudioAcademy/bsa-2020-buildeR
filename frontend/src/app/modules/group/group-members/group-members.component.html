@@ -38,18 +38,14 @@ else loaded;
         </div>
         <div class="col-md-6">
           <label for="input-role">Choose a role permission:</label>
-          <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
-            <div>
-              <input type="text" class="form-control" data-toggle="dropdown"
-                [value]="memberForm.controls['dropdown']?.value" ngbDropdownToggle
-                placeholder="Chose role from dropdown">
-            </div>
-            <ul ngbDropdownMenu>
-              <li *ngFor="let item of roles" ngbDropdownItem
-                (click)="memberForm.controls['dropdown'].setValue(groupRole[item])" class="dropdown-item">
+          <div tabindex="0" id="input-role" role="button">
+            <select class="form-control" [value]="memberForm.controls['dropdown']?.value"
+              placeholder="Chose role from dropdown" formControlName="dropdown">
+              <option *ngFor="let item of roles" (click)="memberForm.controls['dropdown'].setValue(groupRole[item])"
+                class="dropdown-item">
                 {{groupRole[item]}}
-              </li>
-            </ul>
+              </option>>
+            </select>
           </div>
         </div>
       </div>

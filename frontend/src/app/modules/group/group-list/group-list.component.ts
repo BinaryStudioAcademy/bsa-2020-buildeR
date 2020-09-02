@@ -58,7 +58,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   }
   getRole(group: Group) {
     const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
-    console.log(member);
     if (!member) {
       return null;
     }

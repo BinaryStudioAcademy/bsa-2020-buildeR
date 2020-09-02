@@ -27,10 +27,10 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   users: User[];
   groupRole: typeof GroupRole = GroupRole;
   roles = [
+    GroupRole.Guest,
     GroupRole.Owner,
     GroupRole.Contributor,
-    GroupRole.Builder,
-    GroupRole.Guest
+    GroupRole.Builder
   ];
   memberForm: FormGroup;
   constructor(
@@ -95,7 +95,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       .subscribe(() => {
         this.getGroupMembers(this.groupId);
         this.getUsers();
-        this.toastrService.showSuccess('Member was successfully added');
+        this.toastrService.showSuccess('Member was successfully invited');
       },
         (err) => {
           this.toastrService.showError(err);
