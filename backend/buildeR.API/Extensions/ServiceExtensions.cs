@@ -16,8 +16,8 @@ using System;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Reflection;
+using buildeR.API.HostedServices;
 using buildeR.Common.DTO;
-using buildeR.HostedServices;
 
 namespace buildeR.API.Extensions
 {
@@ -44,7 +44,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<IEmailBuilder, EmailBuilder>();
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
-
+            services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
