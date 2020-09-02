@@ -1,17 +1,16 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from '@core/services/authentication.service';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
+import { ModalCropperService } from '@core/services/modal-cropper.service';
 import { emailDotValidator } from '@core/validators/email-dot-validator';
 import { Providers } from '@shared/models/providers';
 import { User } from '@shared/models/user/user';
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 import { ToastrNotificationsService } from '../../../core/services/toastr-notifications.service';
 import { UserService } from '../../../core/services/user.service';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
-import { UserSocialNetwork } from '@shared/models/user/user-social-network';
-import { AuthenticationService } from '@core/services/authentication.service';
-import { HttpService } from '@core/services/http.service';
-import { ModalCropperService } from '@core/services/modal-cropper.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -29,21 +28,24 @@ export class UserSettingsComponent implements OnInit {
   public settingsForm: FormGroup;
   googleClick = false;
   githubClick = false;
+  isOwner = false;
   @Output() image: EventEmitter<File> = new EventEmitter<File>();
 
   constructor(
-    private settingsService: UserService,
     private toastrService: ToastrNotificationsService,
     private userService: UserService,
     private route: ActivatedRoute,
     private fbr: FirebaseSignInService,
     private authService: AuthenticationService,
-    private http: HttpService,
     private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
-
-    this.route.data.subscribe(data => this.details = data.user);
+    this.route.data.subscribe(data => {
+      this.details = data.user;
+      if (this.details.id === this.authService.getCurrentUser().id) {
+        this.isOwner = true;
+      }
+    });
     this.settingsForm = new FormGroup({
       firstName: new FormControl(this.details.firstName,
         [
@@ -105,10 +107,10 @@ export class UserSettingsComponent implements OnInit {
     user.id = this.details.id;
     user.role = this.details.role;
     user.createdAt = this.details.createdAt;
-    if (!user.firstName){
+    if (!user.firstName) {
       user.firstName = null;
     }
-    if (!user.lastName){
+    if (!user.lastName) {
       user.lastName = null;
     }
     this.userService.updateUser(user).subscribe(updateUser => {
