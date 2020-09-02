@@ -1,3 +1,4 @@
+using buildeR.SignalR.HostedServices;
 using buildeR.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
