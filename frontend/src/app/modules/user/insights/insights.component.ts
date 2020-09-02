@@ -41,7 +41,7 @@ export class InsightsComponent implements OnInit {
       this.user.buildHistories = res.body;
       this.totalBuilds = this.totalBuildsCount();
       this.totalDuration = this.user.buildHistories.length ?
-      this.user.buildHistories.map(this.duration).reduce(this.sum) : 0;
+      Math.floor(this.user.buildHistories.map(this.duration).reduce(this.sum) / 6000) : 0;
       this.buildSuccessRate = this.buildSucceedCount();
       this.activeProjects = this.countActiveProjects();
       this.countActiveProjects();
@@ -191,7 +191,7 @@ export class InsightsComponent implements OnInit {
     day = new Date(day);
     const builds = this.user.buildHistories.filter(x => new Date(x.buildAt).getDate() === day.getDate());
     if (builds.length > 0) {
-      return builds.map(this.duration).reduce(this.sum);
+      return Math.floor(builds.map(this.duration).reduce(this.sum) / 6000);
     }
     return 0;
   }

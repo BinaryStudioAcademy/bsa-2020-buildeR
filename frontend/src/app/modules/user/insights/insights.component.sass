@@ -85,41 +85,29 @@ h5
 
 
 .charts
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
   text-align: center
   display: grid
   grid-template-columns: 4
-  grid-template-rows: 2
   margin-bottom: 20px
 
 
 .first-chart
-  grid-column-start: 1
-  grid-column-end: 1
-  grid-row-start: 1
   margin:15px
   width: 95%
   justify-self: center
 
 .second-chart
-  grid-column-start: 2
-  grid-column-end: 2
-  grid-row-start: 1
   margin:15px
   width: 95%
   justify-self: center
 
 .third-chart
-  grid-column-start: 3
-  grid-column-end: 3
-  grid-row-start: 1
   margin:15px
   width: 95%
   justify-self: center
 
 .fourth-chart
-  grid-column-start: 4
-  grid-column-end: 4
-  grid-row-start: 1
   margin:15px
   width: 95%
   justify-self: center
@@ -139,13 +127,6 @@ a
     grid-column-end: 1
     grid-row-start: 2
 
-@media screen and (max-width: 945px)
-  .charts
-    grid-template-columns: 2
-  .third-chart
-    grid-column-start: 2
-    grid-column-end: 2
-    grid-row-start: 2
 
 @media screen and (max-width: 416px)
   a
@@ -165,20 +146,5 @@ a
     grid-row-start: 3
     display: -webkit-box
     margin-left: 3px
-  .charts
-    grid-template-columns: 2
-    max-height: 100%
-    margin-bottom: 10px
-  .second-chart
-    grid-column-start: 1
-    grid-column-end: 1
-    grid-row-start: 2
-  .third-chart
-    grid-column-start: 1
-    grid-column-end: 1
-    grid-row-start: 3
-  .fourth-chart
-    grid-column-start: 1
-    grid-column-end: 1
-    grid-row-start: 4
+ 
 

@@ -21,10 +21,7 @@ services:
   builder_processor:
       build:
         context: ./backend
-        dockerfile: Dockerfile
-        args:
-          - PROJECT_NAME=Processor
-          - PROJECT_PORT=5060
+        dockerfile: Dockerfile.Processor
       container_name: 'builder_processor'
       restart: on-failure
       ports:

@@ -34,8 +34,9 @@ namespace buildeR.SignalR
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
-            services.AddHostedService<Worker>();
             services.AddSignalR();
+            services.AddHostedService<Worker>();
+
             services.AddControllers();
             services.AddHealthChecks();
         }
