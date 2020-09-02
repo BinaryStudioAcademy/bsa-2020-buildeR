@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using buildeR.DAL.Entities;
+using System.Threading.Tasks;
 
 namespace buildeR.BLL.Interfaces
 {
@@ -6,5 +7,6 @@ namespace buildeR.BLL.Interfaces
     {
         Task StartBuild(int projectId, int buildHistoryId, string branchName);
         Task CancelBuild(int projectId);
+        Task<BuildHistory> PrepareBuild(int projectId, string buildAuthorUsername);
     }
 }
