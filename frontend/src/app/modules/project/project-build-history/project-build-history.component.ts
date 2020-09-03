@@ -16,6 +16,7 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   implements OnInit {
   projectId: number;
   builds: BuildHistory[] = [];
+  isLoading = true;
 
   constructor(
     private buildHistoryService: BuildHistoryService,
@@ -27,14 +28,17 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.configureBuildStatusesSignalR();
     this.route.parent.params.subscribe((params) => {
       this.projectId = params.projectId;
       this.buildHistoryService.getBuildHistoriesOfProject(this.projectId).subscribe(
         (response) => {
           this.builds = response.body;
+          this.isLoading = false;
         },
         (error) => {
+          this.isLoading = false;
           this.toastrService.showError(error.message, error.name);
         }
       );

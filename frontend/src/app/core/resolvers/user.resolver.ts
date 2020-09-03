@@ -15,8 +15,14 @@ export class UserResolverService implements Resolve<User>{
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let userId: number = route.params[`userId`];
+    const parentUserId: number = route.parent.params[`userId`];
     if (userId === undefined) {
-      userId = this.authService.getCurrentUser().id;
+      if (parentUserId !== undefined) {
+        userId = parentUserId;
+      }
+      else {
+        userId = this.authService.getCurrentUser().id;
+      }
     }
     return this.userService.getUserByIdRequest(userId).pipe(tap((resp) => {
       return resp ?? EMPTY;
