@@ -1,7 +1,9 @@
 <ul class="build-container">
   <li *ngFor="let build of builds" [appBuildHistoryStatusOutline]="build.buildStatus">
     <div class='user-commit'>
-      <a [routerLink]="'/portal/user/' + build.performer.id"><i class="fas fa-user-tie"></i> {{build.performer.username}}</a>
+      <a [routerLink]="'/portal/user/' + build.performer.id">
+        <img [src]="build.performer.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+          alt="Avatar" class="avatar" /><span>{{build.performer.username}}</span></a>
       <p><i class="fas fa-code"></i> {{ getCommit(build) }}</p>
     </div>
     <div class="build-info">
