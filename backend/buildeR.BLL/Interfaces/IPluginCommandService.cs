@@ -10,7 +10,6 @@ namespace buildeR.BLL.Interfaces
     {
         Task<PluginCommandDTO> GetCommandById(int id);
         Task<IEnumerable<PluginCommandDTO>> GetAll();
-        Task<IEnumerable<PluginCommandDTO>> GetCommandsByPluginId();
         Task<PluginCommandDTO> Create(NewPluginCommandDTO pluginCommand);
         Task Update(PluginCommandDTO pluginCommand);
         Task Delete(int id);
