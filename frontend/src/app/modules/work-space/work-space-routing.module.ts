@@ -47,6 +47,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'admin',
+        loadChildren: () =>
+          import('../../modules/admin-area/admin-area.module').then(
+            (m) => m.AdminAreaModule
+          ),
+      },
+      {
         path: '**',
         component: NotFoundComponent,
         pathMatch: 'full'
