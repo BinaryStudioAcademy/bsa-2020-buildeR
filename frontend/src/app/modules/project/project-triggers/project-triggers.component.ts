@@ -95,7 +95,6 @@ export class ProjectTriggersComponent implements OnInit {
 
   onToggle(change: boolean) {
     change = !change;
-    console.log(change);
   }
 
   compareToMinDate(date: Date) {
