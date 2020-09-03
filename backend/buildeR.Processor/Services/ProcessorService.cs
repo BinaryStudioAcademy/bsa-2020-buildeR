@@ -48,7 +48,7 @@ namespace buildeR.Processor.Services
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
             _kafkaProducer = new KafkaProducer(config, "weblog");
-
+            
             _elk = elk;
 
             _consumer = consumer;
@@ -100,7 +100,7 @@ namespace buildeR.Processor.Services
                 var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
                 await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
 
-                BuildDockerImage(pathToClonedRepository, build.ProjectId);
+                BuildDockerImage(pathToClonedRepository, build);
             }
             catch (Exception e)
             {
@@ -119,7 +119,7 @@ namespace buildeR.Processor.Services
             }
         }
 
-        public void BuildDockerImage(string path, int projectId)
+        public void BuildDockerImage(string path, ExecutiveBuildDTO build)
         {
             Process process = new Process();
             process.StartInfo.FileName = "docker";
@@ -129,9 +129,9 @@ namespace buildeR.Processor.Services
             process.StartInfo.RedirectStandardError = true;
             //* Set your output and error (asynchronous) handlers
             process.OutputDataReceived += (object _sender, DataReceivedEventArgs _args) =>
-                OutputHandler(_sender, _args, projectId);
+                OutputHandler(_sender, _args, build);
             process.ErrorDataReceived += (object _sender, DataReceivedEventArgs _args) =>
-                OutputHandler(_sender, _args, projectId);
+                OutputHandler(_sender, _args, build);
             //* Start process and handlers
             process.Start();
             process.BeginOutputReadLine();
@@ -142,7 +142,7 @@ namespace buildeR.Processor.Services
         private bool areDockerLogs = true;
         private int startLogging = 2;
 
-        public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
+        public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, ExecutiveBuildDTO build)
         {
             // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
             // (also applied to "Removing intermediate container" and "Sending build context"). Skip checking empty strings
@@ -167,8 +167,8 @@ namespace buildeR.Processor.Services
                 {
                     Timestamp = DateTime.Now,
                     Message = $">>> Here starts a new step",
-                    BuildId = projectId,
-                    BuildStep = 1
+                    BuildHistoryId = build.BuildHistoryId,
+                    ProjectId = build.ProjectId
                 };
                 await _kafkaProducer.SendLog(log);
             }
@@ -183,8 +183,8 @@ namespace buildeR.Processor.Services
                 {
                     Timestamp = DateTime.Now,
                     Message = outLine.Data,
-                    BuildId = projectId,
-                    BuildStep = 1
+                    BuildHistoryId = build.BuildHistoryId,
+                    ProjectId = build.ProjectId
                 };
                 await _elk.IndexDocumentAsync(log);
                 await _kafkaProducer.SendLog(log);
@@ -243,7 +243,7 @@ namespace buildeR.Processor.Services
             RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
             */
             var genericTemplate = Template.Parse(
-                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
+                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
