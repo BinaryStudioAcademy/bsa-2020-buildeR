@@ -4,10 +4,9 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  HostListener,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { BuildLogService } from '../../../core/services/build-log.service';
-import { delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -39,8 +38,10 @@ export class LoggingTerminalComponent extends BaseComponent
 
   private lineNumber: number = 1;
 
-  showLevels: boolean = false;
+  showLevels: boolean = true;
   showTimeStamps: boolean = false;
+
+  private lastScrollYPos = -1;
 
   buildSteps: Map<number, [boolean, Action[]]> = new Map<
     number,
@@ -48,7 +49,6 @@ export class LoggingTerminalComponent extends BaseComponent
   >();
 
   constructor(
-    private buildService: BuildLogService,
     private logsService: ProjectLogsService,
     private router: Router,
     private route: ActivatedRoute
@@ -58,16 +58,20 @@ export class LoggingTerminalComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    // this.buildService
-    //   .getTestBuildLog()
-    //   .pipe(delay(0))
-    //   .subscribe((line) => this.buildLog(line));
     this.logsService.buildConnection();
     this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));
     });
+  }
+
+  @HostListener('window:scroll', ['$event']) onScroll(_: Event){
+    const yPos = window.scrollY;
+    if (yPos < this.lastScrollYPos) {
+      this.autoscroll = false;
+    }
+    this.lastScrollYPos = yPos;
   }
 
   ngOnDestroy(): void {
