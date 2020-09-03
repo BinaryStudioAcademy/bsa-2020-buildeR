@@ -130,15 +130,29 @@
             <div ngbDropdown class="d-inline-block">
               <button class="btn add-build-btn" id="allEmptySteps"
                       ngbDropdownToggle>Add build step</button>
-              <div ngbDropdownMenu aria-labelledby="allEmptySteps">
-                <button *ngFor="let step of emptyBuildSteps"
-                        (click)="addNewBuildStep(step)"
-                        ngbDropdownItem>
-                        <span>{{ step.buildPlugin.pluginName }}</span>
-                        <span *ngIf="step.pluginCommand.name" >: {{ step.pluginCommand.name }}</span>
-                  </button>
+              <div ngbDropdownMenu aria-labelledby="allEmptySteps" class="pl-3 pr-3">
+                <div *ngFor="let pluginGroup of pluginGroups">
+                  <span class="font-weight-bold">{{ pluginGroup }}</span>
+                  <ng-container *ngFor="let step of emptyBuildSteps">
+                    <button *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup"
+                          (click)="addNewBuildStep(step)"
+                          ngbDropdownItem>
+                          <span>{{ step.buildPlugin.pluginName }}</span>
+                          <span *ngIf="step.pluginCommand.name" >: {{ step.pluginCommand.name }}</span>
+                    </button>
+                  </ng-container>
+                </div>
               </div>
             </div>
+            <!-- <select class="custom-select form-control w-50">
+              <optgroup *ngFor="let pluginGroup of pluginGroups" label={{pluginGroup}}>
+                  <ng-container *ngFor="let step of emptyBuildSteps" >
+                    <option *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup" value={{step.id}}>
+                        {{ step.buildStepName }}
+                    </option>
+                  </ng-container>
+              </optgroup>
+            </select> -->
             <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
               Save changes
             </button>
