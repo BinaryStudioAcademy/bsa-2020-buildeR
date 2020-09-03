@@ -2,7 +2,7 @@
 <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
   <label for="typeahead-basic">Search for a user by username or email:</label>
   <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-    [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user" />
+    [resultFormatter]="formatter" placeholder="Username or Email" [inputFormatter]="inputFormatter" formControlName="user" />
   <label for="input-role">Choose a role permission:</label>
   <div id="input-role" ngbDropdown #dropdown="ngbDropdown">
     <div>

@@ -17,9 +17,9 @@
     </div>
     <div class="switch-wr">
       <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="customSwitch1" [(ngModel)]="runOnSchedule"
+        <input type="checkbox" class="custom-control-input" id="runOnSchedule" [(ngModel)]="runOnSchedule"
           (change)="onToggle(runOnSchedule)">
-        <label class="custom-control-label" for="customSwitch1">Run on schedule </label>
+        <label class="custom-control-label" for="runOnSchedule">Run on schedule </label>
       </div>
     </div>
     <div [hidden]='!runOnSchedule'>
