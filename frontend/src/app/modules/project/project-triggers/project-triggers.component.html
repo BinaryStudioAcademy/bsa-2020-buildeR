@@ -23,62 +23,71 @@
       </div>
     </div>
     <div [hidden]='!runOnSchedule'>
-      <!-- Show Triggers -->
-      <ng-container *ngFor="let trigger of triggers">
-        <div class="trigger-group border rounded my-2">
-          <div class="barnch-column">
-            <span class="mr-2">Branch </span>
-            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
-              <option *ngFor="let branch of branches" [ngValue]='branch.name' [selected]="trigger.branchHash === branch.name">{{branch.name}}
-              </option>
-            </select>
-          </div>
-          <div class="cron-job-column">
-            <span class="mr-2">Every: </span>
-            <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="trigger.cronExpression"> </cron-jobs>
-          </div>
-          <div class="fire-time-column">
-            <div class="fire-time-wr">
-              <div class="pre-fire-time">
-                <span class="mr-sm-2 text">previous fire time: </span>
-                <span *ngIf="compareToMinDate(trigger.previousFireTime); else elseNotYet"
-                  class="mr-sm-2 small-text">{{trigger.previousFireTime | date:"MMM d, y, H:mm"}}</span>
-                <ng-template #elseNotYet>
-                  <span class="mr-sm-2">- still was not -</span>
-                </ng-template>
-              </div>
-              <div class="next-fire-time">
-                <span class="mr-sm-2 text">next fire time: </span>
-                <span class="mr-sm-2 small-text">{{trigger.nextFireTime | date:"MMM d, y, H:mm"}}</span>
-              </div>
-            </div>
-          </div>
-          <div class="buttons-wr">
-            <button (click)="updateTrigger(trigger)" class="btn btn-update"><i class="far fa-save"></i></button>
-            <button (click)="deleteTrigger(trigger)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
-          </div>
-        </div>
-
-      </ng-container>
-      <!-- end show triggers -->
       <!-- Add new trigger -->
-      <div class="add-new-job pb-2 mt-2">
-        <div class="mr-2">
-          <h5 class="text-over">Branch </h5>
-          <select class="form-control branch-select" [(ngModel)]="selectedBranch">
-            <option *ngFor="let branch of branches" [ngValue]='branch.name'>
+      <div class="trigger-container border rounded">
+        <div class="second-container">
+          <select class="form-control branch-select" [(ngModel)]="selectedBranch" title="branch">
+            <option *ngFor="let branch of branches" [ngValue]='branch.name' [selected]="selectedBranch === branch.name">
               {{branch.name}}
             </option>
           </select>
         </div>
-        <div class="mr-sm-2">
-          <h5 class="text-over">Set up period of builds:</h5>
+        <div class="third-container">
+          <span>Set up period of builds:</span>
+        </div>
+        <div class="fourth-container">
           <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
         </div>
-        <button (click)="createTrigger(cronResult)" class="btn btn-info btn-add"
-          [disabled]="!cronResult || !selectedBranch">Add </button>
+        <div class="fifth-container">
+          <button (click)="createTrigger(cronResult)" class="btn btn-info"
+            [disabled]="!cronResult || !selectedBranch">Add </button>
+        </div>
       </div>
       <!-- end add new trigger -->
+      <!-- edit Triggers -->
+      <ng-container *ngFor="let trigger of triggers; index as i">
+        <div class="trigger-container border rounded">
+          <div class="first-container">
+            <span>#{{i+1}} </span>
+          </div>
+          <div class="second-container">
+            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash" title="branch">
+              <option *ngFor="let branch of branches" [ngValue]='branch.name'
+                [selected]="trigger.branchHash === branch.name">{{branch.name}}
+              </option>
+            </select>
+          </div>
+          <div class="third-container">
+            <span>Every:</span>
+          </div>
+          <div class="fourth-container">
+            <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="trigger.cronExpression"></cron-jobs>
+          </div>
+          <div class="fifth-container">
+            <button (click)="updateTrigger(trigger)" class="btn btn-update text-dark">
+              <i class="fas fa-save"></i>
+            </button>
+            <button (click)="deleteTrigger(trigger)" class="btn btn-delete text-danger">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+          <div class="sixth-container">
+            <div>
+              <span class="mr-sm-2 text">previous fire time: </span>
+              <span *ngIf="compareToMinDate(trigger.previousFireTime); else elseNotYet"
+                class="small-text mr-4">{{trigger.previousFireTime | date:"MMM d, y, H:mm"}}</span>
+              <ng-template #elseNotYet>
+                <span class="small-text mr-4">- still was not -</span>
+              </ng-template>
+            </div>
+            <div>
+              <span class="mr-sm-2 text">next fire time: </span>
+              <span class="small-text">{{trigger.nextFireTime | date:"MMM d, y, H:mm"}}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- end edittriggers -->
     </div>
   </div>
 </div>
