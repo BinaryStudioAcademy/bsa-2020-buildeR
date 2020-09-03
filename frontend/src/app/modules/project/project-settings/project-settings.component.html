@@ -12,6 +12,23 @@
           </div>
           <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="name">
+            <div *ngIf="projectForm.controls['name'].errors">
+              <div class="error" *ngIf="projectForm.controls['name'].errors.minlength && projectForm.controls['name'].touched">
+                The minimum length is 4 characters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.maxlength && projectForm.controls['name'].touched">
+                The maximum length is 32 characters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.required && projectForm.controls['name'].touched">
+                Project name is required
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.pattern && projectForm.controls['name'].touched">
+                Name must have only latin letters, digits and these<br> symbols ' - ', ' . ', ' _ '
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors?.isProjectNameTaken">
+                Project with name '{{projectForm.get('name').value}}' alredy exist
+              </div>
+            </div>
           </div>
           <div class="field">
             <span>Description</span>
@@ -19,6 +36,14 @@
           <div class="input-area">
             <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description">
           </textarea>
+            <div *ngIf="projectForm.controls['description'].errors">
+              <div class="error" *ngIf="projectForm.controls['description'].errors.maxlength && projectForm.controls['description'].touched">
+                Description must be less than 300 charecters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['description'].errors.pattern && projectForm.controls['description'].touched">
+                Description must have only latin letters, digits and <br> special characters
+              </div>
+            </div>
           </div>
           <div class="field">
             <span>Visibility level</span>
@@ -84,6 +109,11 @@
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev" formControlName="name"
               placeholder="Name">
+              <div *ngIf="envVarsForm.controls['name'].errors">
+                <div class="error" *ngIf="envVarsForm.controls['name'].errors.required && envVarsForm.controls['name'].touched">
+                  Name is required
+                </div>
+              </div>
             </div>
           </div>
           <div class='value'>
@@ -91,6 +121,11 @@
             <div class="input-area">
               <input type="text" class="form-control form-control form-control-ev" formControlName="value"
               placeholder="Value">
+              <div *ngIf="envVarsForm.controls['value'].errors">
+                <div class="error" *ngIf="envVarsForm.controls['value'].errors.required && envVarsForm.controls['value'].touched">
+                  Value is required
+                </div>
+              </div>
             </div>
           </div>
           <div class='switch'>
