@@ -44,6 +44,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<IProjectGroupService, ProjectGroupService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IPluginCommandService, PluginCommandService>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
