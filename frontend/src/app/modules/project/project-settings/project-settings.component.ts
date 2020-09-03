@@ -8,6 +8,8 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
 import { enableDebugTools } from '@angular/platform-browser';
 import { env } from 'process';
+import {projectNameAsyncValidator} from "@modules/project/validators/project-name.async-validator";
+import {User} from "@shared/models/user/user";
 
 @Component({
   selector: 'app-project-settings',
@@ -23,6 +25,8 @@ export class ProjectSettingsComponent implements OnInit {
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
   @Input() project: Project = {} as Project;
+  currentUser: User = {} as User;
+
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
@@ -35,15 +39,25 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.parent.data.subscribe(data => {
+      this.currentUser = data.user;
+    });
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
-          Validators.required
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(32),
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+        ],
+        [
+          projectNameAsyncValidator(this.projectService, this.currentUser)
         ]),
         isPublic: new FormControl(this.project.isPublic.toString()),
         description: new FormControl(this.project.description,
           [
-            Validators.required
+            Validators.maxLength(300),
+            Validators.pattern('[^А-яа-я]*')
           ])
     });
 

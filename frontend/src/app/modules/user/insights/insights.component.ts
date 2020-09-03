@@ -12,15 +12,16 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./insights.component.sass']
 })
 export class InsightsComponent implements OnInit {
-  user: User = this.authService.getCurrentUser();
+  user: User = {} as User;
   now: Date = new Date(Date.now());
-  countedDate = new Date(this.user.createdAt);
+  countedDate: Date;
   totalBuilds = 0;
   totalDuration = 0;
   buildSuccessRate = 0;
   activeProjects = 0;
   tab = 0;
   month = false;
+  isOwner = false;
 
   buildsData;
   durationData;
@@ -33,10 +34,14 @@ export class InsightsComponent implements OnInit {
     { name: 'Month' },
   ];
 
-  constructor(private authService: AuthenticationService, private buildService: BuildHistoryService) {
+  constructor(private buildService: BuildHistoryService, private route: ActivatedRoute) {
    }
 
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.user = data.user;
+      this.countedDate = new Date(this.user.createdAt);
+    });
     this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
       this.user.buildHistories = res.body;
       this.totalBuilds = this.totalBuildsCount();

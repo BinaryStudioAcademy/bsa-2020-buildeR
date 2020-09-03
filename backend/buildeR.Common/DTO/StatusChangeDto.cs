@@ -8,5 +8,6 @@ namespace buildeR.Common.DTO
         public int BuildHistoryId { get; set; }
         public BuildStatus Status { get; set; }
         public DateTime Time { get; set; }
+        public int UserId { get; set; }
     }
 }

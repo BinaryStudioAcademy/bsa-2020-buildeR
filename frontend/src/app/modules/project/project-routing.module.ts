@@ -9,6 +9,7 @@ import { ProjectDetailsComponent } from './project-details/project-details.compo
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { ProjectBuildStepsComponent } from './project-build-steps/project-build-steps.component';
 import { ProjectBuildComponent } from './project-build/project-build.component';
+import {UserResolverService} from "@core/resolvers/user.resolver";
 const routes: Routes = [
   {
     path: 'create',
@@ -19,6 +20,7 @@ const routes: Routes = [
     component: ProjectComponent,
     resolve: {
       project: ProjectResolverService,
+      user: UserResolverService
     },
     children: [
       {

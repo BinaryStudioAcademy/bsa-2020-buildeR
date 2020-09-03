@@ -3,7 +3,10 @@ namespace buildeR.Common.Enums
 {
     public enum NotificationType
     {
-        BuildSuccess, 
-        BuildFailed
+        BuildSucceeded, 
+        BuildFailed,
+        BuildErrored,
+        BuildCanceled,
+        Information
     }
 }

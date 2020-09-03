@@ -19,8 +19,10 @@ export class NotificationSettingComponent implements OnInit {
   setting: NotificationSetting = {} as NotificationSetting;
   descriptions: NotificationDescription [] =
   [
-    { notificationType: NotificationType.buildSuccess,  description: 'When build of project was successful'},
-    { notificationType: NotificationType.buildFailed, description: 'When build of project was failed'},
+    { notificationType: NotificationType.BuildSucceeded,  description: 'When build of project was successful'},
+    { notificationType: NotificationType.BuildFailed, description: 'When build of project was failed'},
+    { notificationType: NotificationType.BuildErrored, description: 'When build of project was errored'},
+    { notificationType: NotificationType.BuildCanceled, description: 'When build of project was canceled'},
   ];
   constructor(
     private settingService: NotificationSettingService,
@@ -39,7 +41,8 @@ export class NotificationSettingComponent implements OnInit {
         {
           setting.notificationSettingOptions.map(option =>
             {
-              option.description = this.descriptions.find(d => d.notificationType === option.notificationType).description;
+              option.description = this.descriptions.find(d => d.notificationType === option.notificationType)?.description
+              ?? NotificationType[option.notificationType].toString();
               return option;
             });
           return setting;
@@ -64,7 +67,8 @@ export class NotificationSettingComponent implements OnInit {
           {
             setting.notificationSettingOptions.map(option =>
               {
-                option.description = this.descriptions.find(d => d.notificationType === option.notificationType).description;
+                option.description = this.descriptions.find(d => d.notificationType === option.notificationType)?.description
+                ?? NotificationType[option.notificationType].toString();
                 return option;
               });
             return setting;
