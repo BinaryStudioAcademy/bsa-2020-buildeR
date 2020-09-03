@@ -137,9 +137,8 @@ export class LoggingTerminalComponent extends BaseComponent
 
   // Temporary solution for converting logs to existing format
   private formatLog(line: string) {
-    const log: Log = JSON.parse(line);
-    const { timestamp: Timestamp, message: Message } = log;
-    return `[${this.step++} ${Timestamp} INF] ${Message}`;
+    const log = JSON.parse(line);
+    return `[${this.step++} ${log.Timestamp} INF] ${log.Message}`;
   }
 
   formatExistingLog(log: Log){
