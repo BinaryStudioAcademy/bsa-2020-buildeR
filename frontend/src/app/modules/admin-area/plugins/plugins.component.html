@@ -9,7 +9,7 @@
     <div *ngFor='let plugin of plugins; let i = index' class='card plugin-card mb-2 mr-2'>
       <div class="card-header">
         <button class='btn' (click)="collapsePluginCard(plugin)"
-              [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i [ngClass]="(plugin.isCollapsed) ? 'fa fa-angle-up':'fa fa-angle-down'"></i></button>
+              [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i [ngClass]="(plugin.isCollapsed) ? 'fa fa-angle-down':'fa fa-angle-up'"></i></button>
         <h5 class='card-title plugin-name'>{{ plugin.pluginName }}</h5>
         <button class='btn float-right' (click)="deletePlugin(plugin)"><i class="fas fa-times"></i></button>
       </div>
