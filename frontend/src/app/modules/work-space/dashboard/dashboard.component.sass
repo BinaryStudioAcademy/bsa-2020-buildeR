@@ -100,6 +100,7 @@ span.title
   //   margin-right: 2px
 
 .actions
+  position: relative
   display: flex
   justify-content: center
   align-items: center
@@ -171,6 +172,8 @@ select
   button
     margin: 5px
 
+.first-exist-value
+  margin-top: 7px !important
 /* MEDIA QUERIES */
 
 @media screen and (max-width: 675px)
@@ -224,6 +227,11 @@ select
     font-size: 1rem
 
 @media (max-width: 767px)
+  .actions
+    position: absolute
+    right: 0
+    height: 100%
+    min-width: 25% !important
   .project-wr
     padding-left: 5px
   .star-area
@@ -270,13 +278,16 @@ select
   .star-btn
     padding: 0
   .star
-    margin: 6px 0 0 2px
-    font-size: 1rem
+    margin: 3px 0 0 2px
+    font-size: 18px !important
+  .fa-bars
+    font-size: 18px !important
   .btn
     font-size: 1.5rem
   .btn, span, .branch-select
     font-size: 0.8rem
-
+  .not-exist-value
+    font-size: 14px
 
 @media (max-width:368px)
   .btn, span, .branch-select
