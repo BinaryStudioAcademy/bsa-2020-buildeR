@@ -6,5 +6,6 @@ export interface Notification {
   date: Date;
   isRead: boolean;
   type: NotificationType;
-  userId: number,
+  userId: number;
+  itemId: number;
 }

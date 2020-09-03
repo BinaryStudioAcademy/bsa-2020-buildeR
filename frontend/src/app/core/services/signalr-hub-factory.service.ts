@@ -15,9 +15,9 @@ export class SignalRHubFactoryService implements OnDestroy {
       return this.hubLookup.get(hubUrl);
     }
 
-    const hub = new SignalRHub(hubUrl);
+    const hub = new SignalRHub(this.buildUrl(hubUrl));
     this.hubLookup.set(hubUrl, hub);
-    return new SignalRHub(this.buildUrl(hubUrl));
+    return hub;
   }
 
   disconnect(): void {
