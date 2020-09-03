@@ -5,12 +5,24 @@ button
     outline:0 !important
 
 /* Cards block */
+.card
+  transition: 0.6s
 .card-body
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.3)
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25)
+  border-radius: 4px
   transition: box-shadow 0.3s
-
-.card-body:hover
-  box-shadow: 0 .5rem 2.5rem rgba(0,0,0,.6)
+  h5
+    color: #4D4D4D
+    margin-bottom: 5px
+  p
+   color: #707070
+  .card-img-top
+    padding-bottom: 12px
+    img
+      display: block
+      margin: 0 auto
+.card:hover
+  transform: scale(1.1)
 
 .card-title
   text-align: center
@@ -84,47 +96,205 @@ button
     &:first-child:after
       content: none
 
-// title
+//#features
+//  padding-top: 2rem
+.title
+  color: #28A745
+  font-weight: 200 !important
+  font-size: 36px
 
-.main-title
-  text-align: center
-  font-size: 3rem
-
-  span
-    margin-right: 0.5rem
-
-  .rotating-header
+// new design
+.container-fluid
+  padding-left: 0
+  padding-right: 0
+  .background-img
     position: relative
-    display: inline-block
-
-    .rotating-word-spacer
-      display: inline
-      visibility: hidden
-
-    .rotating-words
-      display: inline
-      position: absolute
-      top: 0
-      left: 0
-      right: 0
-
-      strong
-        opacity: 0
-        overflow: hidden
+    display: grid
+    grid-template-columns: 50% 50%
+    grid-template-rows: 25% 75%
+    height: 682px
+    background-size: cover
+    background-position: center
+    background-attachment: fixed
+    background-image: url("../../../../assets/images/landing-background-img-opacity75.png")
+    .welcome-text
+      justify-self: end
+      align-self: end
+      grid-column-start: 1
+      grid-column-end: 2
+      h1
+        font-weight: 300 !important
+        font-size: 3.5vw
+        color: #FFFFFF
+      span
+        color: rgb(253, 203, 43)
+    .stairs
+      margin: 100px 60px
+      display: block
+      position: relative
+      grid-column-start: 1
+      grid-column-end: 2
+      grid-row-start: 2
+      grid-row-end: 3
+      .step
+        display: flex
+        align-items: flex-end
+        justify-content: center
         position: absolute
+        height: calc(100% / 4)
+        width: calc(100% / 4)
+        font-weight: 500
+        font-size: 2.2vw
+        line-height: 35px
+        color: #FFFFFF
+        border-bottom: 2px solid #FFFFFF
+        border-right: 2px solid #FFFFFF
+        span
+          position: absolute
+          bottom: 4px
+      .step-1
         top: 0
+        left: calc(75% - 6px)
+        border-right: none
+      .step-2
+        top: 25%
+        left: calc(50% - 4px)
+      .step-3
+        top: 50%
+        left: calc(25% - 2px)
+      .step-4
+        bottom: 0
         left: 0
-        transition: all
-        animation: rollDown 10s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s infinite
+    .icons-settings
+      grid-column-start: 2
+      grid-column-end: 3
+      grid-row: 1 / 3
+      align-self: center
+      img
+        width: 100%
 
-        &:nth-child(2)
-          animation-delay: 2.5s
+.bricks-section
+  display: grid
+  grid-template-columns: 2
+  grid-template-rows: 1
+  .bricks-list
+    display: flex
+    flex-direction: column
+    justify-content: center
+    grid-column-start: 1
+    grid-column-end: 2
+    grid-row-start: 1
+    grid-row-end: 2
+    .bricks-text
+      font-size: 25px
+      display: flex
+      justify-content: center
+      a
+        color: #28A745
+        text-decoration: underline
+    ul
+      padding-top: 30px
+      padding-left: 10px
+      padding-bottom: 20px
+      list-style: none
+      img
+        position: absolute
+        top: 10px
+        width: 41px
+      li
+        position: relative
+        font-size: 23px
+        padding: 5px 0
+        p
+          padding-left: 42px
+          margin: 0px
+  .bricks-img
+    grid-row-start: 1
+    grid-row-end: 2
+    grid-column-start: 2
+    grid-column-end: 3
+    img
+      width: 465px
 
-        &:nth-child(3)
-          animation-delay: 5s
+footer
+  .container
+    display: flex
+    justify-content: space-between
+    align-items: center
+    img
+      width: 115px
+    span
+      color: #707070
+      font-weight: 500
 
-        &:nth-child(4)
-          animation-delay: 7.5s
+@media (max-width: 1000px)
+  .background-img
+    height: 500px !important
+    grid-template-columns: 1
+    grid-template-rows: 3
+    .welcome-text
+  .bricks-section
+    grid-template-columns: 1
+    grid-template-rows: 2
+    .bricks-list
+      grid-row-start: 1
+      grid-row-end: 2
+      grid-row-start: 2
+      grid-row-end: 3
+      ul
+        padding-top: 0px
+    .bricks-img
+      justify-self: center
+      grid-column-start: 1
+      grid-column-end: 2
+      grid-row-start: 1
+      grid-row-end: 2
+  footer
+    .container
+      justify-content: center
+      align-items: center
+      flex-direction: column-reverse
+      img
+        width: 100px
 
-#features
-  padding-top: 2rem
+@media (max-width: 800px)
+  .stairs
+    margin: 100px 40px !important
+    .step
+      font-size: 14px !important
+  .welcome-text
+    position: absolute
+    top: 10%
+    align-self: start !important
+    display: flex
+    justify-content: center
+    width: 100%
+    grid-column-start: none !important
+    grid-column-end: none !important
+    h1
+      font-size: 28px !important
+@media (max-width: 500px)
+  .background-img
+    height: 300px !important
+  .welcome-text
+    h1
+      font-size: 20px !important
+  .stairs
+    margin: 30px 10px 90px 10px !important
+    .step
+      font-size: 10px !important
+      span
+        bottom: -6px !important
+  .bricks-section
+    .bricks-img
+      img
+        width: 300px
+  .bricks-list
+    ul
+      li
+        font-size: 16px !important
+    .bricks-text
+      font-size: 20px !important
+      text-align: center
+  .card
+    margin: 0 20px !important
