@@ -32,17 +32,6 @@ namespace buildeR.Processor.Services
 
         private bool IsCurrentOsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        private void SendBuildStatus(BuildStatus status, int buildHistoryId)
-        {
-            var statusChange = new StatusChangeDto
-            {
-                Time = DateTime.Now,
-                Status =status,
-                BuildHistoryId = buildHistoryId
-            };
-            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
-        }
-
         public ProcessorService(IConfiguration config, IConsumer consumer, IProducer buildStatusesProducer, IElasticClient elk)
         {
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
@@ -57,17 +46,25 @@ namespace buildeR.Processor.Services
             _buildStatusesProducer = buildStatusesProducer;
         }
 
+        private void SendBuildStatus(BuildStatus status, int buildHistoryId, int? userId)
+        {
+            var statusChange = new StatusChangeDto
+            {
+                Time = DateTime.Now,
+                Status = status,
+                BuildHistoryId = buildHistoryId,
+                UserId = userId.GetValueOrDefault(31) // replace with user id's taken from the project if run from git
+            };
+            _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
+        }
+
         private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
-            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId);
-            // mock success
-            await BuildProjectAsync(executeBuild).ContinueWith(t =>
-            {
-                SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId);
-            });
+            SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId, executeBuild.UserId);
+            await BuildProjectAsync(executeBuild).ContinueWith(t => SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId, executeBuild.UserId));
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
 
@@ -104,6 +101,7 @@ namespace buildeR.Processor.Services
             }
             catch (Exception e)
             {
+                SendBuildStatus(BuildStatus.Error, build.BuildHistoryId, build.UserId); 
                 Log.Error($"Error while building docker image. Reason: {e.Message}");
             }
             finally

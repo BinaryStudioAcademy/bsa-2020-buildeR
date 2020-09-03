@@ -5,6 +5,7 @@ import {
   ViewChild,
   ElementRef,
   Input,
+  HostListener,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
 import { BuildLogService } from '../../../core/services/build-log.service';
@@ -42,13 +43,14 @@ export class LoggingTerminalComponent extends BaseComponent
   showLevels = false;
   showTimeStamps = false;
 
+  private lastScrollYPos = -1;
+
   buildSteps: Map<number, [boolean, Action[]]> = new Map<
     number,
     [boolean, Action[]]
   >();
 
   constructor(
-    private buildService: BuildLogService,
     private logsService: ProjectLogsService,
     private router: Router,
     private route: ActivatedRoute
@@ -58,10 +60,6 @@ export class LoggingTerminalComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    // this.buildService
-    //   .getTestBuildLog()
-    //   .pipe(delay(0))
-    //   .subscribe((line) => this.buildLog(line));
     this.logsService.buildConnection();
     console.log(this.projectId);
     this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
@@ -77,6 +75,14 @@ export class LoggingTerminalComponent extends BaseComponent
         this.buildLog(this.formatExistingLog(log));
       });
     });
+  }
+
+  @HostListener('window:scroll', ['$event']) onScroll(_: Event){
+    const yPos = window.scrollY;
+    if (yPos < this.lastScrollYPos) {
+      this.autoscroll = false;
+    }
+    this.lastScrollYPos = yPos;
   }
 
   ngOnDestroy(): void {
