@@ -1,1 +1,46 @@
-<p>plugins works!</p>
+<div *ngIf="isLoading; then loading; else loaded;"></div>
+
+<ng-template #loading>
+    <app-loading-spinner size="20px"></app-loading-spinner>
+</ng-template>
+
+<ng-template #loaded>
+  <div class="container">
+    <div *ngFor='let plugin of plugins; let i = index' class='card plugin-card mb-2 mr-2'>
+      <div class="card-header">
+        <button class='btn' (click)="collapsePluginCard(plugin)"
+              [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i class="fas fa-angle-down"></i></button>
+        <h5 class='card-title plugin-name'>{{ plugin.pluginName }}</h5>
+      </div>
+      <div id="'i'" [ngbCollapse]="plugin.isCollapsed" class='p-3'>
+        <div class="card-body">
+          <div class="input-group">
+            <label class="input-group-prepend w-25" [for]="'pluginName' + i"><span class="input-group-text">Plugin Name:</span></label>
+            <input [id]="'pluginName' + i" class="form-control"
+              placeholder="Will be used root if left blank"
+              [(ngModel)]="plugin.pluginName">
+          </div>
+          <div class="input-group">
+            <label class="input-group-prepend w-25" [for]="'pluginCommand' + i"><span class="input-group-text">Plugin Command:</span></label>
+            <input [id]="'pluginCommand' + i" class="form-control"
+              placeholder="Will be used root if left blank"
+              [(ngModel)]="plugin.command">
+          </div>
+          <div class="input-group">
+            <label class="input-group-prepend w-25" [for]="'dockerImageName' + i"><span class="input-group-text">Docker Image Name:</span></label>
+            <input [id]="'dockerImageName' + i" class="form-control"
+              placeholder="Will be used root if left blank"
+              [(ngModel)]="plugin.dockerImageName">
+          </div>
+          <div class="input-group">
+            <label class="input-group-prepend w-25" [for]="'dockerRegistryName' + i"><span class="input-group-text">Docker Registry Name:</span></label>
+            <input [id]="'dockerRegistryName' + i" class="form-control"
+              placeholder="Will be used root if left blank"
+              [(ngModel)]="plugin.dockerRegistryName">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-info" (click)='addNewEmptyPlugin()'>Add new plugin</button>
+  </div>
+</ng-template>

@@ -5,4 +5,5 @@ export interface BuildPlugin {
   DockerImageName: string;
   version: string;
   dockerRegistryName: string;
+  isCollapsed: boolean;
 }
