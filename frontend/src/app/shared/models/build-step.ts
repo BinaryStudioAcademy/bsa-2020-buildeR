@@ -12,6 +12,6 @@ export interface BuildStep {
   commandArguments: CommandArgument[];
   newCommandArgumentKey: string;
   newCommandArgumentValue: string;
-  isAdding: boolean;
+  isEditing: boolean;
   dockerImageVersion: string;
 }

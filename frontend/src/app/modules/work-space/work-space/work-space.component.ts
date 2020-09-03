@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { HttpService } from '@core/services/http.service';
-import { SignalRService } from '@core/services/signal-r.service';
 import { UserService } from '@core/services/user.service';
 import { environment } from '@env/../environments/environment';
 import { User } from '@shared/models/user/user';
@@ -22,9 +21,8 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   user: User;
   groups: Group[];
   groupsLoaded: Promise<boolean>;
-  countNotifications = -1;
+  countNotifications = 0;
   constructor(
-    private signalR: SignalRService,
     private httpService: HttpService,
     private authService: AuthenticationService,
     private userService: UserService,
@@ -34,9 +32,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.signalR.signalRecieved.subscribe(() => {
-      alert('You just received a test broadcast');
-    });
     this.user = this.authService.getCurrentUser();
     this.userService.userLogoUrl.subscribe(url => {
       console.log(url);
@@ -49,12 +44,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
     this.groupService.getUserGroups(this.user.id).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => { this.groups = res; this.groupsLoaded = Promise.resolve(true); });
   }
-
-  broadcast() {
-    this.httpService
-      .getFullRequest(this.url)
-      .subscribe((res) => console.log(res));
-  }
   logOut() {
     this.authService.logout();
   }
@@ -62,9 +51,9 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   showNotifications() {
     this.isShowNotifications = !this.isShowNotifications;
   }
+
   counterNotifications(count: number) {
-    console.log(count);
-    this.countNotifications = count;
+    this.countNotifications += count;
   }
 
   showHideDropdownMenu() {

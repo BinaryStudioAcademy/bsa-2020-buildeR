@@ -15,6 +15,10 @@ import { ProjectCreateComponent } from '@modules/project/project-create/project-
 import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { BuildHistory } from '@shared/models/build-history';
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
+import { StatusChange } from '@shared/models/status-change'
+import { BuildStatus } from '@shared/models/build-status'
+import { BuildHistoryService } from '@core/services/build-history.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,15 +45,38 @@ export class DashboardComponent
     private authService: AuthenticationService,
     private githubService: SynchronizationService,
     private modalService: NgbModal,
-    private syncService: SynchronizationService
+    private syncService: SynchronizationService,
+    private buildHistoryService: BuildHistoryService,
+    private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
+
   }
 
   ngOnInit(): void {
     this.loadingProjects = true;
     this.currentUser = this.authService.getCurrentUser();
     this.getUserProjects(this.currentUser.id);
+    this.projectService.getStarProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.changeFavoriteStateOfProject(res));
+    this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.deleteProject(res));
+    this.projectService.getCopyProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.copyProject(res));
+    this.configureBuildStatusesSignalR();
+  }
+
+  private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+      const project = [...this.starredProjects, ...this.activeProjects].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
+      if (project) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
+            project.lastBuildHistory = bh;
+          });
+        } else {
+          delete project.lastBuildHistory.buildStatus;
+          project.lastBuildHistory.buildStatus = statusChange.Status;
+        }
+      }
+    });
   }
 
   getUserProjects(userId: number) {
@@ -71,28 +98,6 @@ export class DashboardComponent
           this.loadingProjects = false;
           this.toastrService.showError(error);
         }
-      );
-  }
-
-  triggerBuild(project: ProjectInfo) {
-    const newBuildHistory = {
-      branchHash: this.selectedProjectBranch,
-      performerId: this.currentUser.id,
-      projectId: project.id,
-      commitHash: null,
-    } as NewBuildHistory;
-    this.closeModal();
-    this.toastrService.showSuccess(
-      `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${project.name}. Hold tight, it might take a moment to show up.`
-    );
-    this.projectService
-      .startProjectBuild(newBuildHistory)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (buildHistory) => {
-          project.lastBuildHistory = buildHistory;
-        },
-        (error) => this.toastrService.showError(error)
       );
   }
 
@@ -176,32 +181,7 @@ export class DashboardComponent
     this.modalService.dismissAll('Closed');
   }
 
-  openBranchSelectionModal(content, projectId: number) {
-    this.loadProjectBranches(projectId);
-    this.modalService
-      .open(content)
-      .result.then(() => {})
-      .catch(() => {});
-  }
-
   getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? "—";
-  }
-
-  loadProjectBranches(projectId: number) {
-    this.loadingSelectedProjectBranches = true;
-    this.syncService
-      .getRepositoryBranches(projectId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (resp) => {
-          this.selectedProjectBranches = resp;
-          this.loadingSelectedProjectBranches = false;
-        },
-        (error) => {
-          this.toastrService.showError(error);
-          this.loadingSelectedProjectBranches = false;
-        }
-      );
+    return bh.commitHash?.substring(0, 6) ?? '—';
   }
 }

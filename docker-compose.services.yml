@@ -9,7 +9,7 @@ services:
         networks:
             - back
         environment: 
-            - VAULT_DEV_ROOT_TOKEN_ID='buildeR_DEV_TOKEN'
+            - VAULT_DEV_ROOT_TOKEN_ID=buildeR_DEV_TOKEN
         cap_add:
             - IPC_LOCK
 

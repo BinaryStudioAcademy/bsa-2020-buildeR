@@ -1,0 +1,196 @@
+<div class="container">
+    <div class="row my-3 border rounded project-wr" *ngFor="let project of activeProjects">
+      <div class="col-md-2 mx-0 px-0 col-sm-6 col-6 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+        <div class="col-md-12 col-sm-5 col-5 offset-1 offset-md-0 align-text-top row-top">
+          <h5><a class="text-dark" [routerLink]="['/portal/projects', project?.id, 'details']">{{project.name}}</a></h5>
+        </div>
+        <div class="col-md-12 col-sm-5 col-5 row-bottom">
+          <div class="owner-wr">
+            <a class="avatar-wr" [routerLink]="'/portal/user'">
+              <img [src]="project.owner.avatarUrl" class="owner-avatar">
+            </a>
+            <h6 class="my-0 mx-2"><a class="text-dark" [routerLink]="'/portal/user'">{{project?.owner.username}}</a></h6>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="
+      project.lastBuildHistory;
+      then existBuildBlock;
+      else notExistBuildBlock
+    "></div>
+      <ng-template #existBuildBlock>
+        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-5 text-muted small row-top">
+            Default branch
+          </div>
+          <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+            {{project.lastBuildHistory.branchHash}}
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-5 text-muted small row-top">
+            Last build
+          </div>
+          <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
+            <p class="status"
+              [routerLink]="['/portal/projects', project.id, 'history', project.lastBuildHistory.id]"
+              [appBuildHistoryStatus]="project.lastBuildHistory.buildStatus"><i class="fas fa-hammer"></i>
+              #{{project.lastBuildHistory.number}} {{project.lastBuildHistory.buildStatus | buildStatus}}</p>
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-5 text-muted small row-top">
+            Commit
+          </div>
+          <div class="col-md-12 col-sm-5 text-dark small row-bottom">
+            {{ getCommit(project.lastBuildHistory) }}
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-12 col-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-5 text-muted small row-top">
+            Finished
+          </div>
+          <div class="col-md-12 col-sm-5 small row-bottom">
+            {{ project.lastBuildHistory.buildAt | dateAgo }}
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-1 actions">
+          <div>
+            <ng-template #popContent>
+            <ng-template #branchSelectModal let-modal>
+              <div class="modal-header">
+                <h4 style="color: #17a2b8;">Run build</h4>
+                <div (click)="modal.dismiss()">
+                  <i id="cross" class="fas fa-times"></i>
+                </div>
+              </div>
+              <div class="modal-body branch-modal">
+                <div class="group">
+                  <div class="field">
+                    <div class="label-wr">
+                      <span>Select a branch:</span>
+                    </div>
+                  </div>
+                  <div class="input-area" *ngIf="!loadingSelectedProjectBranches else loadingBranches">
+                    <select class="form-control form-control-sm branch-select" [(ngModel)]="selectedProjectBranch">
+                      <option *ngFor="let branch of selectedProjectBranches" [ngValue]='branch.name'>
+                        {{branch.name}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="btn-wr">
+                  <button class="btn btn-success" [disabled]="!selectedProjectBranch"
+                    (click)="triggerBuild(project)">Select</button>
+                  <button class="btn btn-warning" (click)="closeModal()">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <ng-template #loadingBranches>
+                <div class="spinner-wrp">
+                  <app-loading-spinner position="absolute" margin="0" size="4px">
+                  </app-loading-spinner>
+                </div>
+              </ng-template>
+            </ng-template>
+
+            <button *ngIf="!permissions || isBuilder" class="btn btn-success dropdown-item"
+              (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
+              Run</button>
+              <button *ngIf="!permissions || isContributor"  class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
+                  class="fas fa-cog"></i> Settings</button>
+              <button  *ngIf="!permissions" class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                Copy</button>
+              <div  class="dropdown-divider"></div>
+              <button *ngIf="!permissions || isAdmin" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                <i class="far fa-trash-alt"></i> Delete</button>
+            </ng-template>
+          <button *ngIf="!permissions || isBuilder"   type="button" class="btn bars" container="body" placement="top"
+            [ngbPopover]="popContent">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+          <div>
+            <button *ngIf="!permissions" class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
+              (click)="changeFavoriteStateOfProject(project)">
+              <i *ngIf="!permissions && !project.isFavorite" class="far fa-star star"></i>
+              <i *ngIf="!permissions && project.isFavorite" class="fas fa-lg fa-star star"></i>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #notExistBuildBlock>
+        <div class="col-lg-8 col-md-8 mx-0 px-0 col-sm-3 col-3 no-builds my-auto ">
+          <span>There are no builds for this project yet</span>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-1 actions">
+          <div>
+            <ng-template #popContent>
+              <ng-template #branchSelectModal let-modal>
+                <div class="modal-header">
+                  <h4 style="color: #17a2b8;">Run build</h4>
+                  <div (click)="modal.dismiss()">
+                    <i id="cross" class="fas fa-times"></i>
+                  </div>
+                </div>
+                <div class="modal-body branch-modal">
+                  <div class="group">
+                    <div class="field">
+                      <div class="label-wr">
+                        <span>Select a branch:</span>
+                      </div>
+                    </div>
+                    <div class="input-area" *ngIf="!loadingSelectedProjectBranches else loadingBranches">
+                      <select class="form-control form-control-sm branch-select"
+                        [(ngModel)]="selectedProjectBranch">
+                        <option *ngFor="let branch of selectedProjectBranches" [ngValue]='branch.name'>
+                          {{branch.name}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="btn-wr">
+                    <button class="btn btn-success" [disabled]="!selectedProjectBranch"
+                      (click)="triggerBuild(project)">Select</button>
+                    <button class="btn btn-warning" (click)="closeModal()">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                <ng-template #loadingBranches>
+                  <div class="spinner-wrp">
+                    <app-loading-spinner position="absolute" margin="0" size="4px">
+                    </app-loading-spinner>
+                  </div>
+                </ng-template>
+              </ng-template>
+              
+              <button *ngIf="!permissions || isBuilder"  class="btn btn-success dropdown-item"
+                (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
+                Run</button>
+              <button *ngIf="!permissions || isContributor" class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
+                  class="fas fa-cog"></i> Settings</button>
+              <button  *ngIf="!permissions" class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
+                Copy</button>
+              <div class="dropdown-divider"></div>
+              <button *ngIf="!permissions || isAdmin" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+                <i class="far fa-trash-alt"></i> Delete</button>
+            </ng-template>
+            <button *ngIf="!permissions || isBuilder" type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+          <div>
+            <button *ngIf="!permissions" class="btn star-btn m-0 p-0" aria-pressed="false" title="Star this project"
+              (click)="changeFavoriteStateOfProject(project)">
+              <i *ngIf="!permissions && !project.isFavorite" class="far fa-star star"></i>
+              <i *ngIf="!permissions && project.isFavorite" class="fas fa-lg fa-star star"></i>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>

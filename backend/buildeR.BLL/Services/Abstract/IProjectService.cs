@@ -1,5 +1,6 @@
 ﻿using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.ProjectRemoteTrigger;
 using buildeR.Common.DTO.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace buildeR.BLL.Services.Abstract
 
         Task<ProjectDTO> CopyProject(ProjectDTO dto);
         Task<RepositoryDTO> GetRepository(int projectId);
+        Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectRemoteTriggers(int projectId);
 
         Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName);
     }

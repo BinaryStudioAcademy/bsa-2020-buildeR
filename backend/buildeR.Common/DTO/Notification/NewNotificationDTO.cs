@@ -1,10 +1,13 @@
-﻿namespace buildeR.Common.DTO.Notification
+﻿using System;
+using buildeR.Common.Enums;
+
+namespace buildeR.Common.DTO.Notification
 {
     public sealed class NewNotificationDTO
     {
-        public int EntityId { get; set; }
-        public int EntityType { get; set; }
-        public int NotificationTrigger { get; set; }
-        public string NotificationMessage { get; set; }
+        public string Message { get; set; }
+        public DateTime Date { get; set; }
+        public NotificationType Type { get; set; }
+        public int? UserId { get; set; }
     }
 }

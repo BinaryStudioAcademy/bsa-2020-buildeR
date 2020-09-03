@@ -6,10 +6,10 @@ using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO;
 using buildeR.Common.Extensions;
 using buildeR.RabbitMq.Models;
-using Microsoft.Extensions.Hosting;
 using buildeR.RabbitMq.Realization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 namespace buildeR.API.HostedServices
@@ -22,9 +22,8 @@ namespace buildeR.API.HostedServices
         public BuildStatusesQueueConsumerService(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            var settings = configuration.Bind<QueueSettings>("Queues:BuildStatuses");
+            var settings = configuration.Bind<QueueSettings>("Queues:BuildStatusesToApi");
             _consumer = new Consumer(OwnConnectionFactory.GetConnectionFactory(configuration), settings);
-
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

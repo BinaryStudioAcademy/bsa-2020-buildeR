@@ -30,5 +30,6 @@ namespace buildeR.DAL.Entities
         public virtual ICollection<BuildStep> BuildSteps { get; set; }
         public virtual ICollection<ProjectGroup> ProjectGroups { get; set; }
         public virtual ICollection<ProjectTrigger> ProjectTriggers { get; set; }
+        public virtual ICollection<ProjectRemoteTrigger> ProjectRemoteTriggers { get; set; }
     }
 }

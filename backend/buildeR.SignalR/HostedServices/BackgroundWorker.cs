@@ -4,23 +4,21 @@ using System.Threading.Tasks;
 using buildeR.Common.DTO;
 using buildeR.SignalR.Hubs;
 using buildeR.SignalR.Services;
-using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace buildeR.SignalR
+namespace buildeR.SignalR.HostedServices
 {
     public class Worker : BackgroundService
     {
         private Thread _pollLoopThread;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private string _topic;
-        private IHubContext<LogsHub> _logsHubContext;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly string _topic;
+        private readonly IHubContext<LogsHub> _logsHubContext;
 
-        private KafkaConsumer _kafkaConsumer;
+        private readonly KafkaConsumer _kafkaConsumer;
 
         public Worker(IConfiguration config, IHubContext<LogsHub> logsHubContext)
         {
@@ -36,25 +34,23 @@ namespace buildeR.SignalR
             {
                 try
                 {
-                    using (var consumer = _kafkaConsumer.consumer)
+                    using var consumer = _kafkaConsumer.consumer;
+                    consumer.Subscribe(_topic);
+
+                    try
                     {
-                        consumer.Subscribe(_topic);
-
-                        try
+                        while (!_cancellationTokenSource.IsCancellationRequested)
                         {
-                            while (!_cancellationTokenSource.IsCancellationRequested)
-                            {
-                                var cr = consumer.Consume(_cancellationTokenSource.Token);
+                            var cr = consumer.Consume(_cancellationTokenSource.Token);
 
-                                var groupId = JsonConvert.DeserializeObject<ProjectLog>(cr.Message.Value).BuildId.ToString();
-                                // Broadcast is a method that will be called on client to receive messages
-                                _logsHubContext.Clients.Group(groupId).SendAsync("Broadcast", $"{cr.Message.Value}");
-                            }
+                            var groupId = JsonConvert.DeserializeObject<ProjectLog>(cr.Message.Value).BuildId.ToString();
+                            // Broadcast is a method that will be called on client to receive messages
+                            _logsHubContext.Clients.Group(groupId).SendAsync("Broadcast", $"{cr.Message.Value}");
                         }
-                        catch (OperationCanceledException) { }
-
-                        consumer.Close();
                     }
+                    catch (OperationCanceledException) { }
+
+                    consumer.Close();
                 }
                 catch
                 {

@@ -1,3 +1,4 @@
+using buildeR.SignalR.HostedServices;
 using buildeR.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,8 +35,10 @@ namespace buildeR.SignalR
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
-            services.AddHostedService<Worker>();
             services.AddSignalR();
+            services.AddHostedService<Worker>();
+            services.AddHostedService<BuildStatusesQueueConsumerService>();
+            services.AddHostedService<NotificationsQueueConsumerService>();
             services.AddControllers();
             services.AddHealthChecks();
         }
@@ -54,6 +57,8 @@ namespace buildeR.SignalR
                 endpoints.MapHub<TestHub>("/testhub");
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapHub<LogsHub>("/logshub");
+                endpoints.MapHub<BuildStatusesHub>("/buildstatuseshub");
+                endpoints.MapHub<NotificationsHub>("/notificationshub");
             });
         }
 
