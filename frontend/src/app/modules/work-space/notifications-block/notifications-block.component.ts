@@ -73,5 +73,6 @@ export class NotificationsBlockComponent implements OnInit {
         }
       }
     }
+    this.toggle();
   }
 }
