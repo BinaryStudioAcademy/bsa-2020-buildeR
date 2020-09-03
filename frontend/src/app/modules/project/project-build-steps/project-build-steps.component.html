@@ -1,7 +1,7 @@
 <div *ngIf="isLoading; then loading; else loaded;"></div>
 
 <ng-template #loading>
-    <app-loading-spinner size="20px"></app-loading-spinner>
+    <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
   <div class="container px-0 mx-auto">
