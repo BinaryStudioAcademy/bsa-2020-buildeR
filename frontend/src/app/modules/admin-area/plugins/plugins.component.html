@@ -9,38 +9,59 @@
     <div *ngFor='let plugin of plugins; let i = index' class='card plugin-card mb-2 mr-2'>
       <div class="card-header">
         <button class='btn' (click)="collapsePluginCard(plugin)"
-              [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i class="fas fa-angle-down"></i></button>
+              [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i [ngClass]="(plugin.isCollapsed) ? 'fa fa-angle-up':'fa fa-angle-down'"></i></button>
         <h5 class='card-title plugin-name'>{{ plugin.pluginName }}</h5>
+        <button class='btn float-right' (click)="deletePlugin(plugin)"><i class="fas fa-times"></i></button>
       </div>
       <div id="'i'" [ngbCollapse]="plugin.isCollapsed" class='p-3'>
         <div class="card-body">
           <div class="input-group">
             <label class="input-group-prepend w-25" [for]="'pluginName' + i"><span class="input-group-text">Plugin Name:</span></label>
             <input [id]="'pluginName' + i" class="form-control"
-              placeholder="Will be used root if left blank"
+              placeholder="Plugin name"
               [(ngModel)]="plugin.pluginName">
           </div>
           <div class="input-group">
-            <label class="input-group-prepend w-25" [for]="'pluginCommand' + i"><span class="input-group-text">Plugin Command:</span></label>
-            <input [id]="'pluginCommand' + i" class="form-control"
-              placeholder="Will be used root if left blank"
+            <label class="input-group-prepend w-25" [for]="'command' + i"><span class="input-group-text">Plugin Command:</span></label>
+            <input [id]="'command' + i" class="form-control"
+              placeholder="e.g. dotnet, npm, etc."
               [(ngModel)]="plugin.command">
           </div>
           <div class="input-group">
             <label class="input-group-prepend w-25" [for]="'dockerImageName' + i"><span class="input-group-text">Docker Image Name:</span></label>
             <input [id]="'dockerImageName' + i" class="form-control"
-              placeholder="Will be used root if left blank"
+              placeholder="e.g. mcr.microsoft.com/dotnet/core/sdk, node, etc."
               [(ngModel)]="plugin.dockerImageName">
           </div>
           <div class="input-group">
             <label class="input-group-prepend w-25" [for]="'dockerRegistryName' + i"><span class="input-group-text">Docker Registry Name:</span></label>
             <input [id]="'dockerRegistryName' + i" class="form-control"
-              placeholder="Will be used root if left blank"
+              placeholder="search in registry"
               [(ngModel)]="plugin.dockerRegistryName">
+          </div>
+          <div *ngIf='plugin.pluginCommands.length !== 0' class="mb-2">
+            <h5 class="mb-4 mt-3">Plugin commands</h5>
+            <div *ngFor='let command of plugin.pluginCommands' class="d-inline-block one-command">
+              <!-- <div class="input-group">
+              <label class="input-group-prepend" [for]="'command.name' + i + j"><span class="input-group-text">Command #{{ j+1 }}:</span></label>
+              <input [id]="'command.name' + i + j" class="form-control"
+                placeholder="e.g. build, restore, install, etc."
+                [(ngModel)]="command.name">
+              </div> -->
+              <span>{{ command.name }}</span>
+              <i class="fas fa-times" (click)="deleteCommand(plugin, command)"></i>
+            </div>
+          </div>
+          <div class="input-group mb-3 mt-4">
+            <input type="text" class="form-control" [(ngModel)]="plugin.newCommand">
+            <div class="input-group-append" ngbTooltip='Save plugin before adding new commands' [disableTooltip]='plugin.id'>
+              <button class="btn btn-info" [disabled]='!plugin.id || plugin.newCommand.length < 2' (click)='addNewCommand(plugin)'>Add new command</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <button class="btn btn-info" (click)='addNewEmptyPlugin()'>Add new plugin</button>
+    <button class="btn btn-info mt-2 mr-2" (click)='addNewEmptyPlugin()'>Add new plugin</button>
+    <button class="btn btn-info mt-2" (click)='updatePlugins()'>Save changes</button>
   </div>
 </ng-template>
