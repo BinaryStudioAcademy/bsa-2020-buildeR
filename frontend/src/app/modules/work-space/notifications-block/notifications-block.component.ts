@@ -68,7 +68,8 @@ export class NotificationsBlockComponent implements OnInit {
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])
+            bh => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]),
+            err => console.error(err)
           );
         }
       }
