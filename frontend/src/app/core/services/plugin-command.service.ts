@@ -28,3 +28,4 @@ export class PluginCommandService {
   removePluginCommand(pluginCommand: PluginCommand) {
     return this.httpService.deleteRequest(`${this.routePrefix}/${pluginCommand.id}`);
   }
+}
