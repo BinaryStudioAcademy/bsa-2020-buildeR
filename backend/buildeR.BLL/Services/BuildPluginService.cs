@@ -34,7 +34,12 @@ namespace buildeR.BLL.Services
 
         public async Task<IEnumerable<BuildPluginDTO>> GetAll()
         {
-            return await base.GetAllAsync();
+            var plugins = await Context
+                .Set<BuildPlugin>()
+                .Include(BuildPlugin => BuildPlugin.PluginCommands)
+                .AsNoTracking()
+                .ToListAsync();
+            return Mapper.Map<IEnumerable<BuildPluginDTO>>(plugins);
         }
 
         public async Task<BuildPluginDTO> GetPluginById(int pluginId)
@@ -47,7 +52,7 @@ namespace buildeR.BLL.Services
             return await base.GetAsync(pluginId);
         }
 
-            public async Task<BuildPluginDTO> Create(NewBuildPluginDTO plugin)
+        public async Task<BuildPluginDTO> Create(NewBuildPluginDTO plugin)
         {
             if (plugin == null)
             {
@@ -62,6 +67,16 @@ namespace buildeR.BLL.Services
             {
                 throw new ArgumentNullException();
             }
+
+            foreach (var commandDTO in plugin.PluginCommands)
+            {
+                var command = Mapper.Map<PluginCommand>(commandDTO);
+                if (!base.Context.PluginCommands.Contains(command))
+                    base.Context.PluginCommands.Add(command);
+                else
+                    base.Context.PluginCommands.Update(command);
+            }
+
             await base.UpdateAsync(plugin);
         }
 
@@ -72,6 +87,15 @@ namespace buildeR.BLL.Services
             {
                 throw new NotFoundException(nameof(BuildPlugin), id);
             }
+
+            var pluginCommands = await Context
+                .PluginCommands
+                .AsNoTracking()
+                .Where(pluginCommand => pluginCommand.Id.Equals(id))
+                .ToListAsync();
+
+            Context.PluginCommands.RemoveRange(pluginCommands);
+
             await base.RemoveAsync(id);
         }
 
