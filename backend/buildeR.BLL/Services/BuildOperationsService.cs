@@ -52,7 +52,10 @@ namespace buildeR.BLL.Services
             var build = await _projectService.GetExecutiveBuild(projectId);
             build.BuildHistoryId = buildHistoryId;
             build.BranchName = branchName;
-            _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
+            _producer.Send(JsonConvert.SerializeObject(build, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }), build.GetType().Name);
         }
 
         private async Task<User> GetUserByUsername(string username)
