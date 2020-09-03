@@ -7,12 +7,15 @@ import { CommonModule } from '@angular/common';
 const routes: Routes = [
   {
     path: '',
-    component: AdminAreaComponent
+    component: AdminAreaComponent,
+    children: [
+    {
+      path: 'plugins',
+      component: PluginsComponent,
+    },
+  ]
   },
-  {
-    path: 'plugins',
-    component: PluginsComponent,
-  },
+
 ];
 
 @NgModule({
