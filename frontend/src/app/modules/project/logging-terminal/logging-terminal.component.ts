@@ -61,17 +61,14 @@ export class LoggingTerminalComponent extends BaseComponent
 
   ngOnInit(): void {
     this.logsService.buildConnection();
-    console.log(this.projectId);
     this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));
-      console.log(message);
     });
     this.logsService.receiveLogs().pipe(takeUntil(this.unsubscribe$))
     .subscribe((logs) => {
       logs.forEach(log => {
-        console.log(log.message);
         this.buildLog(this.formatExistingLog(log));
       });
     });
