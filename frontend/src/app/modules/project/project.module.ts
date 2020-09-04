@@ -29,7 +29,7 @@ import { ProjectBuildComponent } from './project-build/project-build.component';
     ModalCopyProjectComponent,
     ProjectBuildStepsComponent,
     EnvVarsEditorComponent,
-    ProjectBuildComponent
+    ProjectBuildComponent,
   ],
   imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule, CronJobsModule],
   exports: [ProjectCreateComponent]

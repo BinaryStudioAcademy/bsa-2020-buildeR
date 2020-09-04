@@ -8,7 +8,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -37,7 +37,6 @@ export class LoggingTerminalComponent extends BaseComponent
   @ViewChild('bottom') private bottom: ElementRef;
   rawLogs: string[] = [];
   autoscroll = true;
-
   private lineNumber = 1;
   showLevels = false;
   showTimeStamps = false;
@@ -156,9 +155,10 @@ export class LoggingTerminalComponent extends BaseComponent
   scrollBottom(el: HTMLElement) {
     el.scrollIntoView(true);
   }
-
   openRaw(){
-    console.log(this.rawLogs);
+    localStorage.setItem('logs', JSON.stringify(this.rawLogs));
+    window.open('/logs', '_blank');
+
   }
 }
 
