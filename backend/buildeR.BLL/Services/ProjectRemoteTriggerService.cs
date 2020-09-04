@@ -88,6 +88,7 @@ namespace buildeR.BLL.Services
             }
 
             _context.ProjectRemoteTriggers.Remove(trigger);
+            await _context.SaveChangesAsync();
         }
     }
 }
