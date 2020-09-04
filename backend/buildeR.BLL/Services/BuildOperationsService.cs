@@ -53,7 +53,10 @@ namespace buildeR.BLL.Services
             build.BuildHistoryId = buildHistoryId;
             build.UserId = userId;
             build.BranchName = branchName;
-            _producer.Send(JsonConvert.SerializeObject(build), build.GetType().Name);
+            _producer.Send(JsonConvert.SerializeObject(build, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }), build.GetType().Name);
         }
 
         private async Task<User> GetUserByUsername(string username)
