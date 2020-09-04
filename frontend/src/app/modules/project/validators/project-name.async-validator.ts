@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 export const projectNameAsyncValidator = (projectService: ProjectService, user: User, projectId: number = 0) => {
   return (input: FormControl) => {
-    return timer(500).pipe(
+    return timer(300).pipe(
       switchMap(() => projectService.validateProjectName(user.id, input.value, projectId)),
       map((res) => res ? null : { isProjectNameTaken: true })
     );
