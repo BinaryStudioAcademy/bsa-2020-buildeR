@@ -8,8 +8,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { BuildLogService } from '../../../core/services/build-log.service';
-import { delay, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -36,7 +35,7 @@ export class LoggingTerminalComponent extends BaseComponent
   private projectId: number;
 
   @ViewChild('bottom') private bottom: ElementRef;
-
+  rawLogs: string[] = [];
   autoscroll = true;
 
   private lineNumber = 1;
@@ -138,11 +137,15 @@ export class LoggingTerminalComponent extends BaseComponent
   // Temporary solution for converting logs to existing format
   private formatLog(line: string) {
     const log = JSON.parse(line);
-    return `[${this.step++} ${log.Timestamp} INF] ${log.Message}`;
+    const logString = `[${this.step++} ${log.Timestamp} INF] ${log.Message}`;
+    this.rawLogs.push(logString);
+    return logString;
   }
 
   formatExistingLog(log: Log){
-    return `[${this.step++} ${log.timestamp} INF] ${log.message}`;
+    const logString = `[${this.step++} ${log.timestamp} INF] ${log.message}`;
+    this.rawLogs.push(logString);
+    return logString;
   }
 
   scrollTop(el: HTMLElement) {
@@ -152,6 +155,10 @@ export class LoggingTerminalComponent extends BaseComponent
 
   scrollBottom(el: HTMLElement) {
     el.scrollIntoView(true);
+  }
+
+  openRaw(){
+    console.log(this.rawLogs);
   }
 }
 
