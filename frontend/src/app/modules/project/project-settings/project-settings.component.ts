@@ -17,6 +17,8 @@ import {User} from "@shared/models/user/user";
   styleUrls: ['./project-settings.component.sass']
 })
 export class ProjectSettingsComponent implements OnInit {
+
+  isChanged = false;
   isLoading = false;
   projectId: number;
   branches: string [] = ['master', 'dev'];
@@ -32,16 +34,18 @@ export class ProjectSettingsComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   )
-  {
-    route.parent.params.subscribe(
-      (params) => this.projectId = params.projectId);
-    this.route.parent.data.subscribe(data => this.project = data.project);
-  }
+  { }
 
   ngOnInit(): void {
+
     this.route.parent.data.subscribe(data => {
       this.currentUser = data.user;
     });
+
+    this.route.parent.params.subscribe(
+      (params) => this.projectId = params.projectId);
+    this.route.parent.data.subscribe(data => this.project = data.project);
+
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
@@ -51,7 +55,7 @@ export class ProjectSettingsComponent implements OnInit {
           Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ],
         [
-          projectNameAsyncValidator(this.projectService, this.currentUser)
+          projectNameAsyncValidator(this.projectService, this.currentUser, this.project.id)
         ]),
         isPublic: new FormControl(this.project.isPublic.toString()),
         description: new FormControl(this.project.description,
@@ -59,6 +63,13 @@ export class ProjectSettingsComponent implements OnInit {
             Validators.maxLength(300),
             Validators.pattern('[^А-яа-я]*')
           ])
+    });
+
+    this.projectForm.valueChanges.subscribe(changesSettigsForm => {
+      this.isChanged = false;
+      if (this.project.name === this.projectForm.value.name) {
+        this.isChanged = true;
+      }
     });
 
     this.envVarsForm = new FormGroup({
@@ -94,6 +105,7 @@ export class ProjectSettingsComponent implements OnInit {
     }, (err) => {
       this.toastrService.showError(err);
     });
+    this.isChanged = true;
   }
 
   loadEnvVars(){
