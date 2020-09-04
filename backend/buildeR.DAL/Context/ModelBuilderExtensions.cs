@@ -285,10 +285,10 @@ namespace buildeR.DAL.Context
 
             var notificationFake = new Faker<Notification>()
                 .RuleFor(n => n.Id, _ => notificationId++)
-                .RuleFor(n => n.EntityType, f => f.PickRandom<EntityType>())
-                .RuleFor(n => n.NotificationTrigger, f => f.PickRandom<NotificationTrigger>())
-                .RuleFor(n => n.NotificationMessage, f => f.Lorem.Sentence())
-                .RuleFor(tm => tm.EntityId, f => f.Random.Int(1, GROUP_COUNT));
+                .RuleFor(n => n.Date, f => f.Date.Recent())
+                .RuleFor(n => n.Type, f => f.PickRandom<NotificationType>())
+                .RuleFor(n => n.Message, f => f.Lorem.Sentence())
+                .RuleFor(tm => tm.IsRead, f => f.Random.Bool());
 
             return notificationFake.Generate(NOTIFICATION_COUNT);
         }

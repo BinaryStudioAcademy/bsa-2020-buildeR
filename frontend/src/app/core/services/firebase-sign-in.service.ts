@@ -77,7 +77,6 @@ export class FirebaseSignInService {
               }
               else {
                 this.giveAccessToUser(resp, user, redirectUrl);
-                // this.giveAccessToUser(resp, this.authService.getFireUser(), redirectUrl);
               }
             });
         }

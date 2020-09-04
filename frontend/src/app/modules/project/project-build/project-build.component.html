@@ -7,17 +7,19 @@
   </nav>
   <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
     <div class='user-commit'>
-      <a><i class="fas fa-user-tie"></i> Author: {{buildHistory.performer.username}}</a>
+      <a [routerLink]="'/portal/user/' + buildHistory.performer.id">
+        <img [src]="buildHistory.performer.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+          alt="Avatar" class="avatar" />Author: {{buildHistory.performer.username}}</a>
       <p><i class="fas fa-code"></i> Commit <span class="commit">{{ getCommit(buildHistory) }}</span></p>
       <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
     </div>
     <div class="build-info">
-      <p class="status" [appBuildHistoryStatus]="buildHistory.buildStatus"><i class="fas fa-hammer"></i> Status
+      <p class="status" [appBuildHistoryStatus]="buildHistory.buildStatus"><i class="fas fa-hammer"></i> Status:
         {{buildHistory.buildStatus | buildStatus}}</p>
       <p class="build-time"><i class="far fa-clock"></i> Duration {{buildHistory.duration | timespan}}</p>
       <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium'}}"><i
           class="far fa-calendar-alt"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
-      <button class="btn btn-link restart-button" (click)="restartBuild()" >
+      <button class="btn btn-link restart-button" (click)="restartBuild()">
         <i class="fas fa-redo"></i>
         <span class="button-text"> Restart build</span></button>
     </div>

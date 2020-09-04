@@ -1,32 +1,35 @@
 <!-- Main content container -->
-<div class="container mt-5 mb-5">
-  <!-- Top block -->
-
-  <div class="main-title">
-    <span>buildeR -</span>
-    <div class="rotating-header">
-      <div class="rotating-word-spacer">Deploy</div>
-      <div class="rotating-words">
-        <strong>Push</strong>
-        <strong>Test</strong>
-        <strong>Build</strong>
-        <strong>Deploy</strong>
-      </div>
+<div  class="container-fluid">
+  <div class="background-img">
+    <div class="welcome-text">
+      <h1>Welcome to our builde<span>R</span> service</h1>
+    </div>
+    <div class="icons-settings">
+      <img src="../../../../assets/images/icons-settings3.png" alt="">
+    </div>
+    <div class="stairs">
+      <div class="step step-1"><span>Deploy</span></div>
+      <div class="step step-2"><span>Test</span></div>
+      <div class="step step-3"><span>Build</span></div>
+      <div class="step step-4"><span>Push</span></div>
     </div>
   </div>
-
-  <img src="../../../assets/000.png" class="img-fluid mt-5" />
+</div>
+<div class="container mt-5 mb-5">
 
   <!-- Features block -->
   <div id="features">
-    <h2 class="text-center mt-5 mb-5">Main features</h2>
+    <h2 class="text-center mt-5 mb-5 title">Main features</h2>
 
-    <div class="text-white row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1">
+    <div class="text-dark row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1">
       <div class="col mb-4">
-        <div class="card bg-dark h-100">
+        <div class="card bg-white h-100">
           <div class="card-body">
+            <div class="card-img-top">
+              <img src="../../../../assets/images/feature-icon.png">
+            </div>
             <h5 class="card-title">Dashboard</h5>
-            <p class="card-text">
+            <p class="card-text text-center">
               Dashboard where you can see all your projects, last build status
               and instantly run any project
             </p>
@@ -34,79 +37,77 @@
         </div>
       </div>
       <div class="col mb-4">
-        <div class="card bg-dark h-100">
+        <div class="card bg-white h-100">
           <div class="card-body">
+            <div class="card-img-top">
+              <img src="../../../../assets/images/feature-icon.png">
+            </div>
             <h5 class="card-title">OAuth</h5>
-            <p class="card-text">
-              Quick and easy registartion with your Github, Bitbucket of Gmail
-              accounts
+            <p class="card-text text-center">
+              Quick and easy registartion with your Github or Gmail accounts
             </p>
           </div>
         </div>
       </div>
       <div class="col mb-4">
-        <div class="card bg-dark h-100">
+        <div class="card bg-white h-100">
           <div class="card-body">
+            <div class="card-img-top">
+              <img src="../../../../assets/images/feature-icon.png">
+            </div>
             <h5 class="card-title">Build steps</h5>
-            <p class="card-text">
+            <p class="card-text text-center">
               You define build steps for each of your projects by yourselft
             </p>
           </div>
         </div>
       </div>
       <div class="col mb-4">
-        <div class="card bg-dark h-100">
+        <div class="card bg-white h-100">
           <div class="card-body">
+            <div class="card-img-top">
+              <img src="../../../../assets/images/feature-icon.png">
+            </div>
             <h5 class="card-title">Build logs</h5>
-            <p class="card-text">You'll get your build logs in realtime</p>
+            <p class="card-text text-center">You'll get your build logs in realtime</p>
           </div>
         </div>
       </div>
-      <div class="col mb-4">
-        <div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Dashboard</h5>
-            <p class="card-text">
-              Dashboard where you can see all your projects, last build status
-              and instantly run any project
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col mb-4">
-        <div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">OAuth</h5>
-            <p class="card-text">
-              Quick and easy registartion with your Github, Bitbucket of Gmail
-              accounts
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col mb-4">
-        <div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build steps</h5>
-            <p class="card-text">
-              You define build steps for each of your projects by yourselft
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col mb-4">
-        <div class="card bg-dark h-100">
-          <div class="card-body">
-            <h5 class="card-title">Build logs</h5>
-            <p class="card-text">You'll get your build logs in realtime</p>
-          </div>
-        </div>
+    </div>
+  </div>
+  <div class="bricks-section mt-5">
+    <div class="bricks-img">
+      <img src="../../../../assets/images/builder.png" alt="">
+    </div>
+    <div class="bricks-list">
+      <ul>
+        <li>
+          <img src="../../../../assets/images/icon-logo.png">
+          <p>
+            Test builds of your projects with buildeR, it is absolutely free and easy to use.
+          </p>
+        </li>
+        <li>
+          <img src="../../../../assets/images/icon-logo.png">
+          <p>
+            You can synchronize your account with Github and build a project created from existing repository.
+          </p>
+        </li>
+        <li>
+          <img src="../../../../assets/images/icon-logo.png">
+          <p>
+            Сonfigure your build steps via existing system plugins and see the build logs in real time!
+          </p>
+        </li>
+      </ul>
+      <div class="bricks-text">
+        <p>Sounds great? Let's <a [routerLink]="'/signin'">start</a> your first build!</p>
       </div>
     </div>
   </div>
   <!-- Flow block -->
 
-  <h2 class="text-center mt-5 mb-5">Flow</h2>
+  <h2 class="text-center mt-5 mb-5 title">Flow</h2>
 
   <div id="flow">
     <ul class="progressbar pl-0">
@@ -121,6 +122,7 @@
 </div>
 <footer class="footer mt-auto py-3 text-center bg-light">
   <div class="container">
+    <img src="../../../../assets/images/logo.png" alt="logo">
     <span class="text-muted">Powered by Binary Studio Academy</span>
   </div>
 </footer>

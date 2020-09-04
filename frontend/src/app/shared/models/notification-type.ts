@@ -1,4 +1,7 @@
 export enum NotificationType {
-  buildSuccess,
-  buildFailed
+  BuildSucceeded,
+  BuildFailed,
+  BuildErrored,
+  BuildCanceled,
+  Information
 }

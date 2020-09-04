@@ -1,8 +1,11 @@
 import { NotificationType } from './notification-type';
 
 export interface Notification {
+  id: number
   message: string;
-  date: number;
+  date: Date;
   isRead: boolean;
   type: NotificationType;
+  userId: number;
+  itemId: number;
 }

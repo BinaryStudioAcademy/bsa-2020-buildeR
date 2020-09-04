@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { WorkSpaceComponent } from './work-space/work-space.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { RouterModule, Routes } from '@angular/router';
+import { UserResolverService } from '@core/resolvers/user.resolver';
+import { HelpComponent } from '@modules/work-space/help/help.component';
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
-import {HelpComponent} from "@modules/work-space/help/help.component";
-import {UserResolverService} from "@core/resolvers/user.resolver";
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { WorkSpaceComponent } from './work-space/work-space.component';
+import { AdminGuard } from '../../core/guards/admin.guard';
 
-const routes = [
+const routes: Routes = [
   {
     path: '',
     component: WorkSpaceComponent,
@@ -47,10 +48,17 @@ const routes = [
           ),
       },
       {
+        path: 'admin',
+        loadChildren: () =>
+          import('../../modules/admin-area/admin-area.module').then(
+            (m) => m.AdminAreaModule
+          ),
+          canActivateChild: [AdminGuard]
+      },
+      {
         path: '**',
         component: NotFoundComponent,
-        pathMatch: 'full',
-        skipLocationChange: true,
+        pathMatch: 'full'
       },
     ],
   },

@@ -44,7 +44,11 @@ export class ProjectTriggersComponent implements OnInit {
       .subscribe(project => {
         this.project = project;
         this.syncService.getRepositoryBranches(project.id)
-            .subscribe(branches => this.branches = branches.map(b => b.name));
+            .subscribe(branches =>
+              {
+                this.branches = branches.map(b => b.name);
+                this.selectedBranch = this.branches[0];
+              });
       });
     this.getTriggers(this.route.parent.snapshot.params.projectId);
   }

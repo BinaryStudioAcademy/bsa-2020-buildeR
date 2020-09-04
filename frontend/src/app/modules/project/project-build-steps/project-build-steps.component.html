@@ -1,7 +1,7 @@
 <div *ngIf="isLoading; then loading; else loaded;"></div>
 
 <ng-template #loading>
-    <app-loading-spinner size="20px"></app-loading-spinner>
+    <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
   <div class="container px-0 mx-auto">
@@ -58,7 +58,7 @@
             <div class="col-10 offset-1 input-group new-step-input w-auto">
               <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Command:</span></label>
               <input [id]="'dir' + i" class="form-control"
-                placeholder="Will be used root if left blank"
+                placeholder="e.g. 'mkdir app'"
                 [(ngModel)]="buildStep.commandArguments[0].key">
             </div>
           </div>
@@ -127,18 +127,25 @@
 
         <div class="row">
           <div class="col-6 pl-0">
+
             <div ngbDropdown class="d-inline-block">
               <button class="btn add-build-btn" id="allEmptySteps"
                       ngbDropdownToggle>Add build step</button>
-              <div ngbDropdownMenu aria-labelledby="allEmptySteps">
-                <button *ngFor="let step of emptyBuildSteps"
-                        (click)="addNewBuildStep(step)"
-                        ngbDropdownItem>
-                        <span>{{ step.buildPlugin.pluginName }}</span>
-                        <span *ngIf="step.pluginCommand.name" >: {{ step.pluginCommand.name }}</span>
-                  </button>
+              <div ngbDropdownMenu aria-labelledby="allEmptySteps" class="pl-3 pr-3">
+                <div *ngFor="let pluginGroup of pluginGroups">
+                  <span class="font-weight-bold">{{ pluginGroup }}</span>
+                  <ng-container *ngFor="let step of emptyBuildSteps">
+                    <button *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup"
+                          (click)="addNewBuildStep(step)"
+                          ngbDropdownItem>
+                          <span *ngIf="step.pluginCommand.name" >{{ step.pluginCommand.name }}</span>
+                          <span *ngIf="step.pluginCommand.plugin.pluginName === 'Custom command'" >Custom command</span>
+                    </button>
+                  </ng-container>
+                </div>
               </div>
             </div>
+
             <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
               Save changes
             </button>

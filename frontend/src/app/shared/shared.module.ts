@@ -14,12 +14,11 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { BuildHistoryStatusOutlineDirective } from './directives/build-history-status-outline.directive';
 import { BuildHistoryStatusDirective } from './directives/build-history-status.directive';
-import { BuildStatusColorDirective } from './directives/build-status-color.directive';
-import { BuildStatusIconDirective } from './directives/build-status-icon.directive';
 import { LogLevelDirective } from './directives/log-level.directive';
 import { BuildStatusPipe } from './pipes/build-status.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { TimespanPipe } from './pipes/timespan.pipe';
+import { ProjectsDisplayComponent } from './components/projects-display/projects-display.component';
 
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
@@ -27,8 +26,6 @@ import { TimespanPipe } from './pipes/timespan.pipe';
   declarations: [
     BuildStatusPipe,
     DateAgoPipe,
-    BuildStatusColorDirective,
-    BuildStatusIconDirective,
     LogLevelDirective,
     CronBuilderComponent,
     NotFoundComponent,
@@ -39,7 +36,8 @@ import { TimespanPipe } from './pipes/timespan.pipe';
     LoadingSpinnerComponent,
     ChartSmallComponent,
     ChartBigNormalizedComponent,
-    ChartBigGroupedComponent
+    ChartBigGroupedComponent,
+    ProjectsDisplayComponent,
   ],
   imports: [
     CommonModule,
@@ -62,8 +60,6 @@ import { TimespanPipe } from './pipes/timespan.pipe';
     BuildStatusPipe,
     DateAgoPipe,
     TimespanPipe,
-    BuildStatusColorDirective,
-    BuildStatusIconDirective,
     LogLevelDirective,
     NotFoundComponent,
     CronBuilderComponent,
@@ -73,7 +69,8 @@ import { TimespanPipe } from './pipes/timespan.pipe';
     LoadingSpinnerComponent,
     ChartSmallComponent,
     ChartBigNormalizedComponent,
-    ChartBigGroupedComponent
+    ChartBigGroupedComponent,
+    ProjectsDisplayComponent
   ],
 })
 export class SharedModule { }
