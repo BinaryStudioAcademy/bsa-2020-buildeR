@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using buildeR.Common.DTO;
+using buildeR.Common.DTO.Notification;
 using buildeR.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1;
@@ -18,8 +19,11 @@ namespace buildeR.BLL.Services
 {
     public class BuildService : BaseCrudService<BuildHistory, BuildHistoryDTO, NewBuildHistoryDTO>, IBuildService
     {
-        public BuildService(BuilderContext context, IMapper mapper) : base(context, mapper)
+        private readonly INotificationsService _notificationsService;
+        
+        public BuildService(BuilderContext context, IMapper mapper, INotificationsService notificationsService) : base(context, mapper)
         {
+            _notificationsService = notificationsService;
         }
 
         public async Task<BuildHistoryDTO> GetBuildById(int id)
@@ -107,21 +111,58 @@ namespace buildeR.BLL.Services
         public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)
         {
             // TODO add checking
-            var buildHistory = await Context.BuildHistories.FindAsync(statusChange.BuildHistoryId);
+            var buildHistory = Context.BuildHistories.Include(bh => bh.Project).FirstOrDefault(bh => bh.Id == statusChange.BuildHistoryId);
             if (buildHistory != null)
             {
                 buildHistory.BuildStatus = statusChange.Status;
 
                 if (statusChange.Status != BuildStatus.InProgress)
                 {
-                    buildHistory.BuildAt = DateTime.Now;
+                    buildHistory.BuildAt = statusChange.Time;
                     buildHistory.Duration = (buildHistory.BuildAt - buildHistory.StartedAt).Value.Milliseconds;
                 }
                 
                 await Context.SaveChangesAsync();
+
+                if (statusChange.Status != BuildStatus.InProgress)
+                {
+                    await _notificationsService.Create(new NewNotificationDTO
+                    {
+                        UserId = buildHistory.PerformerId,
+                        Message = $"{StatusToNotificationMessage(buildHistory, statusChange)}",
+                        Type = StatusToNotificationType(statusChange),
+                        Date = DateTime.Now,
+                        ItemId = statusChange.BuildHistoryId
+                    });
+                }
             }
 
             return await GetBuildById(statusChange.BuildHistoryId);
+        }
+        
+        private static NotificationType StatusToNotificationType(StatusChangeDto statusChange)
+        {
+            return statusChange.Status switch
+            {
+                BuildStatus.Error => NotificationType.BuildErrored,
+                BuildStatus.Canceled => NotificationType.BuildCanceled,
+                BuildStatus.Failure => NotificationType.BuildFailed,
+                BuildStatus.Success => NotificationType.BuildSucceeded,
+                BuildStatus.Pending => NotificationType.Information,
+            };
+        }
+        
+        private static string StatusToNotificationMessage(BuildHistory buildHistory, StatusChangeDto statusChange)
+        {
+            string action = statusChange.Status switch
+            {
+                BuildStatus.Error => "errored",
+                BuildStatus.Canceled => "canceled",
+                BuildStatus.Failure => "failed",
+                BuildStatus.Success => "succeeded",
+                BuildStatus.Pending => "is pending"
+            };
+            return $"Build #{buildHistory.Number} of {buildHistory.Project.Name} {action} at {statusChange.Time:g}";
         }
     }
 }
