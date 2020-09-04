@@ -17,6 +17,7 @@ import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-proje
 import { EnvVarsEditorComponent } from './project-settings/env-vars-editor/env-vars-editor.component';
 import { ProjectBuildComponent } from './project-build/project-build.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ProejctRemoteTriggerComponent } from './proejct-remote-trigger/proejct-remote-trigger.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     ModalCopyProjectComponent,
     ProjectBuildStepsComponent,
     EnvVarsEditorComponent,
-    ProjectBuildComponent
+    ProjectBuildComponent,
+    ProejctRemoteTriggerComponent
   ],
   imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule, CronJobsModule, NgMultiSelectDropDownModule],
   exports: [ProjectCreateComponent]
