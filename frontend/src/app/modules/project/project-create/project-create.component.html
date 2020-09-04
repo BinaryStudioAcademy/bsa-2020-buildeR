@@ -103,13 +103,16 @@
       </div>
       <div class="divider"></div>
       <div>
-        <div class="form-control-wr">
+        <div class="form-control-wr position-relative">
           <div class="input-wr">
             <div class="label-wr">
               <label class="required-field">Name</label>
             </div>
             <input type="text" class="form-control form-control-sm" formControlName="name"
             required autocomplete="off" placeholder="Project name">
+            <app-loading-spinner position="absolute" margin="0" left="92%" top="50%" size="3px"
+              *ngIf="projectForm.controls['name'].status === 'PENDING'">
+            </app-loading-spinner>
           </div>
           <div class="error" [hidden]="!projectForm.get('name').errors?.minlength || projectForm.get('name').untouched">
             The minimum length is 4 characters
@@ -185,7 +188,8 @@
           </div>
         </div>
         <div class="btn-wr">
-          <button type="submit" class="btn btn-success" [disabled]="!isFormValid()">
+          <button type="submit" class="btn btn-success" [disabled]="!isFormValid() ||
+          projectForm.controls['name'].status == 'PENDING'">
             Create
           </button>
           <button type="button" class="btn btn-warning" (click)="cancel()">

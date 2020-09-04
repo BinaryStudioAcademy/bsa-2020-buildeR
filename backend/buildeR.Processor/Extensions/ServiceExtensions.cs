@@ -46,7 +46,7 @@ namespace buildeR.Processor.Extensions
                 .DefaultIndex(defaultIndex)
                 .DefaultMappingFor<ProjectLog>(m => m
                     .Ignore(p => p.Timestamp)
-                    .PropertyName(p => p.BuildStep, "id")
+                    .PropertyName(p => p.ProjectId, "ProjectId")
                 );
 
             var client = new ElasticClient(settings);

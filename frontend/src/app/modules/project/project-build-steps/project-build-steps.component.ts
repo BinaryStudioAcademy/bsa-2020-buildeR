@@ -30,6 +30,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   newBuildSteps: BuildStep[] = new Array();
 
   isLoading = true;
+  pluginGroups: string[];
 
   constructor(
     private projectService: ProjectService,
@@ -80,6 +81,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.emptyBuildSteps = resp.body;
+          this.pluginGroups = Array.from(new Set(this.emptyBuildSteps.map(({pluginCommand}) => pluginCommand.plugin.pluginName)));
         },
         (error) => {
           this.isLoading = false;

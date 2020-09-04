@@ -17,6 +17,9 @@ using buildeR.Common.DTO;
 using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
+using buildeR.API.HostedServices;
+using Nest;
+using buildeR.Common.DTO;
 
 namespace buildeR.API.Extensions
 {
@@ -46,14 +49,18 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IPluginCommandService, PluginCommandService>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
+            services.AddElasticsearch(configuration);
+            services.AddTransient<ILogService, LogService>();
             services.AddTransient<ISecretService, SecretService>();
             services.AddHttpClient();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
+            services.AddTransient<IProjectRemoteTriggerService, ProjectRemoteTriggerService>();
 
             services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
@@ -106,6 +113,23 @@ namespace buildeR.API.Extensions
             var schedularFactory =  new StdSchedulerFactory(properties);
 
             return schedularFactory.GetScheduler().GetAwaiter().GetResult();
+        }
+
+        public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
+        {
+            var url = configuration["ElasticConfiguration:Uri"];
+            var defaultIndex = "processes";
+
+            var settings = new ConnectionSettings(new Uri(url))
+                .DefaultIndex(defaultIndex)
+                .DefaultMappingFor<ProjectLog>(m => m
+                    .Ignore(p => p.Timestamp)
+                    .PropertyName(p => p.ProjectId, "ProjectId")
+                );
+
+            var client = new ElasticClient(settings);
+
+            services.AddSingleton<IElasticClient>(client);
         }
     }
 }

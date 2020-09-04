@@ -126,8 +126,8 @@ export class ProjectService {
       envVar);
   }
 
-  validateProjectName(userId: number, projectName: string): Observable<boolean> {
-    return this.httpService.getRequest<boolean>(`${this.routePrefix}/projectNameValidation/${userId}/${projectName}`);
+  validateProjectName(userId: number, projectName: string, projectId: number): Observable<boolean> {
+    return this.httpService.getRequest<boolean>(`${this.routePrefix}/projectNameValidation/${userId}/${projectName}/${projectId}`);
   }
 
   editEnvVarEvent(envVar: EnviromentVariable) {

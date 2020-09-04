@@ -131,7 +131,8 @@ namespace buildeR.BLL.Services
                         UserId = buildHistory.PerformerId,
                         Message = $"{StatusToNotificationMessage(buildHistory, statusChange)}",
                         Type = StatusToNotificationType(statusChange),
-                        Date = DateTime.Now
+                        Date = DateTime.Now,
+                        ItemId = statusChange.BuildHistoryId
                     });
                 }
             }
@@ -161,7 +162,7 @@ namespace buildeR.BLL.Services
                 BuildStatus.Success => "succeeded",
                 BuildStatus.Pending => "is pending"
             };
-            return $"Build {buildHistory.Number} of {buildHistory.Project.Name} {action} at {statusChange.Time:g}";
+            return $"Build #{buildHistory.Number} of {buildHistory.Project.Name} {action} at {statusChange.Time:g}";
         }
     }
 }

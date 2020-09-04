@@ -4,10 +4,11 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  Input,
+  HostListener,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { BuildLogService } from '../../../core/services/build-log.service';
-import { delay } from 'rxjs/operators';
+import { takeUntil, delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -34,13 +35,13 @@ export class LoggingTerminalComponent extends BaseComponent
   private projectId: number;
 
   @ViewChild('bottom') private bottom: ElementRef;
-
+  rawLogs: string[] = [];
   autoscroll = true;
+  private lineNumber = 1;
+  showLevels = false;
+  showTimeStamps = false;
 
-  private lineNumber: number = 1;
-
-  showLevels: boolean = false;
-  showTimeStamps: boolean = false;
+  private lastScrollYPos = -1;
 
   buildSteps: Map<number, [boolean, Action[]]> = new Map<
     number,
@@ -48,7 +49,6 @@ export class LoggingTerminalComponent extends BaseComponent
   >();
 
   constructor(
-    private buildService: BuildLogService,
     private logsService: ProjectLogsService,
     private router: Router,
     private route: ActivatedRoute
@@ -58,16 +58,26 @@ export class LoggingTerminalComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    // this.buildService
-    //   .getTestBuildLog()
-    //   .pipe(delay(0))
-    //   .subscribe((line) => this.buildLog(line));
     this.logsService.buildConnection();
     this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
     this.logsService.logsListener(this.log);
     this.log.subscribe((message) => {
       this.buildLog(this.formatLog(message));
     });
+    this.logsService.receiveLogs().pipe(takeUntil(this.unsubscribe$))
+    .subscribe((logs) => {
+      logs.forEach(log => {
+        this.buildLog(this.formatExistingLog(log));
+      });
+    });
+  }
+
+  @HostListener('window:scroll', ['$event']) onScroll(_: Event){
+    const yPos = window.scrollY;
+    if (yPos < this.lastScrollYPos) {
+      this.autoscroll = false;
+    }
+    this.lastScrollYPos = yPos;
   }
 
   ngOnDestroy(): void {
@@ -110,7 +120,7 @@ export class LoggingTerminalComponent extends BaseComponent
     a.level = logMatchArray[3] as LogLevel;
     a.body = logMatchArray[4];
 
-    const step = parseInt(logMatchArray[1]);
+    const step = parseInt(logMatchArray[1], 10);
 
     return [step, a];
   }
@@ -125,9 +135,16 @@ export class LoggingTerminalComponent extends BaseComponent
 
   // Temporary solution for converting logs to existing format
   private formatLog(line: string) {
-    const log: Log = JSON.parse(line);
-    const { Timestamp, Message } = log;
-    return `[${this.step++} ${Timestamp} INF] ${Message}`;
+    const log = JSON.parse(line);
+    const logString = `[${this.step++} ${log.Timestamp} INF] ${log.Message}`;
+    this.rawLogs.push(logString);
+    return logString;
+  }
+
+  formatExistingLog(log: Log){
+    const logString = `[${this.step++} ${log.timestamp} INF] ${log.message}`;
+    this.rawLogs.push(logString);
+    return logString;
   }
 
   scrollTop(el: HTMLElement) {
@@ -138,11 +155,16 @@ export class LoggingTerminalComponent extends BaseComponent
   scrollBottom(el: HTMLElement) {
     el.scrollIntoView(true);
   }
+  openRaw(){
+    localStorage.setItem('logs', JSON.stringify(this.rawLogs));
+    window.open('/logs', '_blank');
+
+  }
 }
 
-class Log {
-  Timestamp: Date;
-  Message: string;
-  BuildId: number;
-  BuildStep: number;
+export class Log {
+  timestamp: Date;
+  message: string;
+  buildHistoryId: number;
+  projectId: number;
 }

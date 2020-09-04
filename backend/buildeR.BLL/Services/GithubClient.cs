@@ -84,6 +84,17 @@ namespace buildeR.BLL.Services
 
             return JsonConvert.DeserializeObject<IEnumerable<GithubBranch>>(content);
         }
+        public async Task<GithubCommit> GetLastBranchCommit(string repoName, string repoOwner, string branchName, string token = null)
+        {
+            if (token != null)
+                SetUpHttpClient(token);
+
+            var endpoint = $"repos/{repoOwner}/{repoName}/commits/{branchName}";
+            var response = await _client.GetAsync(endpoint);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<GithubCommit>(content);
+        }
         public async Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string token = null)
         {
             if (token != null)
@@ -113,7 +124,9 @@ namespace buildeR.BLL.Services
                 var scopes = response.Headers.GetValues("X-OAuth-Scopes").Single().Split(", ");
                 var missingScopes = new List<string>();
 
-                if(!scopes.Contains("read:user"))
+                var userScopes = scopes.Contains("read:user") || scopes.Contains("write:user") || scopes.Contains("user");
+
+                if (!userScopes)
                 {
                     missingScopes.Add("read:user");
                 }
@@ -123,7 +136,9 @@ namespace buildeR.BLL.Services
                     missingScopes.Add("repo");
                 }
 
-                if(!scopes.Contains("write:repo_hook"))
+                var webhookScopes = scopes.Contains("write:repo_hook") || scopes.Contains("admin:repo_hook");
+
+                if (!webhookScopes)
                 {
                     missingScopes.Add("write:repo_hook");
                 }

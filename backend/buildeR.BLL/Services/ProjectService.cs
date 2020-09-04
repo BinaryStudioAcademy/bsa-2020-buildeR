@@ -181,9 +181,10 @@ namespace buildeR.BLL.Services
 
             return Mapper.Map<IEnumerable<ProjectRemoteTriggerDTO>>(project.ProjectRemoteTriggers);
         }
-        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName)
+        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId)
         {
-            var project = await Context.Projects.FirstOrDefaultAsync(p => p.OwnerId == userId && p.Name == projectName);
+            var project = await Context.Projects.FirstOrDefaultAsync(p =>
+                p.OwnerId == userId && p.Name == projectName && p.Id != projectId);
             return project == null;
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)

@@ -5,6 +5,7 @@ import { SignUpComponent } from '@core/components/sign-up/sign-up.component';
 import { SignInComponent } from '@core/components/sign-in/sign-in.component';
 import { HomeGuard } from '@core/guards/home.guard';
 import { AuthResolver } from '@core/resolvers/auth.resolver';
+import { RawLogsComponent } from '@core/components/raw-logs/raw-logs.component';
 
 const routes: Routes = [
   { path: '',
@@ -24,6 +25,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/work-space/work-space.module')
       .then(m => m.WorkSpaceModule),
   },
+  { path: 'logs', component: RawLogsComponent},
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
