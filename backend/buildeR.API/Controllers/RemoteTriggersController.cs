@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace buildeR.API.Controllers
 {
     [Authorize]
-    [Route("remote-triggers")]
+    [Route("remoteTriggers")]
     [ApiController]
     public class RemoteTriggersController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace buildeR.API.Controllers
             _triggerService = triggerService;
         }
 
-        [HttpGet("project-triggers/{projectId}")]
+        [HttpGet("projectTriggers/{projectId}")]
         public async Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectTriggers(int projectId)
         {
             return await _triggerService.GetProjectTriggers(projectId);
