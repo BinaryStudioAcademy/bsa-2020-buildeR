@@ -1,5 +1,7 @@
+import { RemoteTriggerType } from "./remote-trigger-type";
+
 export interface NewRemoteTrigger {
-  type: number;
+  type: RemoteTriggerType;
   branch: string;
   projectId: number;
 }
