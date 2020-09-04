@@ -9,11 +9,23 @@ import { NewRemoteTrigger } from '../../shared/models/remote-trigger/new-remote-
 })
 export class RemoteTriggerService {
 
+  readonly endpoint = '/remoteTriggers';
+
   constructor(private httpService: HttpService) { }
 
-  getProjectRemoteTriggers(projectId: number): Observable<RemoteTrigger[]> { }
+  getProjectRemoteTriggers(projectId: number): Observable<RemoteTrigger[]> {
+    return this.httpService.getRequest<RemoteTrigger[]>(`${this.endpoint}/projectTriggers/${projectId}`);
+  }
 
-  addRemoteTrigger(trigger: NewRemoteTrigger): Observable<NewRemoteTrigger> { }
+  addRemoteTrigger(trigger: NewRemoteTrigger): Observable<RemoteTrigger> {
+    return this.httpService.postRequest<RemoteTrigger>(`${this.endpoint}`, trigger);
+  }
 
-  deleteRemoteTrigger(triggerId: number): Observable<void> { }
+  updateRemoteTrigger(trigger: RemoteTrigger): Observable<RemoteTrigger> {
+    return this.httpService.putRequest<RemoteTrigger>(`${this.endpoint}`, trigger);
+  }
+
+  deleteRemoteTrigger(triggerId: number): Observable<void> {
+    return this.httpService.deleteRequest<void>(`${this.endpoint}/${triggerId}`);
+  }
 }
