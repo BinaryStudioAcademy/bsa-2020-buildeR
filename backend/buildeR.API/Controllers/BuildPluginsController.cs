@@ -1,5 +1,5 @@
 ﻿using buildeR.BLL.Interfaces;
-
+using buildeR.Common.DTO.BuildPlugin;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Collections.Generic;
@@ -16,6 +16,36 @@ namespace buildeR.API.Controllers
         public BuildPluginsController(IBuildPluginService buildPluginService)
         {
             _buildPluginService = buildPluginService;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<BuildPluginDTO>> GetAll()
+        {
+            return await _buildPluginService.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<BuildPluginDTO> GetById(int id)
+        {
+            return await _buildPluginService.GetPluginById(id);
+        }
+
+        [HttpPost]
+        public async Task<BuildPluginDTO> Create(NewBuildPluginDTO buildPlugin)
+        {
+            return await _buildPluginService.Create(buildPlugin);
+        }
+
+        [HttpPut]
+        public async Task Update(BuildPluginDTO buildPlugin)
+        {
+            await _buildPluginService.Update(buildPlugin);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await _buildPluginService.Delete(id);
         }
 
         [HttpGet("{buildPluginName}/versions/{version}")]
