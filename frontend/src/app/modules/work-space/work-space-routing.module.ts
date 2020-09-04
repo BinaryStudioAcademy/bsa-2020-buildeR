@@ -5,6 +5,7 @@ import { HelpComponent } from '@modules/work-space/help/help.component';
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { WorkSpaceComponent } from './work-space/work-space.component';
+import { AdminGuard } from '../../core/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -52,6 +53,7 @@ const routes: Routes = [
           import('../../modules/admin-area/admin-area.module').then(
             (m) => m.AdminAreaModule
           ),
+          canActivateChild: [AdminGuard]
       },
       {
         path: '**',

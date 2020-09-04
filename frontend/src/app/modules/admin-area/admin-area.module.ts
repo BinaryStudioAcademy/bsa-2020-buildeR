@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdminAreaComponent } from './admin-area/admin-area.component';
 import { PluginsComponent } from './plugins/plugins.component';
 import { AdminAreaRoutingModule } from './admin-area-routing.module';
+import { AdminGuard } from '@core/guards/admin.guard';
 
 
 
@@ -13,6 +14,7 @@ import { AdminAreaRoutingModule } from './admin-area-routing.module';
     CommonModule,
     SharedModule,
     AdminAreaRoutingModule
-  ]
+  ],
+  providers: [AdminGuard]
 })
 export class AdminAreaModule { }
