@@ -16,6 +16,8 @@ import { CronJobsModule } from 'ngx-cron-jobs';
 import { ModalCopyProjectComponent } from './modal-copy-project/modal-copy-project.component';
 import { EnvVarsEditorComponent } from './project-settings/env-vars-editor/env-vars-editor.component';
 import { ProjectBuildComponent } from './project-build/project-build.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ProejctRemoteTriggerComponent } from './proejct-remote-trigger/proejct-remote-trigger.component';
 
 @NgModule({
   declarations: [
@@ -30,8 +32,9 @@ import { ProjectBuildComponent } from './project-build/project-build.component';
     ProjectBuildStepsComponent,
     EnvVarsEditorComponent,
     ProjectBuildComponent,
+    ProejctRemoteTriggerComponent
   ],
-  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule, CronJobsModule],
+  imports: [ProjectRoutingModule, SharedModule, NgSelectModule, DragDropModule, CronJobsModule, NgMultiSelectDropDownModule],
   exports: [ProjectCreateComponent]
 })
 export class ProjectModule { }

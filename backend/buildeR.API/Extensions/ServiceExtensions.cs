@@ -60,6 +60,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
+            services.AddTransient<IProjectRemoteTriggerService, ProjectRemoteTriggerService>();
 
             services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
