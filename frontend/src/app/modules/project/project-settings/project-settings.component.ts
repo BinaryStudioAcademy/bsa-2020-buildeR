@@ -26,6 +26,8 @@ export class ProjectSettingsComponent implements OnInit {
   public projectForm: FormGroup;
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
+
+  changedProject: Project = {} as Project;
   @Input() project: Project = {} as Project;
   currentUser: User = {} as User;
 
@@ -66,8 +68,11 @@ export class ProjectSettingsComponent implements OnInit {
     });
 
     this.projectForm.valueChanges.subscribe(changesSettigsForm => {
+      this.changedProject = (changesSettigsForm as Project);
       this.isChanged = false;
-      if (this.project.name === this.projectForm.value.name) {
+      if (this.project.name === this.changedProject.name &&
+      this.project.description === this.changedProject.description &&
+      this.project.isPublic.toString() === this.changedProject.isPublic.toString()) {
         this.isChanged = true;
       }
     });
