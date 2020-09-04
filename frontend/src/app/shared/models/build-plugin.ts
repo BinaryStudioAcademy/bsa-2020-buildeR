@@ -1,3 +1,5 @@
+import { PluginCommand } from './plugin-command';
+
 export interface BuildPlugin {
   id: number;
   pluginName: string;
@@ -5,4 +7,7 @@ export interface BuildPlugin {
   DockerImageName: string;
   version: string;
   dockerRegistryName: string;
+  isCollapsed: boolean;
+  pluginCommands: PluginCommand[];
+  newCommand: string;
 }

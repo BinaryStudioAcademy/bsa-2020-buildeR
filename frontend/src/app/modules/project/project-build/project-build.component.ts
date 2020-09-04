@@ -3,8 +3,6 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { ActivatedRoute } from '@angular/router';
 import { BuildHistory } from '@shared/models/build-history';
-import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
-import { BuildStatus } from '@shared/models/build-status';
 import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { NewBuildHistory } from '@shared/models/new-build-history';
@@ -12,6 +10,9 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { ProjectService } from '@core/services/project.service';
 import { takeUntil } from 'rxjs/operators';
 import { Project } from '@shared/models/project/project';
+import { BuildLogService } from '@core/services/build-log.service';
+import { ProjectLogsService } from '@core/services/projects-logs.service';
+import { Log } from '../logging-terminal/logging-terminal.component';
 
 @Component({
   selector: 'app-project-build',
@@ -23,6 +24,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   buildHistory: BuildHistory;
   projectId: number;
   project: Project;
+  logs: Log[];
 
   constructor(
     private buildHistoryService: BuildHistoryService,
@@ -30,19 +32,20 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
     private projectService: ProjectService,
-    private buildStatusesSignalRService: BuildStatusesSignalRService
+    private logsService: ProjectLogsService
   ) {
     super();
-    route.parent.params.subscribe(
-      (params) => (this.projectId = params.projectId)
-    );
+    route.parent.params.subscribe((params) => this.projectId = params.projectId);
+    route.parent.data.subscribe((data) => {
+      this.project = data.project;
+      this.getBuildHistory();
+    });
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.configureBuildStatusesSignalR();
-    this.getBuildHistory();
-    this.getProject();
+    // this.getBuildHistory();
+    // this.getProject();
   }
 
   getBuildHistory() {
@@ -50,11 +53,20 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       this.buildHistoryService.getBuildHistory(params.buildId).subscribe(
         (response) => {
           this.buildHistory = response;
+          this.getLogs();
         },
         (error) => {
           console.log(error);
         }
       );
+    });
+  }
+
+  getLogs(){
+    this.logsService.getLogsOfHistory(this.projectId, this.buildHistory.id)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((res) => {
+      this.logsService.sendLogs(res);
     });
   }
 
@@ -67,24 +79,6 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
         console.log(error);
       }
     );
-  }
-
-  private configureBuildStatusesSignalR() {
-    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      if (statusChange.BuildHistoryId == this.buildHistory.id) {
-        if (statusChange.Status != BuildStatus.InProgress) {
-          this.buildHistoryService
-            .getBuildHistory(statusChange.BuildHistoryId)
-            .subscribe((bh) => {
-              if (bh.id == this.buildHistory.id) {
-                this.buildHistory = bh;
-              }
-            });
-        } else {
-          this.buildHistory.buildStatus = statusChange.Status;
-        }
-      }
-    });
   }
 
   getCommit(bh: BuildHistory) {
@@ -105,7 +99,8 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (buildHistory) => {},
+        (buildHistory) => {
+        },
         (error) => this.toastrService.showError(error)
       );
   }

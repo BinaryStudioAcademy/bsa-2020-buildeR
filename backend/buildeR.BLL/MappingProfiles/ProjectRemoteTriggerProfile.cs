@@ -9,6 +9,7 @@ namespace buildeR.BLL.MappingProfiles
         public ProjectRemoteTriggerProfile()
         {
             CreateMap<NewProjectRemoteTriggerDTO, ProjectRemoteTrigger>();
+            CreateMap<ProjectRemoteTriggerDTO, ProjectRemoteTrigger>();
             CreateMap<ProjectRemoteTrigger, ProjectRemoteTriggerDTO>();
         }
     }
