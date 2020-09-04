@@ -113,7 +113,9 @@ namespace buildeR.BLL.Services
                 var scopes = response.Headers.GetValues("X-OAuth-Scopes").Single().Split(", ");
                 var missingScopes = new List<string>();
 
-                if(!scopes.Contains("read:user"))
+                var userScopes = scopes.Contains("read:user") || scopes.Contains("write:user") || scopes.Contains("user");
+
+                if (!userScopes)
                 {
                     missingScopes.Add("read:user");
                 }
@@ -123,7 +125,9 @@ namespace buildeR.BLL.Services
                     missingScopes.Add("repo");
                 }
 
-                if(!scopes.Contains("write:repo_hook"))
+                var webhookScopes = scopes.Contains("write:repo_hook") || scopes.Contains("admin:repo_hook");
+
+                if (!webhookScopes)
                 {
                     missingScopes.Add("write:repo_hook");
                 }
