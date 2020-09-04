@@ -12,6 +12,9 @@
           </div>
           <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="name">
+            <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+                *ngIf="projectForm.controls['name'].status === 'PENDING'">
+            </app-loading-spinner>
             <div *ngIf="projectForm.controls['name'].errors">
               <div class="error" *ngIf="projectForm.controls['name'].errors.minlength && projectForm.controls['name'].touched">
                 The minimum length is 4 characters
@@ -84,7 +87,8 @@
           </div>
         </div>
         <div class="d-flex justify-content-center">
-          <button type="submit" class="btn btn-success" [disabled]="projectForm.errors">Save</button>
+          <button type="submit" class="btn btn-success" [disabled]="projectForm.invalid || isChanged ||
+          !projectForm.dirty || projectForm.controls['name'].status === 'PENDING'">Save</button>
           <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
         </div>
       </form>

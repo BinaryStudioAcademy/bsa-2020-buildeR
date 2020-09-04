@@ -17,6 +17,8 @@ import {User} from "@shared/models/user/user";
   styleUrls: ['./project-settings.component.sass']
 })
 export class ProjectSettingsComponent implements OnInit {
+
+  isChanged = false;
   isLoading = false;
   projectId: number;
   branches: string [] = ['master', 'dev'];
@@ -24,6 +26,8 @@ export class ProjectSettingsComponent implements OnInit {
   public projectForm: FormGroup;
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
+
+  changedProject: Project = {} as Project;
   @Input() project: Project = {} as Project;
   currentUser: User = {} as User;
 
@@ -32,16 +36,18 @@ export class ProjectSettingsComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   )
-  {
-    route.parent.params.subscribe(
-      (params) => this.projectId = params.projectId);
-    this.route.parent.data.subscribe(data => this.project = data.project);
-  }
+  { }
 
   ngOnInit(): void {
+
     this.route.parent.data.subscribe(data => {
       this.currentUser = data.user;
     });
+
+    this.route.parent.params.subscribe(
+      (params) => this.projectId = params.projectId);
+    this.route.parent.data.subscribe(data => this.project = data.project);
+
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
@@ -51,7 +57,7 @@ export class ProjectSettingsComponent implements OnInit {
           Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ],
         [
-          projectNameAsyncValidator(this.projectService, this.currentUser)
+          projectNameAsyncValidator(this.projectService, this.currentUser, this.project.id)
         ]),
         isPublic: new FormControl(this.project.isPublic.toString()),
         description: new FormControl(this.project.description,
@@ -59,6 +65,16 @@ export class ProjectSettingsComponent implements OnInit {
             Validators.maxLength(300),
             Validators.pattern('[^А-яа-я]*')
           ])
+    });
+
+    this.projectForm.valueChanges.subscribe(changesSettigsForm => {
+      this.changedProject = (changesSettigsForm as Project);
+      this.isChanged = false;
+      if (this.project.name === this.changedProject.name &&
+      this.project.description === this.changedProject.description &&
+      this.project.isPublic.toString() === this.changedProject.isPublic.toString()) {
+        this.isChanged = true;
+      }
     });
 
     this.envVarsForm = new FormGroup({
@@ -94,6 +110,7 @@ export class ProjectSettingsComponent implements OnInit {
     }, (err) => {
       this.toastrService.showError(err);
     });
+    this.isChanged = true;
   }
 
   loadEnvVars(){
