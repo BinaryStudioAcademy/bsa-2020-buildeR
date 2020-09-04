@@ -35,7 +35,7 @@ namespace buildeR.BLL.Services
             if (pushTrigger == null)
                 return;
 
-            var rebuild = await _builder.PrepareBuild(projectId, payload.Sender.Login);
+            var rebuild = await _builder.PrepareBuild(projectId, payload.Sender.Login, updatedBranch);
 
             await _builder.StartBuild(projectId, rebuild.Id, updatedBranch, rebuild.PerformerId);
         }
@@ -55,7 +55,7 @@ namespace buildeR.BLL.Services
             if (pullRequestTrigger == null)
                 return;
 
-            var rebuild = await _builder.PrepareBuild(projectId, payload.Sender.Login);
+            var rebuild = await _builder.PrepareBuild(projectId, payload.Sender.Login, updatedBranch);
             
             await _builder.StartBuild(projectId, rebuild.Id, updatedBranch, (await _projectService.GetAsync(projectId)).OwnerId);
         }

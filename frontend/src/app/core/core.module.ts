@@ -19,6 +19,7 @@ import { TokenInterceptorService } from './interceptors/token-interceptor.servic
 import { RegistrationWarningComponent } from './components/registration-warning/registration-warning.component';
 import { EmailVerificationModalComponent } from './components/email-verification-modal/email-verification-modal.component';
 import { AdminGuard } from './guards/admin.guard';
+import { RawLogsComponent } from './components/raw-logs/raw-logs.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { AdminGuard } from './guards/admin.guard';
     SignUpComponent,
     RegistrationDialogComponent,
     RegistrationWarningComponent,
-    EmailVerificationModalComponent
+    EmailVerificationModalComponent,
+    RawLogsComponent
   ],
   imports: [
     HttpClientModule,

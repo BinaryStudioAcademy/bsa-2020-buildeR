@@ -14,6 +14,7 @@ export class ProjectLogsService {
   constructor(private httpService: HttpService) {
    }
    private logs$ = new Subject<Log[]>();
+   private rawLogs$ = new Subject<string[]>();
    public buildConnection() {
      this.logsHubConnection = new HubConnectionBuilder()
      .withUrl(`${environment.signalRUrl}/logsHub`)
@@ -23,6 +24,15 @@ export class ProjectLogsService {
    public getLogsOfHistory(projectId: number, buildHisotryId: number): Observable<Log[]>{
       return this.httpService.getRequest(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
    }
+
+   sendRawLogs(logs){
+    return this.rawLogs$.next(logs);
+   }
+
+   receiveRawLogs(){
+    return this.rawLogs$.asObservable();
+   }
+
 
    sendLogs(logs){
     return this.logs$.next(logs);
