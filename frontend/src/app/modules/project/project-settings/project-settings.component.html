@@ -99,11 +99,6 @@
       <h2 class="small-title">
         Environment Variables
       </h2>
-
-        <!-- Show Env Vars  -->
-        <ng-container class="vars" *ngFor="let varibable of envVariables">
-        <app-env-vars-editor [envVar]="varibable"></app-env-vars-editor>
-        </ng-container>
       <!-- Adding env vars -->
       <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
         <div class="add-env-container border rounded">
@@ -129,19 +124,21 @@
             </div>
           </div>
           <div class='fourth-container'>
-            <h5 class="text-over">Is Secret</h5>
-            <div class="input-area secret-sw">
+            <h5 class="text-over"><label for="isSecret">Is Secret</label></h5>
               <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" formControlName="isSecret" />
+                <input type="checkbox" class="custom-control-input" id="isSecret" formControlName="isSecret" />
                 <label class="custom-control-label" for="isSecret"></label>
               </div>
-            </div>
           </div>
           <div class="fifth-container">
             <button class="btn btn-info m-0" type="submit" [disabled]="envVarsForm.invalid">Add Variable</button>
           </div>
         </div>
       </form>
+      <!-- Show Env Vars  -->
+      <ng-container *ngFor="let varibable of envVariables; index as i">
+        <app-env-vars-editor [envVar]="varibable" [index]="i+1"></app-env-vars-editor>
+      </ng-container>
     </div>
     <div class="settings-section border-bottom padd">
       <app-project-triggers></app-project-triggers>
