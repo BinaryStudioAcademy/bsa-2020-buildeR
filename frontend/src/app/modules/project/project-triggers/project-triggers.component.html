@@ -38,48 +38,9 @@
       </div>
     </div>
     <div [hidden]='!runOnSchedule'>
-      <!-- Show Triggers -->
-      <ng-container *ngFor="let trigger of triggers">
-        <div class="trigger-group border rounded my-2">
-          <div class="barnch-column">
-            <span class="mr-2">Branch </span>
-            <select class="form-control branch-select" [(ngModel)]="trigger.branchHash">
-              <option *ngFor="let branch of branches" [ngValue]='branch' [selected]="trigger.branchHash === branch">{{branch}}
-              </option>
-            </select>
-          </div>
-          <div class="cron-job-column">
-            <span class="mr-2">Every: </span>
-            <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="trigger.cronExpression"> </cron-jobs>
-          </div>
-          <div class="fire-time-column">
-            <div class="fire-time-wr">
-              <div class="pre-fire-time">
-                <span class="mr-sm-2 text">previous fire time: </span>
-                <span *ngIf="compareToMinDate(trigger.previousFireTime); else elseNotYet"
-                  class="mr-sm-2 small-text">{{trigger.previousFireTime | date:"MMM d, y, H:mm"}}</span>
-                <ng-template #elseNotYet>
-                  <span class="mr-sm-2">- still was not -</span>
-                </ng-template>
-              </div>
-              <div class="next-fire-time">
-                <span class="mr-sm-2 text">next fire time: </span>
-                <span class="mr-sm-2 small-text">{{trigger.nextFireTime | date:"MMM d, y, H:mm"}}</span>
-              </div>
-            </div>
-          </div>
-          <div class="buttons-wr">
-            <button (click)="updateTrigger(trigger)" class="btn btn-update"><i class="far fa-save"></i></button>
-            <button (click)="deleteTrigger(trigger)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
-          </div>
-        </div>
-
-      </ng-container>
-      <!-- end show triggers -->
       <!-- Add new trigger -->
-      <div class="add-new-job pb-2 mt-2">
-        <div class="mr-2">
-          <h5 class="text-over">Branch </h5>
+      <div class="trigger-container border rounded">
+        <div class="second-container">
           <select class="form-control branch-select" [(ngModel)]="selectedBranch">
             <option *ngFor="let branch of branches" [ngValue]='branch'>
               {{branch}}
