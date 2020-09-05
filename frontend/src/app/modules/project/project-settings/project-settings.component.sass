@@ -31,6 +31,7 @@
 .text-over
   font-size: 18px
   color: #666
+  margin: 0px
 
 .text-near
   margin-top: -10px
@@ -44,6 +45,7 @@ input[type=text]
   z-index: 2
 #isPublicSwitch
   width: 100%
+
 
 .base-line
   span
@@ -135,25 +137,6 @@ h2
 .padd
   padding-top:20px
 
-.name
-  grid-column-start: 1
-  grid-column-end: 2
-
-.value
-  grid-column-start: 2
-  grid-column-end: 3
-
-.switch
-  grid-column-start: 3
-  grid-column-end: 4
-  padding-right: 5rem
-
-.add-env
-  grid-column-start: 4
-  grid-column-end: 5
-
-.add-env button
-  margin-top: 28px
 
 .isOn button
   margin-top: 28px
@@ -206,6 +189,45 @@ select.form-control
     margin-top: 2px
   .input-area:nth-last-child(1)
     width: 300px
+
+.add-env-container
+  display: grid
+  grid-template-columns: 1fr minmax(120px, 300px) minmax(120px, 300px) 80px 126px
+  grid-gap: 6px
+  padding: 5px
+  margin-bottom: 8px
+  align-items: center
+  justify-items: start
+  &:hover
+    background-color: rgba(9,30,66,.04)
+
+input[type=text].form-control-ev-var
+  width: 100%
+.secret-sw
+  margin-top: -12px
+.first-container
+  grid-column: 1
+  text-align: center
+
+.second-container
+  grid-column: 2
+  width: 96%
+  position: relative
+
+.third-container
+  grid-column: 3
+  width: 96%
+  position: relative
+
+.err-block
+  position: absolute
+
+.fourth-container
+  grid-column: 4
+
+.fifth-container
+  grid-column: 5
+  justify-self: end
 
 @media screen and (max-width: 675px)
   .container

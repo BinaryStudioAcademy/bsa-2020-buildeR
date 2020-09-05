@@ -99,7 +99,6 @@
       <h2 class="small-title">
         Environment Variables
       </h2>
-      <p>Customize your build using enviroment variables. </p>
 
         <!-- Show Env Vars  -->
         <ng-container class="vars" *ngFor="let varibable of envVariables">
@@ -107,46 +106,41 @@
         </ng-container>
       <!-- Adding env vars -->
       <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
-          <div class="group-ev">
-          <div class='name'>
-            <h5 class="text-over">Name</h5>
-            <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="name"
+        <div class="add-env-container border rounded">
+          <p class="first-container my-2">Customize your build using enviroment variables. </p>
+          <div class="second-container">
+            <input type="text" class="form-control form-control form-control-ev-var" formControlName="name"
               placeholder="Name">
-              <div *ngIf="envVarsForm.controls['name'].errors">
-                <div class="error" *ngIf="envVarsForm.controls['name'].errors.required && envVarsForm.controls['name'].touched">
-                  Name is required
-                </div>
+            <div *ngIf="envVarsForm.controls['name'].errors" class="err-block">
+              <div class="error"
+                *ngIf="envVarsForm.controls['name'].errors.required && envVarsForm.controls['name'].touched">
+                Name is required
               </div>
             </div>
           </div>
-          <div class='value'>
-            <h5 class="text-over">Value</h5>
-            <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="value"
+          <div class='third-container'>
+            <input type="text" class="form-control form-control form-control-ev-var" formControlName="value"
               placeholder="Value">
-              <div *ngIf="envVarsForm.controls['value'].errors">
-                <div class="error" *ngIf="envVarsForm.controls['value'].errors.required && envVarsForm.controls['value'].touched">
-                  Value is required
-                </div>
+            <div *ngIf="envVarsForm.controls['value'].errors" class="err-block">
+              <div class="error"
+                *ngIf="envVarsForm.controls['value'].errors.required && envVarsForm.controls['value'].touched">
+                Value is required
               </div>
             </div>
           </div>
-          <div class='switch'>
+          <div class='fourth-container'>
             <h5 class="text-over">Is Secret</h5>
-            <div class="input-area">
-              <div class="custom-control custom-switch ">
-                <input type="checkbox" class="custom-control-input" formControlName="isSecret"/>
+            <div class="input-area secret-sw">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" formControlName="isSecret" />
                 <label class="custom-control-label" for="isSecret"></label>
               </div>
+            </div>
           </div>
-          </div>
-          <div class="add-env">
-            <button class="btn btn-info add-env" type="submit"[disabled]="envVarsForm.invalid">Add Variable</button>
-
+          <div class="fifth-container">
+            <button class="btn btn-info m-0" type="submit" [disabled]="envVarsForm.invalid">Add Variable</button>
           </div>
         </div>
-
       </form>
     </div>
     <div class="settings-section border-bottom padd">
