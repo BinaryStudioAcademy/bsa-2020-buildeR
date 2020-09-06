@@ -9,7 +9,7 @@ namespace buildeR.Common.DTO
     {
         public DateTime Timestamp { get; set; }
         public string Message { get; set; }
-        public int BuildId { get; set; }
-        public int BuildStep { get; set; }
+        public int BuildHistoryId { get; set; }
+        public int ProjectId { get; set; }
     }
 }

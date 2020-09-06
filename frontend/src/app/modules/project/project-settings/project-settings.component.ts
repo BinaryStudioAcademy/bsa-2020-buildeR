@@ -8,6 +8,8 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
 import { enableDebugTools } from '@angular/platform-browser';
 import { env } from 'process';
+import {projectNameAsyncValidator} from "@modules/project/validators/project-name.async-validator";
+import {User} from "@shared/models/user/user";
 
 @Component({
   selector: 'app-project-settings',
@@ -15,6 +17,8 @@ import { env } from 'process';
   styleUrls: ['./project-settings.component.sass']
 })
 export class ProjectSettingsComponent implements OnInit {
+
+  isChanged = false;
   isLoading = false;
   projectId: number;
   branches: string [] = ['master', 'dev'];
@@ -22,29 +26,55 @@ export class ProjectSettingsComponent implements OnInit {
   public projectForm: FormGroup;
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
+
+  changedProject: Project = {} as Project;
   @Input() project: Project = {} as Project;
+  currentUser: User = {} as User;
+
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   )
-  {
-    route.parent.params.subscribe(
-      (params) => this.projectId = params.projectId);
-    this.route.parent.data.subscribe(data => this.project = data.project);
-  }
+  { }
 
   ngOnInit(): void {
+
+    this.route.parent.data.subscribe(data => {
+      this.currentUser = data.user;
+    });
+
+    this.route.parent.params.subscribe(
+      (params) => this.projectId = params.projectId);
+    this.route.parent.data.subscribe(data => this.project = data.project);
+
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
-          Validators.required
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(32),
+          Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
+        ],
+        [
+          projectNameAsyncValidator(this.projectService, this.currentUser, this.project.id)
         ]),
         isPublic: new FormControl(this.project.isPublic.toString()),
         description: new FormControl(this.project.description,
           [
-            Validators.required
+            Validators.maxLength(300),
+            Validators.pattern('[^А-яа-я]*')
           ])
+    });
+
+    this.projectForm.valueChanges.subscribe(changesSettigsForm => {
+      this.changedProject = (changesSettigsForm as Project);
+      this.isChanged = false;
+      if (this.project.name === this.changedProject.name &&
+      this.project.description === this.changedProject.description &&
+      this.project.isPublic.toString() === this.changedProject.isPublic.toString()) {
+        this.isChanged = true;
+      }
     });
 
     this.envVarsForm = new FormGroup({
@@ -80,6 +110,7 @@ export class ProjectSettingsComponent implements OnInit {
     }, (err) => {
       this.toastrService.showError(err);
     });
+    this.isChanged = true;
   }
 
   loadEnvVars(){
@@ -113,14 +144,23 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   delete(envVar: EnviromentVariable){
-    this.projectService.deleteEnviromentVariable(envVar).subscribe(() => {
-     this.loadEnvVars();
-   });
+    this.projectService.deleteEnviromentVariable(envVar).subscribe(
+      () => {
+        this.envVariables = this.envVariables.filter(x => x.id !== envVar.id);
+        this.toastrService.showSuccess('Enviroment Variable deleted');
+      },
+      (error) => this.toastrService.showError(error.message, error.name)
+    );
   }
 
   edit(envVar: EnviromentVariable){
-    this.projectService.updateEnviromentVariable(envVar).subscribe(() => {
-      this.loadEnvVars();
-    });
+    const index = this.envVariables.findIndex(x => x.id === envVar.id);
+    this.projectService.updateEnviromentVariable(envVar).subscribe(
+      () => {
+        this.envVariables.splice(index, 1, envVar);
+        this.toastrService.showSuccess('Enviroment Variable updated');
+      },
+      (error) => this.toastrService.showError(error.message, error.name)
+    );
   }
 }

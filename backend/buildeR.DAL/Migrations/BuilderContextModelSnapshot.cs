@@ -44,7 +44,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<int>("PerformerId")
+                    b.Property<int?>("PerformerId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -239,19 +239,27 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("EntityId")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EntityType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NotificationMessage")
+                    b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NotificationTrigger")
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -418,6 +426,29 @@ namespace buildeR.DAL.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectGroups");
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.ProjectRemoteTrigger", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Branch")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectRemoteTriggers");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.ProjectTrigger", b =>
@@ -605,8 +636,7 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.User", "Performer")
                         .WithMany("BuildHistories")
                         .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildHistories")
@@ -646,6 +676,13 @@ namespace buildeR.DAL.Migrations
                         .HasForeignKey("BuildStepId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
@@ -694,6 +731,15 @@ namespace buildeR.DAL.Migrations
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectGroups")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("buildeR.DAL.Entities.ProjectRemoteTrigger", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.Project", "Project")
+                        .WithMany("ProjectRemoteTriggers")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

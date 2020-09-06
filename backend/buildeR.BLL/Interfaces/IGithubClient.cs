@@ -11,8 +11,9 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<GithubRepository>> GetUserRepositories(string token);
         Task<IEnumerable<GithubBranch>> GetPrivateRepositoryBranches(string repositoryName, string token);
         Task<IEnumerable<GithubBranch>> GetPublicRepositoryBranches(string repositoryName, string repositoryOwner);
+        Task<GithubCommit> GetLastBranchCommit(string repoName, string repoOwner, string branchName, string token = null);
         Task<bool> CheckIfRepositoryAccessable(string repoName, string repoOwner, string token = null);
         Task<AccessTokenCheckDTO> CheckIfTokenValid(string token);
-        Task CreateWebhook(string repositoryName, string callback, string token);
+        Task CreateWebhook(string repositoryName, string eventName, string callback, string token);
     }
 }

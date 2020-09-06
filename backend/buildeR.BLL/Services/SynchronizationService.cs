@@ -48,6 +48,16 @@ namespace buildeR.BLL.Services
 
             return repositories.Select(r => new Repository { Name = r.Name, Owner = r.Owner.Login, Private = r.Private, Description = r.Description, Url = r.Html_Url });
         }
+        public async Task<Commit> GetLastProjectCommit(int projectId, string branch)
+        {
+            var project = await _projectService.GetAsync(projectId);
+            var repository = await _projectService.GetRepository(projectId);
+            var token = await GetUserAccessToken(project.OwnerId);
+
+            var commit = await _githubClient.GetLastBranchCommit(repository.Name, repository.Owner, branch, token?.Token);
+
+            return new Commit { Hash = commit.SHA };
+        }
         public async Task<bool> CheckIfRepositoryAccessable(string repoUrl, int userId)
         {
             var repoName = _synchronizationHelper.GetRepositoryNameFromUrl(repoUrl);
@@ -79,11 +89,15 @@ namespace buildeR.BLL.Services
         {
             callback += $"/{projectId}/github";
 
+            var pushCallback = callback + "/push";
+            var pullRequestCallback = callback + "/pull_request";
+
             var project = await _projectService.GetAsync(projectId);
             var repository = await _projectService.GetRepository(projectId);
             var token = await GetUserAccessToken(project.OwnerId);
 
-            await _githubClient.CreateWebhook(repository.Name, callback, token.Token);
+            await _githubClient.CreateWebhook(repository.Name, "push", pushCallback, token.Token);
+            await _githubClient.CreateWebhook(repository.Name, "pull_request", pullRequestCallback, token.Token);
         }
         public async Task SetUpUserToken(int userId, string token)
         {

@@ -72,7 +72,7 @@ namespace buildeR.API.Controllers
         public async Task<BuildHistoryDTO> BuildProject([FromBody] NewBuildHistoryDTO history)
         {
             var buildHistory = await _buildService.Create(history);
-            await _builder.StartBuild(history.ProjectId, buildHistory.Id, buildHistory.BranchHash);
+            await _builder.StartBuild(history.ProjectId, buildHistory.Id, buildHistory.BranchHash, buildHistory.PerformerId);
             return buildHistory;
         }
 
@@ -106,10 +106,10 @@ namespace buildeR.API.Controllers
             await _envService.UpdateEnvironmentVariable(variableDTO);
         }
 
-        [HttpGet("projectNameValidation/{userId}/{projectName}")]
-        public async Task<bool> ValidateProjectName(int userId, string projectName)
+        [HttpGet("projectNameValidation/{userId}/{projectName}/{projectId}")]
+        public async Task<bool> ValidateProjectName(int userId, string projectName, int projectId)
         {
-            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName);
+            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
         }
     }
 }

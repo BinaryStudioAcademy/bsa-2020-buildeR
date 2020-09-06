@@ -30,6 +30,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   newBuildSteps: BuildStep[] = new Array();
 
   isLoading = true;
+  pluginGroups: string[];
 
   constructor(
     private projectService: ProjectService,
@@ -80,6 +81,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         (resp) => {
           this.isLoading = false;
           this.emptyBuildSteps = resp.body;
+          this.pluginGroups = Array.from(new Set(this.emptyBuildSteps.map(({pluginCommand}) => pluginCommand.plugin.pluginName)));
         },
         (error) => {
           this.isLoading = false;
@@ -195,20 +197,23 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 }
 
   saveNewBuildSteps() {
-    this.newBuildSteps.forEach(step => {
-      this.buildStepService
-      .createBuildStep(step)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (resp) => {
-          this.buildSteps.push(resp);
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error);
-        }
-      );
-    });
+    if (this.newBuildSteps !== []) {
+      this.newBuildSteps.forEach(step => {
+        this.buildStepService
+        .createBuildStep(step)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(
+          (resp) => {
+            this.buildSteps.push(resp);
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.showError(error);
+          }
+        );
+      });
+    }
+
   }
 
   addEmptyCommand(step: BuildStep) {
@@ -223,14 +228,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 
   updateAllSteps() {
     this.isLoading = true;
-    if (this.newBuildSteps !== []) {
-      this.saveNewBuildSteps();
-    }
     this.buildStepService.bulkUpdate(this.buildSteps)
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe(
       (resp) => {
-        this.getProjectBuildSteps(this.projectId)
+        this.getProjectBuildSteps(this.projectId);
        },
       (error) => {
         this.isLoading = false;

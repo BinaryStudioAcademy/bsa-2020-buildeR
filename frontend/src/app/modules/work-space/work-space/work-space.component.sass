@@ -1,5 +1,6 @@
 .work-wrapper
   padding: 20px 10px 30px
+  margin-top: 71px
 
 nav.navbar
   position: fixed
@@ -13,13 +14,14 @@ nav.navbar
 
 .counter
   position: absolute
-  top: -12px
-  right: 15px
+  top: -5px
+  left: 15px
   background-color: tomato
-  color: white
-  padding: 0 10px
-  border-radius: 20px
+  color: #fff
+  padding: 0px 6px
+  border-radius: 50%
   text-align: center
+  font-size: 12px
 
 div.navbar-collapse
   li
@@ -54,7 +56,7 @@ button
 
 // Styles for notifications icon and block
 
-.nav-item:first-child
+.nav-item:nth-child(2), .nav-item:first-child
   margin: auto
   margin-right: 10px
 
@@ -63,7 +65,7 @@ button
   .nav-link i:hover
     color: rgba(255, 211, 55, 0.8)
 
-.notifications-icon
+.notifications-icon, .admin-icon
   width: 1.4em
   height: 1.4em
   font-size: 24px

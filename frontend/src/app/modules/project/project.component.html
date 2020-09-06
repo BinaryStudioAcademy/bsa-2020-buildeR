@@ -25,7 +25,7 @@
         </svg>
       </span>
       <h1 class="user-project-names">
-        <a [routerLink]="">{{ project.owner?.username }} </a>/
+        <a [routerLink]="'/portal/user/' + project?.ownerId">{{ project.owner?.username }} </a>/
         <a [routerLink]="">{{ project.name }} </a>
       </h1>
     </div>
@@ -72,8 +72,51 @@
     </div>
   </div>
   <div class="project-main">
+
     <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
     <div class="project-body">
+      <button class="btn btn-link trigger-button" (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
+        <span class="trigger-button-text"> Trigger build</span></button>
+
+        <ng-template #branchSelectModal let-modal>
+        <div class="modal-header">
+          <h4 style="color: #17a2b8;">Run build</h4>
+          <div (click)="modal.dismiss()">
+            <i id="cross" class="fas fa-times"></i>
+          </div>
+        </div>
+        <div class="modal-body branch-modal">
+          <div class="group">
+            <div class="field">
+              <div class="label-wr">
+                <span>Select a branch:</span>
+              </div>
+            </div>
+            <div class="input-area" *ngIf="!loadingSelectedProjectBranches else loadingBranches">
+              <select class="form-control form-control-sm branch-select" [(ngModel)]="selectedProjectBranch">
+                <option *ngFor="let branch of selectedProjectBranches" [ngValue]='branch.name'>
+                  {{branch.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-wr">
+            <button class="btn btn-success" [disabled]="!selectedProjectBranch"
+              (click)="triggerBuild()">Select</button>
+            <button class="btn btn-warning" (click)="closeModal()">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <ng-template #loadingBranches>
+          <div class="spinner-wrp">
+            <app-loading-spinner position="absolute" margin="0" size="4px">
+            </app-loading-spinner>
+          </div>
+        </ng-template>
+      </ng-template>
+
       <router-outlet></router-outlet>
     </div>
   </div>

@@ -5,6 +5,7 @@ using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
 using buildeR.Common.DTO.BuildStep;
 using buildeR.Common.DTO.Project;
+using buildeR.Common.DTO.ProjectRemoteTrigger;
 using buildeR.Common.DTO.Repository;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
@@ -172,10 +173,18 @@ namespace buildeR.BLL.Services
 
             return Mapper.Map<RepositoryDTO>(project.Repository);
         }
-
-        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName)
+        public async Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectRemoteTriggers(int projectId)
         {
-            var project = await Context.Projects.FirstOrDefaultAsync(p => p.OwnerId == userId && p.Name == projectName);
+            var project = await Context.Projects
+                                       .Include(p => p.ProjectRemoteTriggers)
+                                       .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            return Mapper.Map<IEnumerable<ProjectRemoteTriggerDTO>>(project.ProjectRemoteTriggers);
+        }
+        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId)
+        {
+            var project = await Context.Projects.FirstOrDefaultAsync(p =>
+                p.OwnerId == userId && p.Name == projectName && p.Id != projectId);
             return project == null;
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
