@@ -1,0 +1,63 @@
+<div class="modal-header">
+  <h4 style="color: #17a2b8;">Answer user letter</h4>
+  <div (click)="closeForm()">
+    <i id="cross" class="fas fa-times" ></i>
+  </div>
+</div>
+<div class="modal-body">
+  <form [formGroup]="requestsForm" (ngSubmit)="send(answerText)">
+    <div class="group">
+      <div class="field">
+        <div class="label-wr">
+          <span>Name</span>
+        </div>
+      </div>
+      <div class="input-area">
+        <input type="text" class="form-control form-control-sm" formControlName="userName" disabled
+               placeholder="Name" />
+      </div>
+      <div class="field">
+        <div class="label-wr">
+          <span>Email</span>
+        </div>
+      </div>
+      <div class="input-area">
+        <input type="text" rows="3" class="form-control form-control-sm" formControlName="userEmail"
+                  placeholder="User email" disabled>
+      </div>
+      <div class="field">
+        <div class="label-wr">
+          <span>Subject</span>
+        </div>
+      </div>
+      <div class="input-area">
+        <input type="text" class="form-control form-control-sm" formControlName="subject" required disabled
+               placeholder="Subject" />
+      </div>
+      <div class="field">
+        <div class="label-wr">
+          <span>Description</span>
+        </div>
+      </div>
+      <div class="input-area">
+        <textarea type="text" rows="4" class="form-control form-control-sm" formControlName="description"
+               placeholder="Description" disabled>
+        </textarea>
+      </div>
+      <div class="field">
+        <div class="label-wr">
+          <span>Answer</span>
+        </div>
+      </div>
+      <div class="input-area">
+        <textarea type="text" rows="4" class="form-control form-control-sm" formControlName="answer"
+                  placeholder="Answer">
+        </textarea>
+      </div>
+    </div>
+    <div class="btn-wp">
+      <button type="submit" class="btn btn-success" [disabled]="requestsForm.invalid">Send</button>
+      <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
+    </div>
+  </form>
+</div>

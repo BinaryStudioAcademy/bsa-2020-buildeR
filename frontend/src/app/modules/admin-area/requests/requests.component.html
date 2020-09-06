@@ -14,7 +14,7 @@
             <h5 class='plugin-name'>Email: {{ letter.userEmail }}</h5>
           </div>
           <div class="card-button">
-            <button class="btn btn-info">Answer</button>
+            <button class="btn btn-info" (click)="openModal(letter)">Answer</button>
           </div>
         </div>
         <div class="card-body">
