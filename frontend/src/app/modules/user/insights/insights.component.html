@@ -28,7 +28,7 @@
       <h6> Total builds</h6>
       <h5>{{totalBuilds}}</h5>
       <div>
-        <app-chart-small *ngIf="loaded" [results]="buildsData">
+        <app-chart-small [results]="buildsData">
         </app-chart-small>
       </div>
     </div>
@@ -36,28 +36,28 @@
       <h6 >Total job minutes</h6>
       <h5>{{totalDuration}}</h5>
       <div class="chart">
-        <app-chart-small *ngIf="loaded" [results]="durationData">
+        <app-chart-small [results]="durationData">
         </app-chart-small>
       </div>
     </div>
     <div class="third-chart border">
       <h6 >Build Success Rate</h6>
       <h5>{{buildSuccessRate}}%</h5>
-      <app-chart-small *ngIf="loaded" [results]="successData">
+      <app-chart-small [results]="successData">
       </app-chart-small>
     </div>
     <div class="fourth-chart border">
       <h6>Active Projects</h6>
       <h5>{{activeProjects}}</h5>
-      <app-chart-small *ngIf="loaded" [results]="projectData">
+      <app-chart-small  [results]="projectData">
       </app-chart-small>
     </div>
   </div>
   <div style="text-align: center;">
     <h5>Build Statuses</h5>
-      <app-chart-big-normalized *ngIf="loaded" [hidden]="!month" [results]="bigChartData">
+      <app-chart-big-normalized [hidden]="!month" [results]="bigChartData">
       </app-chart-big-normalized>
-      <app-chart-big-grouped *ngIf="loaded" [hidden]="month" [results]="bigChartData">
+      <app-chart-big-grouped  [hidden]="month" [results]="bigChartData">
       </app-chart-big-grouped>
     </div>
 </div>

@@ -23,7 +23,6 @@ export class InsightsComponent implements OnInit {
   tab = 0;
   month = false;
   isOwner = false;
-  loaded = false;
   buildsData;
   durationData;
   successData;
@@ -48,7 +47,6 @@ export class InsightsComponent implements OnInit {
   }
   // 0 - public and private, 1 - public, 2 - private builds
   receiveBuildsInfo(buildsPublicity: number = 0){
-    this.loaded = false;
     this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
       if (!buildsPublicity){
         this.user.buildHistories = res.body;
@@ -66,7 +64,6 @@ export class InsightsComponent implements OnInit {
       this.activeProjects = this.countActiveProjects();
       this.countActiveProjects();
       this.getData();
-      this.loaded = true;
     });
   }
 
