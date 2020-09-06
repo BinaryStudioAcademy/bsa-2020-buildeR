@@ -82,6 +82,7 @@ export class UserService {
   sendLetterToUser(userLetter: UserLetter, message: string){
     const userLetterWithAnswer =
       {
+        id: userLetter.id,
         userName: userLetter.userName,
         userEmail: userLetter.userEmail,
         subject: userLetter.subject,
@@ -89,7 +90,11 @@ export class UserService {
         isRespond: userLetter.isRespond,
         answer: message
       };
-    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters`, userLetterWithAnswer);
+    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters/send`, userLetterWithAnswer);
+  }
+
+  updateUserLetter(userLetter: UserLetter) {
+    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters`, userLetter);
   }
 
 }

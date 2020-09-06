@@ -94,10 +94,16 @@ namespace buildeR.API.Controllers
             return await _userService.GetAllUserLetters();
         }
         
-        [HttpPut("letters")]
+        [HttpPut("letters/send")]
         public async Task SendLetterToUser([FromBody] UserLetterAnswerDTO userLetter)
         {
             await _userService.SendLetterToUser(userLetter);
+        }
+        
+        [HttpPut("letter")]
+        public async Task UpdateUserLetter([FromBody] UserLetterDTO userLetter)
+        {
+            await _userService.UpdateUserLetter(userLetter);
         }
     }   
 }
