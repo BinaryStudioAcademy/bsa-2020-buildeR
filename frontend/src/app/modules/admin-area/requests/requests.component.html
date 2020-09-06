@@ -4,13 +4,25 @@
 <!--  <app-loading-spinner size="20px"></app-loading-spinner>-->
 <!--</ng-template>-->
 
-<ng-template #loaded>
   <div class="container">
-    <div class='card plugin-card mb-2 mr-2'>
-      <div class="card-header">
-      </div>
-      <div class="card-body">
+    <div *ngFor='let letter of currentUserLetters;'>
+      <div class='card mb-3'>
+        <div class="card-header">
+          <div>
+            <h5 class='card-title plugin-name'>Subject: {{ letter.subject }}</h5>
+            <h5 class='plugin-name'>User name: {{ letter.userName }}</h5>
+            <h5 class='plugin-name'>Email: {{ letter.userEmail }}</h5>
+          </div>
+          <div class="card-button">
+            <button class="btn btn-info">Answer</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-description">
+            {{letter.description}}
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</ng-template>
+
