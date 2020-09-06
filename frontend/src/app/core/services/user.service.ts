@@ -75,4 +75,8 @@ export class UserService {
     return this.httpService.getFullRequest<User[]>(`${this.routePrefix}`);
   }
 
+  getAllUserLetters() {
+    return this.httpService.getRequest<UserLetter[]>(`${this.routePrefix}/letters`);
+  }
+
 }

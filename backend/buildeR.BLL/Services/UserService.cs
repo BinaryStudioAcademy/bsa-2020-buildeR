@@ -186,5 +186,11 @@ namespace buildeR.BLL.Services
             await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, 
                 emailModel.Subject, emailModel.Title, emailModel.Body);
         }
+
+        public async Task<ICollection<UserLetterDTO>> GetAllUserLetters()
+        {
+            var userLetters = await _context.UserLetters.ToListAsync();
+            return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
+        }
     }
 }
