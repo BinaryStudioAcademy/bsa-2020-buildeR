@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 export class InsightsComponent implements OnInit {
   user: User = {} as User;
   now: Date = new Date(Date.now());
+  buildsPublicity = [];
   countedDate: Date;
   totalBuilds = 0;
   totalDuration = 0;
@@ -22,7 +23,7 @@ export class InsightsComponent implements OnInit {
   tab = 0;
   month = false;
   isOwner = false;
-
+  loaded = false;
   buildsData;
   durationData;
   successData;
@@ -38,12 +39,26 @@ export class InsightsComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    this.buildsPublicity = ['public and private builds', 'public builds', 'private builds'];
     this.route.data.subscribe(data => {
       this.user = data.user;
       this.countedDate = new Date(this.user.createdAt);
     });
+    this.receiveBuildsInfo();
+  }
+  // 0 - public and private, 1 - public, 2 - private builds
+  receiveBuildsInfo(buildsPublicity: number = 0){
+    this.loaded = false;
     this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
-      this.user.buildHistories = res.body;
+      if (!buildsPublicity){
+        this.user.buildHistories = res.body;
+      }
+      if (buildsPublicity === 1){
+        this.user.buildHistories = res.body.filter(x => x.project.isPublic === true);
+      }
+      if (buildsPublicity === 2){
+        this.user.buildHistories = res.body.filter(x => x.project.isPublic === false);
+      }
       this.totalBuilds = this.totalBuildsCount();
       this.totalDuration = this.user.buildHistories.length ?
       Math.floor(this.user.buildHistories.map(this.duration).reduce(this.sum) / 6000) : 0;
@@ -51,14 +66,15 @@ export class InsightsComponent implements OnInit {
       this.activeProjects = this.countActiveProjects();
       this.countActiveProjects();
       this.getData();
-  });
+      this.loaded = true;
+    });
   }
 
   getData(isMonth = false) {
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
       this.countedDate = this.user.createdAt;
-      this.fulfillCharts(this.user.createdAt, diff);
+      this.fulfillCharts(this.user.createdAt, diff + 1);
       return;
     }
     if (!(diff <= 7) && isMonth){
@@ -67,7 +83,7 @@ export class InsightsComponent implements OnInit {
       this.countedDate = new Date(this.now);
       this.countedDate.setDate(this.countedDate.getDate() - 30);
       date.setDate(date.getDate() - 30);
-      this.fulfillCharts(date, 30);
+      this.fulfillCharts(date, 31);
       return;
     }
     // Show week
@@ -75,7 +91,7 @@ export class InsightsComponent implements OnInit {
     this.countedDate = new Date(this.now);
     this.countedDate.setDate(this.countedDate.getDate() - 6);
     date.setDate(date.getDate() - 6);
-    this.fulfillCharts(date, 6);
+    this.fulfillCharts(date, 8);
     return;
   }
 
@@ -225,6 +241,18 @@ export class InsightsComponent implements OnInit {
     }
     this.getData(true);
     this.month = true;
+  }
+
+  changeBuilSelector(build: string){
+    if (build ===  this.buildsPublicity[0]){
+      this.receiveBuildsInfo(0);
+    }
+    if (build ===  this.buildsPublicity[1]){
+      this.receiveBuildsInfo(1);
+    }
+    if (build ===  this.buildsPublicity[2]){
+      this.receiveBuildsInfo(2);
+    }
   }
 
   diffDates(dateOne: Date, dateTwo: Date): number {
