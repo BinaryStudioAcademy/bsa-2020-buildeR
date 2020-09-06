@@ -1,13 +1,15 @@
-<!--<div *ngIf="isLoading; then loading; else loaded;"></div>-->
 
-<!--<ng-template #loading>-->
-<!--  <app-loading-spinner size="20px"></app-loading-spinner>-->
-<!--</ng-template>-->
-
-  <div class="container">
+ <div class="container">
+   <div>
+     <div class="mb-2">
+       <button class="btn btn-success mr-1" (click)="changeOnAll()">All</button>
+       <button class="btn btn-success mr-1" (click)="chaneOnIsRespond()">IsRespond</button>
+       <button class="btn btn-success" (click)="changeOnIsNotRespond()">IsNotRespond</button>
+     </div>
+   </div>
     <div *ngFor='let letter of currentUserLetters;'>
       <div class='card mb-3'>
-        <div class="card-header">
+        <div class="card-header" [ngStyle]="{'border-left': letter.isRespond ? '6px solid green' : '6px solid red' }">
           <div>
             <h5 class='card-title plugin-name'>Subject: {{ letter.subject }}</h5>
             <h5 class='plugin-name'>User name: {{ letter.userName }}</h5>

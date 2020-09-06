@@ -90,7 +90,6 @@ namespace buildeR.API.Controllers
         [HttpGet("letters")]
         public async Task<ICollection<UserLetterDTO>> GetAllUserLetters()
         {
-            Console.WriteLine("tyta");
             return await _userService.GetAllUserLetters();
         }
         
@@ -100,10 +99,16 @@ namespace buildeR.API.Controllers
             await _userService.SendLetterToUser(userLetter);
         }
         
-        [HttpPut("letter")]
+        [HttpPut("letters")]
         public async Task UpdateUserLetter([FromBody] UserLetterDTO userLetter)
         {
             await _userService.UpdateUserLetter(userLetter);
+        }
+        
+        [HttpGet("letters/checkRespond/{isRespond}")]
+        public async Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(string isRespond)
+        {
+            return await _userService.GetUserLettersCheckRespond(Convert.ToBoolean(isRespond));
         }
     }   
 }

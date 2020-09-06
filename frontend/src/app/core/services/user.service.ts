@@ -97,4 +97,7 @@ export class UserService {
     return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters`, userLetter);
   }
 
+  getUserLettersCheckRespond(isRespond: boolean) {
+    return this.httpService.getRequest<UserLetter[]>(`${this.routePrefix}/letters/checkRespond/${isRespond}`);
+  }
 }

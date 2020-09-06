@@ -14,6 +14,9 @@ import {RequestsModalComponent} from "@modules/admin-area/requests/requests-moda
 export class RequestsComponent extends BaseComponent implements OnInit {
 
   currentUserLetters: UserLetter[] = {} as UserLetter[];
+  allUserLetters: UserLetter[] = {} as UserLetter[];
+  onlyIsRespondLetters: UserLetter[] = {} as UserLetter[];
+  onlyIsNotRespondLetters: UserLetter[] = {} as UserLetter[];
 
   constructor(private userService: UserService,
               private activeRoute: ActivatedRoute,
@@ -22,13 +25,34 @@ export class RequestsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
    this.activeRoute.data.subscribe(data => {
-     this.currentUserLetters = data.userLetters;
+     this.allUserLetters = data.userLetters;
+     this.currentUserLetters = this.allUserLetters;
      });
+   this.userService.getUserLettersCheckRespond(true).subscribe(letters => {
+     this.onlyIsRespondLetters = letters;
+     console.log(this.onlyIsRespondLetters);
+   })
+    this.userService.getUserLettersCheckRespond(false).subscribe(letters => {
+      this.onlyIsNotRespondLetters = letters;
+      console.log(this.onlyIsNotRespondLetters);
+    })
   }
 
   openModal(userLetter: UserLetter) {
     const activeModal = this.modalService.open(RequestsModalComponent);
     (activeModal.componentInstance as RequestsModalComponent).currentLetter = userLetter;
+  }
+
+  changeOnAll() {
+    this.currentUserLetters = this.allUserLetters;
+  }
+
+  chaneOnIsRespond() {
+    this.currentUserLetters = this.onlyIsRespondLetters;
+  }
+
+  changeOnIsNotRespond() {
+    this.currentUserLetters = this.onlyIsNotRespondLetters;
   }
 
 }

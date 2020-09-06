@@ -215,5 +215,11 @@ namespace buildeR.BLL.Services
             await _context.SaveChangesAsync();
             return letter;
         }
+        
+        public async Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(bool isRespond)
+        {
+            var userLetters = await _context.UserLetters.Where(l => l.IsRespond == isRespond).ToListAsync();
+            return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
+        }
     }
 }

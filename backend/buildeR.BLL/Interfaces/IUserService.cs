@@ -22,5 +22,6 @@ namespace buildeR.BLL.Interfaces
         Task<ICollection<UserLetterDTO>> GetAllUserLetters();
         Task SendLetterToUser(UserLetterAnswerDTO userLetter);
         Task<UserLetter> UpdateUserLetter(UserLetterDTO userLetter);
+        Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(bool isRespond);
     }
 }
