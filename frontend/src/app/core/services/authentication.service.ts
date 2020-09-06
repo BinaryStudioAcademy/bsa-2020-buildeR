@@ -3,10 +3,10 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { filter, tap, switchMap } from 'rxjs/operators';
-import { UserService } from './user.service';
+import { UserInfo, auth } from 'firebase';
 import { from, of } from 'rxjs';
-import { UserInfo } from 'firebase';
+import { filter, switchMap, tap } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class AuthenticationService {
   configureAuthState = (user: firebase.User) => {
     if (user) {
       return user.getIdTokenResult().then((result) => {
-        this.populateAuth(result.token, user);
+        this.populateAuth(result.token, result.expirationTime, user);
         return this.loadCurrentUser();
       });
     }
@@ -84,9 +84,21 @@ export class AuthenticationService {
     return fireUser$.pipe(
       filter(user => Boolean(user)),
       switchMap(user => user.getIdToken(true)),
-      tap(token => localStorage.setItem('jwt', token))
+      tap(token => this.populateAuth(token, new Date(Date.now()).toUTCString()))
     );
   }
+
+  refreshToken() {
+    return this.angularAuth.currentUser.then((user) => {
+      if (user) {
+        user.getIdTokenResult(true).then((result) => {
+          this.populateAuth(result.token, result.expirationTime, user);
+          return this.loadCurrentUser();
+        });
+      }
+    });
+  }
+
 
   getCurrentUser() {
     return this.currentUser;
@@ -110,19 +122,29 @@ export class AuthenticationService {
   }
 
   isAuthorized() {
+    if (this.isTokenExpired()) {
+      this.refreshToken();
+    }
     return Boolean(this.getFireUser());
   }
 
-  populateAuth(jwt: string, user: firebase.User) {
-    this.firebaseUser = user;
-    localStorage.setItem('user', JSON.stringify(user));
+  populateAuth(jwt: string, time?: string, user?: firebase.User) {
+    if (user !== undefined) {
+      this.firebaseUser = user;
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    if (time !== undefined) {
+      localStorage.setItem('exp-time', new Date(time).toUTCString());
+    }
+
     localStorage.setItem('jwt', jwt);
   }
 
   clearAuth() {
-    localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
+    localStorage.removeItem('exp-time');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
   }
@@ -130,5 +152,16 @@ export class AuthenticationService {
   isGithubAddedInFirebase() {
     const check = (item: UserInfo) => item.providerId === 'github.com';
     return this.firebaseUser.providerData.some(check);
+  }
+
+  isTokenExpired() {
+    const expTime = new Date(localStorage.getItem('exp-time'));
+    console.log('expTime1' + expTime);
+    expTime.setMinutes(expTime.getMinutes() - 5);
+    const now = new Date(Date.now());
+    console.log('expTime2 ' + expTime);
+    console.log('now ' + now);
+    console.log(expTime.getTime() < now.getTime());
+    return expTime.getTime() < now.getTime();
   }
 }
