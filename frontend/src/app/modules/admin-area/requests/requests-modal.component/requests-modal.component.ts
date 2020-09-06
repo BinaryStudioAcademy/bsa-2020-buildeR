@@ -24,16 +24,16 @@ export class RequestsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.requestsForm = new FormGroup({
-      userName: new FormControl(this.currentLetter.userName),
-      userEmail: new FormControl(this.currentLetter.userEmail),
-      subject: new FormControl(this.currentLetter.subject),
-      description: new FormControl(this.currentLetter.description),
+      userName: new FormControl({value: this.currentLetter.userName, disabled:true }),
+      userEmail: new FormControl({value: this.currentLetter.userEmail, disabled:true}),
+      subject: new FormControl({value: this.currentLetter.subject, disabled:true}),
+      description: new FormControl({value: this.currentLetter.description, disabled:true}),
       answer: new FormControl(this.answerText, [Validators.required])
     });
   }
 
   send(answerText: string): void{
-
+    this.userService.sendLetterToUser(this.currentLetter, answerText).subscribe(letter => console.log(letter));
   }
 
   closeForm() {

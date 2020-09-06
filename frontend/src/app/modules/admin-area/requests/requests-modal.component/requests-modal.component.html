@@ -5,7 +5,7 @@
   </div>
 </div>
 <div class="modal-body">
-  <form [formGroup]="requestsForm" (ngSubmit)="send(answerText)">
+  <form [formGroup]="requestsForm" (ngSubmit)="send(requestsForm.controls['answer'].value)">
     <div class="group">
       <div class="field">
         <div class="label-wr">
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="input-area">
-        <input type="text" class="form-control form-control-sm" formControlName="userName" disabled
+        <input type="text" class="form-control form-control-sm" formControlName="userName"
                placeholder="Name" />
       </div>
       <div class="field">
@@ -23,7 +23,7 @@
       </div>
       <div class="input-area">
         <input type="text" rows="3" class="form-control form-control-sm" formControlName="userEmail"
-                  placeholder="User email" disabled>
+                  placeholder="User email">
       </div>
       <div class="field">
         <div class="label-wr">
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="input-area">
-        <input type="text" class="form-control form-control-sm" formControlName="subject" required disabled
+        <input type="text" class="form-control form-control-sm" formControlName="subject" required
                placeholder="Subject" />
       </div>
       <div class="field">
@@ -41,7 +41,7 @@
       </div>
       <div class="input-area">
         <textarea type="text" rows="4" class="form-control form-control-sm" formControlName="description"
-               placeholder="Description" disabled>
+               placeholder="Description">
         </textarea>
       </div>
       <div class="field">
