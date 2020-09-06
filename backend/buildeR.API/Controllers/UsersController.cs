@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO;
@@ -6,6 +7,7 @@ using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 
 namespace buildeR.API.Controllers
 {
@@ -87,8 +89,15 @@ namespace buildeR.API.Controllers
 
         [HttpGet("letters")]
         public async Task<ICollection<UserLetterDTO>> GetAllUserLetters()
-        {  
+        {
+            Console.WriteLine("tyta");
             return await _userService.GetAllUserLetters();
+        }
+        
+        [HttpPut("letters")]
+        public async Task SendLetterToUser([FromBody] UserLetterAnswerDTO userLetter)
+        {
+            await _userService.SendLetterToUser(userLetter);
         }
     }   
 }

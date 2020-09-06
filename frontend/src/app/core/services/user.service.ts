@@ -79,4 +79,17 @@ export class UserService {
     return this.httpService.getRequest<UserLetter[]>(`${this.routePrefix}/letters`);
   }
 
+  sendLetterToUser(userLetter: UserLetter, message: string){
+    const userLetterWithAnswer =
+      {
+        userName: userLetter.userName,
+        userEmail: userLetter.userEmail,
+        subject: userLetter.subject,
+        description: userLetter.description,
+        isRespond: userLetter.isRespond,
+        answer: message
+      };
+    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters`, userLetterWithAnswer);
+  }
+
 }

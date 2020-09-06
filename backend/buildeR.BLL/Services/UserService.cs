@@ -192,5 +192,11 @@ namespace buildeR.BLL.Services
             var userLetters = await _context.UserLetters.ToListAsync();
             return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
         }
+
+        public async Task SendLetterToUser(UserLetterAnswerDTO userLetter)
+        {
+            await _emailService.SendEmailAsync(new List<string> {userLetter.UserEmail},
+                new EmailAddress(_emailService.SenderEmail), userLetter.Subject, userLetter.Answer);
+        }
     }
 }

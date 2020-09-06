@@ -20,5 +20,6 @@ namespace buildeR.BLL.Interfaces
         Task Delete(int id);
         Task AddUserLetter(UserLetterDTO newUserLetter);
         Task<ICollection<UserLetterDTO>> GetAllUserLetters();
+        Task SendLetterToUser(UserLetterAnswerDTO userLetter);
     }
 }
