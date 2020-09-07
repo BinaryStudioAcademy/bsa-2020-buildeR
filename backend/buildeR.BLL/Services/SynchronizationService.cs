@@ -87,6 +87,7 @@ namespace buildeR.BLL.Services
         }
         public async Task RegisterWebhook(int projectId, string callback)
         {
+            callback = "https://www.bsa-builder.xyz/api/webhooks";
             callback += $"/{projectId}/github";
 
             var pushCallback = callback + "/push";
