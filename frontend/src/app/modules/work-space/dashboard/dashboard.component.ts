@@ -18,6 +18,7 @@ import { BuildStatusesSignalRService } from '@core/services/build-statuses-signa
 import { BuildStatus } from '@shared/models/build-status'
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { UsersGroupProjects } from '@shared/models/users-group-projects';
+import { GroupRole } from '@shared/models/group/group-role';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,6 +28,8 @@ import { UsersGroupProjects } from '@shared/models/users-group-projects';
 export class DashboardComponent
   extends BaseComponent
   implements OnInit, OnDestroy {
+  GroupRole = GroupRole;
+
   activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
   groupsProjects: UsersGroupProjects[];
@@ -34,7 +37,7 @@ export class DashboardComponent
   currentUser: User;
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
-  tab = 0;
+  tab: "myprojects" | "groupsprojects" = "myprojects";
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -51,7 +54,6 @@ export class DashboardComponent
     private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
-
   }
 
   ngOnInit(): void {
@@ -199,7 +201,6 @@ export class DashboardComponent
     return bh.commitHash?.substring(0, 6) ?? '—';
   }
 
-  changeTab(id: number) {
-    this.tab = id;
-  }
+  hasGroupsProjects() {
+    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0 }
 }

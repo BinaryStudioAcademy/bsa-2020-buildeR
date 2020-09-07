@@ -3,5 +3,5 @@ import { ProjectInfo } from './project-info'
 
 export interface GroupProjects {
   group: Group;
-  projects: ProjectInfo;
+  projects: ProjectInfo[];
 }
