@@ -80,6 +80,15 @@ namespace buildeR.BLL.Services
             throw new ForbiddenExeption("Update", project.Name, project.Id);
         }
 
+        public async Task DeleteBuildStepsByProjectId(int projectId)
+        {
+            var buildSteps = await _buildStepService.GetBuildStepsByProjectIdAsync(projectId);
+            foreach(var step in buildSteps)
+            {
+                await _buildStepService.Delete(step.Id);
+            }
+        }
+
         public async Task DeleteProject(int id)
         {
             var project = await GetAsync(id);

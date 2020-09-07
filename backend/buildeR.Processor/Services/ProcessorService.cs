@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using buildeR.Common.Enums;
 using Microsoft.Extensions.Hosting;
 using System.Threading;
+using System.Linq;
 
 namespace buildeR.Processor.Services
 {
@@ -94,8 +95,14 @@ namespace buildeR.Processor.Services
 
             try
             {
-                var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
-                await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+                if (build.BuildSteps.Count() != 0 && build.BuildSteps.FirstOrDefault().BuildStepName == "Dockerfile")
+                {
+                }
+                else
+                {
+                    var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
+                    await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+                }
 
                 BuildDockerImage(pathToClonedRepository, build);
             }
@@ -230,6 +237,8 @@ namespace buildeR.Processor.Services
         #region Dockerfile
         private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl)
         {
+
+
             string dockerfile = "";
 
             /* Base template for generating dockerfile
