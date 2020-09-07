@@ -56,9 +56,7 @@ namespace buildeR.API.Controllers
         [HttpPost("hooks/{projectId}")]
         public async Task RegisterWebhooks(int projectId)
         {
-            var callback = Url.RouteUrl("Webhooks", new { controller = $"webhooks" }, Request.Scheme);
-
-            await _synchronizationService.RegisterWebhook(projectId, callback);
+            await _synchronizationService.RegisterWebhook(projectId);
         }
 
         [HttpPost("credentials/{userId}")]

@@ -75,4 +75,29 @@ export class UserService {
     return this.httpService.getFullRequest<User[]>(`${this.routePrefix}`);
   }
 
+  getAllUserLetters() {
+    return this.httpService.getRequest<UserLetter[]>(`${this.routePrefix}/letters`);
+  }
+
+  sendLetterToUser(userLetter: UserLetter, message: string){
+    const userLetterWithAnswer =
+      {
+        id: userLetter.id,
+        userName: userLetter.userName,
+        userEmail: userLetter.userEmail,
+        subject: userLetter.subject,
+        description: userLetter.description,
+        isRespond: userLetter.isRespond,
+        answer: message
+      };
+    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters/send`, userLetterWithAnswer);
+  }
+
+  updateUserLetter(userLetter: UserLetter) {
+    return this.httpService.putRequest<UserLetter>(`${this.routePrefix}/letters`, userLetter);
+  }
+
+  getUserLettersCheckRespond(isRespond: boolean) {
+    return this.httpService.getRequest<UserLetter[]>(`${this.routePrefix}/letters/checkRespond/${isRespond}`);
+  }
 }

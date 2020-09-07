@@ -14,7 +14,7 @@
       <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
     </div>
     <div class="build-info">
-      <p class="status" [appBuildHistoryStatus]="buildHistory.buildStatus"><i class="fas fa-hammer"></i> Status:
+      <p class="status" [ngClass]="{'status-blink': buildHistory.buildStatus == 5}" [appBuildHistoryStatus]="buildHistory.buildStatus"><i class="fas fa-hammer"></i> Status:
         {{buildHistory.buildStatus | buildStatus}}</p>
       <p class="build-time"><i class="far fa-clock"></i> Duration {{buildHistory.duration | timespan}}</p>
       <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium'}}"><i
