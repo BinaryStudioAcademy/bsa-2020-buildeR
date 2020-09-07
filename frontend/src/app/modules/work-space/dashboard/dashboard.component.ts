@@ -32,11 +32,12 @@ export class DashboardComponent
 
   activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
-  groupsProjects: UsersGroupProjects[];
+  groupsProjects: UsersGroupProjects[] = [];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
+  loadingGroupsProjects = false;
   tab: "myprojects" | "groupsprojects" = "myprojects";
 
   selectedProjectBranches: Branch[];
@@ -68,7 +69,7 @@ export class DashboardComponent
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const project = [...this.starredProjects, ...this.activeProjects].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
+      const project = [...this.starredProjects, ...this.activeProjects, ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
       if (project) {
         if (statusChange.Status != BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
@@ -102,19 +103,24 @@ export class DashboardComponent
           this.toastrService.showError(error);
         }
       );
+  }
+
+  gotoGroupsProjects() {
+    this.tab = "groupsprojects";
+    this.loadingGroupsProjects = true;
     this.projectService
-      .notOwnGroupsProjectsByUser(userId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (resp) => {
-          this.loadingProjects = false;
-          this.groupsProjects = resp;
-        },
-        (error) => {
-          this.loadingProjects = false;
-          this.toastrService.showError(error);
-        }
-      )
+    .notOwnGroupsProjectsByUser(this.currentUser.id)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(
+      (resp) => {
+        this.loadingGroupsProjects = false;
+        this.groupsProjects = resp;
+      },
+      (error) => {
+        this.loadingGroupsProjects = false;
+        this.toastrService.showError(error);
+      }
+    )
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
