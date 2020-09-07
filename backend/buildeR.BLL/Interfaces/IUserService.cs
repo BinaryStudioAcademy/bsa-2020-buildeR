@@ -19,5 +19,9 @@ namespace buildeR.BLL.Interfaces
         Task<UserDTO> LinkProvider(LinkProviderDTO userLink);
         Task Delete(int id);
         Task AddUserLetter(UserLetterDTO newUserLetter);
+        Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters();
+        Task SendLetterToUser(UserLetterAnswerDTO userLetter);
+        Task<UserLetter> UpdateUserLetter(UserLetterDTO userLetter);
+        Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(bool isRespond);
     }
 }

@@ -8,7 +8,8 @@ import { TabRoute } from '@shared/models/tabs/tab-route';
 })
 export class AdminAreaComponent implements OnInit {
   tabRoutes: TabRoute[] = [
-    { name: 'Plugins', route: 'plugins' }
+    { name: 'Plugins', route: 'plugins' },
+    { name: 'Requests', route: 'requests'}
   ];
 
   constructor() { }

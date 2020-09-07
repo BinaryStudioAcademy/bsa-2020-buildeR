@@ -1,0 +1,31 @@
+
+ <div class="container">
+   <div class="build-history-select">
+     <label style="margin-top: 2px"> View:</label>
+     <select id="selectBox" class="form-control form-control-sm selecter" (change)="onChange()">
+       <option>All</option>
+       <option>Respond</option>
+       <option>Not respond</option>
+     </select>
+   </div>
+    <div *ngFor='let letter of currentUserLetters;'>
+      <div class='card mb-3'>
+        <div class="card-header" [ngStyle]="{'border-left': letter.isRespond ? '6px solid green' : '6px solid red' }">
+          <div class="card-titles">
+            <h5 class='card-title plugin-name'>Subject: {{ letter.subject }}</h5>
+            <h5 class='plugin-name'>User name: <a [routerLink]="'/portal/user/' + letter.userId">{{ letter.userName }}</a></h5>
+            <h5 class='plugin-name'>Email: {{ letter.userEmail }}</h5>
+          </div>
+          <div class="card-button">
+            <button class="btn btn-info" (click)="openModal(letter)">Answer</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-description">
+            {{letter.description}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
