@@ -15,8 +15,6 @@ export class RequestsComponent extends BaseComponent implements OnInit {
 
   currentUserLetters: UserLetter[] = {} as UserLetter[];
   allUserLetters: UserLetter[] = {} as UserLetter[];
-  onlyIsRespondLetters: UserLetter[] = {} as UserLetter[];
-  onlyIsNotRespondLetters: UserLetter[] = {} as UserLetter[];
 
   constructor(private userService: UserService,
               private activeRoute: ActivatedRoute,
@@ -27,16 +25,7 @@ export class RequestsComponent extends BaseComponent implements OnInit {
    this.activeRoute.data.subscribe(data => {
      this.allUserLetters = data.userLetters;
      this.currentUserLetters = this.allUserLetters;
-     console.log(this.currentUserLetters);
      });
-   this.userService.getUserLettersCheckRespond(true).subscribe(letters => {
-     this.onlyIsRespondLetters = letters;
-     console.log(this.onlyIsRespondLetters);
-   })
-    this.userService.getUserLettersCheckRespond(false).subscribe(letters => {
-      this.onlyIsNotRespondLetters = letters;
-      console.log(this.onlyIsNotRespondLetters);
-    })
   }
 
   openModal(userLetter: UserLetter) {
@@ -45,15 +34,27 @@ export class RequestsComponent extends BaseComponent implements OnInit {
   }
 
   changeOnAll() {
-    this.currentUserLetters = this.allUserLetters;
+    this.userService.getAllUserLetters().subscribe(letters =>
+    {
+      this.allUserLetters = letters;
+      this.currentUserLetters = this.allUserLetters;
+    });
   }
 
   chaneOnIsRespond() {
-    this.currentUserLetters = this.onlyIsRespondLetters;
+    this.userService.getAllUserLetters().subscribe(letters =>
+    {
+      this.allUserLetters = letters;
+      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond == true);
+    });
   }
 
   changeOnIsNotRespond() {
-    this.currentUserLetters = this.onlyIsNotRespondLetters;
+    this.userService.getAllUserLetters().subscribe(letters =>
+    {
+      this.allUserLetters = letters;
+      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond == false);
+    });
   }
 
 }
