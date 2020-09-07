@@ -70,9 +70,11 @@
             <div class="panel-footer">
                 <div class="input-group">
                     <input id="btn-input" type="text" class="form-control input-sm"
-                        placeholder="Type your message here..." />
+                        placeholder="Type your message here..." [value]="textOfMessage" />
                         <div class="input-group-append">
-                            <button class="btn btn-sm btn-outline-secondary"type="button">Send</button>
+                            <button class="btn btn-sm btn-outline-secondary"type="button" 
+                            (click)="sendMessage()">
+                                Send</button>
                           </div>
                 </div>
             </div>

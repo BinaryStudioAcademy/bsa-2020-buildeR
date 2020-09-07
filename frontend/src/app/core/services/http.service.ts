@@ -49,6 +49,7 @@ export class HttpService {
   }
 
   postRequest<T>(url: string, payload: object): Observable<T> {
+    console.log(this.buildUrl(url));
     return this.http.post<T>(this.buildUrl(url), payload, {
       headers: this.getHeaders(),
     });

@@ -41,9 +41,9 @@ namespace buildeR.SignalR.HostedServices
         private async void ConsumerReceived(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
-            var statusChange = JsonConvert.DeserializeObject<MessageDTO>(message);
+            var messageSend = JsonConvert.DeserializeObject<MessageDTO>(message);
            
-           // await _hub.Clients.Group(statusChange.UserId.ToString()).SendAsync("getNotification", message);
+            await _hub.Clients.Group(messageSend.GroupId.ToString()).SendAsync("newMessage", message);
 
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }

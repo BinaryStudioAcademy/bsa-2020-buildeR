@@ -39,6 +39,7 @@ namespace buildeR.SignalR
             services.AddHostedService<Worker>();
             services.AddHostedService<BuildStatusesQueueConsumerService>();
             services.AddHostedService<NotificationsQueueConsumerService>();
+            services.AddHostedService<MessagesQueueConsumerService>();
             services.AddControllers();
             services.AddHealthChecks();
         }
