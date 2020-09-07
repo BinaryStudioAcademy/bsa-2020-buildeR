@@ -3,7 +3,6 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { HttpService } from '@core/services/http.service';
 import { UserService } from '@core/services/user.service';
-import { environment } from '@env/../environments/environment';
 import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { GroupService } from '../../../core/services/group.service';
@@ -17,7 +16,6 @@ import { Group } from '../../../shared/models/group/group';
 export class WorkSpaceComponent extends BaseComponent implements OnInit {
   isShowNotifications = false;
   isMenuCollapsed = true;
-  url = environment.signalRUrl + '/test';
   user: User;
   groups: Group[];
   groupsLoaded: Promise<boolean>;

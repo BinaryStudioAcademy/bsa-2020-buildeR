@@ -4,12 +4,14 @@ using buildeR.Common.DTO.ProjectRemoteTrigger;
 using buildeR.Common.DTO.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using buildeR.Common.DTO.TeamMember;
 
 namespace buildeR.BLL.Services.Abstract
 {
     public interface IProjectService : ICrudService<ProjectDTO, NewProjectDTO, int>
     {
         Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId);
+        Task<IEnumerable<UsersGroupProjectsDTO>> NotOwnGroupsProjectsByUser(int userId);
         Task<ProjectDTO> GetProjectByUserId(int userId, int projectId);
         Task<ProjectDTO> CreateProject(NewProjectDTO dto);
         Task UpdateProject(ProjectDTO dto, int userId);
