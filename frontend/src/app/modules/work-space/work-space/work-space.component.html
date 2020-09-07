@@ -10,6 +10,11 @@
     </a>
     <div class="d-flex order-lg-1 ml-auto pr-2" (click)="isMenuCollapsed = true">
       <div class="nav-item">
+        <a class="nav-link" [routerLink]="['admin/plugins']" [hidden]="user.role != '1'">
+          <i class="fas fa-user-cog admin-icon"></i>
+        </a>
+      </div>
+      <div class="nav-item">
         <a class="nav-link a-bell">
           <i class="fas fa-bell notifications-icon bi bi-bell-fill" (click)="showNotifications()"></i>
           <ng-container *ngIf="countNotifications > 0">

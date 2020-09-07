@@ -113,10 +113,10 @@ namespace buildeR.API.Controllers
             await _envService.UpdateEnvironmentVariable(variableDTO);
         }
 
-        [HttpGet("projectNameValidation/{userId}/{projectName}")]
-        public async Task<bool> ValidateProjectName(int userId, string projectName)
+        [HttpGet("projectNameValidation/{userId}/{projectName}/{projectId}")]
+        public async Task<bool> ValidateProjectName(int userId, string projectName, int projectId)
         {
-            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName);
+            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
         }
     }
 }

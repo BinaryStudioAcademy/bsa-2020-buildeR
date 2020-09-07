@@ -25,7 +25,6 @@ namespace buildeR.BLL.Services
         private readonly IQuartzService _quartzService;
         private readonly IBuildStepService _buildStepService;
         private readonly ISynchronizationHelper _synchronizationHelper;
-
         public ProjectService(BuilderContext context,
             IMapper mapper,
             IQuartzService quartzService,
@@ -41,7 +40,7 @@ namespace buildeR.BLL.Services
         {
             return base.GetAsync(id, isNoTracking);
         }
-
+        
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
             var projects = await Context.Projects
@@ -89,21 +88,17 @@ namespace buildeR.BLL.Services
             {
                 return project;
             }
-
             throw new ForbiddenExeption("Read", project.Name, project.Id);
         }
-
         public async Task<ProjectDTO> CreateProject(NewProjectDTO dto)
         {
-            if (dto.Repository.CreatedByLink)
+            if(dto.Repository.CreatedByLink)
             {
                 dto.Repository.Owner = _synchronizationHelper.GetRepositoryOwnerFromUrl(dto.Repository.Url);
                 dto.Repository.Name = _synchronizationHelper.GetRepositoryNameFromUrl(dto.Repository.Url);
             }
-
             return await base.AddAsync(dto);
         }
-
         public async Task UpdateProject(ProjectDTO dto, int userId)
         {
             var project = await GetAsync(dto.Id);
@@ -111,7 +106,6 @@ namespace buildeR.BLL.Services
             {
                 await base.UpdateAsync(dto);
             }
-
             throw new ForbiddenExeption("Update", project.Name, project.Id);
         }
 
@@ -124,21 +118,20 @@ namespace buildeR.BLL.Services
             }
 
             await _quartzService.DeleteAllSheduleJob(id.ToString());
-            await RemoveAsync(id);
-        }
-
+            await RemoveAsync(id);     
+        }       
         public async Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId)
         {
             var project = await Context.Projects
-                .Include(p => p.BuildSteps)
-                .ThenInclude(s => s.PluginCommand)
-                .ThenInclude(c => c.Plugin)
-                .Include(p => p.Repository)
-                .Include(p => p.BuildSteps)
-                .ThenInclude(s => s.BuildPluginParameters)
-                .Include(p => p.BuildSteps)
-                .ThenInclude(s => s.CommandArguments)
-                .FirstOrDefaultAsync(p => p.Id == projectId);
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.PluginCommand)
+                                            .ThenInclude(c => c.Plugin)
+                                    .Include(p => p.Repository)
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.BuildPluginParameters)
+                                    .Include(p => p.BuildSteps)
+                                        .ThenInclude(s => s.CommandArguments)
+                                    .FirstOrDefaultAsync(p => p.Id == projectId);
 
             if (project == null)
                 throw new NotFoundException("Project", projectId);
@@ -155,7 +148,7 @@ namespace buildeR.BLL.Services
 
             return executiveBuild;
         }
-
+    
 
         public async Task ChangeFavoriteStateAsync(int projectId)
         {
@@ -165,7 +158,6 @@ namespace buildeR.BLL.Services
             Context.Entry(project).State = EntityState.Modified;
             await Context.SaveChangesAsync();
         }
-
         public async Task<ProjectDTO> CopyProject(ProjectDTO dto)
         {
             var existingProject = await GetProjectWithBuildSteps(dto.Id);
@@ -192,46 +184,43 @@ namespace buildeR.BLL.Services
                 ProjectId = id,
                 BuildStepName = buildStep.BuildStepName,
                 PluginCommandId = buildStep.PluginCommand.PluginId,
-                Index = buildStep.Index,
+                Index =  buildStep.Index,
                 BuildPluginParameters = buildStep.Parameters.ToList(),
-                LoggingVerbosity = (int) buildStep.LoggingVerbosity
+                LoggingVerbosity = (int)buildStep.LoggingVerbosity
             }));
             var project = await Context.Projects
-                .Include(p => p.BuildSteps)
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                                                .Include(p => p.BuildSteps)
+                                                .Include(p => p.Owner)
+                                                .FirstOrDefaultAsync(p => p.Id == id);
 
             return Mapper.Map<ProjectDTO>(project);
         }
-
         public async Task<RepositoryDTO> GetRepository(int projectId)
         {
             var project = await Context.Projects.Include(p => p.Repository)
-                .FirstOrDefaultAsync(p => p.Id == projectId);
+                                                   .FirstOrDefaultAsync(p => p.Id == projectId);
 
             return Mapper.Map<RepositoryDTO>(project.Repository);
         }
-
         public async Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectRemoteTriggers(int projectId)
         {
             var project = await Context.Projects
-                .Include(p => p.ProjectRemoteTriggers)
-                .FirstOrDefaultAsync(p => p.Id == projectId);
+                                       .Include(p => p.ProjectRemoteTriggers)
+                                       .FirstOrDefaultAsync(p => p.Id == projectId);
 
             return Mapper.Map<IEnumerable<ProjectRemoteTriggerDTO>>(project.ProjectRemoteTriggers);
         }
-
-        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName)
+        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId)
         {
-            var project = await Context.Projects.FirstOrDefaultAsync(p => p.OwnerId == userId && p.Name == projectName);
+            var project = await Context.Projects.FirstOrDefaultAsync(p =>
+                p.OwnerId == userId && p.Name == projectName && p.Id != projectId);
             return project == null;
         }
-
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
         {
             var project = await Context.Projects.Include(p => p.BuildSteps)
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                                                .Include(p => p.Owner)
+                                                .FirstOrDefaultAsync(p => p.Id == id);
             return Mapper.Map<ProjectDTO>(project);
         }
     }

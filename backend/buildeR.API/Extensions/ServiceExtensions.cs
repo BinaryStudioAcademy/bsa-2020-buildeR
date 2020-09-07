@@ -49,6 +49,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IPluginCommandService, PluginCommandService>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
@@ -59,6 +60,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
+            services.AddTransient<IProjectRemoteTriggerService, ProjectRemoteTriggerService>();
 
             services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
