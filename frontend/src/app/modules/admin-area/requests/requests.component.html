@@ -1,11 +1,12 @@
 
  <div class="container">
-   <div>
-     <div class="mb-2">
-       <button class="btn btn-success mr-1" (click)="changeOnAll()">All</button>
-       <button class="btn btn-success mr-1" (click)="chaneOnIsRespond()">IsRespond</button>
-       <button class="btn btn-success" (click)="changeOnIsNotRespond()">IsNotRespond</button>
-     </div>
+   <div class="build-history-select">
+     <label style="margin-top: 2px"> View:</label>
+     <select id="selectBox" class="form-control form-control-sm selecter" (change)="onChange()">
+       <option>All</option>
+       <option>Respond</option>
+       <option>Not respond</option>
+     </select>
    </div>
     <div *ngFor='let letter of currentUserLetters;'>
       <div class='card mb-3'>

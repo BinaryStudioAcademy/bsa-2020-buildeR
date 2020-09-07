@@ -59,4 +59,26 @@ export class RequestsComponent extends BaseComponent implements OnInit {
     });
   }
 
+  onChange() {
+    var selectBox = (document.getElementById("selectBox") as HTMLSelectElement);
+    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+    switch (selectedValue) {
+      case 'All': {
+        this.changeOnAll();
+        break;
+      }
+      case 'Respond': {
+        this.chaneOnIsRespond();
+        break;
+      }
+      case 'Not respond': {
+        this.changeOnIsNotRespond();
+        break;
+      }
+    }
+
+
+  }
+
 }
