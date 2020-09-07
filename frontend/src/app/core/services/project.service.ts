@@ -9,6 +9,7 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 import { BuildHistory } from '@shared/models/build-history';
 import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
+import { UsersGroupProjects } from '@shared/models/users-group-projects'
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -39,6 +40,13 @@ export class ProjectService {
       `${this.routePrefix}/${projectId}/settings`
     );
   }
+
+  notOwnGroupsProjectsByUser(userId: number): Observable<UsersGroupProjects[]> {
+    return this.httpService.getRequest<UsersGroupProjects[]>(
+      `${this.routePrefix}/notOwnGroupsProjectsByUser/${userId}`
+    );
+  }
+
   public createProject(newProject: NewProject): Observable<Project> {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}`,
