@@ -191,7 +191,7 @@ namespace buildeR.BLL.Services
         {
             var users = await _context.Users.ToListAsync();
             var userLetters = await _context.UserLetters.ToListAsync();
-            var userLettersUserIdDTO = users.Join(userLetters, user => user.Email, 
+            var userLettersUserIdDTO = users.Join(userLetters, user => user.Email,
                 letter => letter.UserEmail,
                 (user, letter) => new UserLetterUserIdDTO()
                 {
@@ -202,7 +202,7 @@ namespace buildeR.BLL.Services
                     Description = letter.Description,
                     IsRespond = letter.IsRespond,
                     UserId = user.Id
-                }).Reverse();
+                }).OrderByDescending(l => l.Id);
             return _mapper.Map<ICollection<UserLetterUserIdDTO>>(userLettersUserIdDTO);
         }
 
