@@ -12,7 +12,7 @@
         <div class="card-header" [ngStyle]="{'border-left': letter.isRespond ? '6px solid green' : '6px solid red' }">
           <div>
             <h5 class='card-title plugin-name'>Subject: {{ letter.subject }}</h5>
-            <h5 class='plugin-name'>User name: {{ letter.userName }}</h5>
+            <h5 class='plugin-name'>User name: <a [routerLink]="'/portal/user/' + letter.userId">{{ letter.userName }}</a></h5>
             <h5 class='plugin-name'>Email: {{ letter.userEmail }}</h5>
           </div>
           <div class="card-button">

@@ -27,6 +27,7 @@ export class RequestsComponent extends BaseComponent implements OnInit {
    this.activeRoute.data.subscribe(data => {
      this.allUserLetters = data.userLetters;
      this.currentUserLetters = this.allUserLetters;
+     console.log(this.currentUserLetters);
      });
    this.userService.getUserLettersCheckRespond(true).subscribe(letters => {
      this.onlyIsRespondLetters = letters;

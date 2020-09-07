@@ -187,10 +187,23 @@ namespace buildeR.BLL.Services
                 emailModel.Subject, emailModel.Title, emailModel.Body);
         }
 
-        public async Task<ICollection<UserLetterDTO>> GetAllUserLetters()
+        public async Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters()
         {
+            var users = await _context.Users.ToListAsync();
             var userLetters = await _context.UserLetters.ToListAsync();
-            return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
+            var userLettersUserIdDTO = users.Join(userLetters, user => user.Email, 
+                letter => letter.UserEmail,
+                (user, letter) => new UserLetterUserIdDTO()
+                {
+                    Id = letter.Id,
+                    UserEmail = letter.UserEmail,
+                    UserName = letter.UserName,
+                    Subject = letter.Subject,
+                    Description = letter.Description,
+                    IsRespond = letter.IsRespond,
+                    UserId = user.Id
+                }).Reverse();
+            return _mapper.Map<ICollection<UserLetterUserIdDTO>>(userLettersUserIdDTO);
         }
 
         public async Task SendLetterToUser(UserLetterAnswerDTO userLetter)

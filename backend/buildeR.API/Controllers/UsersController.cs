@@ -88,7 +88,7 @@ namespace buildeR.API.Controllers
         }
 
         [HttpGet("letters")]
-        public async Task<ICollection<UserLetterDTO>> GetAllUserLetters()
+        public async Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters()
         {
             return await _userService.GetAllUserLetters();
         }
