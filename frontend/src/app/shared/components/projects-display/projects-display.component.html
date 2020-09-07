@@ -32,7 +32,7 @@
             Last build
           </div>
           <div class="col-md-12 col-sm-5 small font-weight-bold build-status row-bottom">
-            <p class="status"
+            <p class="status" [ngClass]="{'status-blink': project.lastBuildHistory.buildStatus == 5}"
               [routerLink]="['/portal/projects', project.id, 'history', project.lastBuildHistory.id]"
               [appBuildHistoryStatus]="project.lastBuildHistory.buildStatus"><i class="fas fa-hammer"></i>
               #{{project.lastBuildHistory.number}} {{project.lastBuildHistory.buildStatus | buildStatus}}</p>
