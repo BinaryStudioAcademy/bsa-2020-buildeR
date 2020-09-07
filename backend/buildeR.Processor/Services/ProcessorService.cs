@@ -94,9 +94,13 @@ namespace buildeR.Processor.Services
             CloneRepository(build.RepositoryUrl, pathToClonedRepository, build.BranchName);
 
             try
-            {
+            
+                {
                 if (build.BuildSteps.Count() != 0 && build.BuildSteps.FirstOrDefault().BuildStepName == "Dockerfile")
                 {
+                    var dockerfileDirectory = build.BuildSteps.FirstOrDefault().WorkDirectory;
+                    if (dockerfileDirectory != "")
+                        pathToClonedRepository = Path.Combine(pathToClonedRepository, dockerfileDirectory);
                 }
                 else
                 {

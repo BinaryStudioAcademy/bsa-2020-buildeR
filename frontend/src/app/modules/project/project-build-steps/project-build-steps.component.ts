@@ -108,7 +108,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       } as BuildStep;
       this.newBuildSteps.push(newStep);
       this.allBuildSteps.push(newStep);
-      console.log(this.allBuildSteps);
     }
   }
 
