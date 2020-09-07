@@ -149,7 +149,7 @@
                     <ng-container *ngFor="let step of emptyBuildSteps">
                       <button *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup"
                             (click)="addNewBuildStep(step)"
-                            ngbDropdownItem>
+                            ngbDropdownItem [disabled]="step.buildStepName === 'Dockerfile: Dockerfile'">
                             <span *ngIf="step.pluginCommand.name" >{{ step.pluginCommand.name }}</span>
                             <span *ngIf="step.pluginCommand.plugin.pluginName === 'Custom command'" >Custom command</span>
                       </button>
