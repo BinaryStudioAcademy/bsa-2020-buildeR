@@ -7,6 +7,7 @@ import { InsightsComponent } from './insights/insights.component';
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserComponent } from './user.component';
+import { UserBuildHistoryComponent } from './user-build-history/user-build-history.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,13 @@ const routes: Routes = [
     {
       path: 'notificationsettings',
       component: NotificationSettingComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    },
+    {
+      path: "history",
+      component: UserBuildHistoryComponent,
       resolve: {
         user: UserResolverService
       }
@@ -55,6 +63,13 @@ const routes: Routes = [
     children: [{
       path: '',
       component: UserSettingsComponent,
+      resolve: {
+        user: UserResolverService
+      }
+    },
+    {
+      path: "history",
+      component: UserBuildHistoryComponent,
       resolve: {
         user: UserResolverService
       }

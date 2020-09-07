@@ -9,6 +9,7 @@ import { PhotoCropperContentComponent } from './photo-cropper-content/photo-crop
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 import { InsightsComponent } from './insights/insights.component';
 import { CredentialSettingsComponent } from './credential-settings/credential-settings.component';
+import { UserBuildHistoryComponent } from './user-build-history/user-build-history.component';
 
 
 
@@ -18,7 +19,8 @@ import { CredentialSettingsComponent } from './credential-settings/credential-se
     PhotoCropperContentComponent,
     NotificationSettingComponent,
     InsightsComponent,
-    CredentialSettingsComponent],
+    CredentialSettingsComponent,
+    UserBuildHistoryComponent],
   imports: [
     UserRoutingModule,
     SharedModule,
