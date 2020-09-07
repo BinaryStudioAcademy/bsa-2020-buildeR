@@ -10,5 +10,6 @@ namespace buildeR.BLL.Interfaces
         Task SendEmailAsync(List<string> emails, string subject, string title, string body);
         Task SendEmailAsync(List<string> emails, EmailAddress replyToAddress, string subject, string textMessage);
         string SupportEmail { get; }
+        string SenderEmail { get; }
     }     
 }
