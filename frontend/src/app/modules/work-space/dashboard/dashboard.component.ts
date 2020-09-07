@@ -13,12 +13,11 @@ import { ModalContentComponent } from '../../../core/components/modal-content/mo
 import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 import { Branch } from '@core/models/Branch';
-import { NewBuildHistory } from '@shared/models/new-build-history';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
-import { StatusChange } from '@shared/models/status-change'
 import { BuildStatus } from '@shared/models/build-status'
 import { BuildHistoryService } from '@core/services/build-history.service';
+import { UsersGroupProjects } from '@shared/models/users-group-projects';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,10 +29,12 @@ export class DashboardComponent
   implements OnInit, OnDestroy {
   activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
+  groupsProjects: UsersGroupProjects[];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
+  tab = 0;
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -99,6 +100,19 @@ export class DashboardComponent
           this.toastrService.showError(error);
         }
       );
+    this.projectService
+      .notOwnGroupsProjectsByUser(userId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.loadingProjects = false;
+          this.groupsProjects = resp;
+        },
+        (error) => {
+          this.loadingProjects = false;
+          this.toastrService.showError(error);
+        }
+      )
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -183,5 +197,9 @@ export class DashboardComponent
 
   getCommit(bh: BuildHistory) {
     return bh.commitHash?.substring(0, 6) ?? '—';
+  }
+
+  changeTab(id: number) {
+    this.tab = id;
   }
 }

@@ -37,6 +37,22 @@
         </div>
       </div>
     </ng-template>
+
+    <nav>
+      <ul class="list-group list-group-horizontal container">
+        <li class="list-group-item" [ngClass]="{ active: tab == 0 }">
+          <a (click)="changeTab(0)">
+            My projects
+          </a>
+        </li>
+        <li class="list-group-item" [ngClass]="{ active: tab == 1 }">
+          <a (click)="changeTab(1)">
+            Groups' projects
+          </a>
+        </li>
+      </ul>
+    </nav>
+
     <div class="container d-flex flex-row my-3">
       <span class="my-auto title">
         Active projects
