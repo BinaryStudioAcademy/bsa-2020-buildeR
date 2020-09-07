@@ -2,6 +2,7 @@
 using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.Synchronization.Github;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,15 +17,18 @@ namespace buildeR.BLL.Services
         private readonly IProjectService _projectService;
         private readonly ISynchronizationHelper _synchronizationHelper;
         private readonly ISecretService _secretService;
+        private readonly IConfiguration _configuration;
         public SynchronizationService(IGithubClient githubClient,
                                       IProjectService projectService,
                                       ISynchronizationHelper synchronizationHelper,
-                                      ISecretService secretService)
+                                      ISecretService secretService,
+                                      IConfiguration configuration)
         {
             _githubClient = githubClient;
             _projectService = projectService;
             _synchronizationHelper = synchronizationHelper;
             _secretService = secretService;
+            _configuration = configuration;
         }
         public async Task<IEnumerable<Branch>> GetRepositoryBranches(int projectId)
         {
@@ -88,8 +92,8 @@ namespace buildeR.BLL.Services
         }
         public async Task RegisterWebhook(int projectId)
         {
-            var apiURL = Environment.GetEnvironmentVariable("BaseUrl");
-            var callback = Path.Combine(apiURL, $"webhooks/{projectId}/github");
+            var apiURL = _configuration["WebAPIUrl"] ;
+            var callback = apiURL + $"webhooks/{projectId}/github";
 
             var pushCallback = callback + "/push";
             var pullRequestCallback = callback + "/pull_request";
