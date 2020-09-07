@@ -118,5 +118,11 @@ namespace buildeR.API.Controllers
         {
             return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
         }
+
+        [HttpGet("deleteBuildStepsByProjectId/{projectId}")]
+        public async Task DeleteBuildSteps(int projectId)
+        {
+            await _projectService.DeleteBuildStepsByProjectId(projectId);
+        }
     }
 }

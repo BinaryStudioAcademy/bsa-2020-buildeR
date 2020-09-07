@@ -7,13 +7,13 @@ import { CommandArgumentService } from '@core/services/command-argument.service'
 import { BuildPluginService } from '@core/services/build-plugin.service';
 import { BuildStepService } from '@core/services/build-step.service';
 import { BaseComponent } from '@core/components/base/base.component';
-import { takeUntil, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, delay } from 'rxjs/operators';
 import { BuildStep } from '@shared/models/build-step';
 import { EmptyBuildStep } from '@shared/models/empty-build-step';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommandArgument } from '@shared/models/command-argument';
 import { Observable } from 'rxjs';
-
+import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-project-build-steps',
@@ -31,6 +31,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
 
   isLoading = true;
   pluginGroups: string[];
+  dockerfileUsed = false;
 
   constructor(
     private projectService: ProjectService,
@@ -55,6 +56,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     this.getProjectBuildSteps(this.projectId);
     this.getEmptyBuildSteps();
   }
+
 
   getProject(projectId: number) {
     this.isLoading = true;
@@ -90,6 +92,47 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       );
   }
 
+  addDockerfile() {
+    if (confirm('If you choose this option your build steps will be deleted')) {
+      this.dockerfileUsed = true;
+      const ids = this.buildSteps.map(s => s.id);
+      this.allBuildSteps = [];
+      this.buildSteps = [];
+      this.deleteBuildStepsByProjectId();
+      const dockerfilePlugin = this.emptyBuildSteps.find(s => s.buildStepName === 'Dockerfile: Dockerfile');
+      const newStep = {
+        buildStepName: 'Dockerfile',
+        pluginCommand: dockerfilePlugin.pluginCommand,
+        projectId: this.projectId,
+        pluginCommandId: dockerfilePlugin.pluginCommand.id
+      } as BuildStep;
+      this.newBuildSteps.push(newStep);
+      this.allBuildSteps.push(newStep);
+    }
+  }
+
+  deleteBuildStepsByProjectId() {
+    this.projectService.DeleteBuildStepsByProjectId(this.projectId)
+    .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error);
+        }
+      );
+  }
+
+  deleteDockerFile() {
+    if (confirm("If you choose this option your Dockerfile won't be used")) {
+      const dockerStep = this.allBuildSteps[0];
+      this.removeBuildStep(dockerStep);
+      this.allBuildSteps = [];
+      this.dockerfileUsed = false;
+    }
+  }
+
   getProjectBuildSteps(projectId: number) {
     this.isLoading = true;
     this.buildStepService
@@ -102,6 +145,9 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.allBuildSteps = [];
           this.allBuildSteps = this.allBuildSteps.concat(this.buildSteps);
           this.isLoading = false;
+          if (this.allBuildSteps.length !== 0 && this.allBuildSteps[0].buildStepName === 'Dockerfile') {
+            this.dockerfileUsed = true;
+          }
         },
         (error) => {
           this.isLoading = false;

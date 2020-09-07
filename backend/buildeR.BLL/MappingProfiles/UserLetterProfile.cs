@@ -11,6 +11,9 @@ namespace buildeR.BLL.MappingProfiles
         {
             CreateMap<UserLetter, UserLetterDTO>();
             CreateMap<UserLetterDTO, UserLetter>();
+            
+            CreateMap<UserLetterDTO, UserLetterAnswerDTO>();
+            CreateMap<UserLetterAnswerDTO, UserLetterDTO>();
         }
     }
 }

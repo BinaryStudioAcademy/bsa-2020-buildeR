@@ -186,5 +186,53 @@ namespace buildeR.BLL.Services
             await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, 
                 emailModel.Subject, emailModel.Title, emailModel.Body);
         }
+
+        public async Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters()
+        {
+            var users = await _context.Users.ToListAsync();
+            var userLetters = await _context.UserLetters.ToListAsync();
+            var userLettersUserIdDTO = users.Join(userLetters, user => user.Email,
+                letter => letter.UserEmail,
+                (user, letter) => new UserLetterUserIdDTO()
+                {
+                    Id = letter.Id,
+                    UserEmail = letter.UserEmail,
+                    UserName = letter.UserName,
+                    Subject = letter.Subject,
+                    Description = letter.Description,
+                    IsRespond = letter.IsRespond,
+                    UserId = user.Id
+                }).OrderByDescending(l => l.Id);
+            return _mapper.Map<ICollection<UserLetterUserIdDTO>>(userLettersUserIdDTO);
+        }
+
+        public async Task SendLetterToUser(UserLetterAnswerDTO userLetter)
+        {
+            var currentLetter = _mapper.Map<UserLetterDTO>(userLetter);
+            await _emailService.SendEmailAsync(new List<string> {userLetter.UserEmail},
+                new EmailAddress(_emailService.SenderEmail), userLetter.Subject, userLetter.Answer);
+            currentLetter.IsRespond = true;
+            await UpdateUserLetter(currentLetter);
+        }
+
+        public async Task<UserLetter> UpdateUserLetter(UserLetterDTO userLetter)
+        {
+            var letter = _mapper.Map<UserLetter>(userLetter);
+            var existing = await _context.UserLetters
+                .FirstOrDefaultAsync(x => x.Id == letter.Id);
+            if (existing == null)
+            {
+                throw new NotFoundException("userLetter", letter.Id);
+            }
+            _context.Entry(existing).CurrentValues.SetValues(letter);
+            await _context.SaveChangesAsync();
+            return letter;
+        }
+        
+        public async Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(bool isRespond)
+        {
+            var userLetters = await _context.UserLetters.Where(l => l.IsRespond == isRespond).ToListAsync();
+            return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
+        }
     }
 }
