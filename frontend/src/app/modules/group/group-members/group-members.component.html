@@ -4,11 +4,11 @@ then loading;
 else loaded;
 "></div>
 <ng-template #loading>
-  <app-loading-spinner size="20px"></app-loading-spinner>
+  <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
 
-  <div class="invite">
+  <div class="invite" *ngIf="isCurrentUserOwnerOrAdmin()">
     <h4>Invite member</h4>
     <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
       <div class="row">
@@ -40,7 +40,7 @@ else loaded;
           <label for="input-role">Choose a role permission:</label>
           <div tabindex="0" id="input-role" role="button">
             <select class="form-control" [value]="memberForm.controls['dropdown']?.value"
-              placeholder="Chose role from dropdown" formControlName="dropdown">
+              placeholder="Choose role from dropdown" formControlName="dropdown">
               <option *ngFor="let item of roles" (click)="memberForm.controls['dropdown'].setValue(groupRole[item])"
                 class="dropdown-item">
                 {{groupRole[item]}}
@@ -54,73 +54,57 @@ else loaded;
       </div>
     </form>
   </div>
-  <hr>
-  <div *ngIf="
-      pendingMembers?.length;
-      then pendMembers;
-    ">
-  </div>
-  <ng-template #pendMembers>
-    <div class="container">
-      <div class="row my-3 border rounded member-wr" *ngFor="let member of pendingMembers">
-        <div class="item-avatar area">
-          <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-            alt="Avatar" class="avatar" />
+  <div class="container">
+    <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
+      <div class="item-avatar area">
+        <img [src]="member.user.avatarUrl" [routerLink]="'/portal/user/' + member.user.id"
+          onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="avatar" />
+      </div>
+      <div class="user">
+        <div class="row-top">
+          <h5><a class="text-dark" [routerLink]="'/portal/user/' + member.user.id">{{member?.user.username}}</a></h5>
         </div>
-        <div class="user">
-          <div class="row-top">
-            <h5><a class="text-dark" [routerLink]="">{{member?.user.username}}</a></h5>
-          </div>
-          <div class="align-text-top row-bottom gray">
+        <div class="align-text-top row-bottom gray">
+          <p class="gray" *ngIf="member.isAccepted; else notAccepted">Member since
+            {{member.joinedDate | date:'mediumDate'}}</p>
+          <ng-template #notAccepted>
             <p class="gray">Pending to accept invitation </p>
-          </div>
-        </div>
-        <div class="item area">
-          <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+          </ng-template>
         </div>
       </div>
-    </div>
-  </ng-template>
-
-  <div *ngIf="
-      members?.length;
-      then existMembers;
-    ">
-  </div>
-  <ng-template #existMembers>
-    <div class="container">
-      <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
-        <div class="item-avatar area">
-          <img [src]="member.user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-            alt="Avatar" class="avatar" />
-        </div>
-        <div class="user">
-          <div class="row-top">
-            <h5><a class="text-dark" [routerLink]="">{{member?.user.username}}</a></h5>
-          </div>
-          <div class="align-text-top row-bottom gray">
-            <p class="gray">Member since {{member.joinedDate | date:'mediumDate'}}</p>
-          </div>
-        </div>
-        <div class="item area role" *ngIf="member.user.id !== currentUser.id">
-          <div ngbDropdown>
-            <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-              {{groupRole[member.memberRole]}}
-            </div>
-            <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
-              container="body">
-              <div class="dropdown-header">Change permissions</div>
-              <div class="dropdown-divider"></div>
-              <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
-                container="body">
-                <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
-            </div>
-          </div>
-        </div>
-        <div class="area owner" *ngIf="member.user.id === currentUser.id">
+      <div class="item area role">
+        <div class="area" *ngIf="member.memberRole === groupRole.Owner || !member.isAccepted; else notOwner">
           <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
         </div>
+        <ng-template #notOwner>
+          <div class="area" *ngIf="!isCurrentUserOwnerOrAdmin(); else isOwnerAdmin">
+            <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
+          </div>
+          <ng-template #isOwnerAdmin>
+            <div *ngIf="member.isAccepted; notAcceptedMember" ngbDropdown>
+              <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+                {{groupRole[member.memberRole]}}
+              </div>
+              <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
+                container="body">
+                <div class="dropdown-header">Change permissions</div>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
+                  container="body">
+                  <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
+              </div>
+            </div>
+            <ng-template #notAcceptedMember>
+              <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
+            </ng-template>
+            <div class="item area delete">
+              <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+            </div>
+          </ng-template>
+          <div class="item area delete" *ngIf="member.user.id === this.currentUser.id && !isCurrentUserOwnerOrAdmin()">
+            <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+          </div>
+        </ng-template>
       </div>
     </div>
-  </ng-template>
-</ng-template>
+  </div>

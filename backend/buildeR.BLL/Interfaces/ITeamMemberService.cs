@@ -12,5 +12,7 @@ namespace buildeR.BLL.Interfaces
         Task<TeamMemberDTO> Create(NewTeamMemberDTO teamMember);
         Task Update(TeamMemberDTO teamMember);
         Task Delete(int id);
+        Task DeleteWithNotification(RemoveTeamMemberDTO teamMember);
+
     }
 }

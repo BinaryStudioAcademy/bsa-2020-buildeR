@@ -11,4 +11,5 @@ export interface TeamMember {
   group: Group;
   joinedDate: Date;
   isAccepted: boolean;
+  initiatorId: number;
 }

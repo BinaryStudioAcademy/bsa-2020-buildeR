@@ -8,6 +8,7 @@ namespace buildeR.Common.DTO.TeamMember
     public sealed class TeamMemberDTO
     {
         public int Id { get; set; }
+        public int InitiatorId { get; set; }
         public int UserId { get; set; }
         public int GroupId { get; set; }
         public GroupRole MemberRole { get; set; }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { GroupService } from '../../../core/services/group.service';
 import { takeUntil } from 'rxjs/operators';
 import { Group } from '../../../shared/models/group/group';
@@ -10,6 +10,7 @@ import { ModalContentComponent } from '../../../core/components/modal-content/mo
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { TeamMemberService } from '../../../core/services/team-member.service';
+import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
 
 @Component({
   selector: 'app-group-list',
@@ -22,6 +23,8 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   groups: Group[];
   groupInvites: Group[];
   currentUser: User;
+  // @Output() groupsChanged = new EventEmitter<Group[]>();
+
   constructor(
     private groupService: GroupService,
     private authService: AuthenticationService,
@@ -43,11 +46,30 @@ export class GroupListComponent extends BaseComponent implements OnInit {
       .subscribe(
         (resp) => {
           this.loadingGroups = false;
-          this.groupInvites = resp.filter((g => g.teamMembers.filter(t => !t.isAccepted && t.userId === this.currentUser.id).length !== 0));
-          this.groups = resp.filter((g => g.teamMembers.filter(t => t.isAccepted && t.userId === this.currentUser.id).length !== 0));
+          this.groupInvites = resp.filter((g => g.teamMembers.filter(
+            t => !t.isAccepted &&
+              t.userId === this.currentUser.id &&
+              t.memberRole !== GroupRole.Owner).length !== 0));
+          this.groups = resp.filter((g => g.teamMembers.filter(t => t.isAccepted &&
+            t.userId === this.currentUser.id).length !== 0));
+          // this.onGroupsChanged(this.groups);
+
+          const groupsOwnerIsNotAccepted = resp.filter((g => g.teamMembers.filter(
+            t => !t.isAccepted &&
+              t.userId === this.currentUser.id &&
+              t.memberRole === GroupRole.Owner).length !== 0));
+          if (groupsOwnerIsNotAccepted.length !== 0) {
+            this.setAcceptedIfOwner(groupsOwnerIsNotAccepted);
+            this.getGroups();
+          }
         }
       );
   }
+
+  // onGroupsChanged(groups: Group[]) {
+  //   this.groupsChanged.emit(groups);
+  // }
+
   getCurrentUserRole(groupId: number) {
     const group = this.groups.find(g => g.id === groupId);
     return this.getRole(group);
@@ -65,6 +87,20 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     return member.memberRole;
   }
 
+  setAcceptedIfOwner(groups: Group[]) { // for already created groups
+    for (const group of groups) {
+      const currentMember = group.teamMembers.find(t => t.userId === this.currentUser.id &&
+        t.memberRole === GroupRole.Owner && t.isAccepted === false);
+      if (currentMember) {
+        currentMember.isAccepted = true;
+        this.teamMemberService
+          .updateMember(currentMember)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe();
+      }
+    }
+  }
+
   accept(group: Group) {
     const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
     member.isAccepted = true;
@@ -78,15 +114,20 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   }
   decline(group: Group) {
     const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
-    this.teamMemberService.deleteMember(member.id).pipe(takeUntil(this.unsubscribe$))
+    const removeObject = {
+      id: member.id,
+      initiatorId: member.id,
+      groupId: group.id
+    } as RemoveTeamMember;
+    this.teamMemberService.deleteMemberWithNotification(removeObject).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.groupInvites = this.groupInvites.filter(
-          (g) => g.id !== group.id
-        );
+        this.getGroups();
       });
   }
 
-
+  acceptedMembersCount(group: Group) {
+    return group.teamMembers.filter(t => t.isAccepted === true).length;
+  }
 
   deleteGroup(groupId: number) {
     const modalRef = this.modalService.open(ModalContentComponent);

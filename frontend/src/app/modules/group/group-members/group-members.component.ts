@@ -12,6 +12,7 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
 
 @Component({
   selector: 'app-group-members',
@@ -37,7 +38,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   memberForm: FormGroup;
   constructor(
     private groupService: GroupService,
-    private route: ActivatedRoute,
+    route: ActivatedRoute,
     private userService: UserService,
     private teamMemberService: TeamMemberService,
     private toastrService: ToastrNotificationsService,
@@ -62,9 +63,8 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.loadingUsers = true;
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
-        this.members = res.body.filter((t => t.isAccepted));
+        this.members = res.body;
         this.pendingMembers = res.body.filter((t => !t.isAccepted));
-        console.log(this.members);
         this.loadingUsers = false;
       });
   }
@@ -81,6 +81,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   }
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
+    member.initiatorId = this.currentUser.id;
     this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$)).subscribe(() =>
       this.toastrService.showSuccess('Member role successfully changed'),
       (err) => {
@@ -93,7 +94,8 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.groupId = this.groupId;
     this.newTeamMember.userId = this.memberForm.controls.user.value.id;
     this.newTeamMember.memberRole = this.memberForm.controls.dropdown.value;
-    console.log(this.newTeamMember.memberRole);
+    this.newTeamMember.initiatorId = this.currentUser.id;
+
     if (!this.newTeamMember.memberRole) {
       this.newTeamMember.memberRole = GroupRole.Guest;
     }
@@ -110,12 +112,22 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   }
 
   deleteMember(memberId: number) {
-    this.teamMemberService.deleteMember(memberId).pipe(takeUntil(this.unsubscribe$))
+    const removeObject = {
+      id: memberId,
+      initiatorId: this.currentUser.id,
+      groupId: this.groupId
+    } as RemoveTeamMember;
+    this.teamMemberService.deleteMemberWithNotification(removeObject).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.pendingMembers = this.pendingMembers.filter(
-          (m) => m.id !== memberId
-        );
+        this.getGroupMembers(this.groupId);
+        this.getUsers();
+        this.toastrService.showSuccess('Member was successfully deleted');
       });
+  }
+
+  isCurrentUserOwnerOrAdmin() {
+    return this.members?.some(m => m.user.id === this.currentUser.id &&
+      (m.memberRole === GroupRole.Owner || m.memberRole === GroupRole.Admin));
   }
 
   search = (text$: Observable<string>) =>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { TeamMember } from '../../shared/models/group/team-member';
+import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,8 @@ export class TeamMemberService {
   }
   deleteMember(memberId: number) {
     return this.httpService.deleteRequest<TeamMember>(`${this.routePrefix}/` + memberId);
+  }
+  deleteMemberWithNotification(object: RemoveTeamMember) {
+    return this.httpService.deleteRequest<TeamMember>(`${this.routePrefix}/`, object);
   }
 }
