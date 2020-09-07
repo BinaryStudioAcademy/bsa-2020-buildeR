@@ -20,8 +20,9 @@ namespace buildeR.BLL.Services
     public class BuildService : BaseCrudService<BuildHistory, BuildHistoryDTO, NewBuildHistoryDTO>, IBuildService
     {
         private readonly INotificationsService _notificationsService;
-        
-        public BuildService(BuilderContext context, IMapper mapper, INotificationsService notificationsService) : base(context, mapper)
+
+        public BuildService(BuilderContext context, IMapper mapper, INotificationsService notificationsService) : base(
+            context, mapper)
         {
             _notificationsService = notificationsService;
         }
@@ -100,7 +101,7 @@ namespace buildeR.BLL.Services
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id)
         {
-           var res = Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
+            var res = Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
                 await Context.BuildHistories.AsNoTracking()
                     .Where(p => p.PerformerId == id).Where(t => t.StartedAt > DateTime.Today.AddMonths(-1))
                     .Include(p => p.Performer).Include(x => x.Project)
@@ -108,10 +109,20 @@ namespace buildeR.BLL.Services
             return res;
         }
 
+        public async Task<IEnumerable<BuildHistoryDTO>> GetSortedByStartDateHistoryByUserId(int id)
+        {
+            return Mapper.Map<IEnumerable<BuildHistoryDTO>>(await Context.BuildHistories.AsNoTracking()
+                .Where(bh => bh.PerformerId == id)
+                .Include(bh => bh.Performer)
+                .Include(bh => bh.Project)
+                .OrderBy(bh => bh.StartedAt).ToListAsync());
+        }
+
         public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)
         {
             // TODO add checking
-            var buildHistory = Context.BuildHistories.Include(bh => bh.Project).FirstOrDefault(bh => bh.Id == statusChange.BuildHistoryId);
+            var buildHistory = Context.BuildHistories.Include(bh => bh.Project)
+                .FirstOrDefault(bh => bh.Id == statusChange.BuildHistoryId);
             if (buildHistory != null)
             {
                 buildHistory.BuildStatus = statusChange.Status;
@@ -121,7 +132,7 @@ namespace buildeR.BLL.Services
                     buildHistory.BuildAt = statusChange.Time;
                     buildHistory.Duration = (buildHistory.BuildAt - buildHistory.StartedAt).Value.Milliseconds;
                 }
-                
+
                 await Context.SaveChangesAsync();
 
                 if (statusChange.Status != BuildStatus.InProgress)
@@ -139,7 +150,7 @@ namespace buildeR.BLL.Services
 
             return await GetBuildById(statusChange.BuildHistoryId);
         }
-        
+
         private static NotificationType StatusToNotificationType(StatusChangeDto statusChange)
         {
             return statusChange.Status switch
@@ -151,7 +162,7 @@ namespace buildeR.BLL.Services
                 BuildStatus.Pending => NotificationType.Information,
             };
         }
-        
+
         private static string StatusToNotificationMessage(BuildHistory buildHistory, StatusChangeDto statusChange)
         {
             string action = statusChange.Status switch

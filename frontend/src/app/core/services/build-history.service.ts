@@ -21,6 +21,9 @@ export class BuildHistoryService {
     return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/user/${userId}`);
   }
 
+  getSortedByStartDateHistoryByUserId(userId: number): Observable<HttpResponse<BuildHistory[]>> {
+    return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/user/startDate/${userId}`);
+  }
 
   getBuildHistory(buildId: number): Observable<BuildHistory> {
     return this.httpService.getRequest<BuildHistory>(`${this.routePrefix}/${buildId}`);

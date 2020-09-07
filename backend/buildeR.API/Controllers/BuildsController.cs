@@ -37,6 +37,12 @@ namespace buildeR.API.Controllers
         {
             return await _buildService.GetMonthHistoryByUserId(id);
         }
+        
+        [HttpGet("user/startDate/{id}")]
+        public async Task<IEnumerable<BuildHistoryDTO>> GetSortedByStartDateHistoryByUserId(int id)
+        {
+            return await _buildService.GetSortedByStartDateHistoryByUserId(id);
+        }
 
         [HttpGet("{id}")]
         public async Task<BuildHistoryDTO> GetById(int id)
