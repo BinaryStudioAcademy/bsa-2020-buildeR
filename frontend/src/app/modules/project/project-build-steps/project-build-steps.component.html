@@ -3,161 +3,175 @@
 <ng-template #loading>
     <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
 </ng-template>
+
 <ng-template #loaded>
-  <div class="container px-0 mx-auto">
-    <!-- Titles of steps -->
-    <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="drop($event)">
-      <div class="project-build-step row" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
-        <!-- Template for generic plugins -->
-        <div class="container">
-          <div class="row">
-            <div class="col-1 text-left">
-              <button type="button" class="btn expand-button" (click)="editBuildStep(buildStep)">
-                <i class="expand-icon" [ngClass]="(buildStep.isEditing) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
-              </button>
-            </div>
-            <div class="col-4 text-left m-auto" cdkDragHandle>
-              Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
-              <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
-            </div>
-            <div class="col-1 offset-6">
-              <button class="btn pl-0" (click)="removeBuildStep(buildStep)">
-                <i class="fa fa-times text-danger"></i>
-              </button>
-            </div>
-          </div>
-          </div>
-
-        <!-- First block of advanced parameters -->
-        <div class="container" hidden="true" [hidden]="!buildStep.isEditing">
-          <div class="row">
-            <div class="col-10 offset-1"><hr class="mb-4"></div>
-          </div>
-          <div class="row"  *ngIf="buildStep.buildStepName != 'Custom command: '">
-            <div class="col-5 offset-1 input-group new-step-input">
-              <label class="input-group-prepend" [for]="'docker' + i"><span class="input-group-text">Docker image:</span></label>
-              <input [id]="'docker' + i" type="text" class="form-control"
-                placeholder="Will be used 'latest' if left blank"
-                placement="bottom"
-                ngbTooltip="Specify Docker image version"
-                [(ngModel)]="buildStep.dockerImageVersion"
-                [ngbTypeahead]="searchFunctionFactory(buildStep)"
-                [editable]='false' />
-            </div>
-
-            <div class="col-5 input-group new-step-input w-auto">
-              <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Directory:</span></label>
-              <input [id]="'dir' + i" class="form-control"
-                placeholder="Will be used root if left blank"
-                [(ngModel)]="buildStep.workDirectory">
-            </div>
-          </div>
-
-          <!-- Command for custom command-->
-          <div class="row" *ngIf="buildStep.buildStepName == 'Custom command: '">
-            <div class="col-10 offset-1 input-group new-step-input w-auto">
-              <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Command:</span></label>
-              <input [id]="'dir' + i" class="form-control"
-                placeholder="e.g. 'mkdir app'"
-                [(ngModel)]="buildStep.commandArguments[0].key">
-            </div>
-          </div>
-
-          <!-- Block with command arguments -->
-          <div *ngIf="buildStep.buildStepName !== 'Custom command: '">
-            <div class="row mt-1" *ngIf="buildStep.commandArguments?.length">
-              <div class="col-4 offset-1">
-                <h6 class="pt-2 text-left">Command arguments</h6>
+    <div class="container px-0 mx-auto">
+      <!-- Titles of steps -->
+      <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="drop($event)" [hidden]='dockerfileUsed'>
+        <div class="project-build-step row" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
+          <!-- Template for generic plugins -->
+          <div class="container">
+            <div class="row">
+              <div class="col-1 text-left">
+                <button type="button" class="btn expand-button" (click)="editBuildStep(buildStep)">
+                  <i class="expand-icon" [ngClass]="(buildStep.isEditing) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
+                </button>
+              </div>
+              <div class="col-4 text-left m-auto" cdkDragHandle>
+                Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
+                <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
+              </div>
+              <div class="col-1 offset-6">
+                <button class="btn pl-0" (click)="removeBuildStep(buildStep)">
+                  <i class="fa fa-times text-danger"></i>
+                </button>
               </div>
             </div>
-              <!-- Existing command arguments, that can be edited or deleted -->
-            <div class="mt-2" *ngFor="let arg of buildStep.commandArguments">
-              <div class="row">
-                <div class="col-5 offset-1 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
-                  <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
-                      <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity" [disabled]="!arg.id">
+            </div>
+
+          <!-- First block of advanced parameters -->
+          <div class="container" hidden="true" [hidden]="!buildStep.isEditing">
+            <div class="row">
+              <div class="col-10 offset-1"><hr class="mb-4"></div>
+            </div>
+            <div class="row"  *ngIf="buildStep.buildStepName != 'Custom command: ' && buildStep.buildStepName != 'Dockerfile'">
+              <div class="col-5 offset-1 input-group new-step-input">
+                <label class="input-group-prepend" [for]="'docker' + i"><span class="input-group-text">Docker image:</span></label>
+                <input [id]="'docker' + i" type="text" class="form-control"
+                  placeholder="Will be used 'latest' if left blank"
+                  placement="bottom"
+                  ngbTooltip="Specify Docker image version"
+                  [(ngModel)]="buildStep.dockerImageVersion"
+                  [ngbTypeahead]="searchFunctionFactory(buildStep)"
+                  [editable]='false' />
+              </div>
+
+              <div class="col-5 input-group new-step-input w-auto">
+                <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Directory:</span></label>
+                <input [id]="'dir' + i" class="form-control"
+                  placeholder="Will be used root if left blank"
+                  [(ngModel)]="buildStep.workDirectory">
+              </div>
+            </div>
+
+            <!-- Command for custom command-->
+            <div class="row" *ngIf="buildStep.buildStepName == 'Custom command: '">
+              <div class="col-10 offset-1 input-group new-step-input w-auto">
+                <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Command:</span></label>
+                <input [id]="'dir' + i" class="form-control"
+                  placeholder="e.g. 'mkdir app'"
+                  [(ngModel)]="buildStep.commandArguments[0].key">
+              </div>
+            </div>
+
+            <!-- Block with command arguments -->
+            <div *ngIf="buildStep.buildStepName !== 'Custom command: '">
+              <div class="row mt-1" *ngIf="buildStep.commandArguments?.length">
+                <div class="col-4 offset-1">
+                  <h6 class="pt-2 text-left">Command arguments</h6>
                 </div>
-                <div class="col-5 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
+              </div>
+                <!-- Existing command arguments, that can be edited or deleted -->
+              <div class="mt-2" *ngFor="let arg of buildStep.commandArguments">
+                <div class="row">
+                  <div class="col-5 offset-1 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
+                    <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
+                        <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity" [disabled]="!arg.id">
+                  </div>
+                  <div class="col-5 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
+                    <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
+                    <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal" [disabled]="!arg.id">
+                    <div class="new-step-input">
+                      <button class="btn" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
+                        <i class="fa fa-times text-danger"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form for adding new argument commands -->
+              <div class="row mt-2" *ngIf="buildStep.newCommandArgumentValue !== undefined && buildStep.newCommandArgumentKey !== undefined">
+                <div class="col-5 offset-1 input-group new-step-input">
+                  <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
+                      <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentKey" placeholder="--verbosity">
+                </div>
+                <div class="col-5 input-group new-step-input">
                   <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
-                  <input type="text" class="form-control" [(ngModel)]="arg.value" placeholder="normal" [disabled]="!arg.id">
+                  <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
                   <div class="new-step-input">
-                    <button class="btn" (click)="removeExistingCommandArgument(buildStep, arg.id, arg.key)">
+                    <button class="btn" [disabled]="!buildStep.newCommandArgumentValue && !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
+                      <i class="fas fa-check text-success"></i>
+                    </button>
+                  </div>
+                  <div class="new-step-input">
+                    <button class="btn" (click)="clearNewCommandArgument(buildStep)">
                       <i class="fa fa-times text-danger"></i>
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Form for adding new argument commands -->
-            <div class="row mt-2" *ngIf="buildStep.newCommandArgumentValue !== undefined && buildStep.newCommandArgumentKey !== undefined">
-              <div class="col-5 offset-1 input-group new-step-input">
-                <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
-                    <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentKey" placeholder="--verbosity">
-              </div>
-              <div class="col-5 input-group new-step-input">
-                <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
-                <input type="text" class="form-control" [(ngModel)]="buildStep.newCommandArgumentValue" placeholder="normal">
-                <div class="new-step-input">
-                  <button class="btn" [disabled]="!buildStep.newCommandArgumentValue && !buildStep.newCommandArgumentKey" (click)="saveCommandArgument(buildStep)">
-                    <i class="fas fa-check text-success"></i>
+              <!-- Form for adding new custom command -->
+              <div class="row" *ngIf="buildStep.buildStepName != 'Custom command: '">
+                <div class="col-4 offset-1 text-left mt-3">
+                  <button class="btn btn-success"
+                    [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey"
+                    (click)="addCommandArgument(buildStep)">Add command argument
                   </button>
                 </div>
-                <div class="new-step-input">
-                  <button class="btn" (click)="clearNewCommandArgument(buildStep)">
-                    <i class="fa fa-times text-danger"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Form for adding new custom command -->
-            <div class="row" *ngIf="buildStep.buildStepName != 'Custom command: '">
-              <div class="col-4 offset-1 text-left mt-3">
-                <button class="btn btn-success"
-                  [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey"
-                  (click)="addCommandArgument(buildStep)">Add command argument
-                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div class="project-build-step dockerfile-block" *ngIf="dockerfileUsed">
+        <div class="dockerfile-block-content">
+          <p>Specify location of Dockerfile in your repository. Root directory will be used if left blank</p>
+          <div class="input-group">
+            <label class="input-group-prepend" for="dockerfile-directory"><span class="input-group-text">Directory:</span></label>
+            <input id="dockerfile-directory" class="form-control"
+              placeholder="Will be used root if left blank"
+              [(ngModel)]="allBuildSteps[0].workDirectory">
+          </div>
+      </div>
+      </div>
 
-        <div class="row">
-          <div class="col-6 pl-0">
+          <div class="row">
+            <div class="col-6 pl-0">
 
-            <div ngbDropdown class="d-inline-block">
-              <button class="btn add-build-btn" id="allEmptySteps"
-                      ngbDropdownToggle>Add build step</button>
-              <div ngbDropdownMenu aria-labelledby="allEmptySteps" class="pl-3 pr-3">
-                <div *ngFor="let pluginGroup of pluginGroups">
-                  <span class="font-weight-bold">{{ pluginGroup }}</span>
-                  <ng-container *ngFor="let step of emptyBuildSteps">
-                    <button *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup"
-                          (click)="addNewBuildStep(step)"
-                          ngbDropdownItem>
-                          <span *ngIf="step.pluginCommand.name" >{{ step.pluginCommand.name }}</span>
-                          <span *ngIf="step.pluginCommand.plugin.pluginName === 'Custom command'" >Custom command</span>
-                    </button>
-                  </ng-container>
+              <div ngbDropdown class="d-inline-block">
+                <button class="btn add-build-btn" id="allEmptySteps" [disabled]='dockerfileUsed'
+                        ngbDropdownToggle>Add build step</button>
+                <div ngbDropdownMenu aria-labelledby="allEmptySteps" class="pl-3 pr-3">
+                  <div *ngFor="let pluginGroup of pluginGroups">
+                    <span class="font-weight-bold">{{ pluginGroup }}</span>
+                    <ng-container *ngFor="let step of emptyBuildSteps">
+                      <button *ngIf="step.pluginCommand.plugin.pluginName == pluginGroup"
+                            (click)="addNewBuildStep(step)"
+                            ngbDropdownItem [disabled]="step.buildStepName === 'Dockerfile: Dockerfile'">
+                            <span *ngIf="step.pluginCommand.name" >{{ step.pluginCommand.name }}</span>
+                            <span *ngIf="step.pluginCommand.plugin.pluginName === 'Custom command'" >Custom command</span>
+                      </button>
+                    </ng-container>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
-              Save changes
-            </button>
+              <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="!allBuildSteps || allBuildSteps.length === 0">
+                Save changes
+              </button>
+              <button class="btn btn-info ml-1" (click)="addDockerfile()" [hidden]="dockerfileUsed">Add Dockerfile</button>
+              <button class="btn btn-info ml-1" (click)="deleteDockerFile()" [hidden]="!dockerfileUsed">Switch to steps</button>
+            </div>
+            <div class="col-6 text-right">
+              <button class="btn save-btn mr-2 all-button" (click)="expandAll()" [disabled]="!allBuildSteps || allBuildSteps.length <= 1">
+                <i class="fas fa-angle-double-down"></i> Expand
+              </button>
+              <button class="btn save-btn all-button" (click)="collapseAll()" [disabled]="!allBuildSteps || allBuildSteps.length <= 1">
+                <i class="fas fa-angle-double-up"></i> Collapse
+              </button>
+            </div>
           </div>
-          <div class="col-6 text-right">
-            <button class="btn save-btn mr-2 all-button" (click)="expandAll()">
-              <i class="fas fa-angle-double-down"></i> Expand
-            </button>
-            <button class="btn save-btn all-button" (click)="collapseAll()">
-              <i class="fas fa-angle-double-up"></i> Collapse
-            </button>
-          </div>
-        </div>
-    </div>
+      </div>
 </ng-template>

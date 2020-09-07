@@ -114,12 +114,6 @@ namespace buildeR.BLL.Services
                 .Where(buildStep => buildStep.ProjectId == stepToDelete.ProjectId && buildStep.Index > stepToDelete.Index)
                 .ToListAsync();
 
-            foreach (var buildStep in projectBuildStepsWithIndexMoreBuildStepToDelete)
-            {
-                --buildStep.Index;
-                Context.Entry(buildStep).State = EntityState.Modified;
-            }
-
             await base.RemoveAsync(id);
         }
 

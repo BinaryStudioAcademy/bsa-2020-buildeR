@@ -38,7 +38,8 @@ export class PluginsComponent extends BaseComponent implements OnInit {
         (resp) => {
           this.isLoading = false;
           this.plugins = resp
-            .filter(plugin => plugin.pluginName !== 'Custom command');
+            .filter(plugin => plugin.pluginName !== 'Custom command')
+            .filter(plugin => plugin.pluginName !== 'Dockerfile' );
           this.plugins.forEach(plugin => {
             plugin.isCollapsed = true;
             plugin.newCommand = '';
