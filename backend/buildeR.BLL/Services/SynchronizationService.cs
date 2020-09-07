@@ -4,6 +4,7 @@ using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.Synchronization.Github;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -85,10 +86,10 @@ namespace buildeR.BLL.Services
                 return false;
             }
         }
-        public async Task RegisterWebhook(int projectId, string callback)
+        public async Task RegisterWebhook(int projectId)
         {
-            callback = "https://www.bsa-builder.xyz/api/webhooks";
-            callback += $"/{projectId}/github";
+            var apiURL = Environment.GetEnvironmentVariable("BaseUrl");
+            var callback = Path.Combine(apiURL, $"webhooks/{projectId}/github");
 
             var pushCallback = callback + "/push";
             var pullRequestCallback = callback + "/pull_request";
