@@ -50,13 +50,11 @@ namespace buildeR.BLL.Providers
             };
         }
 
-        public EmailModel GetFeedbackLetter(string email, string userName, string userSubject)
+        public EmailModel GetFeedbackLetter(string email, string userName, string userSubject, string userBody)
         {
             string subject = userSubject;
             string title = $@"<b style=""font-size: 20px"">Hello, {userName}!</b>";
-            string body = @$"We want to thank you for your letter!<br><br>Each of your letters is very important to us! 
-                          We have received your letter and will contact you as soon as possible.
-                          <br><br>Cheers,<br>buildeR team";
+            string body = userBody;
             return new EmailModel()
             {
                 Email = email,
