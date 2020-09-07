@@ -5,6 +5,15 @@
   color: #03BBD5
   font-size: 1.5rem
 
+p.title
+  color: #03BBD5
+  font-size: 1.2rem
+
+select
+  display: inline-block
+  width: auto
+  vertical-align: middle
+
 .text
   margin-bottom: 0.3rem
   font-size: 14px
@@ -87,3 +96,12 @@
     grid-column: 1
     justify-self: start
 
+.divider
+  min-height: 3px
+  width: 60%
+  margin: 10px 0px 10px 0
+  background-color: var(--light)
+
+@media screen and (max-width: 675px)
+  .divider
+    width: 100%

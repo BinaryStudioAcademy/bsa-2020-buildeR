@@ -12,10 +12,11 @@ import { ProjectService } from '@core/services/project.service';
 export class EnvVarsEditorComponent implements OnInit {
 
   public envVarsEditForm: FormGroup;
+  @Input() index: number;
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   @Output()editing: EventEmitter<EnviromentVariable> = new EventEmitter<EnviromentVariable>();
   @Output()deleting: EventEmitter<EnviromentVariable> = new EventEmitter<EnviromentVariable>();
-  fieldTextType = true;
+  fieldTextType = false;
 
   constructor(private pojectService: ProjectService) { }
 
@@ -35,7 +36,9 @@ export class EnvVarsEditorComponent implements OnInit {
     this.fieldTextType = this.envVar.data.isSecret;
 
   }
-
+  changeSecret() {
+    this.fieldTextType = this.envVar.data.isSecret;
+  }
   edit(){
     this.envVar.data = this.envVarsEditForm.value;
     this.pojectService.editEnvVarEvent(this.envVar);

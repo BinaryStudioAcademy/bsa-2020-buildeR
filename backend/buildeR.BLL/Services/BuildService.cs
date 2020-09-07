@@ -102,8 +102,8 @@ namespace buildeR.BLL.Services
         {
            var res = Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
                 await Context.BuildHistories.AsNoTracking()
-                    .Where(bh => bh.PerformerId == id).Where(t => t.StartedAt > DateTime.Today.AddMonths(-1))
-                    .Include(bh => bh.Performer)
+                    .Where(p => p.PerformerId == id).Where(t => t.StartedAt > DateTime.Today.AddMonths(-1))
+                    .Include(p => p.Performer).Include(x => x.Project)
                     .ToListAsync());
             return res;
         }

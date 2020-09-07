@@ -16,13 +16,16 @@ namespace buildeR.BLL.Services
     public class BuildOperationsService : IBuildOperationsService
     {
         private readonly IProjectService _projectService;
+        private readonly ISynchronizationService _synchronizationService;
         private readonly BuilderContext _context;
         private readonly ProcessorProducer _producer;
         public BuildOperationsService(IProjectService projectService,
+                                      ISynchronizationService synchronizationService,
                                       BuilderContext context,
                                       ProcessorProducer producer)
         {
             _projectService = projectService;
+            _synchronizationService = synchronizationService;
             _context = context;
             _producer = producer;
         }
@@ -30,7 +33,7 @@ namespace buildeR.BLL.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<BuildHistory> PrepareBuild(int projectId, string buildAuthorUsername)
+        public async Task<BuildHistory> PrepareBuild(int projectId, string buildAuthorUsername, string triggeredBranch)
         {
             var user = await GetUserByUsername(buildAuthorUsername);
 
@@ -41,6 +44,9 @@ namespace buildeR.BLL.Services
             build.BuildStatus = BuildStatus.Pending;
             build.StartedAt = DateTime.Now;
             build.Number = _context.BuildHistories.Count(b => b.ProjectId == projectId) + 1;
+
+            var lastCommit = await _synchronizationService.GetLastProjectCommit(projectId, triggeredBranch);
+            build.CommitHash = lastCommit.Hash;
 
             _context.Add(build);
             await _context.SaveChangesAsync();

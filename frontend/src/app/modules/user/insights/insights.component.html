@@ -15,12 +15,10 @@
         </ul>
       </nav>
     </div>
-    <div class="build-history-select">
+    <div class="build-history-select" >
       <label style="margin-top: 2px"> View:</label>
-      <select class="form-control form-control-sm selecter">
-        <option>public and private builds</option>
-        <option>public builds</option>
-        <option>private builds</option>
+      <select  class="form-control form-control-sm selecter" (change)="changeBuilSelector($event.target.value)">
+        <option *ngFor='let build of buildsPublicity' >{{build}}</option>
       </select>
     </div>
   </div>
@@ -51,7 +49,7 @@
     <div class="fourth-chart border">
       <h6>Active Projects</h6>
       <h5>{{activeProjects}}</h5>
-      <app-chart-small [results]="projectData">
+      <app-chart-small  [results]="projectData">
       </app-chart-small>
     </div>
   </div>
@@ -59,7 +57,7 @@
     <h5>Build Statuses</h5>
       <app-chart-big-normalized [hidden]="!month" [results]="bigChartData">
       </app-chart-big-normalized>
-      <app-chart-big-grouped [hidden]="month" [results]="bigChartData">
+      <app-chart-big-grouped  [hidden]="month" [results]="bigChartData">
       </app-chart-big-grouped>
     </div>
 </div>
