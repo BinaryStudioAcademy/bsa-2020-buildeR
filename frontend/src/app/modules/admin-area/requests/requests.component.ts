@@ -24,15 +24,13 @@ export class RequestsComponent extends BaseComponent implements OnInit {
   { super(); }
 
   ngOnInit(): void {
-   this.activeRoute.data.subscribe(data => {
-     this.allUserLetters = data.userLetters;
-     this.currentUserLetters = this.allUserLetters;
-     });
+    this.changeOnAll();
   }
 
   openModal(userLetter: UserLetter) {
     const activeModal = this.modalService.open(RequestsModalComponent);
     (activeModal.componentInstance as RequestsModalComponent).currentLetter = userLetter;
+    activeModal.result.then( () => this.onChange());
   }
 
   changeOnAll() {

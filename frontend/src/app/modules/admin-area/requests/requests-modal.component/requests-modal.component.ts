@@ -40,6 +40,7 @@ export class RequestsModalComponent implements OnInit {
       .subscribe(letter => {
         this.toastrService.showSuccess("Your letter was delivered!");
         this.isShowSpinner = false;
+        this.closeForm();
       },error => {
       console.error(error);
       this.toastrService.showError('Your letter wasn\'t delivered!');
