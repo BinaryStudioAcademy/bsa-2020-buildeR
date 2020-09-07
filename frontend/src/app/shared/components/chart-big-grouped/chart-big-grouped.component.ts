@@ -6,7 +6,6 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./chart-big-grouped.component.sass']
 })
 export class ChartBigGroupedComponent implements OnInit {
-
   @Input() results;
   // Mock
   // results = [
@@ -45,6 +44,7 @@ export class ChartBigGroupedComponent implements OnInit {
   showYAxisLabel = false;
   yAxisLabel = '';
   legendTitle = 'Statuses';
+
 
   colorScheme = {
     domain: ['#34ab53', '#d84848', '#ecdb43', '#9d9d9d']
