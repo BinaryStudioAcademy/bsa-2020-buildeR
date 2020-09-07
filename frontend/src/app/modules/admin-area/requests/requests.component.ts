@@ -5,6 +5,7 @@ import {UserLetter} from "@shared/models/user/user-letter";
 import {ActivatedRoute} from "@angular/router";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {RequestsModalComponent} from "@modules/admin-area/requests/requests-modal.component/requests-modal.component";
+import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
 
 @Component({
   selector: 'app-requests',
@@ -18,7 +19,8 @@ export class RequestsComponent extends BaseComponent implements OnInit {
 
   constructor(private userService: UserService,
               private activeRoute: ActivatedRoute,
-              private modalService: NgbModal)
+              private modalService: NgbModal,
+              private toastrService: ToastrNotificationsService)
   { super(); }
 
   ngOnInit(): void {

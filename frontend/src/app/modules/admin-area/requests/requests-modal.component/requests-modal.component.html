@@ -56,7 +56,13 @@
       </div>
     </div>
     <div class="btn-wp">
-      <button type="submit" class="btn btn-success" [disabled]="requestsForm.invalid">Send</button>
+      <button type="submit" class="btn btn-success"
+              [disabled]="requestsForm.invalid"
+              [ngStyle]="{'width': isShowSpinner ? '100px' : '4rem' }">Send
+        <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm"
+              role="status" aria-hidden="true">
+        </span>
+      </button>
       <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
     </div>
   </form>

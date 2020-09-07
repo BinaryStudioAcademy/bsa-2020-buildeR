@@ -4,6 +4,7 @@ import {UserLetter} from "../../../../shared/models/user/user-letter";
 import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {emailDotValidator} from "@core/validators/email-dot-validator";
+import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
 
 
 @Component({
@@ -12,14 +13,15 @@ import {emailDotValidator} from "@core/validators/email-dot-validator";
   styleUrls: ['./requests-modal.component.sass'],
 })
 export class RequestsModalComponent implements OnInit {
-
+  isShowSpinner: boolean = false;
   answerText: string;
   currentLetter: UserLetter = {} as UserLetter;
   requestsForm: FormGroup;
 
   constructor(
     private userService: UserService,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    private toastrService: ToastrNotificationsService
   ) { }
 
   ngOnInit(): void {
@@ -33,7 +35,16 @@ export class RequestsModalComponent implements OnInit {
   }
 
   send(answerText: string): void{
-    this.userService.sendLetterToUser(this.currentLetter, answerText).subscribe(letter => console.log(letter));
+    this.isShowSpinner = true;
+    this.userService.sendLetterToUser(this.currentLetter, answerText)
+      .subscribe(letter => {
+        this.toastrService.showSuccess("Your letter was delivered!");
+        this.isShowSpinner = false;
+      },error => {
+      console.error(error);
+      this.toastrService.showError('Your letter wasn\'t delivered!');
+      this.isShowSpinner = false;
+    });
   }
 
   closeForm() {
