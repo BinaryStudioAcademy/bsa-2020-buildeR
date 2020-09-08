@@ -184,7 +184,7 @@ namespace buildeR.BLL.Services
             {
                 var initiator = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
 
-                string message = $"{group?.Name} changed your role to " +
+                string message = $"{initiator?.Username} changed your role to " +
                     $"{Enum.GetName(typeof(GroupRole), teamMember.MemberRole)} in group {group?.Name}";
                 await MakeNotificationAsync(message, null, teamMember.UserId, teamMember.GroupId);
             }
