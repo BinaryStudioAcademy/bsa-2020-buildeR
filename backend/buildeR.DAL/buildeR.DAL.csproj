@@ -29,6 +29,8 @@
     <Compile Remove="Migrations\20200827110214_Configure relation between buildstep and commandarguments.Designer.cs" />
     <Compile Remove="Migrations\20200828133159_Remove BuildStep field from CommandAgument model.cs" />
     <Compile Remove="Migrations\20200828133159_Remove BuildStep field from CommandAgument model.Designer.cs" />
+    <Compile Remove="Migrations\20200907131010_AddedMessage.cs" />
+    <Compile Remove="Migrations\20200907131010_AddedMessage.Designer.cs" />
     <Compile Remove="Migrations\20200831181140_AddGroupInviteEntity.cs" />
     <Compile Remove="Migrations\20200831181140_AddGroupInviteEntity.Designer.cs" />
   </ItemGroup>
