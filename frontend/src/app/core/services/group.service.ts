@@ -16,7 +16,7 @@ export class GroupService {
   groupIsPublic$ = new Subject<boolean>();
   groupName = this.groupName$.asObservable();
   groupIsPublic = this.groupIsPublic$.asObservable();
-
+  userGroupsChanged = new Subject<boolean>();
   constructor(private httpService: HttpService) { }
 
   getGroupById(groupId: number): Observable<Group> {
@@ -29,6 +29,7 @@ export class GroupService {
     return this.httpService.getRequest<Group[]>(`${this.routePrefix}/getGroupsByUserId/${userId}`);
   }
   deleteGroup(groupId: number) {
+    this.userGroupsChanged.next();
     return this.httpService.deleteFullRequest<Group>(`${this.routePrefix}/` + groupId);
   }
   public getProjectsByGroup(
@@ -46,13 +47,16 @@ export class GroupService {
     );
   }
   createGroup(newGroup: NewGroup) {
+    this.userGroupsChanged.next();
     return this.httpService.postRequest<Group>(`${this.routePrefix}`, newGroup);
   }
   updateGroup(group: Group) {
+    this.userGroupsChanged.next();
     return this.httpService.putRequest<Group>(`${this.routePrefix}`, group);
   }
 
   changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
+    this.userGroupsChanged.next();
     this.groupName$.next(groupName);
     this.groupIsPublic$.next(groupIsPublic);
   }
