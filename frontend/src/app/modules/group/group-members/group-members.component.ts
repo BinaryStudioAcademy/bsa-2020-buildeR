@@ -77,7 +77,6 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         this.users = res.body.filter(
           (user) => !this.members?.some(x => x.userId === user.id) && !this.pendingMembers.some(x => x.userId === user.id)
         );
-        // console.log(this.users);
       }
     });
   }

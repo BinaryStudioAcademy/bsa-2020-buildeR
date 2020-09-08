@@ -19,11 +19,9 @@ export class TeamMemberService {
     return this.httpService.putRequest<TeamMember>(`${this.routePrefix}`, teamMember);
   }
   deleteMember(memberId: number) {
-    this.teamMembersChanged.next();
     return this.httpService.deleteRequest<TeamMember>(`${this.routePrefix}/` + memberId);
   }
   deleteMemberWithNotification(object: RemoveTeamMember) {
-    this.teamMembersChanged.next();
     return this.httpService.deleteRequest<TeamMember>(`${this.routePrefix}/`, object);
   }
 }
