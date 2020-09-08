@@ -36,6 +36,12 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.loadingGroups = true;
     this.currentUser = this.authService.getCurrentUser();
+    this.groupService.userGroupsChanged
+      .pipe(takeUntil((this.unsubscribe$)))
+      .subscribe(() => this.getGroups());
+    this.teamMemberService.teamMembersChanged
+      .pipe(takeUntil((this.unsubscribe$)))
+      .subscribe(() => this.getGroups());
     this.getGroups();
   }
   getGroups() {
@@ -52,7 +58,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
               t.memberRole !== GroupRole.Owner).length !== 0));
           this.groups = resp.filter((g => g.teamMembers.filter(t => t.isAccepted &&
             t.userId === this.currentUser.id).length !== 0));
-          // this.onGroupsChanged(this.groups);
 
           const groupsOwnerIsNotAccepted = resp.filter((g => g.teamMembers.filter(
             t => !t.isAccepted &&
@@ -65,10 +70,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         }
       );
   }
-
-  // onGroupsChanged(groups: Group[]) {
-  //   this.groupsChanged.emit(groups);
-  // }
 
   getCurrentUserRole(groupId: number) {
     const group = this.groups.find(g => g.id === groupId);
@@ -96,7 +97,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         this.teamMemberService
           .updateMember(currentMember)
           .pipe(takeUntil(this.unsubscribe$))
-          .subscribe();
+          .subscribe(() => this.teamMemberService.teamMembersChanged.next());
       }
     }
   }
@@ -106,6 +107,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     member.isAccepted = true;
     this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        this.teamMemberService.teamMembersChanged.next();
         this.getGroups(); this.toastrService.showSuccess('You became a member of this group');
       },
         (err) => {
@@ -121,7 +123,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     } as RemoveTeamMember;
     this.teamMemberService.deleteMemberWithNotification(removeObject).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.getGroups();
+        this.teamMemberService.teamMembersChanged.next();
       });
   }
 
@@ -145,9 +147,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
             .deleteGroup(groupId)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
-              this.groups = this.groups.filter(
-                (group) => group.id !== groupId
-              );
+              this.groupService.userGroupsChanged.next();
               this.toastrService.showSuccess('Group is deleted');
             });
         }

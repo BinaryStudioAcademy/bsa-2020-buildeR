@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { TeamMember } from '../../shared/models/group/team-member';
 import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamMemberService {
   routePrefix = '/teamMembers';
+  teamMembersChanged = new Subject<boolean>();
 
   constructor(private httpService: HttpService) { }
   createMember(teamMember: TeamMember) {

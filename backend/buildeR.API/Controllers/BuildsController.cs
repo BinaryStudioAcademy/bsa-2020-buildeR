@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.BuildHistory;
-using buildeR.Common.DTO.User;
-using buildeR.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace buildeR.API.Controllers
@@ -32,6 +28,13 @@ namespace buildeR.API.Controllers
         {
             return await _buildService.GetHistoryByProjectId(id);
         }
+
+        [HttpGet("project/{id}/last")]
+        public async Task<BuildHistoryDTO> GetLastHistoryByProjectId(int id)
+        {
+            return await _buildService.GetLastHistoryByProjectId(id);
+        }
+
         [HttpGet("user/{id}")]
         public async Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id)
         {

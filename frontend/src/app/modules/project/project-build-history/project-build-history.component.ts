@@ -12,8 +12,7 @@ import { BuildStatus } from '@shared/models/build-status';
   templateUrl: './project-build-history.component.html',
   styleUrls: ['./project-build-history.component.sass'],
 })
-export class ProjectBuildHistoryComponent
-  extends BaseComponent
+export class ProjectBuildHistoryComponent extends BaseComponent
   implements OnInit {
   projectId: number;
   builds: BuildHistory[] = [];
@@ -33,28 +32,26 @@ export class ProjectBuildHistoryComponent
     this.configureBuildStatusesSignalR();
     this.route.parent.params.subscribe((params) => {
       this.projectId = params.projectId;
-      this.buildHistoryService
-        .getBuildHistoriesOfProject(this.projectId)
-        .subscribe(
-          (response) => {
-            this.builds = response.body;
-            this.isLoading = false;
-          },
-          (error) => {
-            this.isLoading = false;
-            this.toastrService.showError(error.message, error.name);
-          }
-        );
+      this.buildHistoryService.getBuildHistoriesOfProject(this.projectId).subscribe(
+        (response) => {
+          this.builds = response.body;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.isLoading = false;
+          this.toastrService.showError(error.message, error.name);
+        }
+      );
     });
   }
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       const buildIndex = this.builds.findIndex(
-        (pi) => pi.id == statusChange.BuildHistoryId
+        (pi) => pi.id === statusChange.BuildHistoryId
       );
       if (buildIndex >= 0) {
-        if (statusChange.Status != BuildStatus.InProgress) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
             .subscribe((bh) => {

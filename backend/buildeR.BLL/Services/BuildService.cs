@@ -13,32 +13,41 @@ using buildeR.Common.DTO;
 using buildeR.Common.DTO.Notification;
 using buildeR.Common.Enums;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1;
+using AutoMapper.QueryableExtensions;
 
 namespace buildeR.BLL.Services
 {
     public class BuildService : BaseCrudService<BuildHistory, BuildHistoryDTO, NewBuildHistoryDTO>, IBuildService
     {
         private readonly INotificationsService _notificationsService;
+        private readonly IBuildLogService _buildLogService;
 
-        public BuildService(BuilderContext context, IMapper mapper, INotificationsService notificationsService) : base(
-            context, mapper)
+        public BuildService(
+            BuilderContext context,
+            IMapper mapper,
+            INotificationsService notificationsService,
+            IBuildLogService buildLogService
+        ) : base(context, mapper)
         {
             _notificationsService = notificationsService;
+            _buildLogService = buildLogService;
         }
 
-        public async Task<BuildHistoryDTO> GetBuildById(int id)
+        public async Task<BuildHistoryDTO> GetBuildById(int buildHistoryId)
         {
-            var build = await Context.BuildHistories.AsNoTracking()
-                .Include(bh => bh.Performer)
-                .Include(bh => bh.Project)
-                .FirstOrDefaultAsync(bh => bh.Id == id);
-            if (build == null)
+            var buildHistory = await Context.BuildHistories.AsNoTracking()
+                .Include(e => e.Performer)
+                .Include(e => e.Project)
+                .FirstOrDefaultAsync(e => e.Id == buildHistoryId);
+
+            if (buildHistory is null)
             {
-                throw new NotFoundException(nameof(BuildHistory), id);
+                throw new NotFoundException(nameof(BuildHistory), buildHistoryId);
             }
             
-            return Mapper.Map<BuildHistoryDTO>(build);
+            var logs = await _buildLogService.GetLogs(buildHistory.ProjectId, buildHistory.Id);
+            return Mapper.Map<BuildHistoryDTO>(buildHistory, opt => opt.AfterMap((src, dest) => dest.Logs = logs));
+
         }
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetAll()
@@ -53,15 +62,16 @@ namespace buildeR.BLL.Services
                 throw new ArgumentNullException();
             }
 
-            var buildHistoriesOfProject =
-                Context.BuildHistories.AsNoTracking().Where(bh => bh.ProjectId == build.ProjectId);
-
-            int lastNumber = buildHistoriesOfProject.Any() ? buildHistoriesOfProject.Select(bh => bh.Number).Max() : 0;
+            var lastHistory = await Context.BuildHistories
+                .AsNoTracking()
+                .OrderByDescending(bh => bh.Number)
+                .FirstOrDefaultAsync(bh => bh.ProjectId == build.ProjectId);
 
             var historyDto = await base.AddAsync(build);
 
             var history = await Context.BuildHistories.FindAsync(historyDto.Id);
 
+            int lastNumber = lastHistory?.Number ?? 0;
             history.Number = lastNumber + 1;
             history.BuildStatus = BuildStatus.Pending;
             history.StartedAt = DateTime.Now;
@@ -94,21 +104,39 @@ namespace buildeR.BLL.Services
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id)
         {
-            return Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
+            return Mapper.Map<IEnumerable<BuildHistoryDTO>>(
                 await Context.BuildHistories.AsNoTracking()
                     .Where(bh => bh.Project.Id == id)
                     .Include(bh => bh.Performer)
                     .ToListAsync());
         }
 
+        public async Task<BuildHistoryDTO> GetLastHistoryByProjectId(int projectId)
+        {
+            var buildHistory = await Context.BuildHistories.AsNoTracking()
+                .Include(e => e.Performer)
+                .Where(e => e.ProjectId == projectId)
+                .OrderByDescending(e => e.Number)
+                .FirstOrDefaultAsync();
+
+            if (buildHistory is null)
+            {
+                return null;
+            }
+
+            var logs = await _buildLogService.GetLogs(buildHistory.ProjectId, buildHistory.Id);
+            return Mapper.Map<BuildHistoryDTO>(buildHistory, opt => opt.AfterMap((src, dest) => dest.Logs = logs));
+        }
+
+
         public async Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id)
         {
-            var res = Mapper.Map<IEnumerable<BuildHistory>, IEnumerable<BuildHistoryDTO>>(
+           return Mapper.Map<IEnumerable<BuildHistoryDTO>>(
                 await Context.BuildHistories.AsNoTracking()
-                    .Where(p => p.PerformerId == id).Where(t => t.StartedAt > DateTime.Today.AddMonths(-1))
-                    .Include(p => p.Performer).Include(x => x.Project)
+                    .Include(p => p.Performer)
+                    .Include(x => x.Project)
+                    .Where(p => p.PerformerId == id && p.StartedAt > DateTime.Today.AddMonths(-1))
                     .ToListAsync());
-            return res;
         }
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetSortedByStartDateHistoryByUserId(int id)
@@ -162,6 +190,7 @@ namespace buildeR.BLL.Services
                 BuildStatus.Failure => NotificationType.BuildFailed,
                 BuildStatus.Success => NotificationType.BuildSucceeded,
                 BuildStatus.Pending => NotificationType.Information,
+                _ => NotificationType.Information,
             };
         }
 

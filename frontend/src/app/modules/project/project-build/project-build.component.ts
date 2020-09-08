@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BuildHistory } from '@shared/models/build-history';
-import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap, tap } from 'rxjs/operators';
 import { Project } from '@shared/models/project/project';
-import { BuildLogService } from '@core/services/build-log.service';
+import { combineLatest } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { formatLog } from '../helpers/log.utils';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
-import { Log } from '../logging-terminal/logging-terminal.component';
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
 import { BuildStatus } from '@shared/models/build-status';
+
 
 @Component({
   selector: 'app-project-build',
@@ -22,39 +23,53 @@ import { BuildStatus } from '@shared/models/build-status';
   styleUrls: ['./project-build.component.sass'],
 })
 export class ProjectBuildComponent extends BaseComponent implements OnInit {
-  currentUser: User;
   buildHistory: BuildHistory;
-  projectId: number;
   project: Project;
-  logs: Log[];
+  logs: string[];
+  isCurrent: boolean;
+  noHistory: boolean;
 
   constructor(
-    private buildHistoryService: BuildHistoryService,
     private route: ActivatedRoute,
-    private authService: AuthenticationService,
+    private router: Router,
     private toastrService: ToastrNotificationsService,
+    private authService: AuthenticationService,
+    private buildHistoryService: BuildHistoryService,
+    private projectLogsService: ProjectLogsService,
     private projectService: ProjectService,
     private buildStatusesSignalRService: BuildStatusesSignalRService,
-    private logsService: ProjectLogsService
   ) {
     super();
-    route.parent.params.subscribe((params) => this.projectId = params.projectId);
-    route.parent.data.subscribe((data) => {
-      this.project = data.project;
-      this.getBuildHistory();
-    });
   }
 
-  ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
+  ngOnInit() {
+    this.listenToRouteChanges();
     this.configureBuildStatusesSignalR();
-    // this.getBuildHistory();
-    // this.getProject();
+  }
+
+  listenToRouteChanges() {
+    combineLatest([this.route.params, this.route.parent.data])
+      .pipe(
+        tap(([params, routeData]) => {
+          this.isCurrent = !params.buildId;
+          this.project = routeData.project;
+        }),
+        switchMap(([params, routeData]) => params.buildId
+          ? this.buildHistoryService.getBuildHistory(params.buildId)
+          : this.buildHistoryService.getLastBuildHistoryByProject(routeData.project.id)),
+        tap(history => this.buildHistory = history),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(history => {
+        this.buildHistory = history;
+        this.logs = history?.logs.map(formatLog);
+        this.projectLogsService.sendLogs(history.logs ?? []);
+      }, (res: HttpErrorResponse) => this.toastrService.showError(res.error));
   }
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      if (statusChange.BuildHistoryId == this.buildHistory.id) {
+      if (statusChange.BuildHistoryId === this.buildHistory.id) {
         if (statusChange.Status != BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
@@ -68,60 +83,32 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     });
   }
 
-  getBuildHistory() {
-    this.route.params.subscribe((params) => {
-      this.buildHistoryService.getBuildHistory(params.buildId).subscribe(
-        (response) => {
-          this.buildHistory = response;
-          this.getLogs();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    });
-  }
-
-  getLogs(){
-    this.logsService.getLogsOfHistory(this.projectId, this.buildHistory.id)
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe((res) => {
-      this.logsService.sendLogs(res);
-    });
-  }
-
-  getProject() {
-    this.projectService.getProjectById(this.projectId).subscribe(
-      (response) => {
-        this.project = response;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
   getCommit(bh: BuildHistory) {
     return bh.commitHash?.substring(0, 6) ?? '—';
   }
 
   restartBuild() {
-    const newBuildHistory = {
+    const user = this.authService.getCurrentUser();
+    const history = {
       branchHash: this.buildHistory.branchHash,
-      performerId: this.currentUser.id,
       projectId: this.buildHistory.projectId,
-      commitHash: null,
+      performerId: user.id,
     } as NewBuildHistory;
-    this.toastrService.showSuccess(
-      `You’ve successfully restarted a build for ${newBuildHistory.branchHash} branch of ${this.project.name}. Hold tight, it might take a moment to show up.`
-    );
+
+    const msg = `You’ve successfully restarted a build for ${history.branchHash} branch of ${this.project?.name}. Hold tight, it might take a moment to show up.`;
+
     this.projectService
-      .startProjectBuild(newBuildHistory)
-      .pipe(takeUntil(this.unsubscribe$))
+      .startProjectBuild(history)
       .subscribe(
-        (buildHistory) => {
+        (newHistory) => {
+          this.toastrService.showSuccess(msg);
+          this.openHistory(newHistory);
         },
         (error) => this.toastrService.showError(error)
       );
+  }
+
+  openHistory({ id, projectId }: BuildHistory) {
+    this.router.navigateByUrl(`/portal/projects/${projectId}/history/${id}`);
   }
 }

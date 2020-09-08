@@ -32,13 +32,13 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
               private auth: AuthenticationService,
               private groupService: GroupService) {
     super();
-    this.route.parent.data.subscribe((data) => {
-      this.groupId = data.group.id;
-      });
-    this.user = this.auth.getCurrentUser();
    }
 
   ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      this.groupId = data.group.id;
+      });
+    this.user = this.auth.getCurrentUser();
     this.chatHub.buildConnection();
     this.chatHub.startConnectionAndJoinGroup(this.groupId.toString());
     this.chatHub.messageListener(this.message);
