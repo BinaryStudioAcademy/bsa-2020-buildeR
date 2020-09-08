@@ -6,10 +6,8 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
-import { enableDebugTools } from '@angular/platform-browser';
-import { env } from 'process';
-import {projectNameAsyncValidator} from "@modules/project/validators/project-name.async-validator";
-import {User} from "@shared/models/user/user";
+import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
+import {User} from '@shared/models/user/user';
 
 @Component({
   selector: 'app-project-settings',
@@ -94,7 +92,6 @@ export class ProjectSettingsComponent implements OnInit {
     this.projectService.deleteEnvVariable.subscribe((res) => {
       this.delete(res);
     });
-
     this.loadEnvVars();
   }
 
@@ -120,6 +117,7 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   addEnvVar(envValue: VariableValue){
+    let err = false;
     this.envVar.projectId = this.project.id;
     this.envVar.id = this.createId();
     this.envVar.data = envValue;
@@ -127,16 +125,24 @@ export class ProjectSettingsComponent implements OnInit {
       this.envVar.data.isSecret = false;
     }
     console.log(this.envVar);
-    this.projectService.addEnvironmentVariable(this.envVar).subscribe(() => {
-      this.envVariables.push(this.envVar);
-      this.envVarsForm.reset();
-      this.loadEnvVars();
-    }, (err) => {
-      console.log(err);
-    });
+    this.projectService.addEnvironmentVariable(this.envVar).subscribe(
+      () => {
+        this.toastrService.showSuccess('Enviroment Variable added');
+      },
+      (error) => {
+        err = true;
+        this.toastrService.showError(error.message, error.name);
+      },
+      () => {
+        if (!err) {
+          this.envVarsForm.reset();
+          this.loadEnvVars();
+        }
+      }
+    );
   }
   createId(): number{
-    if (this.envVariables.length > 0) {
+    if (this.envVariables?.length > 0) {
       // tslint:disable-next-line: no-shadowed-variable
       return Math.max.apply(null, this.envVariables.map((env) => env.id)) + 1;
     }
@@ -144,23 +150,42 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   delete(envVar: EnviromentVariable){
+    let err = false;
+
     this.projectService.deleteEnviromentVariable(envVar).subscribe(
       () => {
-        this.envVariables = this.envVariables.filter(x => x.id !== envVar.id);
         this.toastrService.showSuccess('Enviroment Variable deleted');
       },
-      (error) => this.toastrService.showError(error.message, error.name)
+      (error) => {
+        err = true;
+        this.toastrService.showError(error.message, error.name);
+      },
+      () => {
+        if (!err) {
+          this.envVariables = this.envVariables.filter(x => x.id !== envVar.id);
+        }
+      }
+
     );
   }
 
   edit(envVar: EnviromentVariable){
     const index = this.envVariables.findIndex(x => x.id === envVar.id);
+    let err = false;
+
     this.projectService.updateEnviromentVariable(envVar).subscribe(
       () => {
-        this.envVariables.splice(index, 1, envVar);
         this.toastrService.showSuccess('Enviroment Variable updated');
       },
-      (error) => this.toastrService.showError(error.message, error.name)
+      (error) => {
+        err = true;
+        this.toastrService.showError(error.message, error.name);
+      },
+      () => {
+        if (!err) {
+          this.envVariables.splice(index, 1, envVar);
+        }
+      }
     );
   }
 }

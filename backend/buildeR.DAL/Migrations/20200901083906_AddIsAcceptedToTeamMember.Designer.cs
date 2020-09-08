@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using buildeR.DAL.Context;
 
 namespace buildeR.DAL.Migrations
 {
     [DbContext(typeof(BuilderContext))]
-    partial class BuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20200901083906_AddIsAcceptedToTeamMember")]
+    partial class AddIsAcceptedToTeamMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PerformerId")
+                    b.Property<int>("PerformerId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -101,12 +103,6 @@ namespace buildeR.DAL.Migrations
                             DockerImageName = "node",
                             DockerRegistryName = "node",
                             PluginName = "Node.js"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Command = "sh",
-                            PluginName = "Custom command"
                         });
                 });
 
@@ -232,34 +228,6 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("buildeR.DAL.Entities.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Messages");
-                });
-
             modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -267,27 +235,19 @@ namespace buildeR.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("EntityId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Message")
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NotificationMessage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId")
+                    b.Property<int>("NotificationTrigger")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -382,11 +342,6 @@ namespace buildeR.DAL.Migrations
                             Id = 3,
                             Name = "install",
                             PluginId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            PluginId = 3
                         });
                 });
 
@@ -454,29 +409,6 @@ namespace buildeR.DAL.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectGroups");
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.ProjectRemoteTrigger", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Branch")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectRemoteTriggers");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.ProjectTrigger", b =>
@@ -664,7 +596,8 @@ namespace buildeR.DAL.Migrations
                     b.HasOne("buildeR.DAL.Entities.User", "Performer")
                         .WithMany("BuildHistories")
                         .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("BuildHistories")
@@ -706,28 +639,6 @@ namespace buildeR.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("buildeR.DAL.Entities.Message", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("buildeR.DAL.Entities.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.User", "User")
@@ -749,7 +660,7 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.BuildPlugin", "Plugin")
-                        .WithMany("PluginCommands")
+                        .WithMany()
                         .HasForeignKey("PluginId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -774,15 +685,6 @@ namespace buildeR.DAL.Migrations
 
                     b.HasOne("buildeR.DAL.Entities.Project", "Project")
                         .WithMany("ProjectGroups")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("buildeR.DAL.Entities.ProjectRemoteTrigger", b =>
-                {
-                    b.HasOne("buildeR.DAL.Entities.Project", "Project")
-                        .WithMany("ProjectRemoteTriggers")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
