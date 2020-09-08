@@ -11,8 +11,8 @@ namespace buildeR.RabbitMq.Realization
             var settings = new ConnectionFactorySettings(configuration);
             IConnectionFactory factory = new ConnectionFactory
             {
-                HostName = "localhost",
-                Port = settings.Host,
+                HostName = settings.HostName,
+                Port = settings.Port,
                 UserName = settings.UserName,
                 Password = settings.Password,
                 VirtualHost = settings.VirtualHost,
