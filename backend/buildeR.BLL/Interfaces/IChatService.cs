@@ -9,5 +9,6 @@ namespace buildeR.BLL.Interfaces
     public interface IChatService
     {
         Task<MessageDTO> SendMessage(MessageDTO messageDTO);
+        Task<List<MessageDTO>> GetGroupMessages(int groupId);
     }
 }

@@ -20,6 +20,12 @@ namespace buildeR.API.Controllers
             _chat = chat;
         }
 
+        [HttpGet("{groupId}")]
+        public async Task<List<MessageDTO>> GetGroupMessages(int groupId)
+        {
+            return await _chat.GetGroupMessages(groupId);
+        }
+
         [HttpPost]
         public async Task<MessageDTO> SendMessage(MessageDTO message)
         {
@@ -29,7 +35,8 @@ namespace buildeR.API.Controllers
             }
             catch (Exception e)
             {
-                throw new Exception();
+
+                throw;
             }
         }
     }

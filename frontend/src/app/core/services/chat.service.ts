@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService implements OnDestroy{
+export class ChatService {
   private currentUser: User;
   private hubConnection: HubConnection;
   urlPrefix = '/chat';
@@ -24,6 +24,7 @@ export class ChatService implements OnDestroy{
   ) {
     this.currentUser = this.authService.getCurrentUser();
   }
+  
   public buildConnection() {
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(`${environment.signalRUrl}/messageshub`)
@@ -45,16 +46,16 @@ export class ChatService implements OnDestroy{
        });
      });
   }
-  ngOnDestroy(): void {
-    //
+
+  getChatMessages(groupId: number){
+    return this.httpService.getRequest<Message[]>(`${this.urlPrefix}/${groupId}`);
   }
 
   sendMessage(message: Message) {
-    console.log(this.urlPrefix);
     return this.httpService.postRequest<Message>(this.urlPrefix, message);
   }
 
-  public messageListener(messageSubject: Subject<Message>) {
+  public messageListener(messageSubject: Subject<string>) {
     this.hubConnection.on('newMessage', (data) => {
       messageSubject.next(data);
     });

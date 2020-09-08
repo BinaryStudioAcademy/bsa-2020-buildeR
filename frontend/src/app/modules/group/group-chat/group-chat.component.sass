@@ -1,24 +1,103 @@
-.chat 
-	list-style: none 
-	margin: 0 
-	padding: 0 
-	li 
-		margin-bottom: 10px 
-		padding-bottom: 5px 
-		border-bottom: 1px dotted #B3A9A9 
-		&.left 
-			.chat-body 
-				margin-left: 60px 
-		&.right 
-			.chat-body 
-				margin-right: 60px 
-		.chat-body 
-			p 
-				margin: 0 
-				color: #777777 
-.panel .slidedown .glyphicon, .chat .glyphicon 
-	margin-right: 5px 
-.panel-body 
-	overflow-y: scroll 
-	height: 250px 
+body
+  background: #eee
+
+.card-body
+    min-height: 350px
+    max-height: 500px
+    overflow-y: scroll !important
+
+.chat-list
+  padding: 0
+  font-size: .8rem
+
+  li
+    margin-bottom: 10px
+    overflow: auto
+    color: #ffffff
+
+  .chat-img
+    float: left
+    width: 48px
+
+    img
+      -webkit-border-radius: 50px
+      -moz-border-radius: 50px
+      border-radius: 50px
+      width: 100%
+      cursor: pointer
+
+  .chat-message
+    -webkit-border-radius: 50px
+    -moz-border-radius: 50px
+    border-radius: 20px
+    background: #3eaaaf
+    display: inline-block
+    padding: 10px 20px
+    position: relative
+    max-width: 350px
+    word-wrap: break-word
+	
+	
+
+    &:before
+      content: ""
+      position: absolute
+      top: 15px
+      width: 0
+      height: 0
+
+    h5
+      margin: 0 0 5px 0
+      font-weight: 600
+      line-height: 100%
+      font-size: .9rem
+      cursor: pointer
+
+    p
+      line-height: 18px
+      margin: 0
+      padding: 0
+
+  .chat-body
+    margin-left: 20px
+    float: left
+    width: 70%
+
+  .in .chat-message:before
+    left: -12px
+    border-bottom: 20px solid transparent
+    border-right: 20px solid #3eaaaf
+
+  .out
+    .chat-img
+      float: right
+
+    .chat-body
+      float: right
+      margin-right: 20px
+      text-align: right
+
+    .chat-message
+      background: #d84848
+      max-width: 350px
+      word-wrap: break-word
+
+      &:before
+        right: -12px
+        border-bottom: 20px solid transparent
+        border-left: 20px solid #d84848
+
+.card .card-header
+  &:first-child
+    -webkit-border-radius: 0.3rem 0.3rem 0 0
+    -moz-border-radius: 0.3rem 0.3rem 0 0
+    border-radius: 0.3rem 0.3rem 0 0
+
+  background: #17202b
+  border: 0
+  font-size: 1rem
+  padding: .65rem 1rem
+  position: relative
+  font-weight: 600
+  color: #ffffff
 
