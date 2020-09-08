@@ -119,6 +119,12 @@ namespace buildeR.API.Controllers
             return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
         }
 
+        [HttpGet("deleteBuildStepsByProjectId/{projectId}")]
+        public async Task DeleteBuildSteps(int projectId)
+        {
+            await _projectService.DeleteBuildStepsByProjectId(projectId);
+        }
+
         [HttpGet("canUserRunNotOwnProject")]
         public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
         {

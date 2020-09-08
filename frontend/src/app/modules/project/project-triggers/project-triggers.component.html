@@ -48,7 +48,7 @@
           </select>
         </div>
         <div class="third-container">
-          <span>Set up period of builds:</span>
+          <span>every</span>
         </div>
         <div class="fourth-container">
           <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
@@ -73,7 +73,7 @@
             </select>
           </div>
           <div class="third-container">
-            <span>Every:</span>
+            <span>every</span>
           </div>
           <div class="fourth-container">
             <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="trigger.cronExpression"></cron-jobs>

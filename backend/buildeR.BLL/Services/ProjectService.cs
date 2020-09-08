@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using buildeR.Common.DTO.Group;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.Enums;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace buildeR.BLL.Services
 {
@@ -108,6 +107,15 @@ namespace buildeR.BLL.Services
                 await base.UpdateAsync(dto);
             }
             throw new ForbiddenExeption("Update", project.Name, project.Id);
+        }
+
+        public async Task DeleteBuildStepsByProjectId(int projectId)
+        {
+            var buildSteps = await _buildStepService.GetBuildStepsByProjectIdAsync(projectId);
+            foreach(var step in buildSteps)
+            {
+                await _buildStepService.Delete(step.Id);
+            }
         }
 
         public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)

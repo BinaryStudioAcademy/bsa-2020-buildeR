@@ -11,19 +11,19 @@ namespace buildeR.BLL.Providers
     public class EmailService : IEmailService
     {
         private readonly IEmailBuilder _builder;
-
-        private readonly string _senderEmail;
+        
         private readonly string _senderName;
         private readonly string _apiKey;
 
         public string SupportEmail { get; private set; }
+        public string SenderEmail { get; private set; }
         
         public EmailService(IEmailBuilder builder, IConfiguration configuration)
         {
             _builder = builder;
 
             _apiKey = configuration["SENDGRID_API_KEY"];
-            _senderEmail = configuration["SENDGRID_EMAIL"];
+            SenderEmail = configuration["SENDGRID_EMAIL"];
             _senderName = configuration["SENDGRID_Name"];
             SupportEmail = configuration["SupportEmailAddress"];
         }
@@ -33,7 +33,7 @@ namespace buildeR.BLL.Providers
 
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress(_senderEmail, _senderName),
+                From = new EmailAddress(SenderEmail, _senderName),
                 Subject = subject,
                 HtmlContent = _builder.CreateTemplate(title, body),
             };
@@ -47,7 +47,7 @@ namespace buildeR.BLL.Providers
         {
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress(_senderEmail, _senderName),
+                From = new EmailAddress(SenderEmail, _senderName),
                 Subject = subject,
                 HtmlContent = $"<p>{textMessage}</p>",
                 ReplyTo = replyToAddress

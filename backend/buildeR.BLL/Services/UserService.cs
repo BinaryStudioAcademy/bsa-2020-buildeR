@@ -182,9 +182,69 @@ namespace buildeR.BLL.Services
             await _emailService.SendEmailAsync(new List<string> {_emailService.SupportEmail},
                 new EmailAddress(newUserLetter.UserEmail), strSubject, newUserLetter.Description);
             
-            var emailModel = _emailBuilder.GetFeedbackLetter(newUserLetter.UserEmail, newUserLetter.UserName, newUserLetter.Subject);
+            string strBody = @$"We want to thank you for your letter!<br><br>Each of your letters is very important to us! 
+                          We have received your letter and will contact you as soon as possible.
+                          <br><br>Cheers,<br>buildeR team";
+            
+            var emailModel = _emailBuilder.GetFeedbackLetter(newUserLetter.UserEmail, newUserLetter.UserName, newUserLetter.Subject, strBody);
             await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, 
                 emailModel.Subject, emailModel.Title, emailModel.Body);
+        }
+
+        public async Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters()
+        {
+            var users = await _context.Users.ToListAsync();
+            var userLetters = await _context.UserLetters.ToListAsync();
+            var userLettersUserIdDTO = users.Join(userLetters, user => user.Email,
+                letter => letter.UserEmail,
+                (user, letter) => new UserLetterUserIdDTO()
+                {
+                    Id = letter.Id,
+                    UserEmail = letter.UserEmail,
+                    UserName = letter.UserName,
+                    Subject = letter.Subject,
+                    Description = letter.Description,
+                    IsRespond = letter.IsRespond,
+                    UserId = user.Id
+                }).OrderByDescending(l => l.Id);
+            return _mapper.Map<ICollection<UserLetterUserIdDTO>>(userLettersUserIdDTO);
+        }
+
+        public async Task SendLetterToUser(UserLetterAnswerDTO userLetter)
+        {
+            var currentLetter = _mapper.Map<UserLetterDTO>(userLetter);
+            
+            string body = $"In this letter we try to help you.<br><br> We received your letter - \" {userLetter.Description}\" " +
+                          $"<br><br>We have an answer to you question!<br><br> {userLetter.Answer}" +
+                          "<br><br>We hope that we helped you!" +
+                          "<br><br>Cheers,<br>buildeR team";
+            
+            var emailModel = _emailBuilder.GetFeedbackLetter(userLetter.UserEmail, userLetter.UserName, userLetter.Subject, body);
+            await _emailService.SendEmailAsync(new List<string> { emailModel.Email }, 
+                emailModel.Subject, emailModel.Title, emailModel.Body);
+            
+            currentLetter.IsRespond = true;
+            await UpdateUserLetter(currentLetter);
+        }
+
+        public async Task<UserLetter> UpdateUserLetter(UserLetterDTO userLetter)
+        {
+            var letter = _mapper.Map<UserLetter>(userLetter);
+            var existing = await _context.UserLetters
+                .FirstOrDefaultAsync(x => x.Id == letter.Id);
+            if (existing == null)
+            {
+                throw new NotFoundException("userLetter", letter.Id);
+            }
+            _context.Entry(existing).CurrentValues.SetValues(letter);
+            await _context.SaveChangesAsync();
+            return letter;
+        }
+        
+        public async Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(bool isRespond)
+        {
+            var userLetters = await _context.UserLetters.Where(l => l.IsRespond == isRespond).ToListAsync();
+            return _mapper.Map<ICollection<UserLetterDTO>>(userLetters);
         }
     }
 }

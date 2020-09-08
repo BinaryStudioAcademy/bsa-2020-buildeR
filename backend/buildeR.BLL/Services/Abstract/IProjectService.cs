@@ -18,6 +18,7 @@ namespace buildeR.BLL.Services.Abstract
         Task<bool> CanUserRunNotOwnProject(int projectId, int userId);
 
         Task DeleteProject(int id);
+        Task DeleteBuildStepsByProjectId(int projectId);
         Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId);
         Task ChangeFavoriteStateAsync(int projectId);
 

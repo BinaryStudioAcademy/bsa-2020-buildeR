@@ -50,13 +50,27 @@ namespace buildeR.BLL.Providers
             };
         }
 
-        public EmailModel GetFeedbackLetter(string email, string userName, string userSubject)
+        public EmailModel GetFeedbackLetter(string email, string userName, string userSubject, string userBody)
         {
             string subject = userSubject;
             string title = $@"<b style=""font-size: 20px"">Hello, {userName}!</b>";
-            string body = @$"We want to thank you for your letter!<br><br>Each of your letters is very important to us! 
-                          We have received your letter and will contact you as soon as possible.
-                          <br><br>Cheers,<br>buildeR team";
+            string body = userBody;
+            return new EmailModel()
+            {
+                Email = email,
+                Subject = subject,
+                Title = title,
+                Body = body
+            };
+        }
+        public EmailModel GetInviteGroupLetter(string email, string firstName)
+        {
+            string baseUrl = _configuration["ClientUrl"];
+            string subject = "Invitation to the group";
+            string title = $@"<b style=""font-size: 20px"">Hello, {firstName}!</b>";
+            string body = @$"You have been invited to the group. 
+                             You can accept invitation or decline on your <a href=""{baseUrl}/portal/groups"">groups page</a>.
+                             <br><br>Cheers,<br>buildeR team";
             return new EmailModel()
             {
                 Email = email,

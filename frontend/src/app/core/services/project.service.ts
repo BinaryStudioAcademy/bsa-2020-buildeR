@@ -62,6 +62,11 @@ export class ProjectService {
       history
     );
   }
+
+  public DeleteBuildStepsByProjectId(projectId: number){
+    return this.httpService.getFullRequest(`${this.routePrefix}/deleteBuildStepsByProjectId/${projectId}`);
+  }
+
   public sendBuldProject(projectId){
     return this.buildProject$.next(projectId);
   }
@@ -69,7 +74,6 @@ export class ProjectService {
   public getBuldProject(){
     return this.buildProject$.asObservable();
   }
-
 
   public sendCopyProject(project: number){
     return this.copyProject$.next(project);

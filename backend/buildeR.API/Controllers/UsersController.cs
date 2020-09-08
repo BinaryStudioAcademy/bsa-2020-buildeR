@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO;
@@ -6,6 +7,7 @@ using buildeR.Common.DTO.User;
 using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 
 namespace buildeR.API.Controllers
 {
@@ -83,6 +85,30 @@ namespace buildeR.API.Controllers
         public async Task AddUserLetter([FromBody] UserLetterDTO userLetter)
         {
             await _userService.AddUserLetter(userLetter);
+        }
+
+        [HttpGet("letters")]
+        public async Task<ICollection<UserLetterUserIdDTO>> GetAllUserLetters()
+        {
+            return await _userService.GetAllUserLetters();
+        }
+        
+        [HttpPut("letters/send")]
+        public async Task SendLetterToUser([FromBody] UserLetterAnswerDTO userLetter)
+        {
+            await _userService.SendLetterToUser(userLetter);
+        }
+        
+        [HttpPut("letters")]
+        public async Task UpdateUserLetter([FromBody] UserLetterDTO userLetter)
+        {
+            await _userService.UpdateUserLetter(userLetter);
+        }
+        
+        [HttpGet("letters/checkRespond/{isRespond}")]
+        public async Task<ICollection<UserLetterDTO>> GetUserLettersCheckRespond(string isRespond)
+        {
+            return await _userService.GetUserLettersCheckRespond(Convert.ToBoolean(isRespond));
         }
     }   
 }

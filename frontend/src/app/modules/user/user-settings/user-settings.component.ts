@@ -42,6 +42,7 @@ export class UserSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.details = data.user;
+      console.log(this.details);
       if (this.details.id === this.authService.getCurrentUser().id) {
         this.isOwner = true;
       }
