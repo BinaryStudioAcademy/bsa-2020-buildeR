@@ -17,7 +17,7 @@
       </h1>
     </div>
     <div class="access-icon">
-      <i *ngIf="group.isPublic.toString() === 'true'; else elseBlock" class="fas fa-globe"></i>
+      <i *ngIf="group.isPublic;else elseBlock" class="fas fa-globe"></i>
       <ng-template #elseBlock><i class="fas fa-lock"></i></ng-template>
     </div>
   </div>
