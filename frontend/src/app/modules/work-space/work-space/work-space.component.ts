@@ -40,7 +40,11 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
 
   public getGroups() {
     this.groupService.getUserGroups(this.user.id).pipe(takeUntil(this.unsubscribe$))
-      .subscribe(res => { this.groups = res; this.groupsLoaded = Promise.resolve(true); });
+      .subscribe(res => {
+        this.groups = res.filter(g => g.teamMembers.
+          some(m => m.userId === this.user.id && m.isAccepted === true) === true);
+        this.groupsLoaded = Promise.resolve(true);
+      });
   }
   logOut() {
     this.authService.logout();
