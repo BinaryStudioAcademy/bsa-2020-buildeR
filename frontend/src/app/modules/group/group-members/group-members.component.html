@@ -8,7 +8,7 @@ else loaded;
 </ng-template>
 <ng-template #loaded>
 
-  <div class="invite" *ngIf="isCurrentUserOwnerOrAdmin()">
+  <div class="invite" *ngIf="isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()">
     <h4>Invite member</h4>
     <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
       <div class="row">
@@ -73,40 +73,41 @@ else loaded;
         </div>
       </div>
       <div class="item area role">
-        <div class="area" *ngIf="member.memberRole === groupRole.Owner || !member.isAccepted; else notOwner">
+        <div class="area" *ngIf="!member.isAccepted || member.memberRole === groupRole.Owner 
+          || member.user.id === this.currentUser.id; else other">
           <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
         </div>
-        <ng-template #notOwner>
-          <div class="area" *ngIf="!isCurrentUserOwnerOrAdmin(); else isOwnerAdmin">
+        <ng-template #other>
+          <div class="area" *ngIf="!isCurrentUserOwnerOrAdmin()">
             <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
           </div>
-          <ng-template #isOwnerAdmin>
-            <div *ngIf="member.isAccepted && member.user.id !== this.currentUser.id; else notAcceptedMember"
-              ngbDropdown>
-              <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-                {{groupRole[member.memberRole]}}
-              </div>
-              <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
+          <div class="area" *ngIf="isCurrentUserOwnerOrAdmin() && !isCurrentUserAccepted()">
+            <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
+          </div>
+          <div *ngIf="member.isAccepted && member.user.id !== this.currentUser.id 
+          && isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()" ngbDropdown>
+            <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
+              {{groupRole[member.memberRole]}}
+            </div>
+            <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
+              container="body">
+              <div class="dropdown-header">Change permissions</div>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
                 container="body">
-                <div class="dropdown-header">Change permissions</div>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
-                  container="body">
-                  <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
-              </div>
+                <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
             </div>
-            <ng-template #notAcceptedMember>
-              <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
-            </ng-template>
-            <div class="item area delete">
-              <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
-            </div>
-          </ng-template>
+          </div>
+          <div class="item area delete" *ngIf="member.isAccepted && 
+            member.user.id !== this.currentUser.id && isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()">
+            <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+          </div>
         </ng-template>
-        <div class="item area delete" *ngIf="(member.user.id === this.currentUser.id && !isCurrentUserOwnerOrAdmin())">
+        <div class="item area delete" *ngIf="member.memberRole !== groupRole.Owner && 
+        member.user.id === this.currentUser.id">
           <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
         </div>
-        <div class="item area delete" *ngIf="(!member.isAccepted && isCurrentUserOwnerOrAdmin())">
+        <div class="item area delete" *ngIf="!member.isAccepted && isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()">
           <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
         </div>
       </div>

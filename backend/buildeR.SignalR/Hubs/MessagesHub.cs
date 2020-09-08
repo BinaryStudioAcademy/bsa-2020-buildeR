@@ -1,15 +1,16 @@
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using buildeR.Common.DTO.Message;
-using Microsoft.AspNetCore.SignalR;
 
 namespace buildeR.SignalR.Hubs
 {
-    public class NotificationsHub : Hub
+    public class MessagesHub : Hub
     {
         public async Task JoinGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
-       
     }
 }

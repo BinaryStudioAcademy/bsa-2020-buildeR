@@ -134,6 +134,10 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       (m.memberRole === GroupRole.Owner || m.memberRole === GroupRole.Admin));
   }
 
+  isCurrentUserAccepted() {
+    return this.members?.some(m => m.user.id === this.currentUser.id && m.isAccepted);
+  }
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),

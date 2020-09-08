@@ -68,8 +68,9 @@ export class NotificationsBlockComponent implements OnInit {
             this.router.navigate(['/portal/groups']);
           }
           else {
-            this.router.navigate(['/portal/groups/' + notification.itemId  + '/members']);
+            this.router.navigate(['/portal/groups/' + notification.itemId + '/members']);
           }
+          this.clearOne(notification);
           this.toggle();
           break;
         }
