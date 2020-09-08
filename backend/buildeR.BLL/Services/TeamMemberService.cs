@@ -53,17 +53,14 @@ namespace buildeR.BLL.Services
 
             var newMember = await base.AddAsync(teamMember);
 
-            var inviterUsername = (await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId)).Username;
-            var groupName = (await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId)).Name;
+            var inviter = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
+            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
 
-            await _notificationsService.Create(new NewNotificationDTO
+            if (inviter != null && group != null)
             {
-                Message = $"{inviterUsername} invites you to join group {groupName}",
-                Date = DateTime.Now,
-                Type = NotificationType.Group,
-                UserId = teamMember.UserId,
-                ItemId = -1 // after click on notification user will see Groups page
-            });
+                string msg = $"{inviter?.Username} invites you to join group {group?.Name}";
+                await MakeNotificationAsync(msg, null, teamMember.UserId, -1);
+            }
 
             return newMember;
         }
@@ -90,67 +87,62 @@ namespace buildeR.BLL.Services
             }
             await base.RemoveAsync(teamMember.Id);
 
-            var groupName = (await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId)).Name;
-            var memberUsername = (await _context.Users.FirstOrDefaultAsync(u => u.Id == memberUserId)).Username;
+            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
+            var userMember = await _context.Users.FirstOrDefaultAsync(u => u.Id == memberUserId);
 
             if (teamMember.InitiatorUserId == memberUserId)
             {
-                if (!memberIsAccepted)
+                await CheckIsUserAcceptedAsync(memberIsAccepted, teamMember, userMember, group);
+            }
+            else
+            {
+                var initiator = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorUserId);
+                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId 
+                && t.UserId != teamMember.InitiatorUserId && t.IsAccepted).ToListAsync();
+                foreach (var memb in members)
                 {
-                    var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId 
-                        && (t.MemberRole == GroupRole.Admin || t.MemberRole == GroupRole.Owner)).ToListAsync();
-                    foreach (var memb in members)
-                    {
-                        await _notificationsService.Create(new NewNotificationDTO
-                        {
-                            Message = $"{memberUsername} declined the invitation to group {groupName}",
-                            Date = DateTime.Now,
-                            Type = NotificationType.Group,
-                            UserId = memb.UserId,
-                            ItemId = teamMember.GroupId
-                        });
-                    }
+                    string msg = $"{initiator?.Username} removed {userMember?.Username} from group {group?.Name}";
+                    await MakeNotificationAsync(msg, memb);
                 }
-                else
+
+                string message = $"{initiator?.Username} removed you from group {group?.Name}";
+                await MakeNotificationAsync(message, null, memberUserId, -1);
+            }
+        }
+
+        private async Task CheckIsUserAcceptedAsync(bool memberIsAccepted, RemoveTeamMemberDTO teamMember, User userMember, Group group)
+        {
+            if (!memberIsAccepted)
+            {
+                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted
+                    && (t.MemberRole == GroupRole.Admin || t.MemberRole == GroupRole.Owner)).ToListAsync();
+                foreach (var memb in members)
                 {
-                    var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId).ToListAsync();
-                    foreach (var memb in members)
-                    {
-                        await _notificationsService.Create(new NewNotificationDTO
-                        {
-                            Message = $"{memberUsername} left group {groupName}",
-                            Date = DateTime.Now,
-                            Type = NotificationType.Group,
-                            UserId = memb.UserId,
-                            ItemId = memb.GroupId
-                        });
-                    }
+                    string message = $"{userMember?.Username} declined the invitation to group {group?.Name}";
+                    await MakeNotificationAsync(message, memb);
                 }
             }
             else
             {
-                var initiatorUsername = (await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorUserId)).Username;
-                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId && t.UserId != teamMember.InitiatorUserId).ToListAsync();
+                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted).ToListAsync();
                 foreach (var memb in members)
                 {
-                    await _notificationsService.Create(new NewNotificationDTO
-                    {
-                        Message = $"{initiatorUsername} removed {memberUsername} from group {groupName}",
-                        Date = DateTime.Now,
-                        Type = NotificationType.Group,
-                        UserId = memb.UserId,
-                        ItemId = teamMember.GroupId
-                    });
+                    string message = $"{userMember?.Username} left group {group?.Name}";
+                    await MakeNotificationAsync(message, memb);
                 }
-                await _notificationsService.Create(new NewNotificationDTO
-                {
-                    Message = $"{initiatorUsername} removed you from group {groupName}",
-                    Date = DateTime.Now,
-                    Type = NotificationType.Group,
-                    UserId = memberUserId,
-                    ItemId = -1
-                });
             }
+        }
+
+        async Task MakeNotificationAsync(string Message, TeamMember memb = null, int? userId = null, int? groupId = null)
+        {
+            await _notificationsService.Create(new NewNotificationDTO
+            {
+                Message = Message,
+                Date = DateTime.Now,
+                Type = NotificationType.Group,
+                UserId = memb != null ? memb.UserId : userId,
+                ItemId = memb != null ? memb.GroupId : groupId
+            });
         }
 
         public Task<IEnumerable<TeamMemberDTO>> GetAll()
@@ -171,41 +163,30 @@ namespace buildeR.BLL.Services
             }
 
             var memberBeforeUpdate = await GetById(teamMember.Id);
+            var memberRole = memberBeforeUpdate.MemberRole;
+            bool memberIsAccepted = memberBeforeUpdate.IsAccepted;
+
             await base.UpdateAsync(teamMember);
 
-            if (teamMember.MemberRole != GroupRole.Owner)
+            var group = await _context.Groups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
+            if (teamMember.IsAccepted && !memberIsAccepted && teamMember.MemberRole != GroupRole.Owner)
             {
-                var groupName = (await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId)).Name;
-                if (teamMember.IsAccepted && !memberBeforeUpdate.IsAccepted)
+                var members = await _context.TeamMembers.AsNoTracking().Where(t => t.GroupId == teamMember.GroupId 
+                && t.Id != teamMember.Id && t.IsAccepted).ToListAsync();
+                foreach (var member in members)
                 {
-                    var members = await _context.TeamMembers.Where(t => t.GroupId == memberBeforeUpdate.GroupId && t.Id != teamMember.Id).ToListAsync();
-                    foreach (var member in members)
-                    {
-                        await _notificationsService.Create(new NewNotificationDTO
-                        {
-                            Message = $"{teamMember.User.Username} joined group {groupName}",
-                            Date = DateTime.Now,
-                            Type = NotificationType.Group,
-                            UserId = member.UserId,
-                            ItemId = teamMember.GroupId
-                        });
-                    }
+                    string message = $"{teamMember?.User?.Username} joined group {group?.Name}";
+                    await MakeNotificationAsync(message, member);
                 }
-                else if (teamMember.MemberRole != memberBeforeUpdate.MemberRole)
-                {
-                    var initiatorUsername = (await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId)).Username;
-                    if (teamMember.InitiatorId != teamMember.UserId)
-                    {
-                        await _notificationsService.Create(new NewNotificationDTO
-                        {
-                            Message = $"{initiatorUsername} changed your role to {Enum.GetName(typeof(GroupRole), teamMember.MemberRole)} in group {groupName}",
-                            Date = DateTime.Now,
-                            Type = NotificationType.Group,
-                            UserId = teamMember.Id,
-                            ItemId = teamMember.GroupId
-                        });
-                    }
-                }
+            }
+            else if (teamMember.MemberRole != memberRole && teamMember.InitiatorId != teamMember.UserId
+                && teamMember.MemberRole != GroupRole.Owner)
+            {
+                var initiator = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
+
+                string message = $"{initiator?.Username} changed your role to " +
+                    $"{Enum.GetName(typeof(GroupRole), teamMember.MemberRole)} in group {group?.Name}";
+                await MakeNotificationAsync(message, null, teamMember.UserId, teamMember.GroupId);
             }
         }
     }
