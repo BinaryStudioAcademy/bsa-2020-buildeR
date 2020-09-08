@@ -163,12 +163,15 @@ namespace buildeR.BLL.Services
             }
 
             var memberBeforeUpdate = await GetById(teamMember.Id);
+            var memberRole = memberBeforeUpdate.MemberRole;
+            bool memberIsAccepted = memberBeforeUpdate.IsAccepted;
+
             await base.UpdateAsync(teamMember);
 
-            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
-            if (teamMember.IsAccepted && !memberBeforeUpdate.IsAccepted && teamMember.MemberRole != GroupRole.Owner)
+            var group = await _context.Groups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
+            if (teamMember.IsAccepted && !memberIsAccepted && teamMember.MemberRole != GroupRole.Owner)
             {
-                var members = await _context.TeamMembers.Where(t => t.GroupId == memberBeforeUpdate.GroupId 
+                var members = await _context.TeamMembers.AsNoTracking().Where(t => t.GroupId == teamMember.GroupId 
                 && t.Id != teamMember.Id && t.IsAccepted).ToListAsync();
                 foreach (var member in members)
                 {
@@ -176,14 +179,14 @@ namespace buildeR.BLL.Services
                     await MakeNotificationAsync(message, member);
                 }
             }
-            else if (teamMember.MemberRole != memberBeforeUpdate.MemberRole && teamMember.InitiatorId != teamMember.UserId
+            else if (teamMember.MemberRole != memberRole && teamMember.InitiatorId != teamMember.UserId
                 && teamMember.MemberRole != GroupRole.Owner)
             {
-                var initiator = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
+                var initiator = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
 
-                string message = $"{initiator?.Username} changed your role to " +
+                string message = $"{group?.Name} changed your role to " +
                     $"{Enum.GetName(typeof(GroupRole), teamMember.MemberRole)} in group {group?.Name}";
-                await MakeNotificationAsync(message, null, teamMember.Id, teamMember.GroupId);
+                await MakeNotificationAsync(message, null, teamMember.UserId, teamMember.GroupId);
             }
         }
     }
