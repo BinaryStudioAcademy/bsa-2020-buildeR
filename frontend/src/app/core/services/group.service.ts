@@ -29,7 +29,6 @@ export class GroupService {
     return this.httpService.getRequest<Group[]>(`${this.routePrefix}/getGroupsByUserId/${userId}`);
   }
   deleteGroup(groupId: number) {
-    this.userGroupsChanged.next();
     return this.httpService.deleteFullRequest<Group>(`${this.routePrefix}/` + groupId);
   }
   public getProjectsByGroup(
@@ -47,11 +46,9 @@ export class GroupService {
     );
   }
   createGroup(newGroup: NewGroup) {
-    this.userGroupsChanged.next();
     return this.httpService.postRequest<Group>(`${this.routePrefix}`, newGroup);
   }
   updateGroup(group: Group) {
-    this.userGroupsChanged.next();
     return this.httpService.putRequest<Group>(`${this.routePrefix}`, group);
   }
 

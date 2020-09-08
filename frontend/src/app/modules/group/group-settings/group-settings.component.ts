@@ -48,6 +48,7 @@ export class GroupSettingsComponent implements OnInit {
     group.isPublic = group.isPublic.toString() === 'true';
     this.group = Object.assign(this.group, group);
     this.groupService.updateGroup(this.group).subscribe(() => {
+      this.groupService.userGroupsChanged.next();
       this.groupService.changeGroupNameAndStatus(this.group.name, this.group.isPublic);
       this.toastrService.showSuccess('Group successfully updated');
     }, (err) => {

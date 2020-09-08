@@ -58,7 +58,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
 
   updateDropdown(){
     this.dropdownProjects = this.userProjects
-    .filter(x => !this.projects.map(y => y.id).includes(x.id));
+    .filter(x => !this.projects?.map(y => y.id).includes(x.id));
   }
 
   addProject(project: ProjectInfo){

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
-import { HttpService } from '@core/services/http.service';
+import { TeamMemberService } from '@core/services/team-member.service';
 import { UserService } from '@core/services/user.service';
 import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   groupsLoaded: Promise<boolean>;
   countNotifications = 0;
   constructor(
-    private httpService: HttpService,
+    private teamMemberService: TeamMemberService,
     private authService: AuthenticationService,
     private userService: UserService,
     private groupService: GroupService
@@ -35,6 +35,12 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
       console.log(url);
       this.user.avatarUrl = url;
     });
+    this.groupService.userGroupsChanged
+      .pipe(takeUntil((this.unsubscribe$)))
+      .subscribe(() => this.getGroups());
+    this.teamMemberService.teamMembersChanged
+      .pipe(takeUntil((this.unsubscribe$)))
+      .subscribe(() => this.getGroups());
     this.getGroups();
   }
 
