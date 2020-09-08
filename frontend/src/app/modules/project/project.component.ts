@@ -24,12 +24,14 @@ import { User } from '@shared/models/user/user';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.sass'],
 })
-export class ProjectComponent extends BaseComponent implements OnInit{
+export class ProjectComponent extends BaseComponent implements OnInit {
   id: number;
   project: Project = {} as Project;
   isLoading = false;
   currentUser: User;
-  isSameUser = true;
+  isSameUser = false;
+
+  hasPermissionToTriggerBuild = false;
 
   loadingSelectedProjectBranches = false;
   selectedProjectBranches: Branch[];
@@ -53,7 +55,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private syncService: SynchronizationService,
-    private authService: AuthenticationService,
+    private authService: AuthenticationService
   ) {
     super();
     this.route.paramMap
@@ -70,7 +72,6 @@ export class ProjectComponent extends BaseComponent implements OnInit{
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.getProject(this.id);
-    this.isSameUser = this.currentUser.id === this.project.ownerId;
   }
   getProject(projectId: number) {
     this.isLoading = true;
@@ -78,6 +79,15 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       (data) => {
         this.isLoading = false;
         this.project = data;
+        this.isSameUser = this.currentUser.id === this.project.ownerId;
+        if (!this.isSameUser) {
+          this.projectService.canUserRunNotOwnProject(
+            this.currentUser.id,
+            this.project.id
+          ).subscribe(
+            (permission) => this.hasPermissionToTriggerBuild = permission
+          );
+        }
       },
       (error) => {
         this.isLoading = false;
@@ -101,8 +111,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (buildHistory) => {
-        },
+        (buildHistory) => {},
         (error) => this.toastrService.showError(error)
       );
   }

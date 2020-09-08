@@ -15,6 +15,7 @@ namespace buildeR.BLL.Services.Abstract
         Task<ProjectDTO> GetProjectByUserId(int userId, int projectId);
         Task<ProjectDTO> CreateProject(NewProjectDTO dto);
         Task UpdateProject(ProjectDTO dto, int userId);
+        Task<bool> CanUserRunNotOwnProject(int projectId, int userId);
 
         Task DeleteProject(int id);
         Task<ExecutiveBuildDTO> GetExecutiveBuild(int projectId);

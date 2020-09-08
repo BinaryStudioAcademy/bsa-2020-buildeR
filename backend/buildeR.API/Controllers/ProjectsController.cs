@@ -118,5 +118,11 @@ namespace buildeR.API.Controllers
         {
             return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
         }
+
+        [HttpGet("canUserRunNotOwnProject")]
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await _projectService.CanUserRunNotOwnProject(projectId, userId);
+        }
     }
 }

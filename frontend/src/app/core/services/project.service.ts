@@ -134,6 +134,10 @@ export class ProjectService {
       envVar);
   }
 
+  public canUserRunNotOwnProject(userId: number, projectId: number) {
+    return this.httpService.getRequest<boolean>(`${this.routePrefix}/canUserRunNotOwnProject?userId=${userId}&projectId=${projectId}`);
+  }
+
   validateProjectName(userId: number, projectName: string, projectId: number): Observable<boolean> {
     return this.httpService.getRequest<boolean>(`${this.routePrefix}/projectNameValidation/${userId}/${projectName}/${projectId}`);
   }
