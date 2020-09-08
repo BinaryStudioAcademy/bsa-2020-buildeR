@@ -13,12 +13,12 @@
       </span>
       <h1 class="group-name">
         /
-        <a [routerLink]="">{{ group.name }} </a>
+        <a [routerLink]="">{{ group.name }}</a>
       </h1>
     </div>
     <div class="access-icon">
-      <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
-      <i *ngIf="group.isPublic" class="fas fa-globe"></i>
+      <i *ngIf="group.isPublic;else elseBlock" class="fas fa-globe"></i>
+      <ng-template #elseBlock><i class="fas fa-lock"></i></ng-template>
     </div>
   </div>
   <div class="group-main">
