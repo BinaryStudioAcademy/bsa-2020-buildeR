@@ -2,6 +2,6 @@ import { VariableValue } from './variable-value';
 
 export interface EnviromentVariable {
   projectId: number;
-  id: number;
+  id: string;
   data: VariableValue;
 }

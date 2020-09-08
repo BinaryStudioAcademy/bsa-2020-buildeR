@@ -1,8 +1,12 @@
 <form [formGroup]="envVarsEditForm" class="edit-env-container border rounded" >
-  <p class="first-container my-2">Enviroment Variable #{{index}} </p>
+  <p class="first-container my-2">Environment Variable #{{index}} </p>
   <div class="second-container">
       <input type="text" class="form-control form-control-ev"
       formControlName="name">
+      <div class="error"
+      *ngIf="envVarsEditForm.controls['name'].hasError('isNotUniqueName')" >
+      Name must be unique
+    </div>
   </div>
   <div class="third-container">
     <div class="eye" [hidden]="!envVar.data.isSecret">
@@ -23,7 +27,7 @@
   </div>
   <div class="fifth-container">
     <button (click)="edit()" class="btn btn-update text-dark"
-    [disabled]="envVarsEditForm.pristine || envVarsEditForm.invalid">
+    [disabled]="!isInit || envVarsEditForm.invalid || isNotUniqueCheckChanges(envVarsEditForm.controls['name'].value) || envVarsEditForm.pristine">
       <i class="fas fa-save"></i>
     </button>
     <button (click)="delete()" class="btn btn-delete text-danger">
