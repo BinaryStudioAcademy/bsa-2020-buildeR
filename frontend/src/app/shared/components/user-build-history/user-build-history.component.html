@@ -29,7 +29,7 @@
          <span><i class="fas fa-book"></i> {{ build.project.name }}</span></a>
       </div>
       <div class="build-info">
-        <p class="status" [routerLink]="build.id" [appBuildHistoryStatus]="build.buildStatus"><i
+        <p class="status" [routerLink]="['/portal/projects', build.projectId, 'history', build.id]" [appBuildHistoryStatus]="build.buildStatus"><i
             class="fas fa-hammer"></i> #{{build.number}} {{build.buildStatus | buildStatus}}</p>
         <p class="build-time"><i class="far fa-clock"></i> {{build.duration | timespan}}</p>
         <p class="start-time" title="Finished {{build.buildAt | date:'medium'}}"><i class="far fa-calendar-alt"></i>

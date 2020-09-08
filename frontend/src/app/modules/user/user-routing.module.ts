@@ -7,7 +7,7 @@ import { InsightsComponent } from './insights/insights.component';
 import { NotificationSettingComponent } from './notification-setting/notification-setting.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserComponent } from './user.component';
-import { UserBuildHistoryComponent } from './user-build-history/user-build-history.component';
+import { UserBuildHistoryComponent } from '../../shared/components/user-build-history/user-build-history.component';
 
 
 const routes: Routes = [

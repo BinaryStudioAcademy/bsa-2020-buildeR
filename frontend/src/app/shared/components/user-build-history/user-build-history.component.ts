@@ -33,10 +33,14 @@ export class UserBuildHistoryComponent implements OnInit {
     this.isLoading = true;
     this.configureBuildStatusesSignalR();
     this.route.data.subscribe((data) => {
-      this.user = data.user;
-      if (this.user.id !== this.authService.getCurrentUser().id) {
-        this.isSameUser = false;
-        this.isPublicOnly = true;
+      if (data.user) {
+        this.user = data.user;
+        if (this.user.id !== this.authService.getCurrentUser().id) {
+          this.isSameUser = false;
+          this.isPublicOnly = true;
+        }
+      } else {
+        this.user = this.authService.getCurrentUser();
       }
     });
     this.buildHistoryService
@@ -74,7 +78,9 @@ export class UserBuildHistoryComponent implements OnInit {
   }
 
   buildHistories(): BuildHistory[] {
-    return this.isPublicOnly ? this.builds.filter(bh => bh.project.isPublic) : this.builds;
+    return this.isPublicOnly
+      ? this.builds.filter((bh) => bh.project.isPublic)
+      : this.builds;
   }
 
   getCommit(bh: BuildHistory) {
