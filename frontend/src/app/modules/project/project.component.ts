@@ -29,16 +29,22 @@ export class ProjectComponent extends BaseComponent implements OnInit{
   project: Project = {} as Project;
   isLoading = false;
   currentUser: User;
+  isSameUser = true;
 
   loadingSelectedProjectBranches = false;
   selectedProjectBranches: Branch[];
   selectedProjectBranch: string;
 
-  tabRoutes: TabRoute[] = [
+  tabRoutesOwner: TabRoute[] = [
     { name: 'Current', route: 'details' },
     { name: 'Build History', route: 'history' },
     { name: 'Build Steps', route: 'steps' },
     { name: 'Settings', route: 'settings' },
+  ];
+
+  tabRoutesGuest: TabRoute[] = [
+    { name: 'Current', route: 'details' },
+    { name: 'Build History', route: 'history' },
   ];
 
   constructor(
@@ -64,6 +70,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.getProject(this.id);
+    this.isSameUser = this.currentUser.id === this.project.ownerId;
   }
   getProject(projectId: number) {
     this.isLoading = true;
