@@ -38,17 +38,18 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   memberForm: FormGroup;
   constructor(
     private groupService: GroupService,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     private userService: UserService,
     private teamMemberService: TeamMemberService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
   ) {
     super();
-    route.parent.params.subscribe(
-      (params) => this.groupId = params.groupId);
   }
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.groupId = data.group.id;
+    });
     this.loadingUsers = true;
     this.getGroupMembers(this.groupId);
     this.getUsers();
@@ -76,6 +77,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         this.users = res.body.filter(
           (user) => !this.members?.some(x => x.userId === user.id) && !this.pendingMembers.some(x => x.userId === user.id)
         );
+        // console.log(this.users);
       }
     });
   }

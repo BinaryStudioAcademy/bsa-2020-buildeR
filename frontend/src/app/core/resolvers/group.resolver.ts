@@ -13,8 +13,13 @@ export class GroupResolverService implements Resolve<Group>{
   constructor(private router: Router, private groupService: GroupService) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const id = parseInt(route.paramMap.get('groupId'), 10);
-    return this.groupService.getGroupById(id).pipe(
+    // const id = parseInt(route.paramMap.get('groupId'), 10);
+    let groupId: number = route.params[`groupId`];
+    const parentGroupId: number = route.parent.params[`groupId`];
+    if (groupId === undefined && parentGroupId !== undefined) {
+      groupId = parentGroupId;
+    }
+    return this.groupService.getGroupById(groupId).pipe(
       tap((group) => {
         return group ?? EMPTY;
       }),

@@ -21,12 +21,13 @@ export class GroupSettingsComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     public route: ActivatedRoute,
   ) {
-    this.route.parent.params.subscribe(
-      (params) => this.groupId = params.groupId);
-    this.route.parent.data.subscribe(data => this.group = data.group);
   }
 
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.groupId = data.group.id;
+      this.group = data.group;
+    });
     this.groupForm = new FormGroup({
       name: new FormControl(this.group.name,
         [

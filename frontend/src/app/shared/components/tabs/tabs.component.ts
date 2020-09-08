@@ -14,10 +14,13 @@ export class TabsComponent implements OnInit {
   tab = 0;
   @Input() tabRoutes: TabRoute[] = [];
 
-  constructor(private route: ActivatedRoute){}
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.currentPath = this.route.snapshot.children[0]?.url[0]?.path;
+    this.route.data.subscribe((data) => {
+      this.change(0);
+    });
     const index = this.tabRoutes.findIndex(x => x.route === this.currentPath);
     if (index > 0) {
       this.tab = index;
