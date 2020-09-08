@@ -13,9 +13,9 @@ namespace buildeR.API.Controllers
     [ApiController]
     public class LogsController : ControllerBase
     {
-        private readonly ILogService _logService;
+        private readonly IBuildLogService _logService;
 
-        public LogsController(ILogService logService)
+        public LogsController(IBuildLogService logService)
         {
             _logService = logService;
         }

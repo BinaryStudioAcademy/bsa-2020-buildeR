@@ -17,9 +17,7 @@ using buildeR.Common.DTO;
 using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
-using buildeR.API.HostedServices;
 using Nest;
-using buildeR.Common.DTO;
 
 namespace buildeR.API.Extensions
 {
@@ -55,7 +53,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddElasticsearch(configuration);
-            services.AddTransient<ILogService, LogService>();
+            services.AddTransient<IBuildLogService, BuildLogService>();
             services.AddTransient<ISecretService, SecretService>();
             services.AddHttpClient();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
