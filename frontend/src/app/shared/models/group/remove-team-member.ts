@@ -1,5 +1,5 @@
 export interface RemoveTeamMember {
     id: number;
-    initiatorId: number;
+    initiatorUserId: number;
     groupId: number;
 }

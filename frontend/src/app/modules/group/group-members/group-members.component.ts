@@ -114,7 +114,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   deleteMember(memberId: number) {
     const removeObject = {
       id: memberId,
-      initiatorId: this.currentUser.id,
+      initiatorUserId: this.currentUser.id,
       groupId: this.groupId
     } as RemoveTeamMember;
     this.teamMemberService.deleteMemberWithNotification(removeObject).pipe(takeUntil(this.unsubscribe$))

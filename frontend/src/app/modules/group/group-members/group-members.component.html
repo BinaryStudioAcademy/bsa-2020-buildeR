@@ -81,7 +81,8 @@ else loaded;
             <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
           </div>
           <ng-template #isOwnerAdmin>
-            <div *ngIf="member.isAccepted; notAcceptedMember" ngbDropdown>
+            <div *ngIf="member.isAccepted && member.user.id !== this.currentUser.id; else notAcceptedMember"
+              ngbDropdown>
               <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
                 {{groupRole[member.memberRole]}}
               </div>
@@ -101,10 +102,13 @@ else loaded;
               <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
             </div>
           </ng-template>
-          <div class="item area delete" *ngIf="member.user.id === this.currentUser.id && !isCurrentUserOwnerOrAdmin()">
-            <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
-          </div>
         </ng-template>
+        <div class="item area delete" *ngIf="(member.user.id === this.currentUser.id && !isCurrentUserOwnerOrAdmin())">
+          <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+        </div>
+        <div class="item area delete" *ngIf="(!member.isAccepted && isCurrentUserOwnerOrAdmin())">
+          <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
+        </div>
       </div>
     </div>
   </div>
