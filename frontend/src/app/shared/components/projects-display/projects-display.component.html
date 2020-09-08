@@ -7,7 +7,9 @@
         <div class="col-md-12 col-sm-5 col-12 row-bottom">
           <div class="owner-wr">
             <a class="avatar-wr" [routerLink]="'/portal/user'">
-              <img [src]="project.owner.avatarUrl" class="owner-avatar">
+              <img [src]="project.owner.avatarUrl"
+                   onerror="this.src='../../../../assets/images/Avatar-default.png'"
+                   alt="Avatar" class="owner-avatar">
             </a>
             <h6 class="my-0 mx-2"><a class="text-dark" [routerLink]="'/portal/user'">{{project?.owner.username}}</a></h6>
           </div>
