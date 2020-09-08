@@ -38,17 +38,18 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   memberForm: FormGroup;
   constructor(
     private groupService: GroupService,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     private userService: UserService,
     private teamMemberService: TeamMemberService,
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
   ) {
     super();
-    route.parent.params.subscribe(
-      (params) => this.groupId = params.groupId);
   }
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.groupId = data.group.id;
+    });
     this.loadingUsers = true;
     this.getGroupMembers(this.groupId);
     this.getUsers();
@@ -82,8 +83,10 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
   changeMemberRole(member: TeamMember, newUserRole: GroupRole) {
     member.memberRole = newUserRole;
     member.initiatorId = this.currentUser.id;
-    this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$)).subscribe(() =>
-      this.toastrService.showSuccess('Member role successfully changed'),
+    this.teamMemberService.updateMember(member).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.teamMemberService.teamMembersChanged.next();
+      this.toastrService.showSuccess('Member role successfully changed');
+    },
       (err) => {
         this.toastrService.showError(err);
       }
@@ -102,6 +105,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.newTeamMember.isAccepted = false;
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        this.teamMemberService.teamMembersChanged.next();
         this.getGroupMembers(this.groupId);
         this.getUsers();
         this.toastrService.showSuccess('Member was successfully invited');
@@ -119,6 +123,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     } as RemoveTeamMember;
     this.teamMemberService.deleteMemberWithNotification(removeObject).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        this.teamMemberService.teamMembersChanged.next();
         this.getGroupMembers(this.groupId);
         this.getUsers();
         this.toastrService.showSuccess('Member was successfully deleted');

@@ -29,18 +29,30 @@ const routes: Routes = [
       {
         path: 'projects',
         component: GroupProjectsComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
       {
         path: 'chat',
-        component: GroupChatComponent
+        component: GroupChatComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
       {
         path: 'members',
         component: GroupMembersComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
       {
         path: 'settings',
         component: GroupSettingsComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
     ],
   },
