@@ -29,13 +29,15 @@ namespace buildeR.BLL.Services
 
         public async Task<BuildHistoryDTO> GetBuildById(int id)
         {
-            var build = await Context.BuildHistories.FindAsync(id);
+            var build = await Context.BuildHistories.AsNoTracking()
+                .Include(bh => bh.Performer)
+                .Include(bh => bh.Project)
+                .FirstOrDefaultAsync(bh => bh.Id == id);
             if (build == null)
             {
                 throw new NotFoundException(nameof(BuildHistory), id);
             }
-
-            await Context.Entry(build).Reference(bh => bh.Performer).LoadAsync();
+            
             return Mapper.Map<BuildHistoryDTO>(build);
         }
 

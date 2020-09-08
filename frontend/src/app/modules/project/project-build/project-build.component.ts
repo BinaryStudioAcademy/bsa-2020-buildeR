@@ -13,6 +13,8 @@ import { Project } from '@shared/models/project/project';
 import { BuildLogService } from '@core/services/build-log.service';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Log } from '../logging-terminal/logging-terminal.component';
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
+import { BuildStatus } from '@shared/models/build-status';
 
 @Component({
   selector: 'app-project-build',
@@ -32,6 +34,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
     private projectService: ProjectService,
+    private buildStatusesSignalRService: BuildStatusesSignalRService,
     private logsService: ProjectLogsService
   ) {
     super();
@@ -44,8 +47,25 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.configureBuildStatusesSignalR();
     // this.getBuildHistory();
     // this.getProject();
+  }
+
+  private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+      if (statusChange.BuildHistoryId == this.buildHistory.id) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              this.buildHistory = bh;
+            });
+        } else {
+          this.buildHistory.buildStatus = statusChange.Status;
+        }
+      }
+    });
   }
 
   getBuildHistory() {

@@ -7,6 +7,7 @@ import { BuildStatusesSignalRService } from '@core/services/build-statuses-signa
 import { BuildStatus } from '@shared/models/build-status';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
+import { findIndex } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-build-history',
@@ -59,21 +60,20 @@ export class UserBuildHistoryComponent implements OnInit {
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const buildIndex = this.builds.findIndex(
+      let buildIndex = this.builds.findIndex(
         (pi) => pi.id == statusChange.BuildHistoryId
       );
-      if (statusChange.Status != BuildStatus.InProgress) {
-        this.buildHistoryService
-          .getBuildHistory(statusChange.BuildHistoryId)
-          .subscribe((bh) => {
-            this.builds[buildIndex] = bh;
-          });
-      } else {
-        this.builds[buildIndex].buildStatus = statusChange.Status;
+      if (buildIndex >= 0) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              this.builds[buildIndex] = bh;
+            });
+        } else {
+          this.builds[buildIndex].buildStatus = statusChange.Status;
+        }
       }
-      this.buildHistoryService
-        .getBuildHistory(statusChange.BuildHistoryId)
-        .subscribe((bh) => {});
     });
   }
 
