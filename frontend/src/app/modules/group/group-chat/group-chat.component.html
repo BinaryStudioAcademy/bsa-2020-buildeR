@@ -12,8 +12,9 @@
                     </div>
                     <div class="chat-body">
                         <div class="chat-message">
-                            <h5 [routerLink]="'/portal/user/' + msg.senderId">{{msg.sender.username}}</h5>
-                            <p>{{msg.text}}</p>
+                            <h5 *ngIf="msg.senderId != user.id" [routerLink]="'/portal/user/' + msg.senderId">{{msg.sender.username}}</h5>
+                            <p>{{msg.text}} </p>
+                            <small>{{msg.createdAt | date:'shortTime'}}</small>
                         </div>
                     </div>
                 </li>

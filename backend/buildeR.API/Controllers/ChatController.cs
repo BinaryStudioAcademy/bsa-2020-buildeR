@@ -29,15 +29,7 @@ namespace buildeR.API.Controllers
         [HttpPost]
         public async Task<MessageDTO> SendMessage(MessageDTO message)
         {
-            try
-            {
-                return await _chat.SendMessage(message);
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+          return await _chat.SendMessage(message);
         }
     }
 }

@@ -51,6 +51,7 @@ namespace buildeR.BLL.Services
             }
             
             var entity = _mapper.Map<Message>(messageDTO);
+            entity.CreatedAt = DateTime.Now;
             var result = await _context.Messages.AddAsync(entity);
             await _context.SaveChangesAsync();
 

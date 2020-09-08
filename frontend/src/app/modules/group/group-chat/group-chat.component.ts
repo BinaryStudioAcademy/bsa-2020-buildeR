@@ -44,7 +44,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
     this.chat.messageListener(this.message);
     this.message.subscribe((res) => {
       const msg: Message = JSON.parse(res);
-      console.log(msg);
+      console.log(msg.createdAt)
       this.messages.push(msg);
     });
     this.getMessages();
@@ -69,7 +69,6 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
     const msg = new Message();
     console.log(this.textOfMessage);
     msg.text = this.textOfMessage;
-    msg.creteAt = new Date(Date.now());
     msg.groupId = this.groupId;
     msg.senderId = this.user.id;
     this.chat.sendMessage(msg).subscribe((res) => console.log());
