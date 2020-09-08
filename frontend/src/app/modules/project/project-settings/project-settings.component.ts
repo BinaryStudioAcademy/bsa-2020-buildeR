@@ -99,10 +99,12 @@ export class ProjectSettingsComponent implements OnInit {
     this.projectForm.reset(this.project);
   }
   save(project: Project) {
+    project.isPublic = project.isPublic.toString() === 'true';
     this.project = Object.assign(this.project, project);
     this.projectService.updateProject(this.project).subscribe(() =>
     {
       this.projectService.changeProjectName(this.project.name);
+      this.projectService.changeProjectLevel(this.project.isPublic);
       this.toastrService.showSuccess('Project successfully updated');
     }, (err) => {
       this.toastrService.showError(err);

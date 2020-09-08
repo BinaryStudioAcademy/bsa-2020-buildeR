@@ -56,6 +56,10 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     this.projectService.projectName.subscribe((res) => {
       this.project.name = res;
     });
+    this.projectService.projectLevel.subscribe(res => {
+      this.project.isPublic = res;
+      console.log(res);
+    })
     this.route.data.subscribe((res) => {
       this.project = res.project;
     });

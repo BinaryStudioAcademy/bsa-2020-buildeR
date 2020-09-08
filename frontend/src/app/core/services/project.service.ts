@@ -19,10 +19,12 @@ export class ProjectService {
   private copyProject$ = new Subject<number>();
   private buildProject$ = new Subject<number>();
   private projectName$ = new Subject<string>();
+  private projectLevel$ = new Subject<boolean>();
   private envVariable$ = new Subject<EnviromentVariable>();
   private deleteEnvVariable$ = new Subject<EnviromentVariable>();
 
   projectName = this.projectName$.asObservable();
+  projectLevel = this.projectLevel$.asObservable();
   envVariable = this.envVariable$.asObservable();
   deleteEnvVariable = this.deleteEnvVariable$.asObservable();
 
@@ -115,6 +117,10 @@ export class ProjectService {
 
   changeProjectName(projectName: string) {
     this.projectName$.next(projectName);
+  }
+
+  changeProjectLevel(projectLevel: boolean) {
+    this.projectLevel$.next(projectLevel);
   }
 
   public getEnvironmentVariables(projectId: number): Observable<any> {
