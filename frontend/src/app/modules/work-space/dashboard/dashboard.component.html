@@ -48,6 +48,11 @@
             Groups' projects
           </a>
         </li>
+        <li class="list-group-item" [ngClass]="{ active: tab == 'history' }">
+          <a (click)="tab = 'history'">
+            History
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -88,6 +93,9 @@
         <ng-template #loadingGroupProjects>
           <app-loading-spinner size="10px" position="unset"></app-loading-spinner>
         </ng-template>
+      </div>
+      <div *ngSwitchCase="'history'">
+        <app-user-build-history></app-user-build-history>
       </div>
     </div>
   </div>

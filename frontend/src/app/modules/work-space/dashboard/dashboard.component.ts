@@ -38,7 +38,7 @@ export class DashboardComponent
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
   loadingGroupsProjects = false;
-  tab: "myprojects" | "groupsprojects" = "myprojects";
+  tab: "myprojects" | "groupsprojects" | "history" = "myprojects";
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
