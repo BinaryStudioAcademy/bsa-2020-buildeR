@@ -3,5 +3,6 @@ export enum NotificationType {
   BuildFailed,
   BuildErrored,
   BuildCanceled,
-  Information
+  Information,
+  Group
 }
