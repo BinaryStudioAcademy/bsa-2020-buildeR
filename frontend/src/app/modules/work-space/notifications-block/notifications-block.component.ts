@@ -23,7 +23,7 @@ export class NotificationsBlockComponent implements OnInit {
     private notificationService: NotificationsService,
     private router: Router,
     private buildHistoryService: BuildHistoryService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.notificationService.listen().subscribe((notification) => {
@@ -63,6 +63,17 @@ export class NotificationsBlockComponent implements OnInit {
   navigateToItem(notification: Notification) {
     if (notification.itemId) {
       switch (notification.type) {
+        case NotificationType.Group: {
+          if (notification.itemId === -1) {
+            this.router.navigate(['/portal/groups']);
+          }
+          else {
+            this.router.navigate(['/portal/groups/' + notification.itemId + '/members']);
+          }
+          this.clearOne(notification);
+          this.toggle();
+          break;
+        }
         case NotificationType.BuildCanceled:
         case NotificationType.BuildErrored:
         case NotificationType.BuildFailed:

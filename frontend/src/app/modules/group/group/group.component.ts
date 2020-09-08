@@ -19,6 +19,7 @@ export class GroupComponent extends BaseComponent implements OnInit {
 
   tabRoutes: TabRoute[] = [
     { name: 'Projects', route: 'projects' },
+    { name: 'Chat', route: 'chat'},
     { name: 'Members', route: 'members' },
     { name: 'Settings', route: 'settings' },
   ];

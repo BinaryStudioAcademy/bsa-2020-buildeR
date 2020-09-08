@@ -29,5 +29,17 @@ namespace buildeR.API.Controllers
         {
             await _teamMemberService.Update(teamMember);
         }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteMember(int id)
+        {
+            await _teamMemberService.Delete(id);
+        }
+
+        [HttpDelete]
+        public async Task DeleteMemberWithNotification([FromQuery]RemoveTeamMemberDTO removeObject)
+        {
+            await _teamMemberService.DeleteWithNotification(removeObject);
+        }
     }
 }

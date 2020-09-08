@@ -19,7 +19,7 @@
   (cropperReady)="cropperReady()"
   (loadImageFailed)="loadImageFailed()"
 ></image-cropper>
-<div class="img-preview">
+<div *ngIf="croppedImage"  class="img-preview">
   <img [src]="croppedImage" />
 </div>
 <div *ngIf="canSave">
