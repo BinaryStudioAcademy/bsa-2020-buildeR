@@ -3,6 +3,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { log } from 'console';
+import {timer} from "rxjs";
 
 @Component({
   selector: 'app-photo-cropper-content',
@@ -16,6 +17,7 @@ export class PhotoCropperContentComponent implements OnInit {
   croppedImage;
   canSave = false;
   imageName = '';
+  isShowSpinner: boolean = false;
 
   ngOnInit(): void {
   }
@@ -40,11 +42,15 @@ loadImageFailed() {
 }
 
 save(){
+  this.isShowSpinner = true;
   if (!this.imageName){
     this.imageName = this.makeName(10) + '.png';
   }
   const file = this.base64ToFile(this.croppedImage, this.imageName);
-  this.activeModal.close(file);
+  timer(600).subscribe(() => {
+    this.activeModal.close(file);
+    this.isShowSpinner = false;
+  });
 }
 
 base64ToFile(data, filename) {

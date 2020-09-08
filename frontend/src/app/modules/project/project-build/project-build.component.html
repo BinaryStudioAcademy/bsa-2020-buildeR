@@ -1,3 +1,10 @@
+<div *ngIf="isLoading; then loading; else loaded;"></div>
+
+<ng-template #loading>
+  <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
+</ng-template>
+
+<ng-template #loaded>
 <div *ngIf="buildHistory">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -26,3 +33,4 @@
   </div>
   <app-logging-terminal></app-logging-terminal>
 </div>
+</ng-template>

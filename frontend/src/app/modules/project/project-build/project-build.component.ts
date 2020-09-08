@@ -25,6 +25,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   projectId: number;
   project: Project;
   logs: Log[];
+  isLoading: boolean = true;
 
   constructor(
     private buildHistoryService: BuildHistoryService,
@@ -67,6 +68,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe((res) => {
       this.logsService.sendLogs(res);
+      this.isLoading = false;
     });
   }
 
