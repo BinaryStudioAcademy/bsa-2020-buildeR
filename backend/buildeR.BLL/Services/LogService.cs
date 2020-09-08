@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace buildeR.BLL.Services
 {
-    public class LogService : ILogService
+    public class BuildLogService : IBuildLogService
     {
         private readonly IElasticClient _elk;
 
-        public LogService(IElasticClient elk)
+        public BuildLogService(IElasticClient elk)
         {
             _elk = elk;
         }

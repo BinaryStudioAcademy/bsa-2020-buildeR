@@ -78,16 +78,16 @@ services:
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-    sql_server:
-        image: mcr.microsoft.com/mssql/server:2017-latest
-        container_name: sql_server
-        ports:
-            - 1433:1433
-        networks:
-            - back
-        environment:
-            SA_PASSWORD: MySecretPassword!
-            ACCEPT_EULA: "Y"
+    # sql_server:
+    #     image: mcr.microsoft.com/mssql/server:2017-latest
+    #     container_name: sql_server
+    #     ports:
+    #         - 1433:1433
+    #     networks:
+    #         - back
+    #     environment:
+    #         SA_PASSWORD: MySecretPassword!
+    #         ACCEPT_EULA: "Y"
 
 networks:
     back:

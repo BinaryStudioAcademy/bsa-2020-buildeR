@@ -2,6 +2,7 @@
 using buildeR.Common.DTO.User;
 
 using System;
+using System.Collections.Generic;
 
 namespace buildeR.Common.DTO.BuildHistory
 {
@@ -19,5 +20,6 @@ namespace buildeR.Common.DTO.BuildHistory
         public int Number { get; set; }
         public UserDTO Performer { get; set; }
         public ProjectDTO Project { get; set; }
+        public List<ProjectLog> Logs { get; set; }
     }
 }

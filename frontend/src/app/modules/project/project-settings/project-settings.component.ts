@@ -6,8 +6,9 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
-import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
-import {User} from '@shared/models/user/user';
+import { projectNameAsyncValidator } from '@modules/project/validators/project-name.async-validator';
+import { User } from '@shared/models/user/user';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-project-settings',
@@ -19,7 +20,6 @@ export class ProjectSettingsComponent implements OnInit {
   isChanged = false;
   isLoading = false;
   isLoadedEnvVar = false;
-  projectId: number;
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
   public projectForm: FormGroup;
@@ -32,21 +32,41 @@ export class ProjectSettingsComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
+    private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
-  )
-  { }
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
 
     this.route.parent.data.subscribe(data => {
-      this.currentUser = data.user;
+      this.project = data.project;
+      this.createProjectForm();
     });
 
-    this.route.parent.params.subscribe(
-      (params) => this.projectId = params.projectId);
-    this.route.parent.data.subscribe(data => this.project = data.project);
+    this.loadEnvVars();
+    this.envVarsForm = new FormGroup({
+      name: new FormControl(this.envVar.data.name,
+        [
+          Validators.required,
+          this.isNotUniqueName()
+        ]),
+      value: new FormControl(this.envVar.data.value,
+        [
+          Validators.required
+        ]),
+        isSecret: new FormControl(this.envVar.data.isSecret)
+    });
+    this.projectService.envVariable.subscribe((res) => {
+      this.edit(res);
+    });
+    this.projectService.deleteEnvVariable.subscribe((res) => {
+      this.delete(res);
+    });
+  }
 
+  createProjectForm() {
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
@@ -75,25 +95,7 @@ export class ProjectSettingsComponent implements OnInit {
         this.isChanged = true;
       }
     });
-    this.loadEnvVars();
-    this.envVarsForm = new FormGroup({
-      name: new FormControl(this.envVar.data.name,
-        [
-          Validators.required,
-          this.isNotUniqueName()
-        ]),
-      value: new FormControl(this.envVar.data.value,
-        [
-          Validators.required
-        ]),
-        isSecret: new FormControl(this.envVar.data.isSecret)
-    });
-    this.projectService.envVariable.subscribe((res) => {
-      this.edit(res);
-    });
-    this.projectService.deleteEnvVariable.subscribe((res) => {
-      this.delete(res);
-    });
+
   }
   reset() {
     this.projectForm.reset(this.project);

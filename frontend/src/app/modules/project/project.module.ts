@@ -6,7 +6,6 @@ import { ProjectSettingsComponent } from './project-settings/project-settings.co
 import { SharedModule } from '@shared/shared.module';
 import { ProjectComponent } from './project.component';
 import { LoggingTerminalComponent } from './logging-terminal/logging-terminal.component';
-import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { ProjectTriggersComponent } from './project-triggers/project-triggers.component';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -25,7 +24,6 @@ import { ProejctRemoteTriggerComponent } from './proejct-remote-trigger/proejct-
     ProjectCreateComponent,
     ProjectSettingsComponent,
     LoggingTerminalComponent,
-    ProjectDetailsComponent,
     ProjectTriggersComponent,
     ProjectBuildHistoryComponent,
     ModalCopyProjectComponent,
