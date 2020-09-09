@@ -21,6 +21,7 @@
   width: 26px
   height: 26px
   font-size: 26px
+  color: rgba(0,0,0,.4)
   margin-right: 10px
   display: inline-block
 
@@ -42,16 +43,20 @@
   margin-right: 1.2em
   display: inline-block
   vertical-align: middle
-  width: 30px
-  height: 30px
-
-  a path
-    fill: rgba(0, 0, 0, 0.2)
-    stroke: none
+  font-size: 30px
+  color: rgba(0,0,0,.4)
+  a
+    display: block
+    &:link, &:visited, &:active
+      color: rgba(0,0,0,.4)
+    &:hover
+      color: rgba(0,0,0,.6)
 
 .repo-badge
   display: inline-block
   vertical-align: middle
+  &:hover
+    opacity: 0.8
 
 .project-main
   display: flex
