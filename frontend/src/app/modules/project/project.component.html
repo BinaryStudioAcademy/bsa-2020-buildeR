@@ -50,7 +50,7 @@
 
     <app-tabs [tabRoutes]="isSameUser ? tabRoutes : tabRoutesGuest"></app-tabs>
     <div class="project-body">
-        <button *ngIf="isSameUser || hasPermissionToTriggerBuild" class="btn btn-link trigger-button" (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
+        <button id="triggerBuildButton" *ngIf="isSameUser || hasPermissionToTriggerBuild" class="btn btn-link trigger-button" (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
           <span class="trigger-button-text"> Trigger build</span></button>
 
         <ng-template #branchSelectModal let-modal>
