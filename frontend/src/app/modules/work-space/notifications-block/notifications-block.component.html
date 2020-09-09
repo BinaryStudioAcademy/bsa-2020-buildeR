@@ -16,6 +16,9 @@
     <div *ngIf="notifications.length == 0" class="no-notifications">
       There are no notifications
     </div>
+    <div>
+      
+    </div>
     <ng-container *ngFor="let notification of notifications">
       <div *ngIf="notification.isRead === false || isShowingRead" class="notification" [ngClass]="{
         'isNotRead': !notification.isRead,
@@ -45,6 +48,8 @@
         </div>
       </div>
     </ng-container>
+    <div class="top-point" #top>
+    </div>
   </div>
   <div class="notifications-footer">
     <div class="custom-control custom-switch">
