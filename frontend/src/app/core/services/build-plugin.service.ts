@@ -29,11 +29,8 @@ export class BuildPluginService {
     return this.httpService.deleteRequest(`${this.routePrefix}/${buipldPlugin.id}`);
   }
 
-  getVersionsOfBuildPlugin(buildPluginName: string, partOfVersionTerm: string): Observable<HttpResponse<string[]>> {
-    return this.httpService.getFullRequest<string[]>(`${this.routePrefix}/${buildPluginName}/versions/${partOfVersionTerm}`);
-  }
-
   versionsLookup(buildPluginName: string, partOfVersionTerm: string): Observable<any> {
-    return this.httpService.getRequest<string[]>(`${this.routePrefix}/${buildPluginName}/versions/${partOfVersionTerm}`);
+    return this.httpService.postRequest<string[]>(`${this.routePrefix}/versions`,
+    { buildPluginName, partOfVersionTerm });
   }
 }
