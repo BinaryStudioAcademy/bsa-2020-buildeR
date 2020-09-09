@@ -18,6 +18,7 @@ export class ProjectSettingsComponent implements OnInit {
 
   isChanged = false;
   isLoading = false;
+  isShowSpinner = false;
   projectId: number;
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
@@ -99,12 +100,16 @@ export class ProjectSettingsComponent implements OnInit {
     this.projectForm.reset(this.project);
   }
   save(project: Project) {
+    this.isShowSpinner = true;
     this.project = Object.assign(this.project, project);
     this.projectService.updateProject(this.project).subscribe(() =>
     {
+      this.isShowSpinner = false;
       this.projectService.changeProjectName(this.project.name);
       this.toastrService.showSuccess('Project successfully updated');
     }, (err) => {
+      this.isShowSpinner = false;
+      this.toastrService.showSuccess('Project wasn\'t updated');
       this.toastrService.showError(err);
     });
     this.isChanged = true;

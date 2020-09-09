@@ -87,8 +87,11 @@
           </div>
         </div>
         <div class="d-flex justify-content-center">
-          <button type="submit" class="btn btn-success" [disabled]="projectForm.invalid || isChanged ||
-          !projectForm.dirty || projectForm.controls['name'].status === 'PENDING'">Save</button>
+          <button type="submit" [ngStyle]="{'width': isShowSpinner ? '6rem' : '4rem' }"
+                  class="btn btn-success" [disabled]="projectForm.invalid || isChanged ||
+          !projectForm.dirty || projectForm.controls['name'].status === 'PENDING'">Save
+            <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
           <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
         </div>
       </form>
