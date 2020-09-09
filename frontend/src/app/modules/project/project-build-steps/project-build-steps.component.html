@@ -140,7 +140,7 @@
               </button>
             </div>
             <div class="col-4 text-left m-auto" cdkDragHandle>
-              Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
+              Post-build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
               <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
             </div>
             <div class="col-1 offset-6">

@@ -189,7 +189,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           if (this.allBuildSteps.length && this.allBuildSteps[0].buildStepName.startsWith('Dockerfile')) {
             this.dockerfileUsed = true;
           }
-          console.log(this.postBuildSteps);
         },
         (error) => {
           this.isLoading = false;
@@ -207,7 +206,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       projectId: this.projectId,
       index: allStepsLength,
       commandArguments: [],
-      config: '{ "Host": "", "User": "", "Password": "", "OutputDirectory": ""}',
+      config: step.config,
       isEditing: true
     } as BuildStep;
     if (!step.buildStepName.startsWith('Post Actions')) {
@@ -219,8 +218,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       this.newPostBuildSteps.push(newStep);
       this.allPostBuildSteps.push(newStep);
     }
-    console.log(this.allBuildSteps);
-    console.log(this.newPostBuildSteps);
   }
 
   editBuildStep(step: BuildStep) {
