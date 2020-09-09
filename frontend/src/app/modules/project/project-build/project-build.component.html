@@ -5,7 +5,8 @@
 </ng-template>
 
 <ng-template #loaded>
-<div *ngIf="buildHistory">
+
+<div *ngIf="buildHistory; else emptyBuilds">
   <nav aria-label="breadcrumb" *ngIf="!isCurrent">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a routerLink="../">Show all</a></li>
@@ -40,4 +41,20 @@
   </div>
   <app-logging-terminal [project]="project" [logs]="buildHistory.logs"></app-logging-terminal>
 </div>
+</ng-template>
+<ng-template #emptyBuilds>
+  <div class="container">
+
+    <div class="no-builds-container">
+      <div class="image-container">
+        <img class="builders" [src]="'../../../../assets/images/Play.png'" />
+      </div>
+      <span class="my-3">
+        It seems that you do not yet have builds for this project, you can run it at any time!
+        </span>
+      <button class="btn btn-success" (click)="startFirstBuild()">
+        Run this project
+      </button>
+    </div>
+  </div>
 </ng-template>

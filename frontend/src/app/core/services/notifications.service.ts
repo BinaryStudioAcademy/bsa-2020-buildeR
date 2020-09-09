@@ -34,6 +34,7 @@ export class NotificationsService implements OnDestroy {
   }
 
   getInitialNotifications() {
+    this.currentUser = this.authService.getCurrentUser();
     return this.httpService.getRequest<Notification[]>(
       `${this.routePrefix}/user/${this.currentUser.id}`);
   }
