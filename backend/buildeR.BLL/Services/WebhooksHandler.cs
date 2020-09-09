@@ -30,7 +30,9 @@ namespace buildeR.BLL.Services
             var updatedBranch = payload.Ref.Substring(11);
 
             var triggers = await _projectService.GetProjectRemoteTriggers(projectId);
-            var pushTrigger = triggers.FirstOrDefault(t => t.Type == RemoteTriggerType.Push && t.Branch == updatedBranch);
+            var pushTrigger = triggers.FirstOrDefault(t => (t.Type == RemoteTriggerType.Push ||
+                                                            t.Type ==RemoteTriggerType.All) && 
+                                                            t.Branch == updatedBranch);
 
             if (pushTrigger == null)
                 return;
@@ -50,7 +52,9 @@ namespace buildeR.BLL.Services
             var updatedBranch = payload.Pull_Request.Base.Ref;
 
             var triggers = await _projectService.GetProjectRemoteTriggers(projectId);
-            var pullRequestTrigger = triggers.FirstOrDefault(t => t.Type == RemoteTriggerType.PullRequest && t.Branch == updatedBranch);
+            var pullRequestTrigger = triggers.FirstOrDefault(t => (t.Type == RemoteTriggerType.PullRequest ||
+                                                                   t.Type == RemoteTriggerType.All) &&
+                                                                   t.Branch == updatedBranch);
 
             if (pullRequestTrigger == null)
                 return;
