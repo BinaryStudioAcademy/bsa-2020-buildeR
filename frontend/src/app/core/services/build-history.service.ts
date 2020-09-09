@@ -19,6 +19,10 @@ export class BuildHistoryService {
     return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/user/${userId}`);
   }
 
+  getSortedByStartDateHistoryByUserId(userId: number) {
+    return this.httpService.getFullRequest<BuildHistory[]>(`${this.routePrefix}/user/startDate/${userId}`);
+  }
+
   getBuildHistory(buildId: number) {
     return this.httpService.getRequest<BuildHistory>(`${this.routePrefix}/${buildId}`);
   }

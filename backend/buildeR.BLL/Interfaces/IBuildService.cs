@@ -18,6 +18,7 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id);
 
         Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id);
+        Task<IEnumerable<BuildHistoryDTO>> GetSortedByStartDateHistoryByUserId(int id);
         Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange);
     }
 }

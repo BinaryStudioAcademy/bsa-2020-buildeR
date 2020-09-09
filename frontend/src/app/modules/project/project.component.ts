@@ -22,6 +22,9 @@ export class ProjectComponent extends BaseComponent implements OnInit{
   project: Project = {} as Project;
   isLoading: boolean;
   currentUser: User;
+  isSameUser = false;
+
+  hasPermissionToTriggerBuild = false;
 
   loadingSelectedProjectBranches: boolean;
   selectedProjectBranches: Branch[];
@@ -34,13 +37,18 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     { name: 'Settings', route: 'settings' },
   ];
 
+  tabRoutesGuest: TabRoute[] = [
+    { name: 'Current', route: 'current' },
+    { name: 'Build History', route: 'history' },
+  ];
+
   constructor(
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private syncService: SynchronizationService,
-    private authService: AuthenticationService,
+    private authService: AuthenticationService
   ) {
     super();
 
@@ -50,6 +58,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+    this.checkPermissions();
   }
 
   triggerBuild() {
@@ -68,6 +77,18 @@ export class ProjectComponent extends BaseComponent implements OnInit{
         () => this.toastrService.showSuccess(msg),
         (res) => this.toastrService.showError(res.error)
       );
+  }
+
+  checkPermissions() {
+    this.isSameUser = this.currentUser.id === this.project.ownerId;
+    if (!this.isSameUser) {
+      this.projectService.canUserRunNotOwnProject(
+        this.currentUser.id,
+        this.project.id
+      ).subscribe(
+        (permission) => this.hasPermissionToTriggerBuild = permission
+      );
+    }
   }
 
   openBranchSelectionModal(content: TemplateRef<HTMLElement>, projectId: number) {

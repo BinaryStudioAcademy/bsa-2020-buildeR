@@ -118,6 +118,17 @@ namespace buildeR.BLL.Services
             }
         }
 
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await Context.TeamMembers.AsNoTracking()
+                .Include(tm => tm.Group)
+                .Include(tm => tm.Group)
+                .ThenInclude(g => g.ProjectGroups)
+                .AnyAsync(tm => tm.UserId == userId 
+                           && tm.Group.ProjectGroups.Any(pg => pg.ProjectId == projectId)
+                           && (tm.MemberRole == GroupRole.Builder || tm.MemberRole == GroupRole.Owner));
+        }
+
         public async Task DeleteProject(int id)
         {
             var project = await GetAsync(id);

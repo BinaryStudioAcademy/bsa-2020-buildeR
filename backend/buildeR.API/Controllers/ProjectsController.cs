@@ -124,5 +124,11 @@ namespace buildeR.API.Controllers
         {
             await _projectService.DeleteBuildStepsByProjectId(projectId);
         }
+
+        [HttpGet("canUserRunNotOwnProject")]
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await _projectService.CanUserRunNotOwnProject(projectId, userId);
+        }
     }
 }
