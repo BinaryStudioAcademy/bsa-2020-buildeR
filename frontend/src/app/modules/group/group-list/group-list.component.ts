@@ -23,7 +23,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   groups: Group[];
   groupInvites: Group[];
   currentUser: User;
-  // @Output() groupsChanged = new EventEmitter<Group[]>();
 
   constructor(
     private groupService: GroupService,

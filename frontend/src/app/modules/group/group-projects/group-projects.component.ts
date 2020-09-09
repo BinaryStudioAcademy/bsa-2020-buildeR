@@ -90,7 +90,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
   getCurrentUserRole(groupId: number = this.groupId) {
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
-        const role = res.body.filter(x => x.userId === this.user.id)[0].memberRole;
+        const role = res.body.filter(x => x.userId === this.user.id)[0]?.memberRole;
         if (role === 1) {
           this.isBuilder = true;
           this.isContributor = true;

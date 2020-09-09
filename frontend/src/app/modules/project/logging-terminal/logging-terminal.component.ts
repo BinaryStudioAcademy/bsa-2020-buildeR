@@ -8,7 +8,6 @@ import {
   Input,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { takeUntil } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
 import { Project } from '@shared/models/project/project';
@@ -31,7 +30,9 @@ interface IAction {
 export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
   @Input() isLive: boolean;
   @Input() project: Project;
-  @Input() logs: string[];
+  @Input() set logs(values: IProjectLog[]) {
+    this.writeStaticLogs(values);
+  }
 
   private log$ = new Subject<string>();
   private step = 1;
@@ -46,12 +47,11 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
 
   private lastScrollYPos = -1;
 
-  buildSteps: Map<number, [boolean, IAction[]]> = new Map<number, [boolean, IAction[]]>();
+  buildSteps: Map<number, [boolean, IAction[]]>;
 
-  constructor(
-    private logsService: ProjectLogsService,
-  ) {
+  constructor(private logsService: ProjectLogsService) {
     super();
+    this.initLogs();
   }
 
   @HostListener('window:scroll', ['$event']) onScroll(_: Event) {
@@ -69,16 +69,15 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     this.log$.subscribe((message) => {
       this.buildLog(this.formatLog(message));
     });
-    this.logsService.receiveLogs().pipe(takeUntil(this.unsubscribe$))
-      .subscribe((logs) => {
-        logs.forEach((log) => {
-          this.buildLog(this.formatExistingLog(log));
-        });
-      });
   }
 
   ngOnDestroy() {
     this.logsService.stopConnection();
+  }
+
+  writeStaticLogs(logs: IProjectLog[]) {
+    this.initLogs();
+    logs?.forEach(log => this.buildLog(this.formatExistingLog(log), false));
   }
 
   loggin() {
@@ -87,17 +86,18 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     });
   }
 
-  clear() {
-    this.buildSteps.clear();
-    this.lineNumber = 0;
+  initLogs() {
+    this.buildSteps = new Map<number, [boolean, IAction[]]>();
+    this.rawLogs = [];
+    this.lineNumber = 1;
   }
 
   setExpand(key: number) {
     this.buildSteps.get(key)[0] = !this.buildSteps.get(key)[0];
   }
 
-  private buildLog(line: string) {
-    if (this.autoscroll) {
+  private buildLog(line: string, enableScroll: boolean = true) {
+    if (enableScroll && this.autoscroll) {
       this.scrollBottom(this.bottom.nativeElement);
     }
 

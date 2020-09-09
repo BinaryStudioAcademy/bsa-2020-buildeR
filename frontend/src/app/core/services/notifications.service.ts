@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { SignalRHubFactoryService } from '@core/services/signalr-hub-factory.service';
 import { SignalRHub } from '@core/models/signalr-hub';
-import { Subject } from 'rxjs';
-import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
-import { HttpService } from '../../core/services/http.service';
+import { SignalRHubFactoryService } from '@core/services/signalr-hub-factory.service';
 import { Notification } from '@shared/models/notification';
+import { User } from '@shared/models/user/user';
+import { Subject } from 'rxjs';
+import { HttpService } from '../../core/services/http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,11 @@ export class NotificationsService implements OnDestroy {
         notifications.forEach((n) => this.notifications$.next(n))
       );
     this.configureSignalR();
+  }
+
+  getInitialNotifications() {
+    return this.httpService.getRequest<Notification[]>(
+      `${this.routePrefix}/user/${this.currentUser.id}`);
   }
 
   markAsRead(notificationId: number) {
