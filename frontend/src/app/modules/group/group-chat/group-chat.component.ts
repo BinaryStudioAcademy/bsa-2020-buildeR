@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from '@core/services/chat.service';
 import { Message } from '@shared/models/message';
@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './group-chat.component.html',
   styleUrls: ['./group-chat.component.sass']
 })
-export class GroupChatComponent extends BaseComponent implements OnInit {
+export class GroupChatComponent extends BaseComponent implements OnInit, AfterViewChecked {
 
   user: User;
   groupId: number;
@@ -25,6 +25,8 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
   message = new Subject<string>();
   @Input() textOfMessage = '';
   messages = new Array<Message>();
+  @ViewChild('bottom') private bottom: ElementRef;
+
 
   constructor(private route: ActivatedRoute,
               private chat: ChatService,
@@ -33,6 +35,9 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
               private groupService: GroupService) {
     super();
    }
+  ngAfterViewChecked(): void {
+    this.scrollBottom();
+    }
 
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
@@ -46,6 +51,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
     .subscribe((res) => {
       const msg: Message = JSON.parse(res);
       this.messages.push(msg);
+      this.scrollBottom();
     });
     this.getMessages();
     this.getMembersCount();
@@ -56,6 +62,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
     .subscribe((res) => {
       this.membersCount = res.body.length;
     });
+
   }
 
   getMessages(){
@@ -72,7 +79,11 @@ export class GroupChatComponent extends BaseComponent implements OnInit {
     senderId : this.user.id,
   } as Message;
     this.chat.sendMessage(message).pipe(takeUntil(this.unsubscribe$))
-    .subscribe(() => console.log());
+    .subscribe(() => {});
     this.textOfMessage = '';
   }
+
+  scrollBottom(el: HTMLElement = this.bottom.nativeElement) {
+    el.scrollIntoView();
+}
 }
