@@ -96,15 +96,15 @@ namespace buildeR.Processor.Services
             try
             
                 {
-                if (build.BuildSteps.Count() != 0 && build.BuildSteps.FirstOrDefault().BuildStepName == "Dockerfile")
+                if (build.BuildSteps.Any() && build.BuildSteps.FirstOrDefault()?.BuildStepName == "Dockerfile")
                 {
-                    var dockerfileDirectory = build.BuildSteps.FirstOrDefault().WorkDirectory;
-                    if (dockerfileDirectory != "")
+                    var dockerfileDirectory = build.BuildSteps.FirstOrDefault()?.WorkDirectory;
+                    if (dockerfileDirectory != null)
                         pathToClonedRepository = Path.Combine(pathToClonedRepository, dockerfileDirectory);
                 }
                 else
                 {
-                    var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
+                    var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl, pathToClonedRepository);
                     await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
                 }
 
@@ -239,20 +239,10 @@ namespace buildeR.Processor.Services
         #endregion
 
         #region Dockerfile
-        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl)
+        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl, string pathToClonedRepository)
         {
-
-
             string dockerfile = "";
 
-            /* Base template for generating dockerfile
-            FROM {{ docker_image }}:latest AS {{ step_name }}
-            WORKDIR /src
-            COPY . .
-            WORKDIR /src/{{ work_directory }}
-            ENV {{ key }}={{ value }} // if any
-            RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
-            */
             var genericTemplate = Template.Parse(
                  "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest\r\n" +
                  "WORKDIR \"/src\"\r\n" +
@@ -264,11 +254,26 @@ namespace buildeR.Processor.Services
             var customCommandTemplate = Template.Parse(
                 "&& {{ this.command_arguments[0].key }} ");
 
-            foreach (var step in buildSteps)
+            foreach(var step in buildSteps)
+            {
+                if (step.BuildStepName.StartsWith("Post Action"))
+                    step.Index += 100;
+            }
+
+            var orderedBuildSteps = buildSteps.Where(s => !s.BuildStepName.StartsWith("Post Action")).OrderBy(s => s.Index);
+            var orderedPostBuildSteps = buildSteps.Where(s => s.BuildStepName.StartsWith("Post Action")).OrderBy(s => s.Index);
+
+            foreach (var step in orderedBuildSteps)
                 if (step.BuildStepName != "Custom command: ")
                     dockerfile += genericTemplate.Render(step);
-                else
+                else if (step.BuildStepName.StartsWith("Custom command"))
                     dockerfile += customCommandTemplate.Render(step);
+
+            foreach (var step in orderedPostBuildSteps)
+            {
+                var config = JsonConvert.DeserializeObject<PostBuildStepConfig>(step.Config);
+                dockerfile += $"&& ncftpput -u ${config.User} -p {config.Password} -R {config.Host} {config.OutputDirectory} /src";
+            }
 
             return dockerfile;
         }
