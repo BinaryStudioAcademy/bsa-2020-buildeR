@@ -9,20 +9,20 @@ import { ProjectTrigger } from '@shared/models/project/project-trigger/project-t
   providedIn: 'root'
 })
 export class TriggerService {
-  public routePrefix = '/triggers';
+  routePrefix = '/triggers';
 
   constructor(private httpService: HttpService) { }
 
-  public getTriggersByProjectId(projectId: number): Observable<ProjectTriggerInfo[]> {
+  getTriggersByProjectId(projectId: number): Observable<ProjectTriggerInfo[]> {
     return this.httpService.getRequest<ProjectTriggerInfo[]>(`${this.routePrefix}/GetByProjectId/${projectId}`);
   }
-  public createTrigger(newTrigger: NewProjectTrigger): Observable<ProjectTriggerInfo> {
+  createTrigger(newTrigger: NewProjectTrigger): Observable<ProjectTriggerInfo> {
     return this.httpService.postRequest<ProjectTriggerInfo>(`${this.routePrefix}`, newTrigger);
   }
-  public updateTrigger(trigger: ProjectTriggerInfo): Observable<ProjectTriggerInfo> {
+  updateTrigger(trigger: ProjectTriggerInfo): Observable<ProjectTriggerInfo> {
     return this.httpService.putRequest<ProjectTriggerInfo>(`${this.routePrefix}`, trigger);
   }
-  public deleteTrigger(triggerId: number) {
+  deleteTrigger(triggerId: number) {
     return this.httpService.deleteRequest(`${this.routePrefix}/${triggerId}`);
   }
 }
