@@ -7,7 +7,7 @@
 <ng-template #loaded>
   <div class="container px-0 mx-auto">
     <!-- Titles of steps -->
-    <h4 [hidden]='dockerfileUsed'>Build Steps</h4>
+    <h4 [hidden]='dockerfileUsed || allBuildSteps.length === 0'>Build Steps</h4>
     <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="buildStepsDrop($event)" [hidden]='dockerfileUsed'>
       <div class="project-build-step row" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
         <!-- Template for generic plugins -->
@@ -35,7 +35,7 @@
           <div class="row">
             <div class="col-10 offset-1"><hr class="mb-4"></div>
           </div>
-          <div class="row"  *ngIf="buildStep.buildStepName != 'Custom command: ' && buildStep.buildStepName != 'Dockerfile'">
+          <div class="row"  *ngIf="!buildStep.buildStepName.startsWith('Custom command') && !buildStep.buildStepName.startsWith('Dockerfile')">
             <div class="col-5 offset-1 input-group new-step-input">
               <label class="input-group-prepend" [for]="'docker' + i"><span class="input-group-text">Docker image:</span></label>
               <input [id]="'docker' + i" type="text" class="form-control"
@@ -56,7 +56,7 @@
           </div>
 
           <!-- Block for custom command-->
-          <div class="row" *ngIf="buildStep.buildStepName == 'Custom command: '">
+          <div class="row" *ngIf="buildStep.buildStepName.startsWith('Custom command')">
             <div class="col-10 offset-1 input-group new-step-input w-auto">
               <label class="input-group-prepend" [for]="'dir' + i"><span class="input-group-text">Command:</span></label>
               <input [id]="'dir' + i" class="form-control"
@@ -66,7 +66,7 @@
           </div>
 
           <!-- Block with command arguments -->
-          <div *ngIf="buildStep.buildStepName !== 'Custom command: '">
+          <div *ngIf="!buildStep.buildStepName.startsWith('Custom command')">
             <div class="row mt-1" *ngIf="buildStep.commandArguments?.length">
               <div class="col-4 offset-1">
                 <h6 class="pt-2 text-left">Command arguments</h6>
@@ -114,7 +114,7 @@
             </div>
 
             <!-- Form for adding new custom command -->
-            <div class="row" *ngIf="buildStep.buildStepName != 'Custom command: '">
+            <div class="row" *ngIf="!buildStep.buildStepName.startsWith('Custom command')">
               <div class="col-4 offset-1 text-left mt-3">
                 <button class="btn btn-success"
                   [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey"
@@ -128,9 +128,8 @@
     </div>
 
     <!-- Post Actions -->
-
     <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="postBuildStepsDrop($event)" [hidden]='dockerfileUsed'>
-      <h4 [hidden]='dockerfileUsed'>Post-build Actions</h4>
+      <h4 [hidden]='dockerfileUsed || allPostBuildSteps.length === 0'>Post-build Actions</h4>
       <div class="project-build-step row" *ngFor="let buildStep of allPostBuildSteps; let i = index" cdkDrag>
         <!-- Template for generic plugins -->
         <div class="container">

@@ -24,6 +24,7 @@ import { ModalContentComponent } from '@core/components/modal-content/modal-cont
 export class ProjectBuildStepsComponent extends BaseComponent implements OnInit, OnDestroy {
   projectId: number;
   project: Project = {} as Project;
+
   emptyBuildSteps: EmptyBuildStep[];
 
   allPostBuildSteps: BuildStep[] = new Array();
@@ -37,7 +38,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
   isLoading = true;
   pluginGroups: string[];
   dockerfileUsed = false;
-  postActionsUsed = false;
 
   constructor(
     private projectService: ProjectService,
@@ -170,8 +170,8 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
-          this.buildSteps = resp.body.filter(s => !s.buildStepName.startsWith("Post Actions"));
-          this.postBuildSteps = resp.body.filter(s => s.buildStepName.startsWith("Post Actions"));
+          this.buildSteps = resp.body.filter(s => !s.buildStepName.startsWith('Post Actions'));
+          this.postBuildSteps = resp.body.filter(s => s.buildStepName.startsWith('Post Actions'));
           this.postBuildSteps.forEach(step => {
             step.configObject = JSON.parse(step.config);
           });
@@ -186,7 +186,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           this.allBuildSteps = this.allBuildSteps.concat(this.buildSteps);
 
           this.isLoading = false;
-          if (this.allBuildSteps.length !== 0 && this.allBuildSteps[0].buildStepName === 'Dockerfile') {
+          if (this.allBuildSteps.length && this.allBuildSteps[0].buildStepName.startsWith('Dockerfile')) {
             this.dockerfileUsed = true;
           }
           console.log(this.postBuildSteps);
@@ -210,7 +210,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       config: '{ "Host": "", "User": "", "Password": "", "OutputDirectory": ""}',
       isEditing: true
     } as BuildStep;
-    if (!step.buildStepName.startsWith("Post Actions")) {
+    if (!step.buildStepName.startsWith('Post Actions')) {
       this.addEmptyCommand(newStep);
       this.newBuildSteps.push(newStep);
       this.allBuildSteps.push(newStep);
@@ -241,7 +241,6 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     step.commandArguments.push(newCommandArgument);
     this.clearNewCommandArgument(step);
   }
-
 
   clearNewCommandArgument(step: BuildStep) {
     step.newCommandArgumentKey = undefined;
@@ -305,7 +304,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe(
           (resp) => {
-            if (resp.buildStepName.startsWith("Post Actions")) {
+            if (resp.buildStepName.startsWith('Post Actions')) {
               this.postBuildSteps.push(resp);
             }
             else {
@@ -336,7 +335,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     steps = steps.concat(this.buildSteps, this.postBuildSteps);
     steps.forEach(step => {
       step.config = JSON.stringify(step.configObject);
-    })
+    });
     this.buildStepService.bulkUpdate(steps)
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe(
@@ -421,7 +420,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     });
   }
 
-  trackByFn(index: any, item: any) {
+  trackByFn(index: number) {
     return index;
- }
+  }
 }
