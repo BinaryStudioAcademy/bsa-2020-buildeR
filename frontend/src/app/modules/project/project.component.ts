@@ -12,6 +12,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
+import {BuildHistory} from "@shared/models/build-history";
 
 @Component({
   selector: 'app-project',
@@ -29,6 +30,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
   loadingSelectedProjectBranches: boolean;
   selectedProjectBranches: Branch[];
   selectedProjectBranch: string;
+  lastBuild: BuildHistory;
 
   tabRoutes: TabRoute[] = [
     { name: 'Current', route: 'current' },
@@ -51,9 +53,12 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     private authService: AuthenticationService
   ) {
     super();
-
     this.projectService.projectName.subscribe((res) => this.project.name = res);
-    this.route.data.subscribe(({ project }) => this.project = project);
+    this.route.data.subscribe(({ project }) =>
+    {
+      this.project = project;
+      this.lastBuild = this.project.buildHistories.reverse()[0];
+    });
   }
 
   ngOnInit() {

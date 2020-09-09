@@ -27,5 +27,6 @@ namespace buildeR.BLL.Services.Abstract
         Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectRemoteTriggers(int projectId);
 
         Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId);
+        Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId);
     }
 }

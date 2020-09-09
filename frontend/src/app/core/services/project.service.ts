@@ -9,6 +9,8 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 import { BuildHistory } from '@shared/models/build-history';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { UsersGroupProjects } from '@shared/models/users-group-projects';
+import {Repository} from "@core/models/Repository";
+
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -18,10 +20,12 @@ export class ProjectService {
   private copyProject$ = new Subject<number>();
   private buildProject$ = new Subject<number>();
   private projectName$ = new Subject<string>();
+  private projectLevel$ = new Subject<boolean>();
   private envVariable$ = new Subject<EnviromentVariable>();
   private deleteEnvVariable$ = new Subject<EnviromentVariable>();
 
   projectName = this.projectName$.asObservable();
+  projectLevel = this.projectLevel$.asObservable();
   envVariable = this.envVariable$.asObservable();
   deleteEnvVariable = this.deleteEnvVariable$.asObservable();
 
@@ -113,6 +117,10 @@ export class ProjectService {
     this.projectName$.next(projectName);
   }
 
+  changeProjectLevel(projectLevel: boolean) {
+    this.projectLevel$.next(projectLevel);
+  }
+
   getEnvironmentVariables(projectId: number) {
     return this.httpService.getRequest<EnviromentVariable[]>
       (`${this.routePrefix}/envVar/${projectId}`);
@@ -149,4 +157,9 @@ export class ProjectService {
   deleteEnvVarEvent(envVar: EnviromentVariable) {
     this.deleteEnvVariable$.next(envVar);
   }
+
+  getRepositoryByProjectId(projectId: number){
+    return this.httpService.getRequest<Repository>(`${this.routePrefix}/repository/${projectId}`);
+  }
+
 }

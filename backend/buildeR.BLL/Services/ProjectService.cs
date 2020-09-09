@@ -243,5 +243,13 @@ namespace buildeR.BLL.Services
                                                 .FirstOrDefaultAsync(p => p.Id == id);
             return Mapper.Map<ProjectDTO>(project);
         }
+
+        public async Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId)
+        {
+            var buildHistories = (await Context.BuildHistories.ToListAsync())
+                .Where(b => b.ProjectId == projectId);
+            
+            return Mapper.Map<ICollection<BuildHistoryDTO>>(buildHistories);
+        }
     }
 }
