@@ -13,6 +13,9 @@ import { combineLatest } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { formatLog } from '../helpers/log.utils';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
+import { BuildStatus } from '@shared/models/build-status';
+
 
 @Component({
   selector: 'app-project-build',
@@ -33,13 +36,15 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     private authService: AuthenticationService,
     private buildHistoryService: BuildHistoryService,
     private projectLogsService: ProjectLogsService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private buildStatusesSignalRService: BuildStatusesSignalRService,
   ) {
     super();
   }
 
   ngOnInit() {
     this.listenToRouteChanges();
+    this.configureBuildStatusesSignalR();
   }
 
   listenToRouteChanges() {
@@ -60,6 +65,22 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
         this.logs = history?.logs.map(formatLog);
         this.projectLogsService.sendLogs(history.logs ?? []);
       }, (res: HttpErrorResponse) => this.toastrService.showError(res.error));
+  }
+
+  private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+      if (statusChange.BuildHistoryId === this.buildHistory.id) {
+        if (statusChange.Status != BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              this.buildHistory = bh;
+            });
+        } else {
+          this.buildHistory.buildStatus = statusChange.Status;
+        }
+      }
+    });
   }
 
   getCommit(bh: BuildHistory) {

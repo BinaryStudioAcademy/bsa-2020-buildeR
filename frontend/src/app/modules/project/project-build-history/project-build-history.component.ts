@@ -54,17 +54,20 @@ export class ProjectBuildHistoryComponent extends BaseComponent
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const buildIndex = this.builds.findIndex(pi => pi.id === statusChange.BuildHistoryId);
-      if (statusChange.Status !== BuildStatus.InProgress) {
-        this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-          this.builds[buildIndex] = bh;
-        });
-      } else {
-        this.builds[buildIndex].buildStatus = statusChange.Status;
+      const buildIndex = this.builds.findIndex(
+        (pi) => pi.id === statusChange.BuildHistoryId
+      );
+      if (buildIndex >= 0) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              this.builds[buildIndex] = bh;
+            });
+        } else {
+          this.builds[buildIndex].buildStatus = statusChange.Status;
+        }
       }
-      this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-
-      });
     });
   }
 

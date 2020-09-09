@@ -19,6 +19,7 @@ import { BuildStatusPipe } from './pipes/build-status.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { TimespanPipe } from './pipes/timespan.pipe';
 import { ProjectsDisplayComponent } from './components/projects-display/projects-display.component';
+import { UserBuildHistoryComponent } from './components/user-build-history/user-build-history.component'
 
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
@@ -38,6 +39,7 @@ import { ProjectsDisplayComponent } from './components/projects-display/projects
     ChartBigNormalizedComponent,
     ChartBigGroupedComponent,
     ProjectsDisplayComponent,
+    UserBuildHistoryComponent
   ],
   imports: [
     CommonModule,
@@ -70,7 +72,8 @@ import { ProjectsDisplayComponent } from './components/projects-display/projects
     ChartSmallComponent,
     ChartBigNormalizedComponent,
     ChartBigGroupedComponent,
-    ProjectsDisplayComponent
+    ProjectsDisplayComponent,
+    UserBuildHistoryComponent
   ],
 })
 export class SharedModule { }

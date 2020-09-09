@@ -14,6 +14,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
+import {BuildHistory} from "@shared/models/build-history";
 
 @Component({
   selector: 'app-project',
@@ -24,16 +25,25 @@ export class ProjectComponent extends BaseComponent implements OnInit {
   project: Project = {} as Project;
   isLoading: boolean;
   currentUser: User;
+  isSameUser = false;
+
+  hasPermissionToTriggerBuild = false;
 
   loadingSelectedProjectBranches: boolean;
   selectedProjectBranches: Branch[];
   selectedProjectBranch: string;
+  lastBuild: BuildHistory;
 
   tabRoutes: TabRoute[] = [
     { name: 'Current', route: 'current' },
     { name: 'Build History', route: 'history' },
     { name: 'Build Steps', route: 'steps' },
     { name: 'Settings', route: 'settings' },
+  ];
+
+  tabRoutesGuest: TabRoute[] = [
+    { name: 'Current', route: 'current' },
+    { name: 'Build History', route: 'history' },
   ];
 
   constructor(
@@ -46,15 +56,17 @@ export class ProjectComponent extends BaseComponent implements OnInit {
     private buildHistoryService: BuildHistoryService
   ) {
     super();
-
-    this.projectService.projectName.subscribe(
-      (res) => (this.project.name = res)
-    );
-    this.route.data.subscribe(({ project }) => (this.project = project));
+    this.projectService.projectName.subscribe((res) => this.project.name = res);
+    this.route.data.subscribe(({ project }) =>
+    {
+      this.project = project;
+      this.lastBuild = this.project.buildHistories.reverse()[0];
+    });
   }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+    this.checkPermissions();
   }
 
   triggerBuild() {
@@ -78,10 +90,19 @@ export class ProjectComponent extends BaseComponent implements OnInit {
       );
   }
 
-  openBranchSelectionModal(
-    content: TemplateRef<HTMLElement>,
-    projectId: number
-  ) {
+  checkPermissions() {
+    this.isSameUser = this.currentUser.id === this.project.ownerId;
+    if (!this.isSameUser) {
+      this.projectService.canUserRunNotOwnProject(
+        this.currentUser.id,
+        this.project.id
+      ).subscribe(
+        (permission) => this.hasPermissionToTriggerBuild = permission
+      );
+    }
+  }
+
+  openBranchSelectionModal(content: TemplateRef<HTMLElement>, projectId: number) {
     this.loadProjectBranches(projectId);
     this.modalService.open(content).result.catch(() => {});
   }

@@ -37,13 +37,14 @@ namespace buildeR.BLL.Services
         {
             var buildHistory = await Context.BuildHistories.AsNoTracking()
                 .Include(e => e.Performer)
+                .Include(e => e.Project)
                 .FirstOrDefaultAsync(e => e.Id == buildHistoryId);
 
             if (buildHistory is null)
             {
                 throw new NotFoundException(nameof(BuildHistory), buildHistoryId);
             }
-
+            
             var logs = await _buildLogService.GetLogs(buildHistory.ProjectId, buildHistory.Id);
             return Mapper.Map<BuildHistoryDTO>(buildHistory, opt => opt.AfterMap((src, dest) => dest.Logs = logs));
 
@@ -138,10 +139,20 @@ namespace buildeR.BLL.Services
                     .ToListAsync());
         }
 
+        public async Task<IEnumerable<BuildHistoryDTO>> GetSortedByStartDateHistoryByUserId(int id)
+        {
+            return Mapper.Map<IEnumerable<BuildHistoryDTO>>(await Context.BuildHistories.AsNoTracking()
+                .Where(bh => bh.PerformerId == id)
+                .Include(bh => bh.Performer)
+                .Include(bh => bh.Project)
+                .OrderBy(bh => bh.StartedAt).ToListAsync());
+        }
+
         public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)
         {
             // TODO add checking
-            var buildHistory = Context.BuildHistories.Include(bh => bh.Project).FirstOrDefault(bh => bh.Id == statusChange.BuildHistoryId);
+            var buildHistory = Context.BuildHistories.Include(bh => bh.Project)
+                .FirstOrDefault(bh => bh.Id == statusChange.BuildHistoryId);
             if (buildHistory != null)
             {
                 buildHistory.BuildStatus = statusChange.Status;
@@ -151,7 +162,7 @@ namespace buildeR.BLL.Services
                     buildHistory.BuildAt = statusChange.Time;
                     buildHistory.Duration = (buildHistory.BuildAt - buildHistory.StartedAt).Value.Milliseconds;
                 }
-                
+
                 await Context.SaveChangesAsync();
 
                 if (statusChange.Status != BuildStatus.InProgress)
@@ -169,7 +180,7 @@ namespace buildeR.BLL.Services
 
             return await GetBuildById(statusChange.BuildHistoryId);
         }
-        
+
         private static NotificationType StatusToNotificationType(StatusChangeDto statusChange)
         {
             return statusChange.Status switch
@@ -182,7 +193,7 @@ namespace buildeR.BLL.Services
                 _ => NotificationType.Information,
             };
         }
-        
+
         private static string StatusToNotificationMessage(BuildHistory buildHistory, StatusChangeDto statusChange)
         {
             string action = statusChange.Status switch
