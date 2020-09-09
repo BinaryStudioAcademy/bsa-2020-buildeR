@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../core/services/http.service';
 import { BuildHistory } from '../../shared/models/build-history';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BuildHistoryService {
 
-  public routePrefix = '/builds';
+  routePrefix = '/builds';
+
+  private loadBuildHistoryOfProject$ = new Subject<void>();
 
   constructor(private httpService: HttpService) { }
 
@@ -25,5 +28,13 @@ export class BuildHistoryService {
 
   getLastBuildHistoryByProject(projectId: number) {
     return this.httpService.getRequest<BuildHistory>(`${this.routePrefix}/project/${projectId}/last`);
+  }
+
+  sendLoadBuildHistoryOfProject(){
+    return this.loadBuildHistoryOfProject$.next();
+  }
+
+  getLoadBuildHistoryOfProject(){
+    return this.loadBuildHistoryOfProject$.asObservable();
   }
 }

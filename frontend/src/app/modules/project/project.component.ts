@@ -1,5 +1,5 @@
 import { Project } from 'src/app/shared/models/project/project';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
 import { ActivatedRoute } from '@angular/router';
@@ -12,13 +12,15 @@ import { BaseComponent } from '@core/components/base/base.component';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
+import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
+import { BuildHistoryService } from '@core/services/build-history.service';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.sass'],
 })
-export class ProjectComponent extends BaseComponent implements OnInit{
+export class ProjectComponent extends BaseComponent implements OnInit {
   project: Project = {} as Project;
   isLoading: boolean;
   currentUser: User;
@@ -41,11 +43,14 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     private modalService: NgbModal,
     private syncService: SynchronizationService,
     private authService: AuthenticationService,
+    private buildHistoryService: BuildHistoryService
   ) {
     super();
 
-    this.projectService.projectName.subscribe((res) => this.project.name = res);
-    this.route.data.subscribe(({ project }) => this.project = project);
+    this.projectService.projectName.subscribe(
+      (res) => (this.project.name = res)
+    );
+    this.route.data.subscribe(({ project }) => (this.project = project));
   }
 
   ngOnInit() {
@@ -56,7 +61,7 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     const newBuildHistory = {
       branchHash: this.selectedProjectBranch,
       performerId: this.currentUser.id,
-      projectId: this.project.id
+      projectId: this.project.id,
     } as NewBuildHistory;
 
     this.closeModal();
@@ -65,17 +70,20 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        () => this.toastrService.showSuccess(msg),
+        () => {
+          this.toastrService.showSuccess(msg);
+          this.buildHistoryService.sendLoadBuildHistoryOfProject();
+        },
         (res) => this.toastrService.showError(res.error)
       );
   }
 
-  openBranchSelectionModal(content: TemplateRef<HTMLElement>, projectId: number) {
+  openBranchSelectionModal(
+    content: TemplateRef<HTMLElement>,
+    projectId: number
+  ) {
     this.loadProjectBranches(projectId);
-    this.modalService
-      .open(content)
-      .result
-      .catch(() => {});
+    this.modalService.open(content).result.catch(() => {});
   }
 
   closeModal() {
@@ -88,9 +96,9 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       .getRepositoryBranches(projectId)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (resp) => this.selectedProjectBranches = resp,
+        (resp) => (this.selectedProjectBranches = resp),
         (resp) => this.toastrService.showError(resp.error),
-        () => this.loadingSelectedProjectBranches = false
+        () => (this.loadingSelectedProjectBranches = false)
       );
   }
 }

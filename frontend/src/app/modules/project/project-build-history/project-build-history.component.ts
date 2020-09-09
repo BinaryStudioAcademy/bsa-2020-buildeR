@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
 import { BuildStatus } from '@shared/models/build-status';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-build-history',
@@ -32,17 +33,23 @@ export class ProjectBuildHistoryComponent extends BaseComponent
     this.configureBuildStatusesSignalR();
     this.route.parent.params.subscribe((params) => {
       this.projectId = params.projectId;
-      this.buildHistoryService.getBuildHistoriesOfProject(this.projectId).subscribe(
-        (response) => {
-          this.builds = response.body;
-          this.isLoading = false;
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error.message, error.name);
-        }
-      );
+      this.loadProjects();
     });
+    this.buildHistoryService.getLoadBuildHistoryOfProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.loadProjects());
+  }
+
+  loadProjects() {
+    this.isLoading = true;
+    this.buildHistoryService.getBuildHistoriesOfProject(this.projectId).subscribe(
+      (response) => {
+        this.builds = response.body;
+        this.isLoading = false;
+      },
+      (error) => {
+        this.isLoading = false;
+        this.toastrService.showError(error.message, error.name);
+      }
+    );
   }
 
   private configureBuildStatusesSignalR() {
