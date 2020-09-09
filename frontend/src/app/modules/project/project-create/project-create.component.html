@@ -40,27 +40,33 @@
               <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
             </div>
           </ng-template>
-          <div class="input-wr">
-            <div class="label-wr">
-              <label class="required-field">Repository</label>
+          <fieldset [disabled]="!synchronizationFinished">
+            <div class="input-wr">
+              <div class="label-wr">
+                <label class="required-field">Repository</label>
+              </div>
+              <input
+                  id="typeahead-focus"
+                  type="text"
+                  class="form-control form-control-sm"
+                  [editable]="false"
+                  [(ngModel)]="newProject.repository"
+                  [inputFormatter]="repoListResultFormatter"
+                  [ngbTypeahead]="search"
+                  [resultTemplate]="repoInList"
+                  (selectItem)="handleRepositoryInputClick($event.item)"
+                  (focus)="repositoryInputFocus$.next($any($event).target.value)"
+                  (click)="repositoryInputClick$.next($any($event).target.value)"
+                  #repository="ngbTypeahead"
+                  formControlName="_repository"
+                  required
+
+                />
             </div>
-            <input
-                id="typeahead-focus"
-                type="text"
-                class="form-control form-control-sm"
-                [editable]="false"
-                [(ngModel)]="newProject.repository"
-                [inputFormatter]="repoListResultFormatter"
-                [ngbTypeahead]="search"
-                [resultTemplate]="repoInList"
-                (selectItem)="handleRepositoryInputClick($event.item)"
-                (focus)="repositoryInputFocus$.next($any($event).target.value)"
-                (click)="repositoryInputClick$.next($any($event).target.value)"
-                #repository="ngbTypeahead"
-                formControlName="_repository"
-                required
-              />
-          </div>
+            <app-loading-spinner position="relative" margin="0" top="-17px" left="95%" size="3px"
+              *ngIf="!synchronizationFinished">
+            </app-loading-spinner>
+          </fieldset>
           <div class="error" [hidden]="!projectForm.get('_repository').errors?.required || projectForm.get('_repository').untouched">
             Repository is required
           </div>
