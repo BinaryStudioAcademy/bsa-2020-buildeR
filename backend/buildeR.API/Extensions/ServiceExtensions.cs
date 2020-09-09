@@ -17,9 +17,7 @@ using buildeR.Common.DTO;
 using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
-using buildeR.API.HostedServices;
 using Nest;
-using buildeR.Common.DTO;
 
 namespace buildeR.API.Extensions
 {
@@ -46,6 +44,7 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
             services.AddScoped<IProjectGroupService, ProjectGroupService>();
+            services.AddScoped<IChatService, ChatService>();
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
@@ -54,7 +53,7 @@ namespace buildeR.API.Extensions
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
             services.AddElasticsearch(configuration);
-            services.AddTransient<ILogService, LogService>();
+            services.AddTransient<IBuildLogService, BuildLogService>();
             services.AddTransient<ISecretService, SecretService>();
             services.AddHttpClient();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
@@ -77,8 +76,10 @@ namespace buildeR.API.Extensions
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
             var notificationsQueueSettings = configuration.Bind<QueueSettings>("Queues:NotificationsToSignalR");
+            var messagesQueueSettings = configuration.Bind<QueueSettings>("Queues:MessagesToSignalR");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), toProcessorQueueSettings));
             services.AddTransient(sp => new NotificationsProducer(OwnConnectionFactory.GetConnectionFactory(configuration), notificationsQueueSettings));
+            services.AddTransient(sp => new MessagesProducer(OwnConnectionFactory.GetConnectionFactory(configuration), messagesQueueSettings));
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }

@@ -1,15 +1,9 @@
 import { Project } from 'src/app/shared/models/project/project';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import {
-  ActivatedRoute,
-  Resolve,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 import { TabRoute } from '@shared/models/tabs/tab-route';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SynchronizationService } from '@core/services/synchronization.service';
@@ -25,17 +19,16 @@ import { User } from '@shared/models/user/user';
   styleUrls: ['./project.component.sass'],
 })
 export class ProjectComponent extends BaseComponent implements OnInit{
-  id: number;
   project: Project = {} as Project;
-  isLoading = false;
+  isLoading: boolean;
   currentUser: User;
 
-  loadingSelectedProjectBranches = false;
+  loadingSelectedProjectBranches: boolean;
   selectedProjectBranches: Branch[];
   selectedProjectBranch: string;
 
   tabRoutes: TabRoute[] = [
-    { name: 'Current', route: 'details' },
+    { name: 'Current', route: 'current' },
     { name: 'Build History', route: 'history' },
     { name: 'Build Steps', route: 'steps' },
     { name: 'Settings', route: 'settings' },
@@ -50,61 +43,38 @@ export class ProjectComponent extends BaseComponent implements OnInit{
     private authService: AuthenticationService,
   ) {
     super();
-    this.route.paramMap
-      .pipe(switchMap((params) => params.getAll('projectId')))
-      .subscribe((data) => (this.id = Number(data)));
-    this.projectService.projectName.subscribe((res) => {
-      this.project.name = res;
-    });
-    this.route.data.subscribe((res) => {
-      this.project = res.project;
-    });
+
+    this.projectService.projectName.subscribe((res) => this.project.name = res);
+    this.route.data.subscribe(({ project }) => this.project = project);
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-    this.getProject(this.id);
-  }
-  getProject(projectId: number) {
-    this.isLoading = true;
-    this.projectService.getProjectById(projectId).subscribe(
-      (data) => {
-        this.isLoading = false;
-        this.project = data;
-      },
-      (error) => {
-        this.isLoading = false;
-        this.toastrService.showError(error.message, error.name);
-      }
-    );
   }
 
   triggerBuild() {
     const newBuildHistory = {
       branchHash: this.selectedProjectBranch,
       performerId: this.currentUser.id,
-      projectId: this.project.id,
-      commitHash: null,
+      projectId: this.project.id
     } as NewBuildHistory;
+
     this.closeModal();
-    this.toastrService.showSuccess(
-      `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${this.project.name}. Hold tight, it might take a moment to show up.`
-    );
+    const msg = `You’ve successfully triggered a build for ${newBuildHistory.branchHash} branch of ${this.project.name}. Hold tight, it might take a moment to show up.`;
     this.projectService
       .startProjectBuild(newBuildHistory)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (buildHistory) => {
-        },
-        (error) => this.toastrService.showError(error)
+        () => this.toastrService.showSuccess(msg),
+        (res) => this.toastrService.showError(res.error)
       );
   }
 
-  openBranchSelectionModal(content, projectId: number) {
+  openBranchSelectionModal(content: TemplateRef<HTMLElement>, projectId: number) {
     this.loadProjectBranches(projectId);
     this.modalService
       .open(content)
-      .result.then(() => {})
+      .result
       .catch(() => {});
   }
 
@@ -118,14 +88,9 @@ export class ProjectComponent extends BaseComponent implements OnInit{
       .getRepositoryBranches(projectId)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (resp) => {
-          this.selectedProjectBranches = resp;
-          this.loadingSelectedProjectBranches = false;
-        },
-        (error) => {
-          this.toastrService.showError(error);
-          this.loadingSelectedProjectBranches = false;
-        }
+        (resp) => this.selectedProjectBranches = resp,
+        (resp) => this.toastrService.showError(resp.error),
+        () => this.loadingSelectedProjectBranches = false
       );
   }
 }

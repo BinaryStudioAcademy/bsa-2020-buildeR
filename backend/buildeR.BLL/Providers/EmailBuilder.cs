@@ -63,5 +63,21 @@ namespace buildeR.BLL.Providers
                 Body = body
             };
         }
+        public EmailModel GetInviteGroupLetter(string email, string firstName)
+        {
+            string baseUrl = _configuration["ClientUrl"];
+            string subject = "Invitation to the group";
+            string title = $@"<b style=""font-size: 20px"">Hello, {firstName}!</b>";
+            string body = @$"You have been invited to the group. 
+                             You can accept invitation or decline on your <a href=""{baseUrl}/portal/groups"">groups page</a>.
+                             <br><br>Cheers,<br>buildeR team";
+            return new EmailModel()
+            {
+                Email = email,
+                Subject = subject,
+                Title = title,
+                Body = body
+            };
+        }
     }
 }

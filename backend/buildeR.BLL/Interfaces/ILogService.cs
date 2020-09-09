@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace buildeR.BLL.Interfaces
 {
-    public interface ILogService
+    public interface IBuildLogService
     {
         Task<List<ProjectLog>> GetLogs(int projectId, int buildHistoryId);
     }

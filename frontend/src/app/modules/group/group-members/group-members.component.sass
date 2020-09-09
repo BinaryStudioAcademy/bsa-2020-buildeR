@@ -6,6 +6,8 @@
   height: 100%
   border-radius: 50%
   padding: 5px
+  margin-right: 10%
+
 
 img
   vertical-align: middle
@@ -40,6 +42,10 @@ span.title
 
 .role
   padding-top: 1.5%
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
 
 .form-actions
     margin-top: 0
@@ -62,5 +68,38 @@ input
   flex-grow: 1
   justify-content: center
 
+.item-avatar
+  display: flex
+  flex-grow: 1
+  justify-content: flex-end
+
+
 .user
   flex-grow: 6
+
+.invite
+  display: flex
+  flex-direction: column
+  padding-bottom: 1rem
+  border-bottom: 1px solid #cccccc
+
+::ng-deep .dropdown-item.active,
+::ng-deep .dropdown-item:active
+  color: black
+  text-decoration: none
+  background-color: #f0f0f0
+
+.btn-delete
+  color: #666
+  font-size: 1.5rem
+  &:hover
+    color: black
+
+.gray
+  color: gray
+
+.owner
+  padding: 1.5% 5%
+
+
+

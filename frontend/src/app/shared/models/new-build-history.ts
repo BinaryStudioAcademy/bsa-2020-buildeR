@@ -1,5 +1,5 @@
 export interface NewBuildHistory {
-  projectId: number,
+  projectId: number;
   performerId: number;
   branchHash: string;
   commitHash: string;

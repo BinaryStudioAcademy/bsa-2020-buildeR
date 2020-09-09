@@ -8,13 +8,65 @@ else loaded;
 </ng-template>
 <ng-template #loaded>
   <div *ngIf="
+          groupInvites?.length;
+          then existInvites;
+        ">
+
+  </div>
+  <div *ngIf="
       groups?.length;
       then existGroups;
       else emptyGroups
     ">
   </div>
+
+  <ng-template #existInvites>
+    <div class="container for-span d-flex flex-row my-3">
+      <span class="my-auto title">Group invitations</span>
+    </div>
+    <div class="container" *ngIf="groupInvites">
+      <div class="row my-3 border rounded" *ngFor="let group of groupInvites">
+        <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
+          <div class="col-md-12 col-sm-12 text-dark">
+            <i *ngIf="!group.isPublic" class="fas fa-lock" [routerLink]="['/portal/groups', group?.id, 'projects']"></i>
+            <i *ngIf="group.isPublic" class="fas fa-globe" [routerLink]="['/portal/groups', group?.id, 'projects']"></i>
+            <a class="text-dark" [routerLink]="['../../groups', group?.id, 'projects']">{{group.name}}</a>
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Your role
+          </div>
+          <div class="col-md-12 col-sm-12 small row-bottom">
+            <span class="user-access-role">{{groupRole[getCurrentUserRoleInvite(group.id)]}}</span></div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Members
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="fas fa-users" [routerLink]="['../../groups', group?.id, 'members']"></i>
+            <span class="for-click" [routerLink]="['/portal/groups', group?.id, 'projects']">{{acceptedMembersCount(group)}}</span>
+          </div>
+        </div>
+        <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
+            Projects
+          </div>
+          <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
+            <i class="far fa-bookmark" [routerLink]="['../../groups', group?.id, 'projects']"></i>
+            <span class="for-click" [routerLink]="['/portal/groups', group?.id, 'projects']">{{group.projectGroups.length}}</span>
+          </div>
+        </div>
+        <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
+          <button type="button" class="btn btn-success" (click)="accept(group)">Accept</button>
+          <button type="button" class="btn btn-warning" (click)="decline(group)">Decline</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
   <ng-template #existGroups>
-    <div class="container d-flex flex-row my-3">
+    <div class="container for-span d-flex flex-row my-3">
       <span class="my-auto title">Groups</span>
       <div class="ml-auto">
         <button class="btn btn-info" [routerLink]="'new'">
@@ -26,25 +78,25 @@ else loaded;
       <div class="row my-3 border rounded" *ngFor="let group of groups">
         <div class="col-md-3 mx-0 px-10 col-sm-3 col-xs-12 my-auto row">
           <div class="col-md-12 col-sm-12 text-dark">
-            <i *ngIf="!group.isPublic" class="fas fa-lock"></i>
-            <i *ngIf="group.isPublic" class="fas fa-globe"></i>
-            <a class="text-dark" [routerLink]="['../../groups', group?.id, 'settings']">{{group.name}}</a>
+            <i *ngIf="!group.isPublic" class="fas fa-lock" [routerLink]="['/portal/groups', group?.id, 'projects']"></i>
+            <i *ngIf="group.isPublic" class="fas fa-globe" [routerLink]="['/portal/groups', group?.id, 'projects']"></i>
+            <a class="text-dark group-name" [routerLink]="['/portal/groups', group?.id, 'projects']">{{group.name}}</a>
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
-          <div *ngIf="getCurrentUserRole(group.id)" class="col-md-12 col-sm-12 text-muted small row-top">
+          <div class="col-md-12 col-sm-12 text-muted small row-top">
             Your role
           </div>
           <div class="col-md-12 col-sm-12 small row-bottom">
-            <span *ngIf="getCurrentUserRole(group.id)"
-              class="user-access-role">{{groupRole[getCurrentUserRole(group.id)]}}</span></div>
+            <span class="user-access-role">{{groupRole[getCurrentUserRole(group.id)]}}</span></div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
           <div class="col-md-12 col-sm-12 text-muted small row-top">
             Members
           </div>
           <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-            <i class="fas fa-users" [routerLink]="['../../groups', group?.id, 'members']"></i> {{group.teamMembers.length}}
+            <i class="fas fa-users" [routerLink]="['/portal/groups', group?.id, 'members']"></i>
+            <span class="for-click" [routerLink]="['/portal/groups', group?.id, 'members']">{{acceptedMembersCount(group)}}</span>
           </div>
         </div>
         <div class="col-md-2 mx-0 px-0 col-sm-2 col-xs-12 my-auto row row-cols-sm-2 row-cols-2 row-cols-md-1">
@@ -52,12 +104,13 @@ else loaded;
             Projects
           </div>
           <div class="col-md-12 col-sm-12 mx-2 small row-bottom">
-            <i class="far fa-bookmark" [routerLink]="['../../groups', group?.id, 'projects']"></i> {{group.projectGroups.length}}
+            <i class="far fa-bookmark" [routerLink]="['/portal/groups', group?.id, 'projects']"></i>
+            <span class="for-click" [routerLink]="['/portal/groups', group?.id, 'projects']">{{group.projectGroups.length}}</span>
           </div>
         </div>
         <div class="col-md-3 mx-0 px-0 col-sm-3 col-xs-12 my-auto drop-down-area overflow-hidden center">
           <ng-template #popContent>
-            <button class="btn dropdown-item" [routerLink]="['../../groups', group?.id, 'settings']"><i
+            <button class="btn dropdown-item" [routerLink]="['/portal/groups', group?.id, 'settings']"><i
                 class="fas fa-cog"></i>
               Settings</button>
             <div class="dropdown-divider"></div>

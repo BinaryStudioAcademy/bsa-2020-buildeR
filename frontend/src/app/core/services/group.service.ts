@@ -16,7 +16,7 @@ export class GroupService {
   groupIsPublic$ = new Subject<boolean>();
   groupName = this.groupName$.asObservable();
   groupIsPublic = this.groupIsPublic$.asObservable();
-
+  userGroupsChanged = new Subject<boolean>();
   constructor(private httpService: HttpService) { }
 
   getGroupById(groupId: number): Observable<Group> {
@@ -53,6 +53,7 @@ export class GroupService {
   }
 
   changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
+    this.userGroupsChanged.next();
     this.groupName$.next(groupName);
     this.groupIsPublic$.next(groupIsPublic);
   }
