@@ -54,5 +54,7 @@
   </div>
 </ng-container>
 <div class="container mt-3 grid">
-  <button class="btn btn-success btn-position" (click)="save()">Save</button>
+  <button class="btn btn-success btn-position" (click)="save()">Save
+    <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  </button>
 </div>

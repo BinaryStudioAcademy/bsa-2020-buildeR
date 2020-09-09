@@ -24,6 +24,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   buildHistory: BuildHistory;
   project: Project;
   isCurrent: boolean;
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,7 +58,13 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       )
       .subscribe(history => {
         this.buildHistory = history;
-      }, (res: HttpErrorResponse) => this.toastrService.showError(res.error));
+        this.isLoading = false;
+      }, (res: HttpErrorResponse) =>
+        {
+          this.toastrService.showError(res.error);
+          this.isLoading = false;
+        }
+      );
   }
 
   private configureBuildStatusesSignalR() {

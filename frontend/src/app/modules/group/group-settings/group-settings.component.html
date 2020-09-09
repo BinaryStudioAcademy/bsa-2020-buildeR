@@ -83,7 +83,9 @@
             </div>
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Save</button>
+            <button type="submit" class="btn btn-success" [disabled]="groupForm.invalid">Save
+              <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
             <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
           </div>
         </form>

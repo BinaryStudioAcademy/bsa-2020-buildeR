@@ -169,7 +169,9 @@
           </div>
           <div class="save-button-container" *ngIf="isOwner">
             <button type="submit" class="btn btn-success" [disabled]="settingsForm.invalid || !settingsForm.dirty || isChanged
-              || settingsForm.controls['username'].status === 'PENDING'">Save</button>
+              || settingsForm.controls['username'].status === 'PENDING'">Save
+              <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
       </fieldset>

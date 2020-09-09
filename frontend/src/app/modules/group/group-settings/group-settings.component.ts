@@ -15,6 +15,8 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 export class GroupSettingsComponent implements OnInit {
   groupId: number;
   groupForm: FormGroup;
+  isShowSpinner = false;
+
   @Input() group: Group = {} as Group;
   constructor(
     private groupService: GroupService,
@@ -46,13 +48,17 @@ export class GroupSettingsComponent implements OnInit {
   }
 
   onSubmit(group: Group) {
+    this.isShowSpinner = true;
     group.isPublic = group.isPublic.toString() === 'true';
     this.group = Object.assign(this.group, group);
     this.groupService.updateGroup(this.group).subscribe(() => {
       this.groupService.userGroupsChanged.next();
       this.groupService.changeGroupNameAndStatus(this.group.name, this.group.isPublic);
+      this.isShowSpinner = false;
       this.toastrService.showSuccess('Group successfully updated');
     }, (err) => {
+      this.isShowSpinner = false;
+      this.toastrService.showError('Group wasn\'t updated');
       this.toastrService.showError(err);
     });
   }

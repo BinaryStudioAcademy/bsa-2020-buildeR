@@ -15,6 +15,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 })
 export class NotificationSettingComponent implements OnInit {
 
+  isShowSpinner = false;
   user: User = this.authService.getCurrentUser();
   setting: NotificationSetting = {} as NotificationSetting;
   descriptions: NotificationDescription [] =
@@ -58,6 +59,7 @@ export class NotificationSettingComponent implements OnInit {
   }
 
   save() {
+    this.isShowSpinner = true;
     let res = true;
     if (res) {
       res = false;
@@ -77,10 +79,12 @@ export class NotificationSettingComponent implements OnInit {
         (data) =>
         {
           this.setting = data;
+          this.isShowSpinner = false;
           this.toastrService.showSuccess('notification settings updated');
           res = true;
         },
         (error) => {
+          this.isShowSpinner = false;
           this.toastrService.showError(error.message, error.name);
           res = true;
         }
