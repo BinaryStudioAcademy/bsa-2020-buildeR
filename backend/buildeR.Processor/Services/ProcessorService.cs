@@ -272,7 +272,7 @@ namespace buildeR.Processor.Services
             foreach (var step in orderedPostBuildSteps)
             {
                 var config = JsonConvert.DeserializeObject<PostBuildStepConfig>(step.Config);
-                dockerfile += $"&& ncftpput -u ${config.User} -p {config.Password} -R {config.Host} {config.OutputDirectory} /src";
+                dockerfile += $"&& ncftpput -u {config.User} -p {config.Password} -R {config.Host} {config.OutputDirectory} {config.Directory}";
             }
 
             return dockerfile;
