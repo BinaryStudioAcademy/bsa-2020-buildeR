@@ -38,7 +38,7 @@ export class DashboardComponent
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
   loadingGroupsProjects = false;
-  tab: "myprojects" | "groupsprojects" = "myprojects";
+  tab: "myprojects" | "groupsprojects" | "history" = "myprojects";
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -69,15 +69,21 @@ export class DashboardComponent
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const project = [...this.starredProjects, ...this.activeProjects, ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
-      if (project) {
+      const projectsToUpdate = [
+        ...this.starredProjects,
+        ...this.activeProjects,
+        ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))
+      ].filter(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
+      if (projectsToUpdate) {
         if (statusChange.Status != BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-            project.lastBuildHistory = bh;
+            projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
           });
         } else {
-          delete project.lastBuildHistory.buildStatus;
-          project.lastBuildHistory.buildStatus = statusChange.Status;
+          projectsToUpdate.forEach(p => {
+            delete p.lastBuildHistory.buildStatus;
+            p.lastBuildHistory.buildStatus = statusChange.Status;
+          });
         }
       }
     });

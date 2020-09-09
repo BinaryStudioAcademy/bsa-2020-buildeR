@@ -11,8 +11,11 @@
 
   <div
     *ngIf="this.starredProjects.length > 0 || this.activeProjects.length > 0 || hasGroupsProjects(); else emptyProjects">
-    <div class="container my-3">
-      <span class="my-auto title">Starred projects</span>
+    <div class="container starred-container">
+      <span class="my-auto title starred-title">Starred projects</span>
+      <button class="btn btn-info button-create-project" title="Create new project" (click)="openCreateProjectModal()">
+        <i class="fas fa-plus"></i>
+      </button>
     </div>
 
     <div *ngIf="starredProjects?.length;
@@ -45,18 +48,16 @@
             Groups' projects
           </a>
         </li>
+        <li class="list-group-item" [ngClass]="{ active: tab == 'history' }">
+          <a (click)="tab = 'history'">
+            History
+          </a>
+        </li>
       </ul>
     </nav>
 
     <div [ngSwitch]="tab">
       <div *ngSwitchCase="'myprojects'">
-        <div class="container d-flex flex-row">
-          <div class="ml-auto">
-            <button class="btn btn-info" (click)="openCreateProjectModal()">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-        </div>
         <div *ngIf="activeProjects.length > 0; else emptyActiveProjects">
           <app-projects-display [activeProjects]="activeProjects"></app-projects-display>
         </div>
@@ -83,7 +84,8 @@
           <ng-template #emptyGroupsProjects>
             <div class="container">
               <div class="row border rounded my-3">
-                <p class="m-auto text-center">Seems like you don't participate in any group as not an owner or their project list is empty</p>
+                <p class="m-auto text-center">Seems like you don't participate in any group as not an owner or their
+                  project list is empty</p>
               </div>
             </div>
           </ng-template>
@@ -91,6 +93,9 @@
         <ng-template #loadingGroupProjects>
           <app-loading-spinner size="10px" position="unset"></app-loading-spinner>
         </ng-template>
+      </div>
+      <div *ngSwitchCase="'history'">
+        <app-user-build-history></app-user-build-history>
       </div>
     </div>
   </div>

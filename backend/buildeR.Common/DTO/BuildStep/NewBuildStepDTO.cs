@@ -13,6 +13,7 @@ namespace buildeR.Common.DTO.BuildStep
         public int LoggingVerbosity { get; set; }
         public string WorkDirectory { get; set; }
         public string DockerImageVersion { get; set; }
+        public string Config { get; set; }
         public IEnumerable<CommandArgumentDTO> CommandArguments { get; set; }
         public ICollection<BuildPluginParameterDTO> BuildPluginParameters { get; set; }
     }

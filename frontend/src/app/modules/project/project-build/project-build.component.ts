@@ -11,8 +11,9 @@ import { takeUntil, switchMap, tap } from 'rxjs/operators';
 import { Project } from '@shared/models/project/project';
 import { combineLatest } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { formatLog } from '../helpers/log.utils';
-import { ProjectLogsService } from '@core/services/projects-logs.service';
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
+import { BuildStatus } from '@shared/models/build-status';
+
 
 @Component({
   selector: 'app-project-build',
@@ -22,9 +23,7 @@ import { ProjectLogsService } from '@core/services/projects-logs.service';
 export class ProjectBuildComponent extends BaseComponent implements OnInit {
   buildHistory: BuildHistory;
   project: Project;
-  logs: string[];
   isCurrent: boolean;
-  noHistory: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,14 +31,15 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     private authService: AuthenticationService,
     private buildHistoryService: BuildHistoryService,
-    private projectLogsService: ProjectLogsService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private buildStatusesSignalRService: BuildStatusesSignalRService,
   ) {
     super();
   }
 
   ngOnInit() {
     this.listenToRouteChanges();
+    this.configureBuildStatusesSignalR();
   }
 
   listenToRouteChanges() {
@@ -57,9 +57,23 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       )
       .subscribe(history => {
         this.buildHistory = history;
-        this.logs = history?.logs.map(formatLog);
-        this.projectLogsService.sendLogs(history.logs ?? []);
       }, (res: HttpErrorResponse) => this.toastrService.showError(res.error));
+  }
+
+  private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+      if (statusChange.BuildHistoryId === this.buildHistory.id) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
+          this.buildHistoryService
+            .getBuildHistory(statusChange.BuildHistoryId)
+            .subscribe((bh) => {
+              this.buildHistory = bh;
+            });
+        } else {
+          this.buildHistory.buildStatus = statusChange.Status;
+        }
+      }
+    });
   }
 
   getCommit(bh: BuildHistory) {
@@ -74,7 +88,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       performerId: user.id,
     } as NewBuildHistory;
 
-    const msg = `You’ve successfully restarted a build for ${history.branchHash} branch of ${this.project?.name}. Hold tight, it might take a moment to show up.`;
+    const msg = `You’ve successfully restarted a build for ${history.branchHash} branch of ${this.project.name}. Hold tight, it might take a moment to show up.`;
 
     this.projectService
       .startProjectBuild(history)

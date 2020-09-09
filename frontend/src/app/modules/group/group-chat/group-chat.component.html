@@ -20,13 +20,16 @@
                 </li>
                
             </ul>
+            <div class="chat-footer" #bottom>
+            </div>
         </div>
             <div class="input-group">
                 <input id="btn-input" type="text" class="form-control input-sm"
                     placeholder="Type your message here..." (keydown.enter)="sendMessage()"
                      [(ngModel)]="textOfMessage" />
                 <div class="input-group-append">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="sendMessage()">
+                    <button class="btn btn-sm btn-outline-secondary" [disabled]="textOfMessage ==''" 
+                    type="button" (click)="sendMessage()">
                         Send</button>
                 </div>
             </div>

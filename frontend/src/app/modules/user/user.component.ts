@@ -19,6 +19,7 @@ export class UserComponent implements OnInit {
 
   tabRoutesOwner: TabRoute[] = [
     { name: 'Profile', route: './' },
+    { name: 'History', route: 'history' },
     { name: 'Insights', route: 'insights' },
     { name: 'Notification settings', route: 'notificationsettings' },
     { name: 'Credential settings', route: 'credentialsettings' }
@@ -26,6 +27,7 @@ export class UserComponent implements OnInit {
 
   tabRoutesGuest: TabRoute[] = [
     { name: 'Profile', route: './' },
+    { name: 'History', route: 'history' },
     { name: 'Insights', route: 'insights' }
   ];
 

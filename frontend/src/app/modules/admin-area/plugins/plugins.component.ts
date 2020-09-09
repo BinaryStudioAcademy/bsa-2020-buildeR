@@ -123,7 +123,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
   addNewEmptyPlugin() {
     const plugin = {
       pluginName: 'New plugin',
-      isCollapsed: true,
+      isCollapsed: false,
       pluginCommands: []
     } as BuildPlugin;
     this.plugins.push(plugin);

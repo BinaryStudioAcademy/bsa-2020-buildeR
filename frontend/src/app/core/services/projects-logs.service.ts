@@ -10,11 +10,10 @@ import { IProjectLog } from '@shared/models/project/project-log';
 })
 export class ProjectLogsService {
   private logsHubConnection: HubConnection;
-  routePrefix = '/logs';
-  constructor(private httpService: HttpService) {
-  }
-  private logs$ = new Subject<IProjectLog[]>();
-  private rawLogs$ = new Subject<string[]>();
+  private routePrefix = '/logs';
+
+  constructor(private httpService: HttpService) { }
+
   public buildConnection() {
     this.logsHubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.signalRUrl}/logsHub`)
@@ -25,24 +24,7 @@ export class ProjectLogsService {
     return this.httpService.getRequest(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
   }
 
-  sendRawLogs(logs) {
-    return this.rawLogs$.next(logs);
-  }
-
-  receiveRawLogs() {
-    return this.rawLogs$.asObservable();
-  }
-
-
-  sendLogs(logs) {
-    return this.logs$.next(logs);
-  }
-
-  receiveLogs() {
-    return this.logs$.asObservable();
-  }
-
-  startConnectionAndJoinGroup(groupName: string | number) {
+  startConnectionAndJoinGroup(groupName: string) {
     this.logsHubConnection
       .start()
       .then(() => {

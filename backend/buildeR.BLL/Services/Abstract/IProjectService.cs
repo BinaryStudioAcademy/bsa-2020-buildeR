@@ -15,6 +15,7 @@ namespace buildeR.BLL.Services.Abstract
         Task<ProjectDTO> GetProjectByUserId(int userId, int projectId);
         Task<ProjectDTO> CreateProject(NewProjectDTO dto);
         Task UpdateProject(ProjectDTO dto, int userId);
+        Task<bool> CanUserRunNotOwnProject(int projectId, int userId);
 
         Task DeleteProject(int id);
         Task DeleteBuildStepsByProjectId(int projectId);
@@ -26,5 +27,6 @@ namespace buildeR.BLL.Services.Abstract
         Task<IEnumerable<ProjectRemoteTriggerDTO>> GetProjectRemoteTriggers(int projectId);
 
         Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId);
+        Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId);
     }
 }
