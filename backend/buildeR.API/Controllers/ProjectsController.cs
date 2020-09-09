@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.Repository;
 using buildeR.Common.DTO.Synchronization;
 using buildeR.Common.DTO.TeamMember;
 
@@ -48,9 +49,18 @@ namespace buildeR.API.Controllers
         [HttpGet("{projectId}/settings")]
         public async Task<ProjectDTO> GetProjectById(int projectId)
         {
-            return await _projectService.GetAsync(projectId);
+            var project = await _projectService.GetAsync(projectId);
+            project.Repository = await _projectService.GetRepository(projectId);
+            project.BuildHistories = await _projectService.GetAllBuildHistory(projectId);
+            return project;
         }
-
+        
+        [HttpGet("repository/{projectId}")]
+        public async Task<RepositoryDTO> GetRepositoryByUserId (int projectId)
+        {
+            return await _projectService.GetRepository(projectId);
+        }
+        
         [HttpPost]
         public async Task<ProjectDTO> CreateProject([FromBody] NewProjectDTO dto)
         {

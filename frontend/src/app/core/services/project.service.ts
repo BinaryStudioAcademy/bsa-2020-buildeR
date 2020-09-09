@@ -10,6 +10,7 @@ import { BuildHistory } from '@shared/models/build-history';
 import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { UsersGroupProjects } from '@shared/models/users-group-projects'
+import {Repository} from "@core/models/Repository";
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -155,4 +156,9 @@ export class ProjectService {
   deleteEnvVarEvent(envVar: EnviromentVariable) {
     this.deleteEnvVariable$.next(envVar);
   }
+
+  getRepositoryByProjectId(projectId: number){
+    return this.httpService.getRequest<Repository>(`${this.routePrefix}/repository/${projectId}`);
+  }
+
 }
