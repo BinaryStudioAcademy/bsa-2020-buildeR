@@ -59,15 +59,27 @@ namespace buildeR.Processor.Services
             _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
         }
 
+        public BuildStatus StatusSpecifying(int statusCode)
+        {
+            if (statusCode == 0)
+                return BuildStatus.Success;
+            else if (statusCode == -1)
+                return BuildStatus.Error;
+            else
+                return BuildStatus.Failure;
+        }
+
         private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
             SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId, executeBuild.UserId);
-            await BuildProjectAsync(executeBuild).ContinueWith(t => SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId, executeBuild.UserId));
+            var status = await BuildProjectAsync(executeBuild);
+            SendBuildStatus(StatusSpecifying(status), executeBuild.BuildHistoryId, executeBuild.UserId);
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
+
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -83,7 +95,7 @@ namespace buildeR.Processor.Services
 
         #region Build and output
 
-        public async Task BuildProjectAsync(ExecutiveBuildDTO build)
+        public async Task<int> BuildProjectAsync(ExecutiveBuildDTO build)
         {
             var pathToClonedRepository = Path.Combine(
                 _pathToProjects,
@@ -108,12 +120,12 @@ namespace buildeR.Processor.Services
                     await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
                 }
 
-                BuildDockerImage(pathToClonedRepository, build);
+                return BuildDockerImage(pathToClonedRepository, build);
             }
             catch (Exception e)
             {
-                SendBuildStatus(BuildStatus.Error, build.BuildHistoryId, build.UserId); 
                 Log.Error($"Error while building docker image. Reason: {e.Message}");
+                return -1;
             }
             finally
             {
@@ -128,7 +140,7 @@ namespace buildeR.Processor.Services
             }
         }
 
-        public void BuildDockerImage(string path, ExecutiveBuildDTO build)
+        public int BuildDockerImage(string path, ExecutiveBuildDTO build)
         {
             Process process = new Process();
             process.StartInfo.FileName = "docker";
@@ -146,6 +158,7 @@ namespace buildeR.Processor.Services
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.WaitForExit();
+            return process.ExitCode;
         }
 
         private bool areDockerLogs = true;
@@ -244,7 +257,7 @@ namespace buildeR.Processor.Services
             string dockerfile = "";
 
             var genericTemplate = Template.Parse(
-                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest\r\n" +
+                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:{{ if !this.docker_image_version; this.docker_image_version = \"latest\"; end; this.docker_image_version }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
