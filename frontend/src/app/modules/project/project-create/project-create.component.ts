@@ -33,6 +33,7 @@ export class ProjectCreateComponent implements OnInit {
   urlSection = false;
 
   isPrivateRepoChoosed = false;
+  synchronizationFinished = false;
 
   @ViewChild('repository', { static: false }) instance: NgbTypeahead;
 
@@ -131,7 +132,10 @@ export class ProjectCreateComponent implements OnInit {
 
   synchronize() {
     this.syncService.getUserRepositories(this.user.id)
-                .subscribe(repos => this.repositories = repos);
+                .subscribe(repos => {
+                  this.repositories = repos;
+                  this.synchronizationFinished = true;
+                });
   }
 
   cancel() {
