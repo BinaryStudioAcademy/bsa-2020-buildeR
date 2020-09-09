@@ -71,7 +71,9 @@
       </div>
     </div>
     <div class="btn-wp">
-      <button type="submit" class="btn btn-success" [disabled]="copyForm.invalid">Copy</button>
+      <button type="submit" [ngStyle]="{'width': isShowSpinner ? '6rem' : '4rem' }" class="btn btn-success" [disabled]="copyForm.invalid">Copy
+        <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      </button>
       <button type="button" class="btn btn-warning" (click)="onCancel()">Cancel</button>
     </div>
   </form>
