@@ -16,7 +16,6 @@ export class GroupComponent extends BaseComponent implements OnInit {
   id: number;
   group: Group = {} as Group;
   isLoading = false;
-  //@Output() activeTab = new EventEmitter<number>();
 
   tabRoutes: TabRoute[] = [
     { name: 'Projects', route: 'projects' },
@@ -37,7 +36,6 @@ export class GroupComponent extends BaseComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.group = data.group;
       this.id = this.group.id;
-      //this.activeTab.next(0);
     });
     this.groupService.groupName.subscribe((res) => {
       this.group.name = res;

@@ -77,7 +77,7 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
 
   writeStaticLogs(logs: IProjectLog[]) {
     this.initLogs();
-    logs?.forEach(log => this.buildLog(this.formatExistingLog(log)));
+    logs?.forEach(log => this.buildLog(this.formatExistingLog(log), false));
   }
 
   loggin() {
@@ -96,8 +96,8 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     this.buildSteps.get(key)[0] = !this.buildSteps.get(key)[0];
   }
 
-  private buildLog(line: string) {
-    if (this.autoscroll) {
+  private buildLog(line: string, enableScroll: boolean = true) {
+    if (enableScroll && this.autoscroll) {
       this.scrollBottom(this.bottom.nativeElement);
     }
 

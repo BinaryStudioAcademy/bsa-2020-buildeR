@@ -1,21 +1,24 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { BaseComponent } from '@core/components/base/base.component';
+import { BuildHistoryService } from '@core/services/build-history.service';
+import { NotificationsService } from '@core/services/notifications.service';
+import { takeUntil } from 'rxjs/operators';
 import { Notification } from '../../../shared/models/notification';
 import { NotificationType } from '../../../shared/models/notification-type';
-import { NotificationsService } from '@core/services/notifications.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { BuildHistoryService } from '@core/services/build-history.service';
 
 @Component({
   selector: 'app-notifications-block',
   templateUrl: './notifications-block.component.html',
   styleUrls: ['./notifications-block.component.sass'],
 })
-export class NotificationsBlockComponent implements OnInit {
+export class NotificationsBlockComponent extends BaseComponent implements OnInit {
   public notifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
   public isShowingRead = false;
   public counter: number;
+
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
 
@@ -23,12 +26,26 @@ export class NotificationsBlockComponent implements OnInit {
     private notificationService: NotificationsService,
     private router: Router,
     private buildHistoryService: BuildHistoryService
-  ) { }
+  ) {
+    super();
+    this.notificationService.getInitialNotifications()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((resp) => {
+        if (this.notifications.length === 0) {
+          this.notifications = resp.filter(n => !n.isRead);
+          for (const not of this.notifications) {
+            this.onChanging('adding', not);
+          }
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.notificationService.listen().subscribe((notification) => {
-      this.notifications.push(notification);
-      this.onChanging('adding', notification);
+      if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
+        this.notifications.push(notification);
+        this.onChanging('adding', notification);
+      }
     });
   }
 
@@ -49,7 +66,7 @@ export class NotificationsBlockComponent implements OnInit {
   }
 
   onChanging(type: 'adding' | 'reading', notification: Notification) {
-    if (type == 'adding') {
+    if (type === 'adding') {
       if (this.isShowingRead || !notification.isRead) {
         this.counterNotifications.emit(1);
       }
@@ -69,7 +86,7 @@ export class NotificationsBlockComponent implements OnInit {
             this.router.navigate(['/portal/groups']);
           }
           else {
-            this.router.navigate(['/portal/groups/' + notification.itemId + '/members']);
+            this.router.navigate(['/portal/groups/' + notification.itemId + '/projects']);
           }
           this.clearOne(notification);
           this.toggle();
@@ -81,9 +98,13 @@ export class NotificationsBlockComponent implements OnInit {
         case NotificationType.BuildSucceeded: {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
             bh => this.router.navigateByUrl('/', {skipLocationChange: true})
-              .then(() => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])),
+                  .then(() => {
+                      this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]);
+                      this.clearOne(notification);
+                  }),
             err => console.error(err),
           );
+          break;
         }
       }
     }
