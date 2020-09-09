@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
@@ -6,14 +6,13 @@ import { NotificationsService } from '@core/services/notifications.service';
 import { takeUntil } from 'rxjs/operators';
 import { Notification } from '../../../shared/models/notification';
 import { NotificationType } from '../../../shared/models/notification-type';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-notifications-block',
   templateUrl: './notifications-block.component.html',
   styleUrls: ['./notifications-block.component.sass'],
 })
-export class NotificationsBlockComponent extends BaseComponent implements OnInit, OnDestroy {
+export class NotificationsBlockComponent extends BaseComponent implements OnInit {
   public notifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
