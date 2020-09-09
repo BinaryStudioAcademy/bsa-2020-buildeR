@@ -29,6 +29,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
   isContributor = false;
   isBuilder = false;
   userProjects: ProjectInfo[];
+  isLoading: boolean = true;
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -80,6 +81,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
       if (this.userProjects){
         this.updateDropdown();
       }
+      this.isLoading = false;
     });
   }
 

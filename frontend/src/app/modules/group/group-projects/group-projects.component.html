@@ -1,3 +1,10 @@
+<div *ngIf="isLoading; then loading; else loaded;"></div>
+
+<ng-template #loading>
+  <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
+</ng-template>
+
+<ng-template #loaded>
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
   <div class="ml-auto" *ngIf="isAdmin" ngbDropdown>
     <button tabindex="0" class="btn btn-info" ngbDropdownToggle  id="Dropdown" role="button">
@@ -14,3 +21,4 @@
 <app-projects-display [activeProjects]="projects" [permissions]="true" [isAdmin]="isAdmin"
 [isContributor]="isContributor" [isBuilder]="isBuilder"></app-projects-display>
 </div>
+</ng-template>
