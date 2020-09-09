@@ -74,4 +74,9 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   getCommit(bh: BuildHistory) {
     return bh.commitHash?.substring(0, 6) ?? '—';
   }
+
+  startFirstBuild() {
+    document.getElementById('triggerBuildButton').click();
+  }
+
 }
