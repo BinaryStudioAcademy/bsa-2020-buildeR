@@ -15,9 +15,15 @@
       <div class="input-area">
         <input type="text" class="form-control form-control-sm" formControlName="name" required autocomplete="off"
           placeholder="Project name" />
+        <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+          *ngIf="copyForm.controls['name'].status === 'PENDING'">
+        </app-loading-spinner>
         <div class="error"
           [hidden]="copyForm.controls['name'].valid && copyForm.controls['name'].untouched || !copyForm.controls['name'].errors?.required">
           Name is required
+        </div>
+        <div class="error" *ngIf="copyForm.controls['name'].errors?.isProjectNameTaken">
+          Project with name '{{copyForm.get('name').value}}' alredy exist
         </div>
       </div>
       <div class="field">
