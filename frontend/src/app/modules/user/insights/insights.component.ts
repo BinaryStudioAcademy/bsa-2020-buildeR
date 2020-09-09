@@ -36,7 +36,6 @@ export class InsightsComponent implements OnInit {
 
   constructor(private buildService: BuildHistoryService, private route: ActivatedRoute) {
    }
-
   ngOnInit(): void {
     this.buildsPublicity = ['public and private builds', 'public builds', 'private builds'];
     this.route.data.subscribe(data => {
@@ -80,7 +79,7 @@ export class InsightsComponent implements OnInit {
       this.countedDate = new Date(this.now);
       this.countedDate.setDate(this.countedDate.getDate() - 30);
       date.setDate(date.getDate() - 30);
-      this.fulfillCharts(date, 31);
+      this.fulfillCharts(date, 30);
       return;
     }
     // Show week
@@ -88,7 +87,7 @@ export class InsightsComponent implements OnInit {
     this.countedDate = new Date(this.now);
     this.countedDate.setDate(this.countedDate.getDate() - 6);
     date.setDate(date.getDate() - 6);
-    this.fulfillCharts(date, 8);
+    this.fulfillCharts(date, 6);
     return;
   }
 

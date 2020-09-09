@@ -1,7 +1,7 @@
 ﻿using buildeR.BLL.Interfaces;
 using buildeR.Common.DTO.BuildPlugin;
 using Microsoft.AspNetCore.Mvc;
-
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -48,10 +48,10 @@ namespace buildeR.API.Controllers
             await _buildPluginService.Delete(id);
         }
 
-        [HttpGet("{buildPluginName}/versions/{version}")]
-        public async Task<IEnumerable<string>> GetVersionOfBuildPluginByPartOfVersion(string buildPluginName, string version)
+        [HttpPost("versions")]
+        public async Task<IEnumerable<string>> GetVersionOfBuildPluginByPartOfVersion([FromBody] PluginVersionLookupDTO response)
         {
-            return await _buildPluginService.GetVersionsOfBuildPlugin(buildPluginName, version);
+            return await _buildPluginService.GetVersionsOfBuildPlugin(response.buildPluginName, response.partOfVersionTerm);
         }
     }
 }
