@@ -18,6 +18,9 @@ using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
 using Nest;
+using Quartz.Spi;
+using buildeR.BLL.Factories;
+using buildeR.BLL.QuartzJobs;
 
 namespace buildeR.API.Extensions
 {
@@ -63,7 +66,8 @@ namespace buildeR.API.Extensions
 
             services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
-
+            services.AddSingleton<IJobFactory, JobFactory>();
+            services.AddSingleton<RunBuildJob>();
             services.RegisterAutoMapper();
         }
 
