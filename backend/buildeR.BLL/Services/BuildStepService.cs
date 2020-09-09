@@ -131,7 +131,8 @@ namespace buildeR.BLL.Services
                         BuildPluginId = buildPlugin.Id,
                         BuildPlugin = Mapper.Map<BuildPluginDTO>(buildPlugin),
                         PluginCommand = Mapper.Map<PluginCommandDTO>(pluginCommand),
-                        PluginCommandId = pluginCommand.Id
+                        PluginCommandId = pluginCommand.Id,
+                        Config = buildPlugin.PluginName.StartsWith("Post Actions") ? " { \"Host\": \"\", \"User\": \"\", \"Password\" : \"\", \"Directory\": \"\", \"OutputDirectory\": \"\"} " : " "
                     }
                 );
         }
