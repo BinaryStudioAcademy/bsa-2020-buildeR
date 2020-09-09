@@ -26,6 +26,7 @@ export class ProjectCreateComponent implements OnInit {
   repositories: Repository[];
   projectForm: FormGroup;
   credentialUsername = '';
+  isShowSpinner = false;
 
   userHasToken = false;
   githubRepoSection = false;
@@ -99,6 +100,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
+    this.isShowSpinner = true;
     this.newProject.name = this.projectForm.controls.name.value;
     this.newProject.description = this.projectForm.controls.description.value;
     this.newProject.isPublic = this.projectForm.controls.isPublic.value;
@@ -112,6 +114,7 @@ export class ProjectCreateComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('Project created!');
+        this.isShowSpinner = false;
         this.activeModal.close('Saved');
         if (this.syncService.checkIfUserHasToken(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
@@ -119,6 +122,7 @@ export class ProjectCreateComponent implements OnInit {
         }
       },
       (error) => {
+        this.isShowSpinner = false;
         this.toastrService.showError(error.message, error.name);
         this.activeModal.dismiss('Error on save');
       },
