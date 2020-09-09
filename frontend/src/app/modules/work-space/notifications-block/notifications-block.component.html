@@ -22,8 +22,7 @@
         'build-errored text-danger': notification.type == NotificationType.BuildErrored,
         'build-failed text-danger': notification.type == NotificationType.BuildFailed,
         'build-success text-success': notification.type == NotificationType.BuildSucceeded
-        }"
-        (click)="navigateToItem(notification)">
+        }" (click)="navigateToItem(notification)">
         <div class="notification-type">
           <div class="notification-type-icon">
             <i class="fas" [ngClass]="{
