@@ -63,14 +63,14 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       .subscribe(history => {
         this.buildHistory = history;
         this.logs = history?.logs.map(formatLog);
-        this.projectLogsService.sendLogs(history.logs ?? []);
+        this.projectLogsService.sendLogs(history?.logs ?? []);
       }, (res: HttpErrorResponse) => this.toastrService.showError(res.error));
   }
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       if (statusChange.BuildHistoryId === this.buildHistory.id) {
-        if (statusChange.Status != BuildStatus.InProgress) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
             .subscribe((bh) => {
