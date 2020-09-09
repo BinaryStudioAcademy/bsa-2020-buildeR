@@ -84,8 +84,9 @@ namespace buildeR.BLL.Services
         private IJobDetail CreateJob(QuartzDTO quartzDTO)
         {
             return JobBuilder
-            .Create<PrintToConsoleJob>()
+            .Create<RunBuildJob>()
             .WithIdentity(quartzDTO.Id, quartzDTO.Group)
+            .WithDescription(quartzDTO.Description)
             .Build();
         }
         private ITrigger CreateTrigger(QuartzDTO quartzDTO)
