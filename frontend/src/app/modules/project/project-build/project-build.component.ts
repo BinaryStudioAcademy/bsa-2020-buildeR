@@ -111,8 +111,4 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   openHistory({ id, projectId }: BuildHistory) {
     this.router.navigateByUrl(`/portal/projects/${projectId}/history/${id}`);
   }
-
-  startFirstBuild(){
-    document.getElementById('triggerBuildButton').click();
-  }
 }
