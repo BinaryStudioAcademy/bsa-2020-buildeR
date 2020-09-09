@@ -10,7 +10,7 @@
       <div class="card-header">
         <button class='btn' (click)="collapsePluginCard(plugin)"
               [attr.aria-expanded]="!plugin.isCollapsed" aria-controls="'i'"><i [ngClass]="(plugin.isCollapsed) ? 'fa fa-angle-down':'fa fa-angle-up'"></i></button>
-        <h5 class='card-title plugin-name'>{{ plugin.pluginName }}</h5>
+        <h5 class='card-title plugin-name' (click)="collapsePluginCard(plugin)">{{ plugin.pluginName }}</h5>
         <button class='btn float-right' (click)="deletePlugin(plugin)"><i class="fas fa-times"></i></button>
       </div>
       <div id="'i'" [ngbCollapse]="plugin.isCollapsed" class='p-3'>
@@ -53,7 +53,8 @@
             </div>
           </div>
           <div class="input-group mb-3 mt-4">
-            <input type="text" class="form-control" [(ngModel)]="plugin.newCommand">
+            <label class="input-group-prepend w-25" [for]="'pluginCommand' + i"><span class="input-group-text">Enter command name:</span></label>
+            <input type="text" [id]="'pluginCommand' + i" class="form-control" [(ngModel)]="plugin.newCommand">
             <div class="input-group-append" ngbTooltip='Save plugin before adding new commands' [disableTooltip]='plugin.id'>
               <button class="btn btn-info" [disabled]='!plugin.id || plugin.newCommand.length < 2' (click)='addNewCommand(plugin)'>Add new command</button>
             </div>

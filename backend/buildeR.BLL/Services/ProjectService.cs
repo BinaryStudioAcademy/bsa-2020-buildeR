@@ -118,6 +118,17 @@ namespace buildeR.BLL.Services
             }
         }
 
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await Context.TeamMembers.AsNoTracking()
+                .Include(tm => tm.Group)
+                .Include(tm => tm.Group)
+                .ThenInclude(g => g.ProjectGroups)
+                .AnyAsync(tm => tm.UserId == userId 
+                           && tm.Group.ProjectGroups.Any(pg => pg.ProjectId == projectId)
+                           && (tm.MemberRole == GroupRole.Builder || tm.MemberRole == GroupRole.Owner));
+        }
+
         public async Task DeleteProject(int id)
         {
             var project = await GetAsync(id);
@@ -231,6 +242,14 @@ namespace buildeR.BLL.Services
                                                 .Include(p => p.Owner)
                                                 .FirstOrDefaultAsync(p => p.Id == id);
             return Mapper.Map<ProjectDTO>(project);
+        }
+
+        public async Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId)
+        {
+            var buildHistories = (await Context.BuildHistories.ToListAsync())
+                .Where(b => b.ProjectId == projectId);
+            
+            return Mapper.Map<ICollection<BuildHistoryDTO>>(buildHistories);
         }
     }
 }

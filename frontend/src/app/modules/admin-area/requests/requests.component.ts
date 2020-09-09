@@ -14,8 +14,8 @@ import {ToastrNotificationsService} from "@core/services/toastr-notifications.se
 })
 export class RequestsComponent extends BaseComponent implements OnInit {
 
-  currentUserLetters: UserLetter[] = {} as UserLetter[];
-  allUserLetters: UserLetter[] = {} as UserLetter[];
+  currentUserLetters:UserLetter[];
+  allUserLetters: UserLetter[];
 
   constructor(private userService: UserService,
               private activeRoute: ActivatedRoute,

@@ -23,7 +23,7 @@ export class NotificationsBlockComponent implements OnInit {
     private notificationService: NotificationsService,
     private router: Router,
     private buildHistoryService: BuildHistoryService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.notificationService.listen().subscribe((notification) => {
@@ -60,17 +60,28 @@ export class NotificationsBlockComponent implements OnInit {
     }
   }
 
-  navigateToItem(notification: Notification) {
+  navigateToItem(notification: Notification, event) {
     if (notification.itemId) {
+      event.preventDefault();
       switch (notification.type) {
+        case NotificationType.Group: {
+          if (notification.itemId === -1) {
+            this.router.navigate(['/portal/groups']);
+          }
+          else {
+            this.router.navigate(['/portal/groups/' + notification.itemId + '/members']);
+          }
+          this.clearOne(notification);
+          this.toggle();
+          break;
+        }
         case NotificationType.BuildCanceled:
         case NotificationType.BuildErrored:
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])
-              .then(() => this.toggle())
-              .catch((err) => console.error(err)),
+            bh => this.router.navigateByUrl('/', {skipLocationChange: true})
+              .then(() => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])),
             err => console.error(err),
           );
         }

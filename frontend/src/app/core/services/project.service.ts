@@ -7,35 +7,38 @@ import { Observable, Subject } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { BuildHistory } from '@shared/models/build-history';
-import { Branch } from '@core/models/Branch';
 import { NewBuildHistory } from '@shared/models/new-build-history';
-import { UsersGroupProjects } from '@shared/models/users-group-projects'
+import { UsersGroupProjects } from '@shared/models/users-group-projects';
+import {Repository} from "@core/models/Repository";
+
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  public routePrefix = '/projects';
+  routePrefix = '/projects';
   private starProject$ = new Subject<ProjectInfo>();
   private deleteProject$ = new Subject<number>();
   private copyProject$ = new Subject<number>();
   private buildProject$ = new Subject<number>();
   private projectName$ = new Subject<string>();
+  private projectLevel$ = new Subject<boolean>();
   private envVariable$ = new Subject<EnviromentVariable>();
   private deleteEnvVariable$ = new Subject<EnviromentVariable>();
 
   projectName = this.projectName$.asObservable();
+  projectLevel = this.projectLevel$.asObservable();
   envVariable = this.envVariable$.asObservable();
   deleteEnvVariable = this.deleteEnvVariable$.asObservable();
 
   constructor(private httpService: HttpService) { }
 
-  public getProjectsByUser(
+  getProjectsByUser(
     userId: number
   ): Observable<HttpResponse<ProjectInfo[]>> {
     return this.httpService.getFullRequest<ProjectInfo[]>(
       `${this.routePrefix}/getProjectsByUserId/${userId}`
     );
   }
-  public getProjectById(projectId: number): Observable<Project> {
+  getProjectById(projectId: number): Observable<Project> {
     return this.httpService.getRequest<Project>(
       `${this.routePrefix}/${projectId}/settings`
     );
@@ -47,66 +50,63 @@ export class ProjectService {
     );
   }
 
-  public createProject(newProject: NewProject): Observable<Project> {
+  createProject(newProject: NewProject): Observable<Project> {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}`,
       newProject
     );
   }
-  public updateProject(project: Project): Observable<Project> {
+  updateProject(project: Project): Observable<Project> {
     return this.httpService.putRequest<Project>(`${this.routePrefix}`, project);
   }
-  public startProjectBuild(history: NewBuildHistory): Observable<BuildHistory> {
-    return this.httpService.postRequest<BuildHistory>(
-      `${this.routePrefix}/build`,
-      history
-    );
+  startProjectBuild(history: NewBuildHistory): Observable<BuildHistory> {
+    return this.httpService.postRequest<BuildHistory>(`${this.routePrefix}/build`, history);
   }
 
-  public DeleteBuildStepsByProjectId(projectId: number){
+  DeleteBuildStepsByProjectId(projectId: number){
     return this.httpService.getFullRequest(`${this.routePrefix}/deleteBuildStepsByProjectId/${projectId}`);
   }
 
-  public sendBuldProject(projectId){
+  sendBuldProject(projectId){
     return this.buildProject$.next(projectId);
   }
 
-  public getBuldProject(){
+  getBuldProject(){
     return this.buildProject$.asObservable();
   }
 
-  public sendCopyProject(project: number){
+  sendCopyProject(project: number){
     return this.copyProject$.next(project);
   }
 
-  public getCopyProject(){
+  getCopyProject(){
     return this.copyProject$.asObservable();
   }
 
-  public sendDeleteProject(project: number){
+  sendDeleteProject(project: number){
     return this.deleteProject$.next(project);
   }
 
-  public getDeleteProject(){
+  getDeleteProject(){
     return this.deleteProject$.asObservable();
   }
 
-  public sendStarProject(project: ProjectInfo){
+  sendStarProject(project: ProjectInfo){
     return this.starProject$.next(project);
   }
 
-  public getStarProject(){
+  getStarProject(){
     return this.starProject$.asObservable();
   }
 
-  public changeFavoriteState(projectId: number) {
+  changeFavoriteState(projectId: number) {
     return this.httpService.postRequest(`${this.routePrefix}/markFavorite/${projectId}`, null);
   }
 
-  public deleteProject(projectId: number): Observable<any> {
+  deleteProject(projectId: number) {
     return this.httpService.deleteFullRequest<ProjectInfo>(`${this.routePrefix}/` + projectId);
   }
-  public copyProject(project: Project): Observable<Project> {
+  copyProject(project: Project) {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}/copy`,
       project
@@ -117,25 +117,33 @@ export class ProjectService {
     this.projectName$.next(projectName);
   }
 
-  public getEnvironmentVariables(projectId: number): Observable<any> {
+  changeProjectLevel(projectLevel: boolean) {
+    this.projectLevel$.next(projectLevel);
+  }
+
+  getEnvironmentVariables(projectId: number) {
     return this.httpService.getRequest<EnviromentVariable[]>
       (`${this.routePrefix}/envVar/${projectId}`);
   }
 
-  public addEnvironmentVariable(envVar: EnviromentVariable) {
+  addEnvironmentVariable(envVar: EnviromentVariable) {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}/envVar`,
       envVar
     );
   }
-  public deleteEnviromentVariable(envVar: EnviromentVariable) {
+  deleteEnviromentVariable(envVar: EnviromentVariable) {
     return this.httpService.postRequest(`${this.routePrefix}/envVar/delete`,
       envVar);
   }
 
-  public updateEnviromentVariable(envVar: EnviromentVariable) {
+  updateEnviromentVariable(envVar: EnviromentVariable) {
     return this.httpService.putRequest(`${this.routePrefix}/envVar`,
       envVar);
+  }
+
+  public canUserRunNotOwnProject(userId: number, projectId: number) {
+    return this.httpService.getRequest<boolean>(`${this.routePrefix}/canUserRunNotOwnProject?userId=${userId}&projectId=${projectId}`);
   }
 
   validateProjectName(userId: number, projectName: string, projectId: number): Observable<boolean> {
@@ -149,4 +157,9 @@ export class ProjectService {
   deleteEnvVarEvent(envVar: EnviromentVariable) {
     this.deleteEnvVariable$.next(envVar);
   }
+
+  getRepositoryByProjectId(projectId: number){
+    return this.httpService.getRequest<Repository>(`${this.routePrefix}/repository/${projectId}`);
+  }
+
 }

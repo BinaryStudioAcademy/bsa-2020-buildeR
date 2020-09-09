@@ -3,11 +3,12 @@ import { Component, OnInit, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
-import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
-import {User} from '@shared/models/user/user';
+import { projectNameAsyncValidator } from '@modules/project/validators/project-name.async-validator';
+import { User } from '@shared/models/user/user';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 @Component({
   selector: 'app-project-settings',
@@ -20,6 +21,7 @@ export class ProjectSettingsComponent implements OnInit {
   isLoading = false;
   isShowSpinner = false;
   projectId: number;
+  isLoadedEnvVar = false;
   branches: string [] = ['master', 'dev'];
   public envVarsForm: FormGroup;
   public projectForm: FormGroup;
@@ -32,21 +34,41 @@ export class ProjectSettingsComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
+    private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
-  )
-  { }
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
 
     this.route.parent.data.subscribe(data => {
-      this.currentUser = data.user;
+      this.project = data.project;
+      this.createProjectForm();
     });
 
-    this.route.parent.params.subscribe(
-      (params) => this.projectId = params.projectId);
-    this.route.parent.data.subscribe(data => this.project = data.project);
+    this.loadEnvVars();
+    this.envVarsForm = new FormGroup({
+      name: new FormControl(this.envVar.data.name,
+        [
+          Validators.required,
+          this.isNotUniqueName()
+        ]),
+      value: new FormControl(this.envVar.data.value,
+        [
+          Validators.required
+        ]),
+        isSecret: new FormControl(this.envVar.data.isSecret)
+    });
+    this.projectService.envVariable.subscribe((res) => {
+      this.edit(res);
+    });
+    this.projectService.deleteEnvVariable.subscribe((res) => {
+      this.delete(res);
+    });
+  }
 
+  createProjectForm() {
     this.projectForm = new FormGroup({
       name: new FormControl(this.project.name,
         [
@@ -76,36 +98,19 @@ export class ProjectSettingsComponent implements OnInit {
       }
     });
 
-    this.envVarsForm = new FormGroup({
-      name: new FormControl(this.envVar.data.name,
-        [
-          Validators.required
-        ]),
-      value: new FormControl(this.envVar.data.value,
-        [
-          Validators.required
-        ]),
-        isSecret: new FormControl(this.envVar.data.isSecret)
-    });
-    this.projectService.envVariable.subscribe((res) => {
-      this.edit(res);
-    });
-    this.projectService.deleteEnvVariable.subscribe((res) => {
-      this.delete(res);
-    });
-    this.loadEnvVars();
   }
-
   reset() {
     this.projectForm.reset(this.project);
   }
   save(project: Project) {
     this.isShowSpinner = true;
+    project.isPublic = project.isPublic.toString() === 'true';
     this.project = Object.assign(this.project, project);
     this.projectService.updateProject(this.project).subscribe(() =>
     {
       this.isShowSpinner = false;
       this.projectService.changeProjectName(this.project.name);
+      this.projectService.changeProjectLevel(this.project.isPublic);
       this.toastrService.showSuccess('Project successfully updated');
     }, (err) => {
       this.isShowSpinner = false;
@@ -115,16 +120,20 @@ export class ProjectSettingsComponent implements OnInit {
     this.isChanged = true;
   }
 
-  loadEnvVars(){
-    this.projectService.getEnvironmentVariables(this.project.id).subscribe((res) => {
-      this.envVariables = res;
-    });
+  loadEnvVars() {
+    this.projectService.getEnvironmentVariables(this.project.id).subscribe(
+      (res) => {
+        this.envVariables = res;
+        this.isLoadedEnvVar = true;
+      },
+      (error) => this.toastrService.showError(error.message, error.name),
+    );
   }
 
   addEnvVar(envValue: VariableValue){
     let err = false;
     this.envVar.projectId = this.project.id;
-    this.envVar.id = this.createId();
+    this.envVar.id = envValue.name;
     this.envVar.data = envValue;
     if (!this.envVar.data.isSecret) {
       this.envVar.data.isSecret = false;
@@ -145,13 +154,6 @@ export class ProjectSettingsComponent implements OnInit {
         }
       }
     );
-  }
-  createId(): number{
-    if (this.envVariables?.length > 0) {
-      // tslint:disable-next-line: no-shadowed-variable
-      return Math.max.apply(null, this.envVariables.map((env) => env.id)) + 1;
-    }
-    return 0;
   }
 
   delete(envVar: EnviromentVariable){
@@ -177,6 +179,7 @@ export class ProjectSettingsComponent implements OnInit {
   edit(envVar: EnviromentVariable){
     const index = this.envVariables.findIndex(x => x.id === envVar.id);
     let err = false;
+    console.log(index);
 
     this.projectService.updateEnviromentVariable(envVar).subscribe(
       () => {
@@ -188,9 +191,20 @@ export class ProjectSettingsComponent implements OnInit {
       },
       () => {
         if (!err) {
-          this.envVariables.splice(index, 1, envVar);
+          console.log( this.envVariables);
+          envVar.id = envVar.data.name;
+          this.envVariables.splice(index, 1, envVar); console.log(this.envVariables);
         }
       }
     );
+  }
+  isNotUniqueName(): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      const isNotUnique = this.envVariables.some(x => x.data.name === control.value);
+      return isNotUnique ? { isNotUniqueName: {value: control.value}} : null;
+    };
+  }
+  isNotUniqueCheckChanges(input: string): boolean {
+    return this.envVariables.some(x => x.data.name === input);
   }
 }

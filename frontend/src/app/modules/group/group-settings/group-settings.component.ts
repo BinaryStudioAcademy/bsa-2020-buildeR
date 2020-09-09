@@ -23,12 +23,13 @@ export class GroupSettingsComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     public route: ActivatedRoute,
   ) {
-    this.route.parent.params.subscribe(
-      (params) => this.groupId = params.groupId);
-    this.route.parent.data.subscribe(data => this.group = data.group);
   }
 
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.groupId = data.group.id;
+      this.group = data.group;
+    });
     this.groupForm = new FormGroup({
       name: new FormControl(this.group.name,
         [
@@ -48,8 +49,10 @@ export class GroupSettingsComponent implements OnInit {
 
   onSubmit(group: Group) {
     this.isShowSpinner = true;
+    group.isPublic = group.isPublic.toString() === 'true';
     this.group = Object.assign(this.group, group);
     this.groupService.updateGroup(this.group).subscribe(() => {
+      this.groupService.userGroupsChanged.next();
       this.groupService.changeGroupNameAndStatus(this.group.name, this.group.isPublic);
       this.isShowSpinner = false;
       this.toastrService.showSuccess('Group successfully updated');

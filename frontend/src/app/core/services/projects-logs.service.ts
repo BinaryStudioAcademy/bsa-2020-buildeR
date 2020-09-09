@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
-import { Log } from '@modules/project/logging-terminal/logging-terminal.component';
+import { IProjectLog } from '@shared/models/project/project-log';
 
 @Injectable({
   providedIn: 'root'
@@ -12,38 +12,38 @@ export class ProjectLogsService {
   private logsHubConnection: HubConnection;
   routePrefix = '/logs';
   constructor(private httpService: HttpService) {
-   }
-   private logs$ = new Subject<Log[]>();
-   private rawLogs$ = new Subject<string[]>();
-   public buildConnection() {
-     this.logsHubConnection = new HubConnectionBuilder()
-     .withUrl(`${environment.signalRUrl}/logsHub`)
-     .build();
-   }
+  }
+  private logs$ = new Subject<IProjectLog[]>();
+  private rawLogs$ = new Subject<string[]>();
+  public buildConnection() {
+    this.logsHubConnection = new HubConnectionBuilder()
+      .withUrl(`${environment.signalRUrl}/logsHub`)
+      .build();
+  }
 
-   public getLogsOfHistory(projectId: number, buildHisotryId: number): Observable<Log[]>{
-      return this.httpService.getRequest(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
-   }
+  public getLogsOfHistory(projectId: number, buildHisotryId: number): Observable<IProjectLog[]> {
+    return this.httpService.getRequest(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
+  }
 
-   sendRawLogs(logs){
+  sendRawLogs(logs) {
     return this.rawLogs$.next(logs);
-   }
+  }
 
-   receiveRawLogs(){
+  receiveRawLogs() {
     return this.rawLogs$.asObservable();
-   }
+  }
 
 
-   sendLogs(logs){
+  sendLogs(logs) {
     return this.logs$.next(logs);
-   }
+  }
 
-   receiveLogs(){
+  receiveLogs() {
     return this.logs$.asObservable();
-   }
+  }
 
-   public startConnectionAndJoinGroup(groupName: string) {
-     this.logsHubConnection
+  startConnectionAndJoinGroup(groupName: string | number) {
+    this.logsHubConnection
       .start()
       .then(() => {
         console.log('Connection started...');
@@ -56,16 +56,16 @@ export class ProjectLogsService {
           this.startConnection();
         }, 3000);
       });
-   }
+  }
 
-   public stopConnection() {
-     this.logsHubConnection
+  stopConnection() {
+    this.logsHubConnection
       .stop(); // It also makes user leave his group automaticlly after disconnecting
-   }
+  }
 
-   public logsListener(logSubject: Subject<string>) {
-     this.logsHubConnection.on('Broadcast', (data) => {
-       logSubject.next(data);
-     });
-   }
+  logsListener(logSubject: Subject<string>) {
+    this.logsHubConnection.on('Broadcast', (data) => {
+      logSubject.next(data);
+    });
+  }
 }

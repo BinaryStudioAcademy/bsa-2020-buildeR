@@ -15,7 +15,6 @@ export class NotificationsService implements OnDestroy {
 
   private notificationsHub: SignalRHub;
   private notifications$ = new Subject<Notification>();
-
   private currentUser: User;
 
   constructor(

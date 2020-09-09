@@ -17,6 +17,7 @@ namespace buildeR.Common.DTO.BuildStep
         public LoggingVerbosity LoggingVerbosity { get; set; }
         public string WorkDirectory { get; set; }
         public string DockerImageVersion { get; set; }
+        public string Config { get; set; }
         
 
         public PluginCommandDTO PluginCommand { get; set; }
