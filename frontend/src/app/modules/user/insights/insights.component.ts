@@ -62,7 +62,7 @@ export class InsightsComponent implements OnInit {
       this.buildSuccessRate = this.buildSucceedCount();
       this.activeProjects = this.countActiveProjects();
       this.countActiveProjects();
-      this.getData();
+      this.getData(this.month);
     });
   }
 
