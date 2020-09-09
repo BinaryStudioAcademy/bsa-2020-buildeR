@@ -31,6 +31,8 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     GroupRole.Guest
   ];
   memberForm: FormGroup;
+  isShowSpinner = false;
+
   constructor(
     private groupService: GroupService,
     private route: ActivatedRoute,
@@ -69,6 +71,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     );
   }
   onSubmit() {
+    this.isShowSpinner = true;
     this.newTeamMember = this.memberForm.value as TeamMember;
     this.newTeamMember.groupId = this.groupId;
     this.newTeamMember.userId = this.memberForm.controls.user.value.id;
@@ -76,9 +79,11 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     this.teamMemberService.createMember(this.newTeamMember).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.getGroupMembers(this.groupId);
-        this.toastrService.showSuccess('Member was successfully added');
+          this.isShowSpinner = false;
+          this.toastrService.showSuccess('Member was successfully added');
       },
         (err) => {
+          this.isShowSpinner = false;
           this.toastrService.showError(err);
         });
   }

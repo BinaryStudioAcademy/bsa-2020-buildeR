@@ -17,7 +17,9 @@
     </ul>
   </div>
   <div class="form-actions">
-    <button type="submit" class="btn btn-success">Invite</button>
+    <button type="submit" class="btn btn-success">Invite
+      <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </button>
   </div>
 </form>
 <hr>
