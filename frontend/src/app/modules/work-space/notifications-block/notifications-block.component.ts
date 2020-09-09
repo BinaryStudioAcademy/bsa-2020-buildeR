@@ -60,8 +60,9 @@ export class NotificationsBlockComponent implements OnInit {
     }
   }
 
-  navigateToItem(notification: Notification) {
+  navigateToItem(notification: Notification, event) {
     if (notification.itemId) {
+      event.preventDefault();
       switch (notification.type) {
         case NotificationType.Group: {
           if (notification.itemId === -1) {
@@ -79,9 +80,8 @@ export class NotificationsBlockComponent implements OnInit {
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])
-              .then(() => this.toggle())
-              .catch((err) => console.error(err)),
+            bh => this.router.navigateByUrl('/', {skipLocationChange: true})
+              .then(() => this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId])),
             err => console.error(err),
           );
         }
