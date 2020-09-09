@@ -19,7 +19,7 @@
       </a>
     </div>
     <div class="repo-badge">
-      <a title="Latest push build on default branch: " [routerLink]="'history/' + lastBuild.id">
+      <a title="Latest push build on default branch: " [routerLink]=" lastBuild ? ['history/' + lastBuild?.id] : ['steps']">
         <svg xmlns="http://www.w3.org/2000/svg" width="98" height="20">
           <linearGradient id="a" x2="0" y2="100%">
             <stop offset="0" stop-color="#bbb" stop-opacity=".1" />
@@ -39,7 +39,8 @@
             <text x="19.5" y="14">build</text>
             <text x="66.5" y="15" fill="#010101" fill-opacity=".3">
             </text>
-            <text x="66.5" y="14">{{lastBuild.buildStatus | buildStatus}}</text>
+            <text *ngIf = "lastBuild;" x="66.5" y="14">{{lastBuild?.buildStatus | buildStatus}}</text>
+            <text *ngIf = "!lastBuild;" x="66.5" y="14">not build</text>
           </g>
         </svg>
       </a>

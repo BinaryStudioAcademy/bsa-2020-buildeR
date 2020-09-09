@@ -17,7 +17,7 @@ else loaded;
             <div class="row my-3">
               <div class="item area">
                 <img [src]="r.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-                  class="avatar" />
+                     class="avatar" />
               </div>
               <div class="user">
                 <div class="row-top">
@@ -33,16 +33,16 @@ else loaded;
           </ng-template>
           <label for="typeahead-basic">Search user:</label>
           <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
-            [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
-            placeholder="Username or email" [resultTemplate]="rt" />
+                 [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
+                 placeholder="Username or email" [resultTemplate]="rt" />
         </div>
         <div class="col-md-6">
           <label for="input-role">Choose a role permission:</label>
           <div tabindex="0" id="input-role" role="button">
             <select class="form-control" [value]="memberForm.controls['dropdown']?.value"
-              placeholder="Choose role from dropdown" formControlName="dropdown">
+                    placeholder="Choose role from dropdown" formControlName="dropdown">
               <option *ngFor="let item of roles" (click)="memberForm.controls['dropdown'].setValue(groupRole[item])"
-                class="dropdown-item">
+                      class="dropdown-item">
                 {{groupRole[item]}}
               </option>>
             </select>
@@ -50,7 +50,9 @@ else loaded;
         </div>
       </div>
       <div class="form-actions">
-        <button type="submit" class="btn btn-success" [disabled]="memberForm.invalid">Invite</button>
+        <button type="submit" class="btn btn-success" [disabled]="memberForm.invalid">Invite
+          <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
       </div>
     </form>
   </div>
@@ -58,7 +60,7 @@ else loaded;
     <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
       <div class="item-avatar area">
         <img [src]="member.user.avatarUrl" [routerLink]="'/portal/user/' + member.user.id"
-          onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="avatar" />
+             onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="avatar" />
       </div>
       <div class="user">
         <div class="row-top">
@@ -73,7 +75,7 @@ else loaded;
         </div>
       </div>
       <div class="item area role">
-        <div class="area" *ngIf="!member.isAccepted || member.memberRole === groupRole.Owner 
+        <div class="area" *ngIf="!member.isAccepted || member.memberRole === groupRole.Owner
           || member.user.id === this.currentUser.id; else other">
           <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
         </div>
@@ -84,26 +86,26 @@ else loaded;
           <div class="area" *ngIf="isCurrentUserOwnerOrAdmin() && !isCurrentUserAccepted()">
             <div class="user-access-role">{{groupRole[member.memberRole]}}</div>
           </div>
-          <div *ngIf="member.isAccepted && member.user.id !== this.currentUser.id 
+          <div *ngIf="member.isAccepted && member.user.id !== this.currentUser.id
           && isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()" ngbDropdown>
             <div class="user-access-role" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
               {{groupRole[member.memberRole]}}
             </div>
             <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right"
-              container="body">
+                 container="body">
               <div class="dropdown-header">Change permissions</div>
               <div class="dropdown-divider"></div>
               <button class="dropdown-item" *ngFor="let role of roles" (click)="changeMemberRole(member, role)"
-                container="body">
+                      container="body">
                 <span *ngIf="role===member.memberRole">&#10003;</span> {{groupRole[role]}}</button>
             </div>
           </div>
-          <div class="item area delete" *ngIf="member.isAccepted && 
+          <div class="item area delete" *ngIf="member.isAccepted &&
             member.user.id !== this.currentUser.id && isCurrentUserOwnerOrAdmin() && isCurrentUserAccepted()">
             <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
           </div>
         </ng-template>
-        <div class="item area delete" *ngIf="member.memberRole !== groupRole.Owner && 
+        <div class="item area delete" *ngIf="member.memberRole !== groupRole.Owner &&
         member.user.id === this.currentUser.id">
           <button (click)="deleteMember(member.id)" class="btn btn-delete"><i class="far fa-trash-alt"></i></button>
         </div>
@@ -113,3 +115,4 @@ else loaded;
       </div>
     </div>
   </div>
+</ng-template>
