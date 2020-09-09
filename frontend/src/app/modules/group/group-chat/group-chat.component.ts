@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from '@core/services/chat.service';
 import { Message } from '@shared/models/message';
@@ -73,6 +73,9 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
   }
 
   sendMessage(){
+    if (this.textOfMessage === ''){
+      return;
+    }
     const message = {
     text : this.textOfMessage,
     groupId : this.groupId,
