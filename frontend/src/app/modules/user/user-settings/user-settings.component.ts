@@ -23,6 +23,7 @@ export class UserSettingsComponent implements OnInit {
 
   isChanged = false;
   changedUser: User = {} as User;
+  isShowSpinner: boolean = false;
 
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
@@ -105,6 +106,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   onSubmit(user: User) {
+    this.isShowSpinner = true;
     user.id = this.details.id;
     user.role = this.details.role;
     user.createdAt = this.details.createdAt;
@@ -117,10 +119,12 @@ export class UserSettingsComponent implements OnInit {
     this.userService.updateUser(user).subscribe(updateUser => {
       this.details = updateUser;
       this.isChanged = true;
-      this.toastrService.showSuccess('Your profile was updated!');
       this.userService.changeUserName(this.settingsForm.controls.username.value);
+      this.isShowSpinner = false;
+      this.toastrService.showSuccess('Your profile was updated!');
     }, error => {
       console.error(error);
+      this.isShowSpinner = false;
       this.toastrService.showError('Your profile wasn\'t updated');
     });
   }
