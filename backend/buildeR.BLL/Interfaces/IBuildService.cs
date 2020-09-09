@@ -8,12 +8,15 @@ namespace buildeR.BLL.Interfaces
 {
     public interface IBuildService : ICrudService<BuildHistoryDTO, NewBuildHistoryDTO, int>
     {
-        Task<BuildHistoryDTO> GetBuildById(int id);
+        Task<BuildHistoryDTO> GetBuildById(int buildId);
+        Task<BuildHistoryDTO> GetLastHistoryByProjectId(int projectId);
+
         Task<IEnumerable<BuildHistoryDTO>> GetAll();
         Task<BuildHistoryDTO> Create(NewBuildHistoryDTO build);
         Task Update(BuildHistoryDTO build);
         Task Delete(int id);
         Task<IEnumerable<BuildHistoryDTO>> GetHistoryByProjectId(int id);
+
         Task<IEnumerable<BuildHistoryDTO>> GetMonthHistoryByUserId(int id);
         Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange);
     }

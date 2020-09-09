@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Group } from '../../../shared/models/group/group';
-import { TabRoute } from '@shared/models/tabs/tab-route';
-import { GroupService } from '../../../core/services/group.service';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { BaseComponent } from '@core/components/base/base.component';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { TabRoute } from '@shared/models/tabs/tab-route';
+import { takeUntil } from 'rxjs/operators';
+import { GroupService } from '../../../core/services/group.service';
+import { Group } from '../../../shared/models/group/group';
 
 @Component({
   selector: 'app-group',
@@ -16,9 +16,11 @@ export class GroupComponent extends BaseComponent implements OnInit {
   id: number;
   group: Group = {} as Group;
   isLoading = false;
+  //@Output() activeTab = new EventEmitter<number>();
 
   tabRoutes: TabRoute[] = [
     { name: 'Projects', route: 'projects' },
+    { name: 'Chat', route: 'chat' },
     { name: 'Members', route: 'members' },
     { name: 'Settings', route: 'settings' },
   ];
@@ -29,18 +31,20 @@ export class GroupComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     super();
-    this.route.paramMap
-      .pipe(switchMap((params) => params.getAll('groupId')))
-      .subscribe((data) => (this.id = Number(data)));
+  }
+
+  ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.group = data.group;
+      this.id = this.group.id;
+      //this.activeTab.next(0);
+    });
     this.groupService.groupName.subscribe((res) => {
       this.group.name = res;
     });
     this.groupService.groupIsPublic.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       this.group.isPublic = res;
     });
-  }
-
-  ngOnInit(): void {
     this.getGroup(this.id);
   }
   getGroup(groupId: number) {

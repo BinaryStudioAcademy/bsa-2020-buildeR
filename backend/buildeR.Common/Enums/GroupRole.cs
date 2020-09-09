@@ -9,6 +9,7 @@ namespace buildeR.Common.Enums
         Guest,
         Contributor,
         Owner,
-        Builder
+        Builder,
+        Admin
     }
 }

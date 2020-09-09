@@ -12,7 +12,7 @@ namespace buildeR.RabbitMq.Realization
             IConnectionFactory factory = new ConnectionFactory
             {
                 HostName = settings.HostName,
-                Port = settings.Host,
+                Port = settings.Port,
                 UserName = settings.UserName,
                 Password = settings.Password,
                 VirtualHost = settings.VirtualHost,

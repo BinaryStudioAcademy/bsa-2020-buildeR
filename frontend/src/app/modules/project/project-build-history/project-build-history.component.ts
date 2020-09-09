@@ -47,13 +47,13 @@ export class ProjectBuildHistoryComponent extends BaseComponent
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const buildIndex = this.builds.findIndex(pi => pi.id == statusChange.BuildHistoryId);
-      if (statusChange.Status != BuildStatus.InProgress) {
+      const buildIndex = this.builds.findIndex(pi => pi.id === statusChange.BuildHistoryId);
+      if (statusChange.Status !== BuildStatus.InProgress) {
         this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
           this.builds[buildIndex] = bh;
         });
       } else {
-        this.builds[buildIndex].buildStatus = statusChange.Status
+        this.builds[buildIndex].buildStatus = statusChange.Status;
       }
       this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
 
@@ -62,6 +62,6 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   }
 
   getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? "—";
+    return bh.commitHash?.substring(0, 6) ?? '—';
   }
 }

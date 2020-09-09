@@ -131,6 +131,9 @@
       ]
     },
     "no-conflicting-lifecycle": true,
+    "member-access": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
     "no-host-metadata-property": true,
     "no-input-rename": true,
     "no-inputs-metadata-property": true,

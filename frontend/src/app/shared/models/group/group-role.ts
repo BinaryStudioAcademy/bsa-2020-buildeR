@@ -2,5 +2,6 @@ export enum GroupRole {
   Guest,
   Contributor,
   Owner,
-  Builder
+  Builder,
+  Admin
 }

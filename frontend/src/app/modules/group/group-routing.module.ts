@@ -8,6 +8,7 @@ import { GroupProjectsComponent } from './group-projects/group-projects.componen
 import { GroupMembersComponent } from './group-members/group-members.component';
 import { GroupSettingsComponent } from './group-settings/group-settings.component';
 import { GroupCreateComponent } from './group-create/group-create.component';
+import { GroupChatComponent } from './group-chat/group-chat.component';
 
 const routes: Routes = [
   {
@@ -28,14 +29,30 @@ const routes: Routes = [
       {
         path: 'projects',
         component: GroupProjectsComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
+      },
+      {
+        path: 'chat',
+        component: GroupChatComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
       {
         path: 'members',
         component: GroupMembersComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
       {
         path: 'settings',
         component: GroupSettingsComponent,
+        resolve: {
+          group: GroupResolverService,
+        },
       },
     ],
   },
