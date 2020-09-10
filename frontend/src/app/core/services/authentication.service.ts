@@ -122,7 +122,7 @@ export class AuthenticationService {
   }
 
   isAuthorized() {
-    return Boolean(this.getFireUser()) && Boolean(this.getCurrentUser());
+    return Boolean(this.getFireUser());
   }
 
   populateAuth(jwt: string, user: firebase.User) {
