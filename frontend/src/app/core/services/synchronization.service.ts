@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { AccessTokenCheck } from '../models/AccessTokenCheck';
 import { Repository } from '../models/Repository';
 import { Branch } from '../models/Branch';
-import { AuthenticationService } from './authentication.service';
 import { AccessToken } from '@core/models/AccessToken';
 
 @Injectable({
@@ -14,37 +12,37 @@ export class SynchronizationService {
 
   endpoint = '/synchronization';
 
-  constructor(private httpService: HttpService, private authService: AuthenticationService) { }
+  constructor(private httpService: HttpService) { }
 
-  checkIfTokenValid(accessToken: AccessToken): Observable<AccessTokenCheck> {
+  checkIfTokenValid(accessToken: AccessToken) {
     return this.httpService.postRequest<AccessTokenCheck>(`${this.endpoint}/token/valid`, accessToken);
   }
 
-  checkIfUserHasToken(userId: number): Observable<boolean> {
+  checkIfUserHasToken(userId: number) {
     return this.httpService.getRequest<boolean>(`${this.endpoint}/user/${userId}/token/exist`);
   }
 
-  getUserAccessToken(userId: number): Observable<AccessToken> {
+  getUserAccessToken(userId: number) {
     return this.httpService.getRequest<AccessToken>(`${this.endpoint}/${userId}/token`);
   }
 
-  getUserRepositories(userId: number): Observable<Repository[]> {
+  getUserRepositories(userId: number) {
     return this.httpService.getRequest<Repository[]>(`${this.endpoint}/${userId}/repos`);
   }
 
-  getRepositoryBranches(projectId: number): Observable<Branch[]> {
+  getRepositoryBranches(projectId: number) {
     return this.httpService.getRequest<Branch[]>(`${this.endpoint}/${projectId}/branches`);
   }
 
-  checkIfRepositoryAccessable(userId: number, repoUrl: string): Observable<boolean> {
+  checkIfRepositoryAccessable(userId: number, repoUrl: string) {
     return this.httpService.postRequest<boolean>(`${this.endpoint}/${userId}/repo/exist`, { link: repoUrl });
   }
 
-  registerWebhook(projectId: number): Observable<any> {
-    return this.httpService.postRequest<any>(`${this.endpoint}/hooks/${projectId}`, null);
+  registerWebhook(projectId: number) {
+    return this.httpService.postRequest<void>(`${this.endpoint}/hooks/${projectId}`, null);
   }
 
-  setUpUserToken(userId: number, token: AccessToken): Observable<void> {
+  setUpUserToken(userId: number, token: AccessToken){
     return this.httpService.postRequest<void>(`${this.endpoint}/credentials/${userId}`, token);
   }
 }

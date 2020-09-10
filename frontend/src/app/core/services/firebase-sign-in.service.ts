@@ -31,7 +31,6 @@ export class FirebaseSignInService {
     githubProvider.addScope('repo');
     return this.authService.getAngularAuth().signInWithPopup(githubProvider).then(
       (credential) => {
-        localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
       (error: auth.Error) => {
@@ -206,7 +205,6 @@ export class FirebaseSignInService {
       const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(githubProvider);
       const credential = result.credential;
       this.authService.setFirebaseUser(result.user);
-      localStorage.setItem('github-access-token', credential[`accessToken`]);
       return 'ok';
     }
     catch (err) {

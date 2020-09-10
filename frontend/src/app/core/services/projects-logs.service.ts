@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { IProjectLog } from '@shared/models/project/project-log';
@@ -14,14 +14,14 @@ export class ProjectLogsService {
 
   constructor(private httpService: HttpService) { }
 
-  public buildConnection() {
+  buildConnection() {
     this.logsHubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.signalRUrl}/logsHub`)
       .build();
   }
 
-  public getLogsOfHistory(projectId: number, buildHisotryId: number): Observable<IProjectLog[]> {
-    return this.httpService.getRequest(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
+  getLogsOfHistory(projectId: number, buildHisotryId: number) {
+    return this.httpService.getRequest<IProjectLog[]>(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
   }
 
   startConnectionAndJoinGroup(groupName: string) {

@@ -23,10 +23,10 @@ export class UserSettingsComponent implements OnInit {
 
   isChanged = false;
   changedUser: User = {} as User;
-  isShowSpinner: boolean = false;
+  isShowSpinner = false;
 
   @Input() details: User = {} as User;
-  public settingsForm: FormGroup;
+  settingsForm: FormGroup;
   googleClick = false;
   githubClick = false;
   isOwner = false;

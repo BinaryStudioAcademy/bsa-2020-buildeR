@@ -9,8 +9,7 @@ import { EnviromentVariable } from '@shared/models/environment-variable/envirome
 import { BuildHistory } from '@shared/models/build-history';
 import { NewBuildHistory } from '@shared/models/new-build-history';
 import { UsersGroupProjects } from '@shared/models/users-group-projects';
-import {Repository} from "@core/models/Repository";
-
+import { Repository } from '@core/models/Repository';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -31,71 +30,69 @@ export class ProjectService {
 
   constructor(private httpService: HttpService) { }
 
-  getProjectsByUser(
-    userId: number
-  ): Observable<HttpResponse<ProjectInfo[]>> {
+  getProjectsByUser(userId: number) {
     return this.httpService.getFullRequest<ProjectInfo[]>(
       `${this.routePrefix}/getProjectsByUserId/${userId}`
     );
   }
-  getProjectById(projectId: number): Observable<Project> {
+  getProjectById(projectId: number) {
     return this.httpService.getRequest<Project>(
       `${this.routePrefix}/${projectId}/settings`
     );
   }
 
-  notOwnGroupsProjectsByUser(userId: number): Observable<UsersGroupProjects[]> {
+  notOwnGroupsProjectsByUser(userId: number) {
     return this.httpService.getRequest<UsersGroupProjects[]>(
       `${this.routePrefix}/notOwnGroupsProjectsByUser/${userId}`
     );
   }
 
-  createProject(newProject: NewProject): Observable<Project> {
+  createProject(newProject: NewProject) {
     return this.httpService.postRequest<Project>(
       `${this.routePrefix}`,
       newProject
     );
   }
-  updateProject(project: Project): Observable<Project> {
+  updateProject(project: Project) {
     return this.httpService.putRequest<Project>(`${this.routePrefix}`, project);
   }
-  startProjectBuild(history: NewBuildHistory): Observable<BuildHistory> {
+  startProjectBuild(history: NewBuildHistory) {
     return this.httpService.postRequest<BuildHistory>(`${this.routePrefix}/build`, history);
   }
 
-  DeleteBuildStepsByProjectId(projectId: number){
+  DeleteBuildStepsByProjectId(projectId: number) {
     return this.httpService.getFullRequest(`${this.routePrefix}/deleteBuildStepsByProjectId/${projectId}`);
   }
 
-  sendBuldProject(projectId){
+  sendBuldProject(projectId) {
     return this.buildProject$.next(projectId);
   }
 
-  getBuldProject(){
+  getBuldProject() {
     return this.buildProject$.asObservable();
   }
 
-  sendCopyProject(project: number){
+  sendCopyProject(project: number) {
     return this.copyProject$.next(project);
   }
 
-  getCopyProject(){
+  getCopyProject() {
     return this.copyProject$.asObservable();
   }
 
-  sendDeleteProject(project: number){
+  sendDeleteProject(project: number) {
     return this.deleteProject$.next(project);
   }
 
-  getDeleteProject(){
+  getDeleteProject() {
     return this.deleteProject$.asObservable();
   }
 
-  sendStarProject(project: ProjectInfo){
+  sendStarProject(project: ProjectInfo) {
     return this.starProject$.next(project);
   }
 
-  getStarProject(){
+  getStarProject() {
     return this.starProject$.asObservable();
   }
 
@@ -146,7 +143,7 @@ export class ProjectService {
     return this.httpService.getRequest<boolean>(`${this.routePrefix}/canUserRunNotOwnProject?userId=${userId}&projectId=${projectId}`);
   }
 
-  validateProjectName(userId: number, projectName: string, projectId: number): Observable<boolean> {
+  validateProjectName(userId: number, projectName: string, projectId: number) {
     return this.httpService.getRequest<boolean>(`${this.routePrefix}/projectNameValidation/${userId}/${projectName}/${projectId}`);
   }
 
@@ -158,7 +155,7 @@ export class ProjectService {
     this.deleteEnvVariable$.next(envVar);
   }
 
-  getRepositoryByProjectId(projectId: number){
+  getRepositoryByProjectId(projectId: number) {
     return this.httpService.getRequest<Repository>(`${this.routePrefix}/repository/${projectId}`);
   }
 

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { RemoteTrigger } from '../../shared/models/remote-trigger/remote-trigger';
-import { Observable } from 'rxjs';
 import { NewRemoteTrigger } from '../../shared/models/remote-trigger/new-remote-trigger';
 
 @Injectable({
@@ -13,19 +12,19 @@ export class RemoteTriggerService {
 
   constructor(private httpService: HttpService) { }
 
-  getProjectRemoteTriggers(projectId: number): Observable<RemoteTrigger[]> {
+  getProjectRemoteTriggers(projectId: number) {
     return this.httpService.getRequest<RemoteTrigger[]>(`${this.endpoint}/projectTriggers/${projectId}`);
   }
 
-  addRemoteTrigger(trigger: NewRemoteTrigger): Observable<RemoteTrigger> {
+  addRemoteTrigger(trigger: NewRemoteTrigger) {
     return this.httpService.postRequest<RemoteTrigger>(`${this.endpoint}`, trigger);
   }
 
-  updateRemoteTrigger(trigger: RemoteTrigger): Observable<RemoteTrigger> {
+  updateRemoteTrigger(trigger: RemoteTrigger) {
     return this.httpService.putRequest<RemoteTrigger>(`${this.endpoint}`, trigger);
   }
 
-  deleteRemoteTrigger(triggerId: number): Observable<void> {
+  deleteRemoteTrigger(triggerId: number) {
     return this.httpService.deleteRequest<void>(`${this.endpoint}/${triggerId}`);
   }
 }

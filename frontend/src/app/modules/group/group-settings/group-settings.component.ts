@@ -64,7 +64,7 @@ export class GroupSettingsComponent implements OnInit {
   }
   reset() {
     this.groupForm.reset(this.group);
-    this.groupForm.controls['isPublic'].setValue(this.group.isPublic.toString());
+    this.groupForm.controls.isPublic.setValue(this.group.isPublic.toString());
   }
 
 }

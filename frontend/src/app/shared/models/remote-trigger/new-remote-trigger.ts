@@ -1,4 +1,4 @@
-import { RemoteTriggerType } from "./remote-trigger-type";
+import { RemoteTriggerType } from './remote-trigger-type';
 
 export interface NewRemoteTrigger {
   type: RemoteTriggerType;

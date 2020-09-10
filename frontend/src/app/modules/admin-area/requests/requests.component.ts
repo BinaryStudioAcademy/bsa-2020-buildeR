@@ -1,11 +1,11 @@
-import {Component, OnInit} from "@angular/core";
-import {BaseComponent} from "../../../core/components/base/base.component";
-import {UserService} from "@core/services/user.service";
-import {UserLetter} from "@shared/models/user/user-letter";
-import {ActivatedRoute} from "@angular/router";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {RequestsModalComponent} from "@modules/admin-area/requests/requests-modal.component/requests-modal.component";
-import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
+import {Component, OnInit} from '@angular/core';
+import {BaseComponent} from '../../../core/components/base/base.component';
+import {UserService} from '@core/services/user.service';
+import {UserLetter} from '@shared/models/user/user-letter';
+import {ActivatedRoute} from '@angular/router';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {RequestsModalComponent} from '@modules/admin-area/requests/requests-modal.component/requests-modal.component';
+import {ToastrNotificationsService} from '@core/services/toastr-notifications.service';
 
 @Component({
   selector: 'app-requests',
@@ -14,7 +14,7 @@ import {ToastrNotificationsService} from "@core/services/toastr-notifications.se
 })
 export class RequestsComponent extends BaseComponent implements OnInit {
 
-  currentUserLetters:UserLetter[];
+  currentUserLetters: UserLetter[];
   allUserLetters: UserLetter[];
 
   constructor(private userService: UserService,
@@ -45,7 +45,7 @@ export class RequestsComponent extends BaseComponent implements OnInit {
     this.userService.getAllUserLetters().subscribe(letters =>
     {
       this.allUserLetters = letters;
-      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond == true);
+      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond);
     });
   }
 
@@ -53,13 +53,13 @@ export class RequestsComponent extends BaseComponent implements OnInit {
     this.userService.getAllUserLetters().subscribe(letters =>
     {
       this.allUserLetters = letters;
-      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond == false);
+      this.currentUserLetters = this.allUserLetters.filter(l => l.isRespond);
     });
   }
 
   onChange() {
-    var selectBox = (document.getElementById("selectBox") as HTMLSelectElement);
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    const selectBox = (document.getElementById('selectBox') as HTMLSelectElement);
+    const selectedValue = selectBox.options[selectBox.selectedIndex].value;
 
     switch (selectedValue) {
       case 'All': {

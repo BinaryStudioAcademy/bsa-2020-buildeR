@@ -3,11 +3,11 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from 'src/app/shared/models/project/project';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
-import {projectNameAsyncValidator} from "@modules/project/validators/project-name.async-validator";
-import {UserService} from "@core/services/user.service";
-import {AuthenticationService} from "@core/services/authentication.service";
-import {User} from "@shared/models/user/user";
+import {ToastrNotificationsService} from '@core/services/toastr-notifications.service';
+import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
+import {UserService} from '@core/services/user.service';
+import {AuthenticationService} from '@core/services/authentication.service';
+import {User} from '@shared/models/user/user';
 
 @Component({
   selector: 'app-modal-copy-project',
@@ -52,7 +52,7 @@ export class ModalCopyProjectComponent implements OnInit {
     else {
       this.project.description = this.copyForm.value[`description`];
     }
-    this.project.isPublic = this.copyForm.value['isPublic'];
+    this.project.isPublic = this.copyForm.value.isPublic;
     this.projectService.copyProject(this.project).subscribe((result) => {
       this.project = result;
       this.isShowSpinner = false;
