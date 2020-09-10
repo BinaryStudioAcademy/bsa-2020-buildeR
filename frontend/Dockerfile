@@ -3,7 +3,7 @@ COPY package.json package-lock.json ./
 RUN npm install && mkdir /builder && mv ./node_modules ./builder
 WORKDIR /builder
 COPY . .
-RUN npm run ng build -- --prod
+RUN npm run build
 
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf

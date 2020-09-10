@@ -39,7 +39,7 @@ jobs:
         run: |
           cd frontend
           npm ci
-          npx ng build --prod
+          npm run build
 
       - name: Slack notification
         uses: 8398a7/action-slack@v3

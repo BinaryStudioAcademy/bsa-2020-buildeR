@@ -31,7 +31,7 @@
       <div *ngFor="let action of buildStep.value[1]">
         <div *ngIf="action.body">
           <span class="line-number">{{action.number}}</span>
-          <p>
+          <p class="log-text">
             <span class='level' *ngIf="showLevels" [appLogLevel]="action.level">[{{action.level}}]</span>
             <span class="timestamp" *ngIf="showTimeStamps"> {{action.date | date:"medium"}}</span>
             {{action.body}}

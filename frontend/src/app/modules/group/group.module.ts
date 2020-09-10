@@ -10,10 +10,16 @@ import { GroupMembersComponent } from './group-members/group-members.component';
 import { GroupSettingsComponent } from './group-settings/group-settings.component';
 import { GroupChatComponent } from './group-chat/group-chat.component';
 
-
-
 @NgModule({
-    declarations: [GroupListComponent, GroupComponent, GroupProjectsComponent, GroupMembersComponent, GroupSettingsComponent, GroupCreateComponent, GroupChatComponent],
+  declarations: [
+    GroupListComponent,
+    GroupComponent,
+    GroupProjectsComponent,
+    GroupMembersComponent,
+    GroupSettingsComponent,
+    GroupCreateComponent,
+    GroupChatComponent
+  ],
   imports: [
     CommonModule,
     GroupRoutingModule,

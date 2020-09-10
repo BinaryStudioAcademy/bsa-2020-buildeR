@@ -13,12 +13,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using buildeR.Common.DTO.Notification;
 
 namespace buildeR.BLL.Services
 {
     public class GroupService : BaseCrudService<Group, GroupDTO, NewGroupDTO>, IGroupService
     {
-        public GroupService(BuilderContext context, IMapper mapper) : base(context, mapper) {}
+        private readonly INotificationsService _notificationsService;
+
+        public GroupService(BuilderContext context, IMapper mapper, INotificationsService notificationsService) : base(context, mapper) 
+        {
+            _notificationsService = notificationsService;
+        }
 
         public async Task<GroupDTO> GetGroupById(int id)
         {
@@ -84,6 +90,34 @@ namespace buildeR.BLL.Services
                 throw new NotFoundException(nameof(Group), id);
             }
             await base.RemoveAsync(id);
+        }
+
+        public async Task DeleteGroupWithNotification(RemoveGroupDTO removeGroup)
+        {
+            var group = await base.GetAsync(removeGroup.GroupId);
+            var teamMembers = (await GetGroupsWithMembersAndProjects())
+                .FirstOrDefault(g => g.Id == removeGroup.GroupId)?
+                .TeamMembers.Where(t => t.UserId != removeGroup.InitiatorUserId).ToList();
+
+            if (group == null)
+            {
+                throw new NotFoundException(nameof(Group), removeGroup.GroupId);
+            }
+            await base.RemoveAsync(removeGroup.GroupId);
+
+            var initiator = Context.Users.AsNoTracking().FirstOrDefault(u => u.Id == removeGroup.InitiatorUserId);
+
+            foreach (var member in teamMembers)
+            {
+                await _notificationsService.Create(new NewNotificationDTO
+                {
+                    UserId = member?.UserId,
+                    Message = $"{initiator?.Username} deleted group {group?.Name}",
+                    Type = NotificationType.Group,
+                    Date = DateTime.Now,
+                    ItemId = -1
+                });
+            }
         }
 
         public async Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id)
