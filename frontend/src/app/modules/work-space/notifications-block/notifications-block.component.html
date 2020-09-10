@@ -17,11 +17,11 @@
       There are no notifications
     </div>
     <div>
-      
+
     </div>
     <ng-container *ngFor="let notification of notifications">
       <app-notification-card
-      *ngIf="isShowingRead === false || isShowingRead"
+      *ngIf="notification.isRead === false || isShowingRead"
       [notification]="notification"
       [isShowingRead]="isShowingRead"
       (clearedOne)="clearOne(notification)"
