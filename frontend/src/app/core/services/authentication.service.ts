@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { from, of } from 'rxjs';
-import { filter, tap, switchMap } from 'rxjs/operators';
-import { UserInfo } from 'firebase';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { UserInfo, auth } from 'firebase';
+import { UserInfo } from 'firebase';
 import { from, of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
@@ -79,7 +76,7 @@ export class AuthenticationService {
 
   getFirebaseToken() {
     const currentToken = localStorage.getItem('jwt');
-    return !currentToken || this.tokenHelper.isTokenExpired(currentToken)
+    return !currentToken /*|| this.tokenHelper.isTokenExpired(currentToken)*/
       ? this.refreshFirebaseToken()
       : of(currentToken);
   }
@@ -97,7 +94,7 @@ export class AuthenticationService {
   }
 
   refreshToken() {
-    return this.angularAuth.currentUser.then((user) => {
+    return this.angularAuth.user.subscribe((user) => {
       if (user) {
         user.getIdTokenResult(true).then((result) => {
           this.populateAuth(result.token, result.expirationTime, user);
