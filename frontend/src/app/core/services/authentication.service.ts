@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { from, of } from 'rxjs';
-import { filter, tap, switchMap } from 'rxjs/operators';
-import { UserInfo } from 'firebase';
+import { Providers } from '@shared/models/providers';
+import { LinkProvider } from '@shared/models/user/link-provider';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
+import { auth, UserInfo } from 'firebase';
+import { from, of } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -58,6 +61,10 @@ export class AuthenticationService {
             if (user && user.uid === userResult.userSocialNetworks[0].uId) {
               this.currentUser = userResult;
               this.router.navigate(['/portal']);
+              if (this.isGithubAddedInFirebase(user)
+                && !this.isProviderAdded(userResult, Providers.Github)) {
+                this.linkUserProviderInDb(userResult, Providers.Github, null, user);
+              }
             }
           });
       });
@@ -115,7 +122,7 @@ export class AuthenticationService {
   }
 
   isAuthorized() {
-    return Boolean(this.getFireUser());
+    return Boolean(this.getFireUser()) && Boolean(this.getCurrentUser());
   }
 
   populateAuth(jwt: string, user: firebase.User) {
@@ -132,8 +139,43 @@ export class AuthenticationService {
     this.currentUser = undefined;
   }
 
-  isGithubAddedInFirebase() {
+  isGithubAddedInFirebase(firebaseUser?: firebase.User) {
     const check = (item: UserInfo) => item.providerId === 'github.com';
-    return this.firebaseUser.providerData.some(check);
+    return firebaseUser ? firebaseUser.providerData.some(check) : this.firebaseUser.providerData.some(check);
+  }
+
+  isProviderAdded(user: User, provider: Providers) {
+    if (user.userSocialNetworks === null) {
+      return true;
+    }
+    const check = (item: UserSocialNetwork) => item.providerName === provider;
+    return user.userSocialNetworks?.some(check);
+  }
+
+  linkUserProviderInDb(user: User, provider: Providers, credential?: auth.UserCredential, fireUser?: firebase.User) {
+    let providerUrlId: string;
+    switch (provider) {
+      case Providers.Google: {
+        providerUrlId = 'google.com';
+        break;
+      }
+      case Providers.Github: {
+        providerUrlId = 'github.com';
+        break;
+      }
+    }
+    const linkUser = ({
+      userId: user.id,
+      providerName: provider,
+      providerUrl: providerUrlId,
+      uId: credential !== null ? credential.user.uid : fireUser.uid
+    } as LinkProvider);
+    this.userService.linkProvider(linkUser)
+      .subscribe((response) => {
+        if (response) {
+          this.setUser(response);
+          user = response;
+        }
+      });
   }
 }

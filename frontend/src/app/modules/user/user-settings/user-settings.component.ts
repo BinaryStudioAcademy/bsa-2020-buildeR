@@ -23,7 +23,7 @@ export class UserSettingsComponent implements OnInit {
 
   isChanged = false;
   changedUser: User = {} as User;
-  isShowSpinner: boolean = false;
+  isShowSpinner = false;
 
   @Input() details: User = {} as User;
   public settingsForm: FormGroup;
@@ -43,7 +43,6 @@ export class UserSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.details = data.user;
-      console.log(this.details);
       if (this.details.id === this.authService.getCurrentUser().id) {
         this.isOwner = true;
       }
@@ -159,14 +158,16 @@ export class UserSettingsComponent implements OnInit {
   }
 
   linkWithGithub() {
-    if (!this.isGithubAddedInFirebase() && !this.isProviderAdded(Providers.Github)) {
+    const isGithubAddedInFirebase = this.isGithubAddedInFirebase();
+    const isGithubAddedDb = this.isProviderAdded(Providers.Github);
+    if (!isGithubAddedInFirebase && !isGithubAddedDb) {
       this.fbr.linkWithProvider(Providers.Github).then((result) => {
         if (result === 'ok') {
           this.githubClick = true;
         }
         this.showLinkMessage(result, 'Github');
       });
-    } else if (!this.isGithubAddedInFirebase() && this.isProviderAdded(Providers.Github)) {
+    } else if (!isGithubAddedInFirebase && isGithubAddedDb) {
       this.fbr.linkGithubOnlyInFirebase().then((result) => {
         this.showLinkMessage(result, 'Github');
       });

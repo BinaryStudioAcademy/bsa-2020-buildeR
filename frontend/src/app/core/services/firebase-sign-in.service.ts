@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { EmailVerificationModalComponent } from '@core/components/email-verification-modal/email-verification-modal.component';
 import { RegisterDialogService } from '@core/services/register-dialog.service';
 import { UserService } from '@core/services/user.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Providers } from '@shared/models/providers';
 import { LinkProvider } from '@shared/models/user/link-provider';
-import { auth } from 'firebase/app';
+import { User } from '@shared/models/user/user';
+import { UserSocialNetwork } from '@shared/models/user/user-social-network';
+import { auth, UserInfo } from 'firebase/app';
 import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
 import { AuthenticationService } from './authentication.service';
-import { User } from '@shared/models/user/user';
-import { EmailVerificationModalComponent } from '@core/components/email-verification-modal/email-verification-modal.component';
-import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 
 @Injectable({
   providedIn: 'root'
@@ -62,10 +62,9 @@ export class FirebaseSignInService {
           return;
         }
         if (resp) {
-          if (credential.credential.providerId === 'google.com') {
-            if (!this.isProviderAdded(resp, Providers.Google)) {
-              this.linkUserGoogleAdditional(resp, credential);
-            }
+          if (credential.credential.providerId === 'google.com'
+            && !this.isProviderAdded(resp, Providers.Google)) {
+            this.linkUserProviderInDb(resp, Providers.Google, credential);
           }
 
           this.authService.getAngularAuth().authState
@@ -77,6 +76,11 @@ export class FirebaseSignInService {
               }
               else {
                 this.giveAccessToUser(resp, user, redirectUrl);
+
+                if (this.isGithubAddedInFirebase(user)
+                  && !this.isProviderAdded(resp, Providers.Github)) {
+                  this.linkUserProviderInDb(resp, Providers.Github, null, user);
+                }
               }
             });
         }
@@ -92,6 +96,11 @@ export class FirebaseSignInService {
       this.authService.setUser(resp);
       this.router.navigate([redirectUrl ?? '/portal']);
     }
+  }
+
+  isGithubAddedInFirebase(firebaseUser: firebase.User) {
+    const check = (item: UserInfo) => item.providerId === 'github.com';
+    return firebaseUser.providerData.some(check);
   }
 
   openVerificationEmailModal(email: string) {
@@ -131,12 +140,23 @@ export class FirebaseSignInService {
     return user.userSocialNetworks?.some(check);
   }
 
-  linkUserGoogleAdditional(user: User, credential: auth.UserCredential) {
+  linkUserProviderInDb(user: User, provider: Providers, credential?: auth.UserCredential, fireUser?: firebase.User) {
+    let providerUrlId: string;
+    switch (provider) {
+      case Providers.Google: {
+        providerUrlId = 'google.com';
+        break;
+      }
+      case Providers.Github: {
+        providerUrlId = 'github.com';
+        break;
+      }
+    }
     const linkUser = ({
       userId: user.id,
-      providerName: Providers.Google,
-      providerUrl: credential.credential.providerId,
-      uId: credential.user.uid
+      providerName: provider,
+      providerUrl: providerUrlId,
+      uId: credential !== null ? credential.user.uid : fireUser.uid
     } as LinkProvider);
     this.userService.linkProvider(linkUser)
       .subscribe((response) => {
