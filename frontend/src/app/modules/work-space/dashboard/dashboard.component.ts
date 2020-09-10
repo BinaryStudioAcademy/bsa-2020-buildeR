@@ -227,9 +227,11 @@ export class DashboardComponent
     return this.activeProjects.filter(p => p.lastBuildHistory)?.length
       || this.starredProjects.filter(p => p.lastBuildHistory)?.length
       || this.groupsProjects.filter(p => p.groupProjects.projects
-        .filter(p => p.lastBuildHistory)?.length)?.length
+        .filter(p => p.lastBuildHistory)?.length)?.length;
   }
 
   hasGroupsProjects() {
-    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0; }
+    return this.groupsProjects.length > 0 || this.groupsProjects
+      .reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0;
+  }
 }
