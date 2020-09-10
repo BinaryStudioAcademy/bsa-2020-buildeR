@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
+import { HttpService, Params } from './http.service';
 import { Group } from '../../shared/models/group/group';
 import { Subject } from 'rxjs';
 import { ProjectInfo } from '../../shared/models/project-info';
 import { TeamMember } from '../../shared/models/group/team-member';
 import { NewGroup } from '@shared/models/group/new-group';
+import { RemoveGroup } from '@shared/models/group/remove-group';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,9 @@ export class GroupService {
   }
   deleteGroup(groupId: number) {
     return this.httpService.deleteFullRequest<Group>(`${this.routePrefix}/` + groupId);
+  }
+  deleteGroupWithNotification(object: RemoveGroup) {
+    return this.httpService.deleteRequest<Group>(`${this.routePrefix}/`, object as unknown as Params);
   }
   getProjectsByGroup(groupId: number) {
     return this.httpService.getFullRequest<ProjectInfo[]>(

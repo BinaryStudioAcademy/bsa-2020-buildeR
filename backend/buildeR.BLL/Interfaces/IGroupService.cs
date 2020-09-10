@@ -20,5 +20,6 @@ namespace buildeR.BLL.Interfaces
         Task<IEnumerable<ProjectInfoDTO>> GetGroupProjects(int id);
         Task<IEnumerable<TeamMemberDTO>> GetGroupMembers(int id);
         Task<IEnumerable<GroupDTO>> GetGroupsByUserId(int userId);
+        Task DeleteGroupWithNotification(RemoveGroupDTO removeObject);
     }
 }
