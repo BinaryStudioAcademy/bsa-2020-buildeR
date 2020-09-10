@@ -53,7 +53,7 @@ export class RequestsModalComponent implements OnInit {
   }
 
   cancelForm() {
-    this.activeModal.dismiss('Cancel');
+    this.activeModal.dismiss('Form is cancel');
   }
 
 }

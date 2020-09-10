@@ -34,7 +34,7 @@ export class RequestsComponent extends BaseComponent implements OnInit {
     {
       if(result === 'Send')
       this.onChange();
-    });
+    }, error => console.log(error));
   }
 
   changeOnAll() {
