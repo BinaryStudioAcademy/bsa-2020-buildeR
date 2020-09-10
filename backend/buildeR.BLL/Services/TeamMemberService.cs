@@ -44,7 +44,7 @@ namespace buildeR.BLL.Services
             }
             teamMember.JoinedDate = DateTime.Now;
 
-            var user = await _context.Users.Include(u => u.NotificationSetting).FirstOrDefaultAsync(u => u.Id == teamMember.UserId);
+            var user = await _context.Users.AsNoTracking().Include(u => u.NotificationSetting).FirstOrDefaultAsync(u => u.Id == teamMember.UserId);
             //if (user.NotificationSetting.EnableEmail)
             //{
             //    var emailModel = _emailBuilder.GetInviteGroupLetter(user.Email, user.FirstName);
@@ -53,8 +53,8 @@ namespace buildeR.BLL.Services
 
             var newMember = await base.AddAsync(teamMember);
 
-            var inviter = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
-            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
+            var inviter = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorId);
+            var group = await _context.Groups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
 
             if (inviter != null && group != null)
             {
@@ -87,8 +87,8 @@ namespace buildeR.BLL.Services
             }
             await base.RemoveAsync(teamMember.Id);
 
-            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
-            var userMember = await _context.Users.FirstOrDefaultAsync(u => u.Id == memberUserId);
+            var group = await _context.Groups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == teamMember.GroupId);
+            var userMember = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == memberUserId);
 
             if (teamMember.InitiatorUserId == memberUserId)
             {
@@ -97,7 +97,7 @@ namespace buildeR.BLL.Services
             else
             {
                 var initiator = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamMember.InitiatorUserId);
-                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId 
+                var members = await _context.TeamMembers.AsNoTracking().Where(t => t.GroupId == teamMember.GroupId 
                 && t.UserId != teamMember.InitiatorUserId && t.IsAccepted).ToListAsync();
                 foreach (var memb in members)
                 {
@@ -114,7 +114,7 @@ namespace buildeR.BLL.Services
         {
             if (!memberIsAccepted)
             {
-                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted
+                var members = await _context.TeamMembers.AsNoTracking().Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted
                     && (t.MemberRole == GroupRole.Admin || t.MemberRole == GroupRole.Owner)).ToListAsync();
                 foreach (var memb in members)
                 {
@@ -124,7 +124,7 @@ namespace buildeR.BLL.Services
             }
             else
             {
-                var members = await _context.TeamMembers.Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted).ToListAsync();
+                var members = await _context.TeamMembers.AsNoTracking().Where(t => t.GroupId == teamMember.GroupId && t.IsAccepted).ToListAsync();
                 foreach (var memb in members)
                 {
                     string message = $"{userMember?.Username} left group {group?.Name}";

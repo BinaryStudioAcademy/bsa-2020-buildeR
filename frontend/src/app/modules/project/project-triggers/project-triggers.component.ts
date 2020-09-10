@@ -63,7 +63,6 @@ export class ProjectTriggersComponent implements OnInit {
       (data) => {
         this.remoteTriggers = data;
         if (this.remoteTriggers.length !== 0) {
-          console.log(data);
           this.remoteTriggersSection = true;
         }
       },
@@ -79,11 +78,8 @@ export class ProjectTriggersComponent implements OnInit {
         branchHash: this.selectedBranch,
         cronExpression: cron
       };
-      console.log(newTrigger.cronExpression);
       this.triggerService.createTrigger(newTrigger).subscribe(
         (data) => {
-          console.log(data);
-
           this.triggers.push(data);
           this.toastrService.showSuccess('trigger created');
         },

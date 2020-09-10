@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import {UserService} from "../../../../core/services/user.service";
-import {UserLetter} from "../../../../shared/models/user/user-letter";
-import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {emailDotValidator} from "@core/validators/email-dot-validator";
-import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
+import {UserService} from '../../../../core/services/user.service';
+import {UserLetter} from '../../../../shared/models/user/user-letter';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {emailDotValidator} from '@core/validators/email-dot-validator';
+import {ToastrNotificationsService} from '@core/services/toastr-notifications.service';
 
 
 @Component({
@@ -13,7 +13,7 @@ import {ToastrNotificationsService} from "@core/services/toastr-notifications.se
   styleUrls: ['./requests-modal.component.sass'],
 })
 export class RequestsModalComponent implements OnInit {
-  isShowSpinner: boolean = false;
+  isShowSpinner = false;
   answerText: string;
   currentLetter: UserLetter = {} as UserLetter;
   requestsForm: FormGroup;
@@ -26,10 +26,10 @@ export class RequestsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.requestsForm = new FormGroup({
-      userName: new FormControl({value: this.currentLetter.userName, disabled:true }),
-      userEmail: new FormControl({value: this.currentLetter.userEmail, disabled:true}),
-      subject: new FormControl({value: this.currentLetter.subject, disabled:true}),
-      description: new FormControl({value: this.currentLetter.description, disabled:true}),
+      userName: new FormControl({value: this.currentLetter.userName, disabled: true }),
+      userEmail: new FormControl({value: this.currentLetter.userEmail, disabled: true}),
+      subject: new FormControl({value: this.currentLetter.subject, disabled: true}),
+      description: new FormControl({value: this.currentLetter.description, disabled: true}),
       answer: new FormControl(this.answerText, [Validators.required])
     });
   }
@@ -38,18 +38,21 @@ export class RequestsModalComponent implements OnInit {
     this.isShowSpinner = true;
     this.userService.sendLetterToUser(this.currentLetter, answerText)
       .subscribe(letter => {
-        this.toastrService.showSuccess("Your letter was delivered!");
+        this.toastrService.showSuccess('Your letter was delivered!');
         this.isShowSpinner = false;
         this.closeForm();
-      },error => {
-      console.error(error);
+      }, error => {
       this.toastrService.showError('Your letter wasn\'t delivered!');
       this.isShowSpinner = false;
     });
   }
 
   closeForm() {
-    this.activeModal.close();
+    this.activeModal.close('Send');
+  }
+
+  cancelForm() {
+    this.activeModal.dismiss('Form is cancel');
   }
 
 }

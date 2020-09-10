@@ -16,6 +16,9 @@
     <div *ngIf="notifications.length == 0" class="no-notifications">
       There are no notifications
     </div>
+    <div>
+      
+    </div>
     <ng-container *ngFor="let notification of notifications">
       <app-notification-card
       *ngIf="isShowingRead === false || isShowingRead"
@@ -24,6 +27,8 @@
       (clearedOne)="clearOne(notification)"
       (toggleNotificationsBlock)="toggle()"></app-notification-card>
     </ng-container>
+    <div class="top-point" #top>
+    </div>
   </div>
   <div class="notifications-footer">
     <div class="custom-control custom-switch">

@@ -181,6 +181,7 @@ namespace buildeR.BLL.Services
         public async Task<ProjectDTO> CopyProject(ProjectDTO dto)
         {
             var existingProject = await GetProjectWithBuildSteps(dto.Id);
+            dto.Repository.Id = 0;
             var newProject = new ProjectDTO
             {
                 Description = dto.Description,
@@ -197,7 +198,7 @@ namespace buildeR.BLL.Services
             };
 
             var createdProject = (await Context.AddAsync(Mapper.Map<Project>(newProject))).Entity;
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
             int id = createdProject.Id;
             existingProject.BuildSteps.Select(buildStep => _buildStepService.Create(new NewBuildStepDTO
             {

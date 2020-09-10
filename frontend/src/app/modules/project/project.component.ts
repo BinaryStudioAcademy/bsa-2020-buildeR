@@ -2,7 +2,7 @@ import { Project } from 'src/app/shared/models/project/project';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ProjectService } from '@core/services/project.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { TabRoute } from '@shared/models/tabs/tab-route';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
-import {BuildHistory} from "@shared/models/build-history";
+import {BuildHistory} from '@shared/models/build-history';
 
 @Component({
   selector: 'app-project',
@@ -50,6 +50,7 @@ export class ProjectComponent extends BaseComponent implements OnInit {
     private projectService: ProjectService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute,
+    private router: Router,
     private modalService: NgbModal,
     private syncService: SynchronizationService,
     private authService: AuthenticationService,
@@ -84,6 +85,7 @@ export class ProjectComponent extends BaseComponent implements OnInit {
       .subscribe(
         () => {
           this.toastrService.showSuccess(msg);
+          this.router.navigateByUrl(`/portal/projects/${this.project.id}/history`);
           this.buildHistoryService.sendLoadBuildHistoryOfProject();
         },
         (res) => this.toastrService.showError(res.error)

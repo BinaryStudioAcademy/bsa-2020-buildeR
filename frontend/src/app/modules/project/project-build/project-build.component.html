@@ -5,7 +5,8 @@
 </ng-template>
 
 <ng-template #loaded>
-<div *ngIf="buildHistory">
+
+<div *ngIf="buildHistory; else emptyBuilds">
   <nav aria-label="breadcrumb" *ngIf="!isCurrent">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a routerLink="../">Show all</a></li>
@@ -13,12 +14,12 @@
   </nav>
   <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
     <div class='user-commit'>
-      <a [routerLink]="'/portal/user/' + buildHistory.performer.id">
+      <a [routerLink]="'/portal/user/' + buildHistory.performer?.id">
         <img
-          [src]="buildHistory.performer.avatarUrl"
+          [src]="buildHistory.performer?.avatarUrl"
           onerror="this.src='../../../../assets/images/Avatar-default.png'"
           alt="Avatar"
-          class="avatar" />Author: {{buildHistory.performer.username}}
+          class="avatar" />Author: {{buildHistory.performer?.username}}
       </a>
       <p><i class="fas fa-code"></i> Commit <span class="commit">{{getCommit(buildHistory)}}</span></p>
       <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
@@ -40,4 +41,17 @@
   </div>
   <app-logging-terminal [project]="project" [logs]="buildHistory.logs"></app-logging-terminal>
 </div>
+</ng-template>
+<ng-template #emptyBuilds>
+  <div class="container">
+
+    <div class="no-builds-container">
+      <div class="image-container">
+        <img class="builders" [src]="'../../../../assets/images/Play.png'" />
+      </div>
+      <span class="my-3">
+        It seems that you do not yet have builds for this project, you can run it at any time!
+        </span>
+    </div>
+  </div>
 </ng-template>

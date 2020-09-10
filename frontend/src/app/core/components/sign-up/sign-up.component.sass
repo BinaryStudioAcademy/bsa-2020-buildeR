@@ -12,19 +12,19 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.5)
     border-radius: 5px
     padding-top: 20px
-    padding-left: 40px
-    padding-right: 40px
+    padding-left: 16vw
+    padding-right: 16vw
     padding-bottom: 60px
     z-index: 1000
     background-color: white
+    justify-content: center
+    align-items: center
+    display: flex
 
 .content > h6
     font-weight: bold
     font-size: 70px
     margin-bottom: 25px
-
-.content button
-    margin: 0 200px
 
 
 .ember-view
@@ -60,6 +60,9 @@
     align-items: center
     border-radius: 10px
     margin-bottom: 10px
+    width: 16vw
+    justify-content: center
+    align-items: center
 
 .content .btn:hover
     background-color: #eff0f4
@@ -88,3 +91,25 @@
 
 .content > p > a:hover
     opacity: 1
+
+@media screen and (max-width: 900px)
+    .btn
+        width: 20vw
+    .content
+        padding-left: 10vw
+        padding-right: 10vw
+
+@media screen and (max-width: 835px)
+    .content
+        .btn
+            width: 10rem
+
+@media screen and (max-width: 670px)
+    .content
+        padding-left: 5vw
+        padding-right: 5vw
+
+@media screen and (max-width: 520px)
+    #blue-blob_svg__Layer_1
+        width: 80vw
+        height: 50vw

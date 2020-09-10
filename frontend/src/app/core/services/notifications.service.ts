@@ -24,18 +24,22 @@ export class NotificationsService implements OnDestroy {
     private httpService: HttpService,
     private appNotificationsToaster: AppNotificationsToasterService
   ) {
-    this.currentUser = this.authService.getCurrentUser();
-    httpService
-      .getRequest<Notification[]>(
-        `${this.routePrefix}/user/${this.currentUser.id}`
-      )
-      .subscribe((notifications) =>
-        notifications.forEach((n) => this.notifications$.next(n))
-      );
+
+  }
+
+  private getCurrentUser() {
+    if (!this.currentUser) {
+      this.currentUser = this.authService.getCurrentUser();
+    }
+  }
+
+  connect() {
+    this.getCurrentUser();
     this.configureSignalR();
   }
 
-  getInitialNotifications() {
+  getNotifications() {
+    this.getCurrentUser();
     return this.httpService.getRequest<Notification[]>(
       `${this.routePrefix}/user/${this.currentUser.id}`);
   }
@@ -60,9 +64,9 @@ export class NotificationsService implements OnDestroy {
         this.notificationsHub
           .invoke('JoinGroup', this.currentUser.id.toString())
           .then(null)
-          .catch((err) => console.error(err));
+          .catch((err) => {});
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {});
     this.notificationsHub.listen('getNotification').subscribe((notif) => {
       const notification: Notification = JSON.parse(notif);
       notification.date = new Date();

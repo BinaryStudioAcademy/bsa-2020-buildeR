@@ -3,7 +3,7 @@ import { Component, OnInit, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '@core/services/project.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
 import { projectNameAsyncValidator } from '@modules/project/validators/project-name.async-validator';
@@ -23,8 +23,8 @@ export class ProjectSettingsComponent implements OnInit {
   projectId: number;
   isLoadedEnvVar = false;
   branches: string [] = ['master', 'dev'];
-  public envVarsForm: FormGroup;
-  public projectForm: FormGroup;
+  envVarsForm: FormGroup;
+  projectForm: FormGroup;
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
 
@@ -101,6 +101,7 @@ export class ProjectSettingsComponent implements OnInit {
   }
   reset() {
     this.projectForm.reset(this.project);
+    this.projectForm.controls.isPublic.setValue(this.project.isPublic.toString());
   }
   save(project: Project) {
     this.isShowSpinner = true;
@@ -138,7 +139,6 @@ export class ProjectSettingsComponent implements OnInit {
     if (!this.envVar.data.isSecret) {
       this.envVar.data.isSecret = false;
     }
-    console.log(this.envVar);
     this.projectService.addEnvironmentVariable(this.envVar).subscribe(
       () => {
         this.toastrService.showSuccess('Enviroment Variable added');
@@ -179,8 +179,6 @@ export class ProjectSettingsComponent implements OnInit {
   edit(envVar: EnviromentVariable){
     const index = this.envVariables.findIndex(x => x.id === envVar.id);
     let err = false;
-    console.log(index);
-
     this.projectService.updateEnviromentVariable(envVar).subscribe(
       () => {
         this.toastrService.showSuccess('Enviroment Variable updated');
@@ -191,15 +189,14 @@ export class ProjectSettingsComponent implements OnInit {
       },
       () => {
         if (!err) {
-          console.log( this.envVariables);
           envVar.id = envVar.data.name;
-          this.envVariables.splice(index, 1, envVar); console.log(this.envVariables);
+          this.envVariables.splice(index, 1, envVar);
         }
       }
     );
   }
   isNotUniqueName(): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: any} | null => {
+    return control => {
       const isNotUnique = this.envVariables.some(x => x.data.name === control.value);
       return isNotUnique ? { isNotUniqueName: {value: control.value}} : null;
     };

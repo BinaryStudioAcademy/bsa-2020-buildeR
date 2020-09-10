@@ -8,8 +8,6 @@ import { environment } from '../../../environments/environment';
 export class SignalRHubFactoryService implements OnDestroy {
   private hubLookup = new Map<string, SignalRHub>();
 
-  constructor() { }
-
   createHub(hubUrl: string): SignalRHub {
     if (this.hubLookup.has(hubUrl)) {
       return this.hubLookup.get(hubUrl);
@@ -20,16 +18,16 @@ export class SignalRHubFactoryService implements OnDestroy {
     return hub;
   }
 
-  disconnect(): void {
+  disconnect() {
     this.hubLookup.forEach((hub) => hub.disconnect());
     this.hubLookup.clear();
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.disconnect();
   }
 
-  private buildUrl(hubUrl: string): string {
+  private buildUrl(hubUrl: string) {
     return environment.signalRUrl + hubUrl;
   }
 }

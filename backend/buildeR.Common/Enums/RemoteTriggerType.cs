@@ -7,6 +7,7 @@ namespace buildeR.Common.Enums
     {
         Undefined = 0,
         Push = 1,
-        PullRequest = 2
+        PullRequest = 2,
+        All = Push | PullRequest,
     }
 }

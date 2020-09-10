@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using Quartz.Spi;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,16 +13,18 @@ namespace buildeR.API.HostedServices
     {
         private readonly IScheduler _scheduler;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public QuartzHostedService(IScheduler scheduler, IServiceScopeFactory serviceScopeFactory)
+        private readonly IJobFactory _jobFactory;
+        public QuartzHostedService(IScheduler scheduler, IServiceScopeFactory serviceScopeFactory, IJobFactory jobFactory)
         {
             _scheduler = scheduler;
             _serviceScopeFactory = serviceScopeFactory;
+            _jobFactory = jobFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             await InitDatabase();
+            _scheduler.JobFactory = _jobFactory;
             await _scheduler?.Start(cancellationToken);
         }
 
