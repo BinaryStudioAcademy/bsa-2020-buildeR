@@ -42,7 +42,7 @@ export class AuthenticationService {
   }
 
   async loadCurrentUser(force?: boolean) {
-    if (!this.currentUser || force) {
+    if (!this.currentUser || this.currentUser === undefined || force) {
       this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
     }
 

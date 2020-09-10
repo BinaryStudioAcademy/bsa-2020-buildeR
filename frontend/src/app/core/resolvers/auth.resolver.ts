@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
 import {
-  RouterStateSnapshot,
   ActivatedRouteSnapshot,
-  Resolve,
+  Resolve, RouterStateSnapshot
 } from '@angular/router';
-import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../../shared/models/user/user';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthResolver implements Resolve<User> {
   constructor(private authService: AuthenticationService) { }
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.authService.loadCurrentUser();
+  async resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    const user = await this.authService.loadCurrentUser();
+    if (!user) {
+      this.authService.logout();
+      return;
+    }
+    return user;
   }
 }
