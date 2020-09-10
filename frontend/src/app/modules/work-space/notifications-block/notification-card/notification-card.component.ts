@@ -11,7 +11,7 @@ import { NotificationsService } from '@core/services/notifications.service';
   styleUrls: ['./notification-card.component.sass']
 })
 export class NotificationCardComponent implements OnInit {
-  public NotificationType = NotificationType;
+  NotificationType = NotificationType;
   @Input() notification: Notification;
   @Input() isShowingRead: boolean;
   @Output() clearedOne = new EventEmitter<Notification>();
@@ -61,7 +61,7 @@ export class NotificationCardComponent implements OnInit {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
             bh => this.router.navigateByUrl('/', {skipLocationChange: true})
                   .then(() => {
-                      this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]);
+                      this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
                       this.clearOne(notification);
                   }),
           );
