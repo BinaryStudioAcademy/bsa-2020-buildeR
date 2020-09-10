@@ -36,6 +36,12 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
   }
 
   ngOnInit(): void {
+    this.notificationService.getNotifications()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((notifications) => {
+        this.notifications.push(...notifications);
+        this.onChanging('adding', ...notifications);
+      });
     this.notificationService.connect();
     this.notificationService.listen().subscribe((notification) => {
       if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
@@ -61,14 +67,17 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
     this.toggleNotifications.emit();
   }
 
-  onChanging(type: 'adding' | 'reading', notification: Notification) {
+  onChanging(type: 'adding' | 'reading', ...notifications: Notification[]) {
     if (type === 'adding') {
-      if (this.isShowingRead || !notification.isRead) {
-        this.counterNotifications.emit(1);
+      if (this.isShowingRead) {
+        this.counterNotifications.emit(notifications.length);
+      } else {
+        const unreadCount = notifications.reduce((acc, n) => acc + (n.isRead ? 0 : 1), 0);
+        this.counterNotifications.emit(unreadCount);
       }
     } else {
       if (!this.isShowingRead) {
-        this.counterNotifications.emit(-1);
+        this.counterNotifications.emit(-notifications.length);
       }
     }
   }
