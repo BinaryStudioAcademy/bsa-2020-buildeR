@@ -59,6 +59,7 @@ export class UserBuildHistoryComponent implements OnInit {
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       let buildIndex = this.builds.findIndex(
         (pi) => pi.id == statusChange.BuildHistoryId

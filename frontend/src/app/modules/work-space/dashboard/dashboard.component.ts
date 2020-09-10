@@ -68,6 +68,7 @@ export class DashboardComponent
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       const projectsToUpdate = [
         ...this.starredProjects,
