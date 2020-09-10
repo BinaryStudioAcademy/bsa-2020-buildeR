@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { TeamMemberService } from '../../../core/services/team-member.service';
 import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
+import { RemoveGroup } from '@shared/models/group/remove-group';
 
 @Component({
   selector: 'app-group-list',
@@ -147,8 +148,13 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     modalRef.result
       .then((result) => {
         if (result) {
+          const id = groupId;
+          const removeObject = {
+            initiatorUserId: this.currentUser.id,
+            groupId: id
+          } as RemoveGroup;
           this.groupService
-            .deleteGroup(groupId)
+            .deleteGroupWithNotification(removeObject)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
               this.groupService.userGroupsChanged.next();

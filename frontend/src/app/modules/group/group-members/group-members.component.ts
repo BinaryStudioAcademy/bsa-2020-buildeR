@@ -114,6 +114,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         this.getUsers();
         this.toastrService.showSuccess('Member was successfully invited');
         this.memberForm.controls[`user`].setValue('');
+        this.memberForm.controls[`dropdown`].setValue('Guest');
       },
         (err) => {
           this.isShowSpinner = false;
