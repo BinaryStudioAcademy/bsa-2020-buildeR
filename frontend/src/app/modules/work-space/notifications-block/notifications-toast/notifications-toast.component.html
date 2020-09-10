@@ -1,0 +1,9 @@
+<ngb-toast
+  *ngFor="let toast of appNotificationsService.toasts"
+  [autohide]="true" [delay]="toast.delay || 5000"
+  (hide)="appNotificationsService.remove(toast)"
+  [delay]="60000"
+  style="padding: 0px;">
+<app-notification-card [notification]="toast" (clearedOne)="appNotificationsService.remove(toast)"
+(read)="markRead()"></app-notification-card>
+</ngb-toast>
