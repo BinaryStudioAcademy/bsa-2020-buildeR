@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using buildeR.Common.DTO.Group;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.Enums;
+using buildeR.Common.DTO.User;
 
 namespace buildeR.BLL.Services
 {
@@ -45,7 +46,14 @@ namespace buildeR.BLL.Services
 
             return Mapper.Map<ProjectDTO>(project);
         }
-        
+        public async Task<UserDTO> GetUserByProjectId(int projectId)
+        {
+            var user = await Context.Projects
+                .AsNoTracking()
+                .Select(project => project.Owner)
+                .FirstOrDefaultAsync(project => project.Id == projectId);
+            return Mapper.Map<UserDTO>(user);
+        }
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
             var projects = await Context.Projects

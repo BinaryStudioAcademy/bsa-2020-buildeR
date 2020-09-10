@@ -5,6 +5,7 @@ using buildeR.Common.DTO.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using buildeR.Common.DTO.TeamMember;
+using buildeR.Common.DTO.User;
 
 namespace buildeR.BLL.Services.Abstract
 {
@@ -28,5 +29,6 @@ namespace buildeR.BLL.Services.Abstract
 
         Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId);
         Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId);
+        Task<UserDTO> GetUserByProjectId(int projectId);
     }
 }
