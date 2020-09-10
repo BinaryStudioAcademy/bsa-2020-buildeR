@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
@@ -58,5 +58,4 @@ export class GroupComponent extends BaseComponent implements OnInit {
       }
     );
   }
-
 }

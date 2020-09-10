@@ -32,7 +32,7 @@ const routes: Routes = [
       }
     },
     {
-      path: "history",
+      path: 'history',
       component: UserBuildHistoryComponent,
       resolve: {
         user: UserResolverService
@@ -68,7 +68,7 @@ const routes: Routes = [
       }
     },
     {
-      path: "history",
+      path: 'history',
       component: UserBuildHistoryComponent,
       resolve: {
         user: UserResolverService

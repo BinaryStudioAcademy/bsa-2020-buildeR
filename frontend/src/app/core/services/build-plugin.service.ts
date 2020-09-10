@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../core/services/http.service';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
 import { BuildPlugin } from '@shared/models/build-plugin';
 
 @Injectable({
@@ -9,19 +7,19 @@ import { BuildPlugin } from '@shared/models/build-plugin';
 })
 export class BuildPluginService {
 
-  public routePrefix = '/buildPlugins';
+  private routePrefix = '/buildPlugins';
 
   constructor(private httpService: HttpService) { }
 
-  getAllPlugins(): Observable<BuildPlugin[]> {
+  getAllPlugins() {
     return this.httpService.getRequest<BuildPlugin[]>(this.routePrefix);
   }
 
-  createBuildPlugin(buipldPlugin: BuildPlugin): Observable<BuildPlugin> {
+  createBuildPlugin(buipldPlugin: BuildPlugin) {
     return this.httpService.postRequest<BuildPlugin>(`${this.routePrefix}`, buipldPlugin);
   }
 
-  updateBuildPlugin(buipldPlugin: BuildPlugin): Observable<any> {
+  updateBuildPlugin(buipldPlugin: BuildPlugin) {
     return this.httpService.putRequest<BuildPlugin>(`${this.routePrefix}`, buipldPlugin);
   }
 
@@ -29,7 +27,7 @@ export class BuildPluginService {
     return this.httpService.deleteRequest(`${this.routePrefix}/${buipldPlugin.id}`);
   }
 
-  versionsLookup(buildPluginName: string, partOfVersionTerm: string): Observable<any> {
+  versionsLookup(buildPluginName: string, partOfVersionTerm: string) {
     return this.httpService.postRequest<string[]>(`${this.routePrefix}/versions`,
     { buildPluginName, partOfVersionTerm });
   }

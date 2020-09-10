@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../core/services/http.service';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
 import { EmptyBuildStep } from '../../shared/models/empty-build-step';
 import { BuildStep } from '@shared/models/build-step';
 
@@ -10,27 +8,27 @@ import { BuildStep } from '@shared/models/build-step';
 })
 export class BuildStepService {
 
-  public routePrefix = '/buildSteps';
+  private routePrefix = '/buildSteps';
 
   constructor(private httpService: HttpService) { }
 
-  getEmptyBuildSteps(): Observable<HttpResponse<EmptyBuildStep[]>> {
+  getEmptyBuildSteps() {
     return this.httpService.getFullRequest<EmptyBuildStep[]>(`${this.routePrefix}/getEmptyBuildSteps`);
   }
 
-  getBuildStepsByProject(projectId: number): Observable<HttpResponse<BuildStep[]>> {
+  getBuildStepsByProject(projectId: number) {
     return this.httpService.getFullRequest<BuildStep[]>(`${this.routePrefix}/project/${projectId}`);
   }
 
-  createBuildStep(buildStep: BuildStep): Observable<BuildStep> {
+  createBuildStep(buildStep: BuildStep) {
     return this.httpService.postRequest<BuildStep>(`${this.routePrefix}`, buildStep);
   }
 
-  updateBuildStep(buildStep: BuildStep): Observable<any> {
+  updateBuildStep(buildStep: BuildStep) {
     return this.httpService.putRequest<BuildStep>(`${this.routePrefix}`, buildStep);
   }
 
-  bulkUpdate(buildSteps: BuildStep[]): Observable<any> {
+  bulkUpdate(buildSteps: BuildStep[]) {
     return this.httpService.putRequest<BuildStep>(`${this.routePrefix}/bulk`, buildSteps);
   }
 

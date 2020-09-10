@@ -44,7 +44,6 @@ export class PluginsComponent extends BaseComponent implements OnInit {
             plugin.isCollapsed = true;
             plugin.newCommand = '';
           });
-          console.log(this.plugins);
         },
         (error) => {
           this.isLoading = false;
@@ -127,7 +126,6 @@ export class PluginsComponent extends BaseComponent implements OnInit {
       pluginCommands: []
     } as BuildPlugin;
     this.plugins.push(plugin);
-    console.log(this.plugins);
   }
 
   addNewCommand(plugin: BuildPlugin) {

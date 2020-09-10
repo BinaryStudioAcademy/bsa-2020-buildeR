@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { from, of } from 'rxjs';
+import { filter, tap, switchMap } from 'rxjs/operators';
+import { UserInfo } from 'firebase';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { filter, tap, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
-import { from, of } from 'rxjs';
-import { UserInfo } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +16,15 @@ export class AuthenticationService {
   private currentUser: User;
   private firebaseUser: firebase.User;
 
+  private readonly tokenHelper: JwtHelperService;
+
   constructor(
     private angularAuth: AngularFireAuth,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.tokenHelper = new JwtHelperService();
+  }
 
   configureAuthState = (user: firebase.User) => {
     if (user) {
@@ -71,7 +76,7 @@ export class AuthenticationService {
 
   getFirebaseToken() {
     const currentToken = localStorage.getItem('jwt');
-    return !currentToken
+    return !currentToken || this.tokenHelper.isTokenExpired(currentToken)
       ? this.refreshFirebaseToken()
       : of(currentToken);
   }
@@ -120,7 +125,6 @@ export class AuthenticationService {
   }
 
   clearAuth() {
-    localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
     this.firebaseUser = undefined;

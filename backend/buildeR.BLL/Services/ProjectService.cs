@@ -65,7 +65,11 @@ namespace buildeR.BLL.Services
                 .ThenInclude(p => p.BuildHistories)
                 .Where(pg => pg.Group.TeamMembers.Any(tm => tm.UserId == userId && tm.MemberRole != GroupRole.Owner))
                 .ToListAsync();
-            return notOwnGroupProjects.Select(gp => gp.Group).Distinct().GroupJoin(
+            
+                // this is comparer for group, distinct method needs it 
+                GroupComparer comparer = new GroupComparer();
+                
+                return notOwnGroupProjects.Select(gp => gp.Group).Distinct(comparer).GroupJoin(
                 notOwnGroupProjects,
                 group => group.Id,
                 pg => pg.GroupId,

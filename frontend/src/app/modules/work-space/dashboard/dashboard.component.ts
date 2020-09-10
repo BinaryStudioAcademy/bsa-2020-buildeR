@@ -14,8 +14,8 @@ import { ModalCopyProjectComponent } from '../../project/modal-copy-project/moda
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 import { Branch } from '@core/models/Branch';
 import { BuildHistory } from '@shared/models/build-history';
-import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
-import { BuildStatus } from '@shared/models/build-status'
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
+import { BuildStatus } from '@shared/models/build-status';
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { UsersGroupProjects } from '@shared/models/users-group-projects';
 import { GroupRole } from '@shared/models/group/group-role';
@@ -38,7 +38,7 @@ export class DashboardComponent
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
   loadingGroupsProjects = false;
-  tab: "myprojects" | "groupsprojects" | "history" = "myprojects";
+  tab: 'myprojects' | 'groupsprojects' | 'history' = 'myprojects';
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -68,14 +68,15 @@ export class DashboardComponent
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       const projectsToUpdate = [
         ...this.starredProjects,
         ...this.activeProjects,
         ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))
-      ].filter(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
+      ].filter(pi => pi.lastBuildHistory?.id === statusChange.BuildHistoryId);
       if (projectsToUpdate) {
-        if (statusChange.Status != BuildStatus.InProgress) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
             projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
           });
@@ -112,7 +113,7 @@ export class DashboardComponent
   }
 
   gotoGroupsProjects() {
-    this.tab = "groupsprojects";
+    this.tab = 'groupsprojects';
     this.loadingGroupsProjects = true;
     this.projectService
     .notOwnGroupsProjectsByUser(this.currentUser.id)
@@ -126,7 +127,7 @@ export class DashboardComponent
         this.loadingGroupsProjects = false;
         this.toastrService.showError(error);
       }
-    )
+    );
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -177,9 +178,7 @@ export class DashboardComponent
             });
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   copyProject(id: number) {
@@ -193,9 +192,7 @@ export class DashboardComponent
           this.activeProjects.push(result);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   openCreateProjectModal() {
@@ -214,5 +211,5 @@ export class DashboardComponent
   }
 
   hasGroupsProjects() {
-    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0 }
+    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0; }
 }
