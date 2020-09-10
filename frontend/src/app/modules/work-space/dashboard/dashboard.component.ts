@@ -227,7 +227,7 @@ export class DashboardComponent
     return this.activeProjects.filter(p => p.lastBuildHistory)?.length
       || this.starredProjects.filter(p => p.lastBuildHistory)?.length
       || this.groupsProjects.filter(p => p.groupProjects.projects
-        .filter(p => p.lastBuildHistory)?.length)?.length;
+        .filter(build => build.lastBuildHistory)?.length)?.length;
   }
 
   hasGroupsProjects() {
