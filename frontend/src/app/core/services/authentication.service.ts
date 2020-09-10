@@ -161,12 +161,12 @@ export class AuthenticationService {
 
   isTokenExpired() {
     const expTime = new Date(localStorage.getItem('exp-time'));
-    console.log('expTime1' + expTime);
+    // console.log('expTime1' + expTime);
     expTime.setMinutes(expTime.getMinutes() - 5);
     const now = new Date(Date.now());
-    console.log('expTime2 ' + expTime);
-    console.log('now ' + now);
-    console.log(expTime.getTime() < now.getTime());
+    // console.log('expTime2 ' + expTime);
+    // console.log('now ' + now);
+    // console.log(expTime.getTime() < now.getTime());
     return expTime.getTime() < now.getTime();
   }
 }
