@@ -21,6 +21,9 @@ namespace buildeR.BLL.Services
         }
         public async Task HandleGithubPushEvent(int projectId, PushGithubPayloadDTO payload)
         {
+            if (payload?.Ref == null)
+                return;
+
             //When commit is pushed to branch github send payload object with property
             //"refs": "refs/heads/*name of branch*"
             if (!payload.Ref.StartsWith("refs/heads/"))

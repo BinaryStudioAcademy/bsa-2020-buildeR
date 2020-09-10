@@ -43,6 +43,7 @@ namespace buildeR.BLL.Services
             build.PerformerId = user?.Id;
             build.BuildStatus = BuildStatus.Pending;
             build.StartedAt = DateTime.Now;
+            build.BranchHash = triggeredBranch;
             build.Number = _context.BuildHistories.Count(b => b.ProjectId == projectId) + 1;
 
             var lastCommit = await _synchronizationService.GetLastProjectCommit(projectId, triggeredBranch);
