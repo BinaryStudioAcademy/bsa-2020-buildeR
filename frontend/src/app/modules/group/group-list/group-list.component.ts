@@ -79,12 +79,17 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     return this.getRole(group);
   }
   getRole(group: Group) {
-    const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
+    const member = group?.teamMembers.find(m => m.userId === this.currentUser.id);
     if (!member) {
       return null;
     }
 
     return member.memberRole;
+  }
+
+  isCurrentUserOwnerOrAdmin(group: Group) {
+    return this.getCurrentUserRole(group.id) === GroupRole.Owner
+      || this.getCurrentUserRole(group.id) === GroupRole.Admin;
   }
 
   setAcceptedIfOwner(groups: Group[]) { // for already created groups
