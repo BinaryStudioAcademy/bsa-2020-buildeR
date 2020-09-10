@@ -33,7 +33,7 @@ export class ChartBigNormalizedComponent implements OnInit {
   //   },
   // ];
 
-  view = [window.innerWidth - 300, 300];
+  view = [1100, 300];
 
   // options
   showXAxis = true;
@@ -54,17 +54,23 @@ export class ChartBigNormalizedComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    if (window.innerWidth < 400){
+    if (window.innerWidth < 520){
       this.view = [window.innerWidth - 50, 300];
-      this.showYAxisLabel = true;
-    }
-    else{
-      this.view = [window.innerWidth - 300, 300];
       this.showYAxisLabel = true;
     }
     window.onresize = () => {
-    if (window.innerWidth < 400){
+    if (window.innerWidth < 350){
+      this.view = [280, 300];
+      this.showYAxisLabel = false;
+      return;
+    }
+    if (window.innerWidth < 650){
       this.view = [window.innerWidth - 50, 300];
+      this.showYAxisLabel = false;
+      return;
+    }
+    if (window.innerWidth > 1200){
+      this.view = [1100, 300];
       this.showYAxisLabel = false;
     }
     else{
@@ -72,7 +78,6 @@ export class ChartBigNormalizedComponent implements OnInit {
       this.showYAxisLabel = true;
     }
   };
-
   }
 
  onSelect(data): void {

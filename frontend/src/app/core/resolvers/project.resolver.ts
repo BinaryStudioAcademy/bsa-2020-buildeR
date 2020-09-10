@@ -16,13 +16,12 @@ import { EMPTY } from 'rxjs';
 export class ProjectResolverService implements Resolve<Project> {
   constructor(private router: Router, private projectService: ProjectService) {}
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const id = parseInt(route.paramMap.get('projectId'), 10);
-    return this.projectService.getProjectById(id).pipe(
+    const projectId = Number(route.paramMap.get('projectId'));
+    return this.projectService.getProjectById(projectId).pipe(
       tap((proj) => {
         return proj ?? EMPTY;
       }),
       catchError(() => {
-        console.log(this.router.url);
         this.router.navigateByUrl('/portal/**', { skipLocationChange: true });
         return EMPTY;
       })

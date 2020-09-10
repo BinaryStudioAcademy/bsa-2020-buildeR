@@ -5,19 +5,14 @@
   color: #03BBD5
   font-size: 1.5rem
 
+p.title
+  color: #03BBD5
+  font-size: 1.2rem
+
 select
   display: inline-block
   width: auto
   vertical-align: middle
-
-.add-new-job
-  display: flex
-  flex-direction: row
-  align-items: flex-start
-
-.text-over
-  font-size: 18px
-  color: #666
 
 .text
   margin-bottom: 0.3rem
@@ -32,50 +27,80 @@ select
 .switch-wr
   margin: 20px 0
 
-.trigger-group
-  display: flex
-  flex-wrap: wrap
-  justify-items: start
-  align-items: center
-  position: relative
-  grid-gap: 8px
-  padding: 8px
-  padding-right: 54px
-
-.buttons-wr
-  position: absolute
-  top: 0px
-  right: 0px
-
-.fire-time-wr
-  grid-template-columns: 1
-  grid-template-rows: 2
-
-.pre-fire-time
-  grid-row-start: 0
-  grid-row-end: 1
-  justify-self: start
-
-.pre-fire-time
-  grid-row-start: 1
-  grid-row-end: 2
-  justify-self: start
-
-.barnch-column,
-.cron-job-column
-  display: flex
-  flex-wrap: wrap
-  justify-items: start
-  align-items: center
-
 .btn-update,
 .btn-delete
-  color: #666
-  padding: 0px 6px
-  font-size: 18px
+  font-size: 20px
+  padding: 2px 8px
+  max-width: 32px
   &:hover
     background-color: rgba(9,30,66,.08)
 
-.btn-add
-  align-self: flex-end
+.branch-select
+  max-width: 130px
 
+.trigger-container
+  display: grid
+  grid-template-columns: 24px 130px 42px 1fr 72px
+  grid-gap: 0 6px
+  padding: 5px
+  margin-bottom: 8px
+  align-items: center
+  background-color: rgba(9,30,66,.04)
+
+.first-container
+  grid-column: 1
+  display: flex
+  align-self: center
+
+.second-container
+  grid-column: 2
+  justify-self: end
+  grid-gap: 4px
+
+.third-container
+  grid-column: 3
+  justify-self: end
+
+.fourth-container
+  grid-column: 4
+
+.fifth-container
+  grid-column: 5
+  justify-self: end
+
+.sixth-container
+  grid-column: 2/5
+  display: flex
+  flex-wrap: wrap
+  justify-items: flex-start
+
+@media screen and (max-width: 991px)
+  .trigger-container
+    grid-template-columns: 1fr
+    justify-items: start
+    grid-gap: 6px
+  .first-container,
+  .second-container
+    grid-column: 1
+    grid-row: 1
+  .first-container
+    justify-self: center
+  .fifth-container
+    grid-column: 1
+    grid-row: 1
+  .second-container,
+  .third-container,
+  .fourth-container,
+  .sixth-container
+    grid-column: 1
+    justify-self: start
+
+.divider
+  min-height: 3px
+  width: 60%
+  margin: 10px 0px 10px 0
+  background-color: var(--light)
+
+@media screen and (max-width: 675px)
+  .divider
+    width: 100%

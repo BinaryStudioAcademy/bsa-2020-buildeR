@@ -10,6 +10,11 @@
     </a>
     <div class="d-flex order-lg-1 ml-auto pr-2" (click)="isMenuCollapsed = true">
       <div class="nav-item">
+        <a class="nav-link" [routerLink]="['admin/plugins']" [hidden]="user.role !== 1">
+          <i class="fas fa-user-cog admin-icon"></i>
+        </a>
+      </div>
+      <div class="nav-item">
         <a class="nav-link a-bell">
           <i class="fas fa-bell notifications-icon bi bi-bell-fill" (click)="showNotifications()"></i>
           <ng-container *ngIf="countNotifications > 0">
@@ -29,7 +34,6 @@
         </a>
         <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right">
           <a ngbDropdownItem [routerLink]="['user']">Settings</a>
-          <a ngbDropdownItem>Broadcast</a>
           <a ngbDropdownItem (click)="logOut()">Logout</a>
         </div>
       </div>
@@ -41,11 +45,11 @@
             <a class="nav-link" (click)="isMenuCollapsed = true" [routerLink]="['dashboard']">Dashboard</a>
           </li>
           <li class="nav-item">
-            <div (click)="isMenuCollapsed = true" *ngIf="groupsLoaded | async" class="nav-item" ngbDropdown>
-              <a class="nav-link" [routerLink]="['groups']" ngbDropdownToggle>Groups</a>
+            <div (click)="isMenuCollapsed = true" *ngIf="groupsLoaded | async" ngbDropdown>
+              <a class="nav-link" [routerLink]="['groups']" ngbCollapse>Groups</a>
               <div *ngIf="groups.length > 0" ngbDropdownMenu aria-labelledby="navbarDropdown" class="dropdown-groups">
                 <a *ngFor="let group of groups" ngbDropdownItem
-                  [routerLink]="['groups', group.id, 'settings']">{{group.name}}</a>
+                  [routerLink]="['/portal/groups', group?.id, 'projects']">{{group.name}}</a>
               </div>
             </div>
           </li>

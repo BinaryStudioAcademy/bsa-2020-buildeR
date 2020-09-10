@@ -20,7 +20,7 @@ namespace buildeR.BLL.Services
         private readonly IMapper _mapper;
         private readonly NotificationsProducer _producer;
 
-        private static JsonSerializerSettings _camelCaseProperties = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings CamelCaseProperties = new JsonSerializerSettings
         {
             ContractResolver = new DefaultContractResolver {NamingStrategy = new CamelCaseNamingStrategy()}
         };
@@ -61,7 +61,7 @@ namespace buildeR.BLL.Services
 
             var dto = _mapper.Map<NotificationDTO>(createdEntity);
 
-            _producer.Send(JsonConvert.SerializeObject(dto, _camelCaseProperties), createdEntity.GetType().Name);
+            _producer.Send(JsonConvert.SerializeObject(dto, CamelCaseProperties), createdEntity.GetType().Name);
 
             return dto;
         }

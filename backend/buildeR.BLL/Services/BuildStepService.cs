@@ -114,12 +114,6 @@ namespace buildeR.BLL.Services
                 .Where(buildStep => buildStep.ProjectId == stepToDelete.ProjectId && buildStep.Index > stepToDelete.Index)
                 .ToListAsync();
 
-            foreach (var buildStep in projectBuildStepsWithIndexMoreBuildStepToDelete)
-            {
-                --buildStep.Index;
-                Context.Entry(buildStep).State = EntityState.Modified;
-            }
-
             await base.RemoveAsync(id);
         }
 
@@ -137,7 +131,8 @@ namespace buildeR.BLL.Services
                         BuildPluginId = buildPlugin.Id,
                         BuildPlugin = Mapper.Map<BuildPluginDTO>(buildPlugin),
                         PluginCommand = Mapper.Map<PluginCommandDTO>(pluginCommand),
-                        PluginCommandId = pluginCommand.Id
+                        PluginCommandId = pluginCommand.Id,
+                        Config = buildPlugin.PluginName.StartsWith("Post Actions") ? " { \"Host\": \"\", \"User\": \"\", \"Password\" : \"\", \"Directory\": \"\", \"OutputDirectory\": \"\"} " : " "
                     }
                 );
         }

@@ -5,16 +5,18 @@
 </ng-template>
 
 <ng-template #loaded>
+  <div *ngIf="builds?.length; else emptyBuilds">
   <ul class="build-container">
     <li *ngFor="let build of builds" [appBuildHistoryStatusOutline]="build.buildStatus">
       <div class='user-commit'>
-        <a [routerLink]="'/portal/user/' + build.performer.id">
-          <img [src]="build.performer.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-            alt="Avatar" class="avatar" /><span>{{build.performer.username}}</span></a>
+        <a [routerLink]="'/portal/user/' + build.performer?.id">
+          <img [src]="build.performer?.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
+            alt="Avatar" class="avatar" /><span>{{build.performer?.username}}</span></a>
         <p><i class="fas fa-code"></i> {{ getCommit(build) }}</p>
       </div>
       <div class="build-info">
-        <p class="status" [routerLink]="build.id" [appBuildHistoryStatus]="build.buildStatus"><i
+        <p class="status" [ngClass]="{'status-blink': build.buildStatus == 5}"
+           [routerLink]="build.id" [appBuildHistoryStatus]="build.buildStatus"><i
             class="fas fa-hammer"></i> #{{build.number}} {{build.buildStatus | buildStatus}}</p>
         <p class="build-time"><i class="far fa-clock"></i> {{build.duration | timespan}}</p>
         <p class="start-time" title="Finished {{build.buildAt | date:'medium'}}"><i class="far fa-calendar-alt"></i>
@@ -22,4 +24,17 @@
       </div>
     </li>
   </ul>
+  </div>
+</ng-template>
+<ng-template #emptyBuilds>
+  <div class="container">
+    <div class="no-builds-container">
+      <div class="image-container">
+        <img class="builders" [src]="'../../../../assets/images/Play.png'" />
+      </div>
+      <span class="my-3">
+        It seems that you do not yet have builds for this project, you can run it at any time!
+        </span>
+    </div>
+  </div>
 </ng-template>

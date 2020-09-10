@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {BaseComponent} from "../../../core/components/base/base.component";
-import {User} from "../../../shared/models/user/user";
-import {AuthenticationService} from "../../../core/services/authentication.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {UserLetter} from "@shared/models/user/user-letter";
+import { BaseComponent } from '../../../core/components/base/base.component';
+import { User } from '../../../shared/models/user/user';
+import { AuthenticationService } from '../../../core/services/authentication.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UserLetter } from '@shared/models/user/user-letter';
 import { emailDotValidator } from '@core/validators/email-dot-validator';
-import {ToastrNotificationsService} from "@core/services/toastr-notifications.service";
-import {UserService} from "@core/services/user.service";
-import {ActivatedRoute} from "@angular/router";
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { UserService } from '@core/services/user.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -22,7 +22,7 @@ export class HelpComponent extends BaseComponent
   userHelp: UserLetter = {} as UserLetter;
   isShowSpinner = false;
 
-  public helpForm: FormGroup;
+  helpForm: FormGroup;
 
   constructor(
     private authService: AuthenticationService,
@@ -35,7 +35,7 @@ export class HelpComponent extends BaseComponent
 
   ngOnInit(): void {
     this.route.data.subscribe(data => this.currentUser = data.user);
-    if(this.currentUser) {
+    if (this.currentUser) {
       this.userHelp.userEmail = this.currentUser.email;
     }
 
@@ -47,7 +47,7 @@ export class HelpComponent extends BaseComponent
           Validators.pattern(`^[a-zA-Z].*`),
           emailDotValidator()
         ]
-        ),
+      ),
       subject: new FormControl(this.userHelp.subject,
         [
           Validators.required,
@@ -62,37 +62,36 @@ export class HelpComponent extends BaseComponent
           Validators.maxLength(1000),
           Validators.pattern('[a-zA-z0-9_\n\r\t!"#$%&\'\(\)\*\+\,-\.:;<=>\?\[\@\^\{\}\~|\\]\\/ ]*')
         ]
-        ),
+      ),
     });
 
-    if(!this.currentUser)
-    this.helpForm.addControl('userName',
-      new FormControl(this.userHelp.userName,
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(30),
-          Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
-        ]));
+    if (!this.currentUser) {
+      this.helpForm.addControl('userName',
+        new FormControl(this.userHelp.userName,
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(30),
+            Validators.pattern('^(?![-\'\\s])(?!.*--)(?!.*\'\')[[A-Za-z-\'\\s]+(?<![-\'\\s])$')
+          ]));
+    }
   }
 
   onSubmit(letter: UserLetter): void {
 
-    if(this.currentUser) {
+    if (this.currentUser) {
       this.currentUser.firstName ? letter.userName = this.currentUser.firstName :
-        letter.userName = this.currentUser.username
+        letter.userName = this.currentUser.username;
     }
     this.isShowSpinner = true;
-    this.userService.sendLetter(letter).subscribe( letter =>
-    {
-      this.toastrService.showSuccess("Your letter was delivered! Thanks!");
+    this.userService.sendLetter(letter).subscribe(() => {
+      this.toastrService.showSuccess('Your letter was delivered! Thanks!');
       this.isShowSpinner = false;
     },
       error => {
-      console.error(error.message);
-      this.toastrService.showError("Your letter wasn\'t delivered!");
-      this.isShowSpinner = false;
-    });
+        this.toastrService.showError(`Your letter wasn\\'t delivered!`);
+        this.isShowSpinner = false;
+      });
   }
 
 }

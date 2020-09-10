@@ -1,0 +1,44 @@
+::ng-deep
+  *:focus
+    outline: none !important
+  .filter-textbox
+    display: none !important
+  .dropdown-btn
+    border: 1px solid #ced4da !important
+
+form
+  display: flex
+  justify-content: flex-start
+  padding: 5px
+
+.form-control-wr
+  display: flex
+  flex-direction: column
+  justify-content: flex-end
+  width: 40%
+  margin: 1px 4px 1px 4px
+
+.form-control-wr-small
+  display: flex
+  flex-direction: column
+  justify-content: flex-end
+  width: 15%
+  margin: 1px 4px 1px 4px
+
+.btn-wr
+  display: flex
+  button
+    margin-left: 4px
+
+@media screen and (max-width: 675px)
+  form
+    flex-direction: column
+    min-width: 400px
+  .form-control-wr, .form-control-wr-small
+    min-width: 400px
+    width: 100%
+  .btn-wr
+    margin-top: 5px
+    display: flex
+    justify-content: center
+

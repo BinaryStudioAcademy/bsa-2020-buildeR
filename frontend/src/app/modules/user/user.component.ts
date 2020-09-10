@@ -19,6 +19,7 @@ export class UserComponent implements OnInit {
 
   tabRoutesOwner: TabRoute[] = [
     { name: 'Profile', route: './' },
+    { name: 'History', route: 'history' },
     { name: 'Insights', route: 'insights' },
     { name: 'Notification settings', route: 'notificationsettings' },
     { name: 'Credential settings', route: 'credentialsettings' }
@@ -26,6 +27,7 @@ export class UserComponent implements OnInit {
 
   tabRoutesGuest: TabRoute[] = [
     { name: 'Profile', route: './' },
+    { name: 'History', route: 'history' },
     { name: 'Insights', route: 'insights' }
   ];
 
@@ -60,13 +62,9 @@ export class UserComponent implements OnInit {
       const formData = new FormData();
       formData.append('file', file, file.name);
       this.userService.uploadAvatar(formData, this.currentUser.id).subscribe((res) => {
-        console.log(res.avatarUrl);
         this.currentUser.avatarUrl = res.avatarUrl;
         this.userService.changeImageUrl(res.avatarUrl);
       });
-    }
-    else {
-      console.log('Image didn`t change');
     }
   }
 }

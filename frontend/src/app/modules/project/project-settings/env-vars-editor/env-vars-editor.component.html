@@ -1,32 +1,37 @@
-<form [formGroup]="envVarsEditForm" class="group-ev vars" >
-  <div class="name">
-    <div class="input-area">
-      <input type="text" class="form-control form-control form-control-ev"
+<form [formGroup]="envVarsEditForm" class="edit-env-container border rounded" >
+  <p class="first-container my-4">Environment Variable #{{index}} </p>
+  <div class="second-container">
+      <input type="text" class="form-control form-control-ev"
       formControlName="name">
+      <div class="error"
+      *ngIf="envVarsEditForm.controls['name'].hasError('isNotUniqueName')" >
+      Name must be unique
     </div>
   </div>
-  <div class="value">
-    <div class="input-area">
+  <div class="third-container">
+    <div class="eye" [hidden]="!envVar.data.isSecret">
       <i class="fa" [ngClass]="{
         'fa-eye-slash': !fieldTextType,
         'fa-eye': fieldTextType
       }"
       (click)="toggleFieldTextType()"></i>
-      <input type="text" [type]="fieldTextType ? 'password' : 'text'" class="form-control form-control form-control-ev val"
+    </div>
+    <input type="text" [type]="fieldTextType ? 'password' : 'text'" class="form-control form-control-ev"
       formControlName="value">
+  </div>
+  <div class="fourth-container">
+    <div class="custom-control custom-switch">
+      <input type="checkbox" [(ngModel)]="envVar.data.isSecret" (change)="changeSecret()" class="custom-control-input" [id]="envVar.id" formControlName="isSecret">
+      <label class="custom-control-label" [for]="envVar.id"></label>
     </div>
   </div>
-    <div class="switch">
-      <div class="input-area">
-        <div class="custom-control custom-switch">
-          <input type="checkbox" class="custom-control-input" formControlName="isSecret"/>
-          <label class="custom-control-label isSecret-label" for="isSecret"></label>
-        </div>
-    </div>
-    </div>
-    <div class="options-env-vars">
-      <button class="btn btn-warning add-cron" [disabled]="envVarsEditForm.pristine
-      || envVarsEditForm.invalid" (click)="edit()">Edit</button>
-      <button class="btn btn-danger add-cron" (click)="delete()">Delete</button>
-    </div>
-  </form>
+  <div class="fifth-container">
+    <button (click)="edit()" class="btn btn-update text-dark"
+    [disabled]="!isInit || envVarsEditForm.invalid || isNotUniqueCheckChanges(envVarsEditForm.controls['name'].value) || envVarsEditForm.pristine">
+      <i class="fas fa-save"></i>
+    </button>
+    <button (click)="delete()" class="btn btn-delete text-danger">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+  </div>
+</form>

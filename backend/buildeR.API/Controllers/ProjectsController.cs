@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using buildeR.Common.DTO.BuildHistory;
+using buildeR.Common.DTO.Repository;
 using buildeR.Common.DTO.Synchronization;
+using buildeR.Common.DTO.TeamMember;
 
 namespace buildeR.API.Controllers
 {
@@ -37,13 +39,28 @@ namespace buildeR.API.Controllers
         {
             return await _projectService.GetProjectsByUser(userId);
         }
+        
+        [HttpGet("notOwnGroupsProjectsByUser/{userId:int}")]
+        public async Task<IEnumerable<UsersGroupProjectsDTO>> NotOwnGroupsProjectsByUser(int userId)
+        {
+            return await _projectService.NotOwnGroupsProjectsByUser(userId);
+        }
 
         [HttpGet("{projectId}/settings")]
         public async Task<ProjectDTO> GetProjectById(int projectId)
         {
-            return await _projectService.GetAsync(projectId);
+            var project = await _projectService.GetAsync(projectId);
+            project.Repository = await _projectService.GetRepository(projectId);
+            project.BuildHistories = await _projectService.GetAllBuildHistory(projectId);
+            return project;
         }
-
+        
+        [HttpGet("repository/{projectId}")]
+        public async Task<RepositoryDTO> GetRepositoryByUserId (int projectId)
+        {
+            return await _projectService.GetRepository(projectId);
+        }
+        
         [HttpPost]
         public async Task<ProjectDTO> CreateProject([FromBody] NewProjectDTO dto)
         {
@@ -106,10 +123,22 @@ namespace buildeR.API.Controllers
             await _envService.UpdateEnvironmentVariable(variableDTO);
         }
 
-        [HttpGet("projectNameValidation/{userId}/{projectName}")]
-        public async Task<bool> ValidateProjectName(int userId, string projectName)
+        [HttpGet("projectNameValidation/{userId}/{projectName}/{projectId}")]
+        public async Task<bool> ValidateProjectName(int userId, string projectName, int projectId)
         {
-            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName);
+            return await _projectService.CheckIfProjectNameIsUnique(userId, projectName, projectId);
+        }
+
+        [HttpGet("deleteBuildStepsByProjectId/{projectId}")]
+        public async Task DeleteBuildSteps(int projectId)
+        {
+            await _projectService.DeleteBuildStepsByProjectId(projectId);
+        }
+
+        [HttpGet("canUserRunNotOwnProject")]
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await _projectService.CanUserRunNotOwnProject(projectId, userId);
         }
     }
 }

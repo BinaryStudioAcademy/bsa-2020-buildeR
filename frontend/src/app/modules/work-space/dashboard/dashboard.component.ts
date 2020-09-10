@@ -13,12 +13,12 @@ import { ModalContentComponent } from '../../../core/components/modal-content/mo
 import { ModalCopyProjectComponent } from '../../project/modal-copy-project/modal-copy-project.component';
 import { ProjectCreateComponent } from '@modules/project/project-create/project-create.component';
 import { Branch } from '@core/models/Branch';
-import { NewBuildHistory } from '@shared/models/new-build-history';
 import { BuildHistory } from '@shared/models/build-history';
-import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service'
-import { StatusChange } from '@shared/models/status-change'
-import { BuildStatus } from '@shared/models/build-status'
+import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
+import { BuildStatus } from '@shared/models/build-status';
 import { BuildHistoryService } from '@core/services/build-history.service';
+import { UsersGroupProjects } from '@shared/models/users-group-projects';
+import { GroupRole } from '@shared/models/group/group-role';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,12 +28,17 @@ import { BuildHistoryService } from '@core/services/build-history.service';
 export class DashboardComponent
   extends BaseComponent
   implements OnInit, OnDestroy {
+  GroupRole = GroupRole;
+
   activeProjects: ProjectInfo[];
   starredProjects: ProjectInfo[];
+  groupsProjects: UsersGroupProjects[] = [];
   cachedUserProjects: ProjectInfo[];
   currentUser: User;
   currentGithubUser: SynchronizedUser;
   loadingProjects = false;
+  loadingGroupsProjects = false;
+  tab: 'myprojects' | 'groupsprojects' | 'history' = 'myprojects';
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
@@ -50,7 +55,6 @@ export class DashboardComponent
     private buildStatusesSignalRService: BuildStatusesSignalRService
   ) {
     super();
-
   }
 
   ngOnInit(): void {
@@ -64,16 +68,23 @@ export class DashboardComponent
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const project = [...this.starredProjects, ...this.activeProjects].find(pi => pi.lastBuildHistory?.id == statusChange.BuildHistoryId);
-      if (project) {
-        if (statusChange.Status != BuildStatus.InProgress) {
+      const projectsToUpdate = [
+        ...this.starredProjects,
+        ...this.activeProjects,
+        ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))
+      ].filter(pi => pi.lastBuildHistory?.id === statusChange.BuildHistoryId);
+      if (projectsToUpdate) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-            project.lastBuildHistory = bh;
+            projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
           });
         } else {
-          delete project.lastBuildHistory.buildStatus;
-          project.lastBuildHistory.buildStatus = statusChange.Status;
+          projectsToUpdate.forEach(p => {
+            delete p.lastBuildHistory.buildStatus;
+            p.lastBuildHistory.buildStatus = statusChange.Status;
+          });
         }
       }
     });
@@ -99,6 +110,24 @@ export class DashboardComponent
           this.toastrService.showError(error);
         }
       );
+  }
+
+  gotoGroupsProjects() {
+    this.tab = 'groupsprojects';
+    this.loadingGroupsProjects = true;
+    this.projectService
+    .notOwnGroupsProjectsByUser(this.currentUser.id)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(
+      (resp) => {
+        this.loadingGroupsProjects = false;
+        this.groupsProjects = resp;
+      },
+      (error) => {
+        this.loadingGroupsProjects = false;
+        this.toastrService.showError(error);
+      }
+    );
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -149,9 +178,7 @@ export class DashboardComponent
             });
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   copyProject(id: number) {
@@ -165,9 +192,7 @@ export class DashboardComponent
           this.activeProjects.push(result);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   openCreateProjectModal() {
@@ -184,4 +209,7 @@ export class DashboardComponent
   getCommit(bh: BuildHistory) {
     return bh.commitHash?.substring(0, 6) ?? '—';
   }
+
+  hasGroupsProjects() {
+    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0; }
 }

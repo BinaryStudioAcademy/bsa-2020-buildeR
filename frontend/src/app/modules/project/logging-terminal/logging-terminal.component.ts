@@ -4,93 +4,100 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  HostListener,
+  Input,
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
-import { BuildLogService } from '../../../core/services/build-log.service';
-import { delay } from 'rxjs/operators';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { Subject } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Project } from '@shared/models/project/project';
+import { IProjectLog } from '@shared/models/project/project-log';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
-type Action = {
+interface IAction {
   level: LogLevel;
   date: Date;
   body?: string;
   number: number;
-};
+}
 
 @Component({
   selector: 'app-logging-terminal',
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent extends BaseComponent
-  implements OnInit, OnDestroy {
-  private log = new Subject<string>();
-  private step = 1;
-  private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
-  private projectId: number;
-
-  @ViewChild('bottom') private bottom: ElementRef;
-
-  autoscroll = true;
-
-  private lineNumber: number = 1;
-
-  showLevels: boolean = false;
-  showTimeStamps: boolean = false;
-
-  buildSteps: Map<number, [boolean, Action[]]> = new Map<
-    number,
-    [boolean, Action[]]
-  >();
-
-  constructor(
-    private buildService: BuildLogService,
-    private logsService: ProjectLogsService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
-    super();
-    route.parent.params.subscribe((params) => this.projectId = params.projectId);
+export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
+  @Input() isLive: boolean;
+  @Input() project: Project;
+  @Input() set logs(values: IProjectLog[]) {
+    this.writeStaticLogs(values);
   }
 
-  ngOnInit(): void {
-    // this.buildService
-    //   .getTestBuildLog()
-    //   .pipe(delay(0))
-    //   .subscribe((line) => this.buildLog(line));
+  private log$ = new Subject<string>();
+  private step = 1;
+  private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
+
+  @ViewChild('bottom') private bottom: ElementRef;
+  rawLogs: string[] = [];
+  autoscroll = true;
+  private lineNumber = 1;
+  showLevels = false;
+  showTimeStamps = false;
+
+  private lastScrollYPos = -1;
+
+  buildSteps: Map<number, [boolean, IAction[]]>;
+
+  constructor(private logsService: ProjectLogsService) {
+    super();
+    this.initLogs();
+  }
+
+  @HostListener('window:scroll', ['$event']) onScroll(_: Event) {
+    const yPos = window.scrollY;
+    if (yPos < this.lastScrollYPos) {
+      this.autoscroll = false;
+    }
+    this.lastScrollYPos = yPos;
+  }
+
+  ngOnInit() {
     this.logsService.buildConnection();
-    this.logsService.startConnectionAndJoinGroup(this.projectId.toString());
-    this.logsService.logsListener(this.log);
-    this.log.subscribe((message) => {
+    this.logsService.startConnectionAndJoinGroup(this.project.id.toString());
+    this.logsService.logsListener(this.log$);
+    this.log$.subscribe((message) => {
       this.buildLog(this.formatLog(message));
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.logsService.stopConnection();
   }
 
+  writeStaticLogs(logs: IProjectLog[]) {
+    this.initLogs();
+    logs?.forEach(log => this.buildLog(this.formatExistingLog(log), false));
+  }
+
   loggin() {
-    this.log.subscribe((line) => {
+    this.log$.subscribe((line) => {
       this.buildLog(line);
     });
   }
 
-  clear() {
-    this.buildSteps.clear();
-    this.lineNumber = 0;
+  initLogs() {
+    this.buildSteps = new Map<number, [boolean, IAction[]]>();
+    this.rawLogs = [];
+    this.lineNumber = 1;
   }
 
   setExpand(key: number) {
     this.buildSteps.get(key)[0] = !this.buildSteps.get(key)[0];
   }
 
-  private buildLog(line: string) {
-    if (this.autoscroll) {
+  private buildLog(line: string, enableScroll: boolean = true) {
+    if (enableScroll && this.autoscroll) {
       this.scrollBottom(this.bottom.nativeElement);
     }
 
@@ -98,24 +105,23 @@ export class LoggingTerminalComponent extends BaseComponent
     this.appendLog(step, action);
   }
 
-  private parseLine(line: string): [number, Action] {
-    const a: Action = {} as Action;
+  private parseLine(line: string): [number, IAction] {
+    const a: IAction = {} as IAction;
 
     a.number = this.lineNumber++;
 
     const logMatchArray = line.match(this.logRegExr);
 
-    // @ts-ignore
     a.date = new Date(logMatchArray[2]);
     a.level = logMatchArray[3] as LogLevel;
     a.body = logMatchArray[4];
 
-    const step = parseInt(logMatchArray[1]);
+    const step = parseInt(logMatchArray[1], 10);
 
     return [step, a];
   }
 
-  private appendLog(step: number, a: Action) {
+  private appendLog(step: number, a: IAction) {
     if (!this.buildSteps.has(step)) {
       this.buildSteps.set(step, [false, []]);
     }
@@ -125,9 +131,16 @@ export class LoggingTerminalComponent extends BaseComponent
 
   // Temporary solution for converting logs to existing format
   private formatLog(line: string) {
-    const log: Log = JSON.parse(line);
-    const { Timestamp, Message } = log;
-    return `[${this.step++} ${Timestamp} INF] ${Message}`;
+    const log = JSON.parse(line);
+    const logString = `[${this.step++} ${log.Timestamp} INF] ${log.Message}`;
+    this.rawLogs.push(logString);
+    return logString;
+  }
+
+  formatExistingLog(log: IProjectLog) {
+    const logString = `[${this.step++} ${log.timestamp} INF] ${log.message}`;
+    this.rawLogs.push(logString);
+    return logString;
   }
 
   scrollTop(el: HTMLElement) {
@@ -138,11 +151,8 @@ export class LoggingTerminalComponent extends BaseComponent
   scrollBottom(el: HTMLElement) {
     el.scrollIntoView(true);
   }
-}
-
-class Log {
-  Timestamp: Date;
-  Message: string;
-  BuildId: number;
-  BuildStep: number;
+  openRaw() {
+    localStorage.setItem('logs', JSON.stringify(this.rawLogs));
+    window.open('/logs', '_blank');
+  }
 }

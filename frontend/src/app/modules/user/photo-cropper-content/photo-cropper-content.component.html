@@ -6,7 +6,7 @@
   </button>
 </div>
   <input *ngIf="!content" type="file" (change)="fileChangeEvent($event)"/>
-  
+
   <image-cropper
   [imageChangedEvent]="imageChangedEvent"
   [maintainAspectRatio]="true"
@@ -19,10 +19,12 @@
   (cropperReady)="cropperReady()"
   (loadImageFailed)="loadImageFailed()"
 ></image-cropper>
-<div class="img-preview">
+<div *ngIf="croppedImage"  class="img-preview">
   <img [src]="croppedImage" />
 </div>
 <div *ngIf="canSave">
-  <button class="btn btn-success" (click)="save()">Save</button>
+  <button class="btn btn-success" (click)="save()">Save
+    <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+    </span></button>
 </div>
 </div>

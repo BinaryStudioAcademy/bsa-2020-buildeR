@@ -12,6 +12,26 @@
           </div>
           <div class="input-area">
             <input type="text" class="form-control form-control-sm" formControlName="name">
+            <app-loading-spinner position="relative" margin="0" top="-17px" left="92%" size="3px"
+                *ngIf="projectForm.controls['name'].status === 'PENDING'">
+            </app-loading-spinner>
+            <div *ngIf="projectForm.controls['name'].errors">
+              <div class="error" *ngIf="projectForm.controls['name'].errors.minlength && projectForm.controls['name'].touched">
+                The minimum length is 4 characters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.maxlength && projectForm.controls['name'].touched">
+                The maximum length is 32 characters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.required && projectForm.controls['name'].touched">
+                Project name is required
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors.pattern && projectForm.controls['name'].touched">
+                Name must have only latin letters, digits and these<br> symbols ' - ', ' . ', ' _ '
+              </div>
+              <div class="error" *ngIf="projectForm.controls['name'].errors?.isProjectNameTaken">
+                Project with name '{{projectForm.get('name').value}}' alredy exist
+              </div>
+            </div>
           </div>
           <div class="field">
             <span>Description</span>
@@ -19,6 +39,14 @@
           <div class="input-area">
             <textarea type="text" rows="3" class="form-control form-control-sm" formControlName="description">
           </textarea>
+            <div *ngIf="projectForm.controls['description'].errors">
+              <div class="error" *ngIf="projectForm.controls['description'].errors.maxlength && projectForm.controls['description'].touched">
+                Description must be less than 300 charecters
+              </div>
+              <div class="error" *ngIf="projectForm.controls['description'].errors.pattern && projectForm.controls['description'].touched">
+                Description must have only latin letters, digits and <br> special characters
+              </div>
+            </div>
           </div>
           <div class="field">
             <span>Visibility level</span>
@@ -59,61 +87,74 @@
           </div>
         </div>
         <div class="d-flex justify-content-center">
-          <button type="submit" class="btn btn-success" [disabled]="projectForm.errors">Save</button>
+          <button type="submit" [ngStyle]="{'width': isShowSpinner ? '6rem' : '4rem' }"
+                  class="btn btn-success" [disabled]="projectForm.invalid || isChanged ||
+          !projectForm.dirty || projectForm.controls['name'].status === 'PENDING'">Save
+            <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
           <button type="button" class="btn btn-info" (click)="reset()">Reset</button>
         </div>
       </form>
 
       <br />
     </div>
+
     <div class="settings-section border-bottom padd">
       <h2 class="small-title">
-        Environment Variables
+        Environment  Variables
       </h2>
-      <p>Customize your build using enviroment variables. </p>
-
-        <!-- Show Env Vars  -->
-        <ng-container class="vars" *ngFor="let varibable of envVariables">
-        <app-env-vars-editor [envVar]="varibable"></app-env-vars-editor>
-        </ng-container>
       <!-- Adding env vars -->
+      <app-loading-spinner position="relative" margin="0" top="-25px" left="280px" size="8px"
+        *ngIf="!isLoadedEnvVar">
+      </app-loading-spinner>
+      <ng-container *ngIf="isLoadedEnvVar">
       <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
-          <div class="group-ev">
-          <div class='name'>
-            <h5 class="text-over">Name</h5>
-            <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="name"
+        <div class="add-env-container border rounded">
+          <p class="first-container my-2">Customize your build using environment variables. </p>
+          <div class="second-container">
+            <input type="text" class="form-control form-control form-control-ev-var" formControlName="name"
               placeholder="Name">
+            <div *ngIf="envVarsForm.controls['name'].errors" class="err-block">
+              <div class="error"
+                *ngIf="envVarsForm.controls['name'].errors.required && envVarsForm.controls['name'].touched">
+                Name is required
+              </div>
+              <div class="error"
+                *ngIf="envVarsForm.controls['name'].hasError('isNotUniqueName')" >
+                Name must be unique
+              </div>
             </div>
           </div>
-          <div class='value'>
-            <h5 class="text-over">Value</h5>
-            <div class="input-area">
-              <input type="text" class="form-control form-control form-control-ev" formControlName="value"
+          <div class='third-container'>
+            <input type="text" class="form-control form-control form-control-ev-var" formControlName="value"
               placeholder="Value">
+            <div *ngIf="envVarsForm.controls['value'].errors" class="err-block">
+              <div class="error"
+                *ngIf="envVarsForm.controls['value'].errors.required && envVarsForm.controls['value'].touched">
+                Value is required
+              </div>
             </div>
           </div>
-          <div class='switch'>
-            <h5 class="text-over">Is Secret</h5>
-            <div class="input-area">
-              <div class="custom-control custom-switch ">
-                <input type="checkbox" class="custom-control-input" formControlName="isSecret"/>
+          <div class='fourth-container'>
+            <h5 class="text-over"><label for="isSecret">Is Secret</label></h5>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="isSecret" formControlName="isSecret" />
                 <label class="custom-control-label" for="isSecret"></label>
               </div>
           </div>
-          </div>
-          <div class="add-env">
-            <button class="btn btn-info add-env" type="submit"[disabled]="envVarsForm.invalid">Add Variable</button>
-
+          <div class="fifth-container">
+            <button class="btn btn-info m-0" type="submit" [disabled]="envVarsForm.invalid || !isLoadedEnvVar || isNotUniqueCheckChanges(envVarsForm.controls['name'].value)">Add Variable</button>
           </div>
         </div>
-
       </form>
+    </ng-container>
+    </div>
+      <!-- Show Env Vars  -->
+      <ng-container *ngFor="let varibable of envVariables; index as i">
+        <app-env-vars-editor [envVariables]="envVariables" [envVar]="varibable" [index]="i+1"></app-env-vars-editor>
+      </ng-container>
     </div>
     <div class="settings-section border-bottom padd">
       <app-project-triggers></app-project-triggers>
-    </div>
-
   </div>
-
 </div>

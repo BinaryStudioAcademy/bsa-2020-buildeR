@@ -1,6 +1,7 @@
-<ngx-charts-bar-vertical-normalized
+<ngx-charts-bar-vertical-stacked
   [view]="view"
   [scheme]="colorScheme"
+  [roundDomains]="false"
   [results]="results"
   [gradient]="gradient"
   [xAxis]="showXAxis"
@@ -14,6 +15,6 @@
   (select)="onSelect($event)"
   (activate)="onActivate($event)"
   (deactivate)="onDeactivate($event)">
-</ngx-charts-bar-vertical-normalized>
+</ngx-charts-bar-vertical-stacked>
 <!-- to change size of chart add it in template -->
 <!-- [view]="view" -->

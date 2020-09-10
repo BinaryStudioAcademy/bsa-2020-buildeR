@@ -8,22 +8,20 @@
   <app-loading-spinner size="20px"></app-loading-spinner>
 </ng-template>
 <ng-template #loaded>
-  <div *ngIf="
-    activeProjects?.length || starredProjects?.length;
-    then existProjects;
-    else emptyProjects
-  ">
-  </div>
-  <ng-template #existProjects>
 
-    <div class="container my-3">
-      <span class="my-auto title">Starred projects</span>
+  <div
+    *ngIf="this.starredProjects.length > 0 || this.activeProjects.length > 0 || hasGroupsProjects(); else emptyProjects">
+    <div class="container starred-container">
+      <span class="my-auto title starred-title">Starred projects</span>
+      <button class="btn btn-info button-create-project" title="Create new project" (click)="openCreateProjectModal()">
+        <i class="fas fa-plus"></i>
+      </button>
     </div>
 
     <div *ngIf="starredProjects?.length;
-    then existStarredProjects;
-    else emptyStarredProjects
-    ">
+      then existStarredProjects;
+      else emptyStarredProjects
+      ">
     </div>
     <ng-template #existStarredProjects>
       <app-projects-display [activeProjects]="starredProjects"></app-projects-display>
@@ -37,34 +35,71 @@
         </div>
       </div>
     </ng-template>
-    <div class="container d-flex flex-row my-3">
-      <span class="my-auto title">
-        Active projects
-      </span>
-      <div class="ml-auto">
-        <button class="btn btn-info" (click)="openCreateProjectModal()">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
-    </div>
 
-    <div *ngIf="activeProjects?.length;
-        then existActiveProjects;
-        else emptyActiveProjects
-        ">
-    </div>
+    <nav>
+      <ul class="list-group list-group-horizontal container">
+        <li class="list-group-item" [ngClass]="{ active: tab == 'myprojects' }">
+          <a (click)="tab = 'myprojects'">
+            My projects
+          </a>
+        </li>
+        <li class="list-group-item" [ngClass]="{ active: tab == 'groupsprojects' }">
+          <a (click)="gotoGroupsProjects()">
+            Groups' projects
+          </a>
+        </li>
+        <li class="list-group-item" [ngClass]="{ active: tab == 'history' }">
+          <a (click)="tab = 'history'">
+            History
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-    <ng-template #existActiveProjects>
-      <app-projects-display [activeProjects]="activeProjects"></app-projects-display>
-    </ng-template>
-    <ng-template #emptyActiveProjects>
-      <div class="container">
-        <div class="row border rounded my-3">
-          <p class="m-auto text-center">All your projects are your favorite, it's impressive!</p>
+    <div [ngSwitch]="tab">
+      <div *ngSwitchCase="'myprojects'">
+        <div *ngIf="activeProjects.length > 0; else emptyActiveProjects">
+          <app-projects-display [activeProjects]="activeProjects"></app-projects-display>
         </div>
+        <ng-template #emptyActiveProjects>
+          <div class="container">
+            <div class="row border rounded my-3">
+              <p class="m-auto text-center">All your projects are your favorite, it's impressive!</p>
+            </div>
+          </div>
+        </ng-template>
       </div>
-    </ng-template>
-  </ng-template>
+      <div *ngSwitchCase="'groupsprojects'">
+        <div *ngIf="!loadingGroupsProjects; else loadingGroupProjects;">
+          <div *ngIf="hasGroupsProjects(); else emptyGroupsProjects">
+            <div *ngFor="let groupProjects of groupsProjects" class="container my-3">
+              <a class="group-name my-auto"
+                [routerLink]="['..', 'groups', groupProjects.groupProjects.group.id]">{{groupProjects.groupProjects.group.name}}</a>
+              <app-projects-display [activeProjects]="groupProjects.groupProjects.projects" [permissions]="true"
+                [isBuilder]="groupProjects.memberRole === GroupRole.Builder"
+                [isContributor]="groupProjects.memberRole === GroupRole.Contributor">
+              </app-projects-display>
+            </div>
+          </div>
+          <ng-template #emptyGroupsProjects>
+            <div class="container">
+              <div class="row border rounded my-3">
+                <p class="m-auto text-center">Seems like you don't participate in any group as not an owner or their
+                  project list is empty</p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+        <ng-template #loadingGroupProjects>
+          <app-loading-spinner size="10px" position="unset"></app-loading-spinner>
+        </ng-template>
+      </div>
+      <div *ngSwitchCase="'history'">
+        <app-user-build-history></app-user-build-history>
+      </div>
+    </div>
+  </div>
+
   <ng-template #emptyProjects>
     <div class="container">
       <div class="no-projects-container">

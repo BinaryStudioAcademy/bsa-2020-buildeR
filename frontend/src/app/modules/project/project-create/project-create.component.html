@@ -40,27 +40,33 @@
               <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
             </div>
           </ng-template>
-          <div class="input-wr">
-            <div class="label-wr">
-              <label class="required-field">Repository</label>
+          <fieldset [disabled]="!synchronizationFinished">
+            <div class="input-wr">
+              <div class="label-wr">
+                <label class="required-field">Repository</label>
+              </div>
+              <input
+                  id="typeahead-focus"
+                  type="text"
+                  class="form-control form-control-sm"
+                  [editable]="false"
+                  [(ngModel)]="newProject.repository"
+                  [inputFormatter]="repoListResultFormatter"
+                  [ngbTypeahead]="search"
+                  [resultTemplate]="repoInList"
+                  (selectItem)="handleRepositoryInputClick($event.item)"
+                  (focus)="repositoryInputFocus$.next($any($event).target.value)"
+                  (click)="repositoryInputClick$.next($any($event).target.value)"
+                  #repository="ngbTypeahead"
+                  formControlName="_repository"
+                  required
+
+                />
             </div>
-            <input
-                id="typeahead-focus"
-                type="text"
-                class="form-control form-control-sm"
-                [editable]="false"
-                [(ngModel)]="newProject.repository"
-                [inputFormatter]="repoListResultFormatter"
-                [ngbTypeahead]="search"
-                [resultTemplate]="repoInList"
-                (selectItem)="handleRepositoryInputClick($event.item)"
-                (focus)="repositoryInputFocus$.next($any($event).target.value)"
-                (click)="repositoryInputClick$.next($any($event).target.value)"
-                #repository="ngbTypeahead"
-                formControlName="_repository"
-                required
-              />
-          </div>
+            <app-loading-spinner position="relative" margin="0" top="-17px" left="95%" size="3px"
+              *ngIf="!synchronizationFinished">
+            </app-loading-spinner>
+          </fieldset>
           <div class="error" [hidden]="!projectForm.get('_repository').errors?.required || projectForm.get('_repository').untouched">
             Repository is required
           </div>
@@ -103,13 +109,16 @@
       </div>
       <div class="divider"></div>
       <div>
-        <div class="form-control-wr">
+        <div class="form-control-wr position-relative">
           <div class="input-wr">
             <div class="label-wr">
               <label class="required-field">Name</label>
             </div>
             <input type="text" class="form-control form-control-sm" formControlName="name"
             required autocomplete="off" placeholder="Project name">
+            <app-loading-spinner position="absolute" margin="0" left="92%" top="50%" size="3px"
+              *ngIf="projectForm.controls['name'].status === 'PENDING'">
+            </app-loading-spinner>
           </div>
           <div class="error" [hidden]="!projectForm.get('name').errors?.minlength || projectForm.get('name').untouched">
             The minimum length is 4 characters
@@ -185,8 +194,10 @@
           </div>
         </div>
         <div class="btn-wr">
-          <button type="submit" class="btn btn-success" [disabled]="!isFormValid()">
+          <button type="submit" class="btn btn-success" [disabled]="!isFormValid() ||
+          projectForm.controls['name'].status == 'PENDING'">
             Create
+            <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           </button>
           <button type="button" class="btn btn-warning" (click)="cancel()">
             Cancel

@@ -28,41 +28,45 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
   isAdmin = false;
   isContributor = false;
   isBuilder = false;
+  isGuest = false;
   userProjects: ProjectInfo[];
+  isLoading = true;
 
   selectedProjectBranches: Branch[];
   loadingSelectedProjectBranches = false;
   selectedProjectBranch: string;
 
-  constructor(private groupService: GroupService,
-              private route: ActivatedRoute,
-              private authService: AuthenticationService,
-              private projectService: ProjectService,
-              private toastr: ToastrNotificationsService,
-              private projectGroupService: ProjectGroupService,
-              private modalService: ModalService) {
+  constructor(
+    private groupService: GroupService,
+    private route: ActivatedRoute,
+    private authService: AuthenticationService,
+    private projectService: ProjectService,
+    private toastr: ToastrNotificationsService,
+    private projectGroupService: ProjectGroupService,
+    private modalService: ModalService) {
     super();
+  }
+
+  ngOnInit(): void {
     this.route.parent.data.subscribe((data) => {
       this.group = data.group;
       this.groupId = this.group.id;
       this.getGroupProjects();
-      });
+    });
 
     this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$))
-    .subscribe((res) => this.delete(this.groupId, res));
-  }
+      .subscribe((res) => this.delete(this.groupId, res));
 
-  ngOnInit(): void {
     this.getCurrentUserRole();
   }
 
-  updateDropdown(){
+  updateDropdown() {
     this.dropdownProjects = this.userProjects
-    .filter(x => !this.projects.map(y => y.id).includes(x.id));
+      .filter(x => !this.projects?.map(y => y.id).includes(x.id));
   }
 
-  addProject(project: ProjectInfo){
-    const projectGroup = {} as  ProjectGroup;
+  addProject(project: ProjectInfo) {
+    const projectGroup = {} as ProjectGroup;
     projectGroup.groupId = this.groupId;
     projectGroup.projectId = project.id;
     this.projectGroupService.addProject(projectGroup).subscribe(() => {
@@ -75,48 +79,52 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
 
   getGroupProjects(groupId: number = this.groupId) {
     this.groupService.getProjectsByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
-    .subscribe(res => {
-      this.projects = res.body;
-      if (this.userProjects){
-        this.updateDropdown();
-      }
-    });
-  }
-
-  getCurrentUserRole(groupId: number = this.groupId){
-    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
-     .subscribe(res =>  {
-       const role = res.body.filter(x => x.userId === this.user.id)[0].memberRole;
-       if (role === 1){
-        this.isBuilder = true;
-        this.isContributor = true;
-       }
-       if (role === 2){
-         this.isContributor = true;
-         this.isAdmin = true;
-         this.isBuilder = true;
-         this.getUserProjects();
-       }
-       if (role === 3){
-        this.isBuilder = true;
-       }
+      .subscribe(res => {
+        this.projects = res.body;
+        this.isLoading = false;
+        if (this.userProjects) {
+          this.updateDropdown();
+        }
       });
   }
 
-  getUserProjects(userId: number = this.user.id){
+  getCurrentUserRole(groupId: number = this.groupId) {
+    this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(res => {
+        const role = res.body.filter(x => x.userId === this.user.id)[0]?.memberRole;
+        if (role === 0) {
+          this.isGuest = true;
+        }
+        if (role === 1) {
+          this.isBuilder = true;
+          this.isContributor = true;
+        }
+        if (role === 2) {
+          this.isContributor = true;
+          this.isAdmin = true;
+          this.isBuilder = true;
+          this.getUserProjects();
+        }
+        if (role === 3) {
+          this.isBuilder = true;
+        }
+      });
+  }
+
+  getUserProjects(userId: number = this.user.id) {
     if (!this.isAdmin) {
       return;
     }
     this.projectService.getProjectsByUser(userId).pipe(takeUntil(this.unsubscribe$))
-    .subscribe(res => {
-      this.userProjects = res.body;
-      this.updateDropdown();
-    });
+      .subscribe(res => {
+        this.userProjects = res.body;
+        this.updateDropdown();
+      });
   }
 
-  async delete(groupId: number, projectId: number){
+  async delete(groupId: number, projectId: number) {
     const confirm = await this.modalService.open('Do you really want to delete this project?',
-    'This action cannot be undone.');
+      'This action cannot be undone.');
     if (confirm) {
       this.projectGroupService.removeProject(groupId, projectId).subscribe(() => {
         this.toastr.showSuccess('Project removed successfully');
@@ -124,6 +132,6 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
       }, (err) => this.toastr.showError(err));
     }
 
-}
+  }
 
 }

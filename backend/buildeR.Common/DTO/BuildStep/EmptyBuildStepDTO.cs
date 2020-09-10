@@ -12,5 +12,6 @@ namespace buildeR.Common.DTO.BuildStep
 
         public int BuildPluginId { get; set; }
         public int PluginCommandId { get; set; }
+        public string Config { get; set; }
     }
 }

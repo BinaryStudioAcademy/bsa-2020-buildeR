@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { Group } from '../../shared/models/group/group';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ProjectInfo } from '../../shared/models/project-info';
-import { HttpResponse } from '@angular/common/http';
 import { TeamMember } from '../../shared/models/group/team-member';
 import { NewGroup } from '@shared/models/group/new-group';
 
@@ -16,31 +15,27 @@ export class GroupService {
   groupIsPublic$ = new Subject<boolean>();
   groupName = this.groupName$.asObservable();
   groupIsPublic = this.groupIsPublic$.asObservable();
-
+  userGroupsChanged = new Subject<boolean>();
   constructor(private httpService: HttpService) { }
 
-  getGroupById(groupId: number): Observable<Group> {
+  getGroupById(groupId: number) {
     return this.httpService.getRequest<Group>(`${this.routePrefix}/` + groupId);
   }
-  getAllGroups(): Observable<Group[]> {
+  getAllGroups() {
     return this.httpService.getRequest<Group[]>(this.routePrefix);
   }
-  getUserGroups(userId: number): Observable<Group[]> {
+  getUserGroups(userId: number) {
     return this.httpService.getRequest<Group[]>(`${this.routePrefix}/getGroupsByUserId/${userId}`);
   }
   deleteGroup(groupId: number) {
     return this.httpService.deleteFullRequest<Group>(`${this.routePrefix}/` + groupId);
   }
-  public getProjectsByGroup(
-    groupId: number
-  ): Observable<HttpResponse<ProjectInfo[]>> {
+  getProjectsByGroup(groupId: number) {
     return this.httpService.getFullRequest<ProjectInfo[]>(
       `${this.routePrefix}/getProjectsByGroupId/${groupId}`
     );
   }
-  public getMembersByGroup(
-    groupId: number
-  ): Observable<HttpResponse<TeamMember[]>> {
+  getMembersByGroup(groupId: number) {
     return this.httpService.getFullRequest<TeamMember[]>(
       `${this.routePrefix}/getMembersByGroupId/${groupId}`
     );
@@ -53,6 +48,7 @@ export class GroupService {
   }
 
   changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
+    this.userGroupsChanged.next();
     this.groupName$.next(groupName);
     this.groupIsPublic$.next(groupIsPublic);
   }

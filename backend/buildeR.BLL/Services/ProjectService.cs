@@ -9,12 +9,14 @@ using buildeR.Common.DTO.ProjectRemoteTrigger;
 using buildeR.Common.DTO.Repository;
 using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using buildeR.Common.DTO.Group;
+using buildeR.Common.DTO.TeamMember;
+using buildeR.Common.Enums;
 
 namespace buildeR.BLL.Services
 {
@@ -24,10 +26,10 @@ namespace buildeR.BLL.Services
         private readonly IBuildStepService _buildStepService;
         private readonly ISynchronizationHelper _synchronizationHelper;
         public ProjectService(BuilderContext context,
-                              IMapper mapper,
-                              IQuartzService quartzService, 
-                              IBuildStepService buildStepService,
-                              ISynchronizationHelper synchronizationHelper) : base(context, mapper)
+            IMapper mapper,
+            IQuartzService quartzService,
+            IBuildStepService buildStepService,
+            ISynchronizationHelper synchronizationHelper) : base(context, mapper)
         {
             _quartzService = quartzService;
             _buildStepService = buildStepService;
@@ -41,7 +43,6 @@ namespace buildeR.BLL.Services
         
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
-           
             var projects = await Context.Projects
                 .AsNoTracking()
                 .Include(project => project.Owner)
@@ -50,6 +51,38 @@ namespace buildeR.BLL.Services
                 .ToArrayAsync();
             var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
             return projectInfos;
+        }
+
+        public async Task<IEnumerable<UsersGroupProjectsDTO>> NotOwnGroupsProjectsByUser(int userId)
+        {
+            var notOwnGroupProjects = await Context.ProjectGroups
+                .AsNoTracking()
+                .Include(pg => pg.Group)
+                .ThenInclude(g => g.TeamMembers)
+                .Include(pg => pg.Project)
+                .ThenInclude(p => p.Owner)
+                .Include(pg => pg.Project)
+                .ThenInclude(p => p.BuildHistories)
+                .Where(pg => pg.Group.TeamMembers.Any(tm => tm.UserId == userId && tm.MemberRole != GroupRole.Owner))
+                .ToListAsync();
+            
+                // this is comparer for group, distinct method needs it 
+                GroupComparer comparer = new GroupComparer();
+                
+                return notOwnGroupProjects.Select(gp => gp.Group).Distinct(comparer).GroupJoin(
+                notOwnGroupProjects,
+                group => group.Id,
+                pg => pg.GroupId,
+                (group, pg) => new UsersGroupProjectsDTO
+                {
+                    GroupProjects = new GroupProjectsDTO
+                    {
+                        Group = Mapper.Map<GroupDTO>(group),
+                        Projects = Mapper.Map<ICollection<ProjectInfoDTO>>(pg.Select(prg => prg.Project)),
+                    },
+                    MemberRole = group.TeamMembers.First(tm => tm.UserId == userId).MemberRole
+                }
+            ).ToArray();
         }
 
         public async Task<ProjectDTO> GetProjectByUserId(int userId, int projectId)
@@ -78,6 +111,26 @@ namespace buildeR.BLL.Services
                 await base.UpdateAsync(dto);
             }
             throw new ForbiddenExeption("Update", project.Name, project.Id);
+        }
+
+        public async Task DeleteBuildStepsByProjectId(int projectId)
+        {
+            var buildSteps = await _buildStepService.GetBuildStepsByProjectIdAsync(projectId);
+            foreach(var step in buildSteps)
+            {
+                await _buildStepService.Delete(step.Id);
+            }
+        }
+
+        public async Task<bool> CanUserRunNotOwnProject(int projectId, int userId)
+        {
+            return await Context.TeamMembers.AsNoTracking()
+                .Include(tm => tm.Group)
+                .Include(tm => tm.Group)
+                .ThenInclude(g => g.ProjectGroups)
+                .AnyAsync(tm => tm.UserId == userId 
+                           && tm.Group.ProjectGroups.Any(pg => pg.ProjectId == projectId)
+                           && (tm.MemberRole == GroupRole.Builder || tm.MemberRole == GroupRole.Owner));
         }
 
         public async Task DeleteProject(int id)
@@ -132,6 +185,7 @@ namespace buildeR.BLL.Services
         public async Task<ProjectDTO> CopyProject(ProjectDTO dto)
         {
             var existingProject = await GetProjectWithBuildSteps(dto.Id);
+            dto.Repository.Id = 0;
             var newProject = new ProjectDTO
             {
                 Description = dto.Description,
@@ -148,7 +202,7 @@ namespace buildeR.BLL.Services
             };
 
             var createdProject = (await Context.AddAsync(Mapper.Map<Project>(newProject))).Entity;
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
             int id = createdProject.Id;
             existingProject.BuildSteps.Select(buildStep => _buildStepService.Create(new NewBuildStepDTO
             {
@@ -181,9 +235,10 @@ namespace buildeR.BLL.Services
 
             return Mapper.Map<IEnumerable<ProjectRemoteTriggerDTO>>(project.ProjectRemoteTriggers);
         }
-        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName)
+        public async Task<bool> CheckIfProjectNameIsUnique(int userId, string projectName, int projectId)
         {
-            var project = await Context.Projects.FirstOrDefaultAsync(p => p.OwnerId == userId && p.Name == projectName);
+            var project = await Context.Projects.FirstOrDefaultAsync(p =>
+                p.OwnerId == userId && p.Name == projectName && p.Id != projectId);
             return project == null;
         }
         private async Task<ProjectDTO> GetProjectWithBuildSteps(int id)
@@ -192,6 +247,14 @@ namespace buildeR.BLL.Services
                                                 .Include(p => p.Owner)
                                                 .FirstOrDefaultAsync(p => p.Id == id);
             return Mapper.Map<ProjectDTO>(project);
+        }
+
+        public async Task<ICollection<BuildHistoryDTO>> GetAllBuildHistory(int projectId)
+        {
+            var buildHistories = (await Context.BuildHistories.ToListAsync())
+                .Where(b => b.ProjectId == projectId);
+            
+            return Mapper.Map<ICollection<BuildHistoryDTO>>(buildHistories);
         }
     }
 }

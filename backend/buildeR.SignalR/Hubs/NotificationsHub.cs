@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using buildeR.Common.DTO.Message;
 using Microsoft.AspNetCore.SignalR;
 
 namespace buildeR.SignalR.Hubs
@@ -9,5 +10,6 @@ namespace buildeR.SignalR.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
+       
     }
 }

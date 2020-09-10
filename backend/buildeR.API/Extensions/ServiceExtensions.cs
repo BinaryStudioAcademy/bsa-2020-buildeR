@@ -17,6 +17,10 @@ using buildeR.Common.DTO;
 using Quartz.Impl;
 using Quartz;
 using System.Collections.Specialized;
+using Nest;
+using Quartz.Spi;
+using buildeR.BLL.Factories;
+using buildeR.BLL.QuartzJobs;
 
 namespace buildeR.API.Extensions
 {
@@ -43,21 +47,27 @@ namespace buildeR.API.Extensions
             services.AddScoped<INotificationSettingService, NotificationSettingService>();
             services.AddScoped<ITeamMemberService, TeamMemberService>();
             services.AddScoped<IProjectGroupService, ProjectGroupService>();
+            services.AddScoped<IChatService, ChatService>();
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<IHttpClient, BuilderHttpClient>();
+            services.AddTransient<IPluginCommandService, PluginCommandService>();
             services.AddTransient<IBuildPluginService, BuildPluginService>();
             services.AddTransient<IBuildOperationsService, BuildOperationsService>();
             services.AddTransient<IWebhooksHandler, WebhooksHandler>();
+            services.AddElasticsearch(configuration);
+            services.AddTransient<IBuildLogService, BuildLogService>();
             services.AddTransient<ISecretService, SecretService>();
             services.AddHttpClient();
             services.AddTransient<IEnvironmentVariablesService, EnvironmentVariablesService>();
             services.AddTransient<IFileProvider, FileProvider>();
             services.AddTransient<ISynchronizationHelper, SynchronizationHelper>();
+            services.AddTransient<IProjectRemoteTriggerService, ProjectRemoteTriggerService>();
 
             services.AddSingleton(GetScheduler(configuration));
             services.AddHostedService<QuartzHostedService>();
-
+            services.AddSingleton<IJobFactory, JobFactory>();
+            services.AddSingleton<RunBuildJob>();
             services.RegisterAutoMapper();
         }
 
@@ -70,8 +80,10 @@ namespace buildeR.API.Extensions
         {
             var toProcessorQueueSettings = configuration.Bind<QueueSettings>("Queues:ToProcessor");
             var notificationsQueueSettings = configuration.Bind<QueueSettings>("Queues:NotificationsToSignalR");
+            var messagesQueueSettings = configuration.Bind<QueueSettings>("Queues:MessagesToSignalR");
             services.AddTransient(sp => new ProcessorProducer(OwnConnectionFactory.GetConnectionFactory(configuration), toProcessorQueueSettings));
             services.AddTransient(sp => new NotificationsProducer(OwnConnectionFactory.GetConnectionFactory(configuration), notificationsQueueSettings));
+            services.AddTransient(sp => new MessagesProducer(OwnConnectionFactory.GetConnectionFactory(configuration), messagesQueueSettings));
             
             services.AddHostedService<BuildStatusesQueueConsumerService>();
         }
@@ -106,6 +118,23 @@ namespace buildeR.API.Extensions
             var schedularFactory =  new StdSchedulerFactory(properties);
 
             return schedularFactory.GetScheduler().GetAwaiter().GetResult();
+        }
+
+        public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
+        {
+            var url = configuration["ElasticConfiguration:Uri"];
+            var defaultIndex = "processes";
+
+            var settings = new ConnectionSettings(new Uri(url))
+                .DefaultIndex(defaultIndex)
+                .DefaultMappingFor<ProjectLog>(m => m
+                    .Ignore(p => p.Timestamp)
+                    .PropertyName(p => p.ProjectId, "ProjectId")
+                );
+
+            var client = new ElasticClient(settings);
+
+            services.AddSingleton<IElasticClient>(client);
         }
     }
 }

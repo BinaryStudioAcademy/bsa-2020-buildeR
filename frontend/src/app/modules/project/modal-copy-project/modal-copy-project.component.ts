@@ -3,6 +3,11 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from 'src/app/shared/models/project/project';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {ToastrNotificationsService} from '@core/services/toastr-notifications.service';
+import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
+import {UserService} from '@core/services/user.service';
+import {AuthenticationService} from '@core/services/authentication.service';
+import {User} from '@shared/models/user/user';
 
 @Component({
   selector: 'app-modal-copy-project',
@@ -10,21 +15,29 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./modal-copy-project.component.sass']
 })
 export class ModalCopyProjectComponent implements OnInit {
-  public copyForm: FormGroup;
-  constructor(private projectService: ProjectService, private activeModal: NgbActiveModal) { }
+  copyForm: FormGroup;
+  constructor(private projectService: ProjectService,
+              private activeModal: NgbActiveModal,
+              private toastrService: ToastrNotificationsService,
+              private authService: AuthenticationService) { }
   @Input() id: number;
+  isShowSpinner = false;
+  currentUser: User = {} as User;
   project: Project = {} as Project;
   ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser();
     this.projectService.getProjectById(this.id).subscribe((res) => {
       this.project = res; this.copyForm = new FormGroup({
         name: new FormControl(`${this.project.name}` + `-Copy`,
-          [Validators.required]),
+          [Validators.required],
+          projectNameAsyncValidator(this.projectService, this.currentUser)),
         description: new FormControl(this.project.description),
         isPublic: new FormControl(this.project.isPublic.toString())
       });
     });
   }
   save() {
+    this.isShowSpinner = true;
     const Name = this.copyForm.value[`name`];
     if (Name === '') {
       this.project.name = null;
@@ -39,10 +52,15 @@ export class ModalCopyProjectComponent implements OnInit {
     else {
       this.project.description = this.copyForm.value[`description`];
     }
-    this.project.isPublic = this.copyForm.value['isPublic'];
+    this.project.isPublic = this.copyForm.value.isPublic;
     this.projectService.copyProject(this.project).subscribe((result) => {
       this.project = result;
+      this.isShowSpinner = false;
+      this.toastrService.showSuccess('Project was copied!');
       this.activeModal.close(this.project);
+    }, error => {
+      this.isShowSpinner = false;
+      this.toastrService.showError('Project wasn\'t copied!');
     });
   }
   onCancel() {

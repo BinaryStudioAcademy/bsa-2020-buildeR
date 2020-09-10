@@ -9,8 +9,8 @@
       </label>
     </div>
     <div class="buttons-right">
-      <button class="btn btn-outline-light" (click)="clear()">Clear log</button>
-      <button class="btn btn-outline-light">Raw Log</button>
+      <button class="btn btn-outline-light" (click)="initLogs()">Clear log</button>
+      <button class="btn btn-outline-light" (click)="openRaw()">Raw Log</button>
     </div>
   </div>
   <div class="log-tail">
@@ -23,7 +23,9 @@
     </div>
   </div>
   <div class="log-container">
-    <div class="build-step" [class]="{'expandable': buildStep.value[1].length > 1, 'expanded': buildStep.value[0]}"
+    <div
+      class="build-step"
+      [class]="{'expandable': buildStep.value[1].length > 1, 'expanded': buildStep.value[0]}"
       *ngFor="let buildStep of buildSteps | keyvalue">
       <span class="expand-button" *ngIf="buildStep.value[1].length > 1" (click)="setExpand(buildStep.key)"></span>
       <div *ngFor="let action of buildStep.value[1]">

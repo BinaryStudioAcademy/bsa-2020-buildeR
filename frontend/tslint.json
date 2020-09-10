@@ -56,14 +56,7 @@
       }
     ],
     "no-any": true,
-    "no-console": [
-      true,
-      "debug",
-      "info",
-      "time",
-      "timeEnd",
-      "trace"
-    ],
+    "no-console": true,
     "no-empty": false,
     "no-inferrable-types": [
       true,
@@ -73,6 +66,7 @@
     "no-redundant-jsdoc": true,
     "no-switch-case-fall-through": true,
     "no-var-requires": false,
+    "no-bitwise": false,
     "object-literal-key-quotes": [
       true,
       "as-needed"
@@ -131,6 +125,15 @@
       ]
     },
     "no-conflicting-lifecycle": true,
+    "member-access": [
+      true,
+      "no-public"
+    ],
+    "no-debugger": {
+      "severity": "warning"
+    },
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
     "no-host-metadata-property": true,
     "no-input-rename": true,
     "no-inputs-metadata-property": true,

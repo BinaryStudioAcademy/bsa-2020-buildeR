@@ -23,9 +23,10 @@ export class UserSettingsComponent implements OnInit {
 
   isChanged = false;
   changedUser: User = {} as User;
+  isShowSpinner = false;
 
   @Input() details: User = {} as User;
-  public settingsForm: FormGroup;
+  settingsForm: FormGroup;
   googleClick = false;
   githubClick = false;
   isOwner = false;
@@ -104,6 +105,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   onSubmit(user: User) {
+    this.isShowSpinner = true;
     user.id = this.details.id;
     user.role = this.details.role;
     user.createdAt = this.details.createdAt;
@@ -116,10 +118,11 @@ export class UserSettingsComponent implements OnInit {
     this.userService.updateUser(user).subscribe(updateUser => {
       this.details = updateUser;
       this.isChanged = true;
-      this.toastrService.showSuccess('Your profile was updated!');
       this.userService.changeUserName(this.settingsForm.controls.username.value);
+      this.isShowSpinner = false;
+      this.toastrService.showSuccess('Your profile was updated!');
     }, error => {
-      console.error(error);
+      this.isShowSpinner = false;
       this.toastrService.showError('Your profile wasn\'t updated');
     });
   }
@@ -134,11 +137,10 @@ export class UserSettingsComponent implements OnInit {
       const formData = new FormData();
       formData.append('file', file, file.name);
       this.userService.uploadAvatar(formData, this.details.id).subscribe((res) => {
-        console.log(res.avatarUrl);
         this.details.avatarUrl = res.avatarUrl;
         this.userService.changeImageUrl(res.avatarUrl);
         this.details.avatarUrl = res.avatarUrl;
-      }, (er) => console.log(er));
+      });
     }
   }
 

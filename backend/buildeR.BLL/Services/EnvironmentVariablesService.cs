@@ -22,7 +22,9 @@ namespace buildeR.BLL.Services
         public async Task AddEnvironmenVariable(EnvironmentVariableDTO variableDTO)
         {
             string path = route + variableDTO.ProjectId.ToString();
+            variableDTO.Id = variableDTO.Data.Name;
             string value = JsonConvert.SerializeObject(variableDTO.Data);
+
             try
             {
                 var res = await _secretService.ReadSecretsAsync(path);
@@ -46,13 +48,8 @@ namespace buildeR.BLL.Services
         public async Task UpdateEnvironmentVariable(EnvironmentVariableDTO variableDTO,
                                                                           Dictionary<string, string> dict = null)
         {
-            string path = route + variableDTO.ProjectId.ToString();
-            if (dict == null)
-            {
-                dict = await _secretService.ReadSecretsAsync(path);
-            }
-            dict[variableDTO.Id] = JsonConvert.SerializeObject(variableDTO.Data);
-            await _secretService.CreateSecretsAsync(dict, path);
+            await DeleteEnvironmentVariable(variableDTO);
+            await AddEnvironmenVariable(variableDTO);
         }
 
         public async Task DeleteEnvironmentVariable(EnvironmentVariableDTO variableDTO)

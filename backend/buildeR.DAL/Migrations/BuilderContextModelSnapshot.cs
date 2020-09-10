@@ -143,6 +143,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<string>("BuildStepName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Config")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DockerImageVersion")
                         .HasColumnType("nvarchar(max)");
 
@@ -232,6 +235,34 @@ namespace buildeR.DAL.Migrations
                     b.ToTable("Groups");
                 });
 
+            modelBuilder.Entity("buildeR.DAL.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -245,13 +276,16 @@ namespace buildeR.DAL.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -514,6 +548,9 @@ namespace buildeR.DAL.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
 
@@ -672,13 +709,26 @@ namespace buildeR.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("buildeR.DAL.Entities.Message", b =>
+                {
+                    b.HasOne("buildeR.DAL.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("buildeR.DAL.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("buildeR.DAL.Entities.Notification", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("buildeR.DAL.Entities.NotificationSetting", b =>
@@ -702,7 +752,7 @@ namespace buildeR.DAL.Migrations
             modelBuilder.Entity("buildeR.DAL.Entities.PluginCommand", b =>
                 {
                     b.HasOne("buildeR.DAL.Entities.BuildPlugin", "Plugin")
-                        .WithMany()
+                        .WithMany("PluginCommands")
                         .HasForeignKey("PluginId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

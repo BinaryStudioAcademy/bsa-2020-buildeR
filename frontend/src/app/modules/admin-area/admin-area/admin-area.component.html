@@ -1,0 +1,13 @@
+<div class="container admin-container">
+  <div class="admin-header">
+    <div class="admin-title">
+      Administration area
+    </div>
+  </div>
+  <div class="admin-main">
+    <app-tabs [tabRoutes]="tabRoutes"></app-tabs>
+    <div class="admin-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

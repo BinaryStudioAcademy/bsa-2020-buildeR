@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using buildeR.Common.Enums;
 using Microsoft.Extensions.Hosting;
 using System.Threading;
+using System.Linq;
 
 namespace buildeR.Processor.Services
 {
@@ -37,7 +38,7 @@ namespace buildeR.Processor.Services
             _pathToProjects = Path.Combine(Path.GetTempPath(), "buildeR", "Projects");
 
             _kafkaProducer = new KafkaProducer(config, "weblog");
-
+            
             _elk = elk;
 
             _consumer = consumer;
@@ -58,15 +59,27 @@ namespace buildeR.Processor.Services
             _buildStatusesProducer.Send(JsonConvert.SerializeObject(statusChange));
         }
 
+        public BuildStatus StatusSpecifying(int statusCode)
+        {
+            if (statusCode == 0)
+                return BuildStatus.Success;
+            else if (statusCode == -1)
+                return BuildStatus.Error;
+            else
+                return BuildStatus.Failure;
+        }
+
         private async void Consumer_Received(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs e)
         {
             var key = e.RoutingKey;
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
             var executeBuild = JsonConvert.DeserializeObject<ExecutiveBuildDTO>(message);
             SendBuildStatus(BuildStatus.InProgress, executeBuild.BuildHistoryId, executeBuild.UserId);
-            await BuildProjectAsync(executeBuild).ContinueWith(t => SendBuildStatus(BuildStatus.Success, executeBuild.BuildHistoryId, executeBuild.UserId));
+            var status = await BuildProjectAsync(executeBuild);
+            SendBuildStatus(StatusSpecifying(status), executeBuild.BuildHistoryId, executeBuild.UserId);
             _consumer.SetAcknowledge(e.DeliveryTag, true);
         }
+
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -82,7 +95,7 @@ namespace buildeR.Processor.Services
 
         #region Build and output
 
-        public async Task BuildProjectAsync(ExecutiveBuildDTO build)
+        public async Task<int> BuildProjectAsync(ExecutiveBuildDTO build)
         {
             var pathToClonedRepository = Path.Combine(
                 _pathToProjects,
@@ -93,16 +106,26 @@ namespace buildeR.Processor.Services
             CloneRepository(build.RepositoryUrl, pathToClonedRepository, build.BranchName);
 
             try
-            {
-                var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl);
-                await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+            
+                {
+                if (build.BuildSteps.Any() && build.BuildSteps.FirstOrDefault()?.BuildStepName == "Dockerfile")
+                {
+                    var dockerfileDirectory = build.BuildSteps.FirstOrDefault()?.WorkDirectory;
+                    if (dockerfileDirectory != null)
+                        pathToClonedRepository = Path.Combine(pathToClonedRepository, dockerfileDirectory);
+                }
+                else
+                {
+                    var dockerFileContent = GenerateDockerFileContent(build.BuildSteps, build.RepositoryUrl, pathToClonedRepository);
+                    await CreateDockerFileAsync(dockerFileContent, pathToClonedRepository);
+                }
 
-                BuildDockerImage(pathToClonedRepository, build.ProjectId);
+                return BuildDockerImage(pathToClonedRepository, build);
             }
             catch (Exception e)
             {
-                SendBuildStatus(BuildStatus.Error, build.BuildHistoryId, build.UserId); 
                 Log.Error($"Error while building docker image. Reason: {e.Message}");
+                return -1;
             }
             finally
             {
@@ -117,7 +140,7 @@ namespace buildeR.Processor.Services
             }
         }
 
-        public void BuildDockerImage(string path, int projectId)
+        public int BuildDockerImage(string path, ExecutiveBuildDTO build)
         {
             Process process = new Process();
             process.StartInfo.FileName = "docker";
@@ -127,20 +150,21 @@ namespace buildeR.Processor.Services
             process.StartInfo.RedirectStandardError = true;
             //* Set your output and error (asynchronous) handlers
             process.OutputDataReceived += (object _sender, DataReceivedEventArgs _args) =>
-                OutputHandler(_sender, _args, projectId);
+                OutputHandler(_sender, _args, build);
             process.ErrorDataReceived += (object _sender, DataReceivedEventArgs _args) =>
-                OutputHandler(_sender, _args, projectId);
+                OutputHandler(_sender, _args, build);
             //* Start process and handlers
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.WaitForExit();
+            return process.ExitCode;
         }
 
         private bool areDockerLogs = true;
         private int startLogging = 2;
 
-        public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, int projectId)
+        public async void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine, ExecutiveBuildDTO build)
         {
             // If log starts with Step and containts FROM we stop logging because there will be useless Docker logs 
             // (also applied to "Removing intermediate container" and "Sending build context"). Skip checking empty strings
@@ -165,8 +189,8 @@ namespace buildeR.Processor.Services
                 {
                     Timestamp = DateTime.Now,
                     Message = $">>> Here starts a new step",
-                    BuildId = projectId,
-                    BuildStep = 1
+                    BuildHistoryId = build.BuildHistoryId,
+                    ProjectId = build.ProjectId
                 };
                 await _kafkaProducer.SendLog(log);
             }
@@ -181,8 +205,8 @@ namespace buildeR.Processor.Services
                 {
                     Timestamp = DateTime.Now,
                     Message = outLine.Data,
-                    BuildId = projectId,
-                    BuildStep = 1
+                    BuildHistoryId = build.BuildHistoryId,
+                    ProjectId = build.ProjectId
                 };
                 await _elk.IndexDocumentAsync(log);
                 await _kafkaProducer.SendLog(log);
@@ -228,20 +252,12 @@ namespace buildeR.Processor.Services
         #endregion
 
         #region Dockerfile
-        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl)
+        private string GenerateDockerFileContent(IEnumerable<BuildStepDTO> buildSteps, string repositoryUrl, string pathToClonedRepository)
         {
             string dockerfile = "";
 
-            /* Base template for generating dockerfile
-            FROM {{ docker_image }}:latest AS {{ step_name }}
-            WORKDIR /src
-            COPY . .
-            WORKDIR /src/{{ work_directory }}
-            ENV {{ key }}={{ value }} // if any
-            RUN {{ runner }} {{ command }} {{ arg.key }} {{ arg.value }} // if any args
-            */
             var genericTemplate = Template.Parse(
-                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:latest AS {{ this.work_directory }}\r\n" +
+                 "\r\n\r\nFROM {{ this.plugin_command.plugin.docker_image_name }}:{{ if !this.docker_image_version; this.docker_image_version = \"latest\"; end; this.docker_image_version }}\r\n" +
                  "WORKDIR \"/src\"\r\n" +
                  "COPY . .\r\n" +
                  "WORKDIR \"/src/{{ this.work_directory }}\"\r\n" +
@@ -251,11 +267,26 @@ namespace buildeR.Processor.Services
             var customCommandTemplate = Template.Parse(
                 "&& {{ this.command_arguments[0].key }} ");
 
-            foreach (var step in buildSteps)
+            foreach(var step in buildSteps)
+            {
+                if (step.BuildStepName.StartsWith("Post Action"))
+                    step.Index += 100;
+            }
+
+            var orderedBuildSteps = buildSteps.Where(s => !s.BuildStepName.StartsWith("Post Action")).OrderBy(s => s.Index);
+            var orderedPostBuildSteps = buildSteps.Where(s => s.BuildStepName.StartsWith("Post Action")).OrderBy(s => s.Index);
+
+            foreach (var step in orderedBuildSteps)
                 if (step.BuildStepName != "Custom command: ")
                     dockerfile += genericTemplate.Render(step);
-                else
+                else if (step.BuildStepName.StartsWith("Custom command"))
                     dockerfile += customCommandTemplate.Render(step);
+
+            foreach (var step in orderedPostBuildSteps)
+            {
+                var config = JsonConvert.DeserializeObject<PostBuildStepConfig>(step.Config);
+                dockerfile += $"&& ncftpput -u {config.User} -p {config.Password} -R {config.Host} {config.OutputDirectory} {config.Directory}";
+            }
 
             return dockerfile;
         }

@@ -26,12 +26,14 @@ export class ProjectCreateComponent implements OnInit {
   repositories: Repository[];
   projectForm: FormGroup;
   credentialUsername = '';
+  isShowSpinner = false;
 
   userHasToken = false;
   githubRepoSection = false;
   urlSection = false;
 
   isPrivateRepoChoosed = false;
+  synchronizationFinished = false;
 
   @ViewChild('repository', { static: false }) instance: NgbTypeahead;
 
@@ -99,6 +101,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   save() {
+    this.isShowSpinner = true;
     this.newProject.name = this.projectForm.controls.name.value;
     this.newProject.description = this.projectForm.controls.description.value;
     this.newProject.isPublic = this.projectForm.controls.isPublic.value;
@@ -112,6 +115,7 @@ export class ProjectCreateComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe(
       (resp) => {
         this.toastrService.showSuccess('Project created!');
+        this.isShowSpinner = false;
         this.activeModal.close('Saved');
         if (this.syncService.checkIfUserHasToken(this.user.id)) {
           this.syncService.registerWebhook(resp.id)
@@ -119,6 +123,7 @@ export class ProjectCreateComponent implements OnInit {
         }
       },
       (error) => {
+        this.isShowSpinner = false;
         this.toastrService.showError(error.message, error.name);
         this.activeModal.dismiss('Error on save');
       },
@@ -127,7 +132,10 @@ export class ProjectCreateComponent implements OnInit {
 
   synchronize() {
     this.syncService.getUserRepositories(this.user.id)
-                .subscribe(repos => this.repositories = repos);
+                .subscribe(repos => {
+                  this.repositories = repos;
+                  this.synchronizationFinished = true;
+                });
   }
 
   cancel() {
@@ -189,16 +197,16 @@ export class ProjectCreateComponent implements OnInit {
     }
 
     if (!this.newProject.repository.createdByLink) {
-      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid && !this.projectForm.pending;
+      return this.projectForm.controls._repository?.value.name && this.projectForm.valid && !this.projectForm.pending;
     }
     else {
-      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid && !this.projectForm.pending;
+      return this.projectForm.controls.repositoryURL?.value && this.projectForm.valid && !this.projectForm.pending;
     }
   }
 
   handleRepositoryInputClick(repo: Repository) {
-    this.projectForm.controls['name'].setValue(repo.name);
-    this.projectForm.controls['description'].setValue(repo.description);
+    this.projectForm.controls.name.setValue(repo.name);
+    this.projectForm.controls.description.setValue(repo.description);
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;

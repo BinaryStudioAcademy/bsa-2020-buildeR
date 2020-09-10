@@ -18,6 +18,8 @@ import { HomeGuard } from './guards/home.guard';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { RegistrationWarningComponent } from './components/registration-warning/registration-warning.component';
 import { EmailVerificationModalComponent } from './components/email-verification-modal/email-verification-modal.component';
+import { AdminGuard } from './guards/admin.guard';
+import { RawLogsComponent } from './components/raw-logs/raw-logs.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { EmailVerificationModalComponent } from './components/email-verification
     SignUpComponent,
     RegistrationDialogComponent,
     RegistrationWarningComponent,
-    EmailVerificationModalComponent
+    EmailVerificationModalComponent,
+    RawLogsComponent
   ],
   imports: [
     HttpClientModule,
@@ -37,6 +40,7 @@ import { EmailVerificationModalComponent } from './components/email-verification
   providers: [
     AuthGuard,
     HomeGuard,
+    AdminGuard,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
   ],

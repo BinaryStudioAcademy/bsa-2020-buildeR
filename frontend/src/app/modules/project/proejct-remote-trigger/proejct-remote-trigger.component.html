@@ -1,0 +1,60 @@
+<form #triggerForm="ngForm">
+  <div class="form-control-wr">
+    <label>
+      Trigger branch
+    </label>
+    <div class="input-wr">
+      <input
+      type="text"
+      class="form-control"
+      [editable]="false"
+      placeholder="Select from list"
+      [(ngModel)]="trigger.branch"
+      [ngbTypeahead]="search"
+      (focus)="branchInputFocus$.next($any($event).target.value)"
+      (click)="branchInputClick$.next($any($event).target.value)"
+      #branch="ngbTypeahead"
+      name="branchInput"
+      #branchInput="ngModel"
+      required />
+      <!-- <div class="error" [hidden]="!branchInput.errors?.required || branchInput.untouched">
+        Branch is required
+      </div> -->
+    </div>
+  </div>
+  <div class="form-control-wr">
+    <label>
+      Events which trigger build
+    </label>
+    <div class="input-wr">
+      <ng-multiselect-dropdown
+        [placeholder]="'Select events'"
+        [data]="eventsList"
+        [settings]="dropdownSettings"
+        [(ngModel)]="selectedEvents"
+        name="eventsSelect"
+        (onSelect)="eventsOnChange()"
+        (onDeSelect)="eventsOnChange()"
+        (onSelectAll)="eventsOnChange()"
+        (onDeSelectAll)="eventsOnChange()"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+  </div>
+  <div class="form-control-wr-small">
+    <div *ngIf="createNewTrigger" class="btn-wr">
+      <button class="btn btn-success" (click)="createTrigger()">Create</button>
+    </div>
+    <div *ngIf="!createNewTrigger" class="btn-wr">
+      <button *ngIf="selectedEventsChanged || triggerForm.touched"
+              class="btn btn-warning"
+              (click)="saveEditedTrigger()">
+              Update
+      </button>
+      <button class="btn btn-danger"
+              (click)="deleteTrigger()">
+        Delete
+      </button>
+    </div>
+  </div>
+</form>

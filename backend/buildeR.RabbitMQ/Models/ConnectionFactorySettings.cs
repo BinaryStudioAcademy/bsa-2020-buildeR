@@ -13,7 +13,7 @@ namespace buildeR.RabbitMq.Models
         }
         
         public string HostName => _configuration["RABBIT_MQ_HOST_NAME"];
-        public int Host { get; set; } = 5672;
+        public int Port { get; set; } = 5672;
         public string UserName => _configuration["RABBIT_MQ_USERNAME"];
         public string Password => _configuration["RABBIT_MQ_PASSWORD"];
         public string VirtualHost { get; set; } = "/";

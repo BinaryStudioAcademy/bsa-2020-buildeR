@@ -60,7 +60,8 @@ namespace buildeR.BLL.Services
                 UserId = group.CreatorId,
                 MemberRole = GroupRole.Owner,
                 GroupId = newGroup.Id,
-                JoinedDate = DateTime.Now
+                JoinedDate = DateTime.Now,
+                IsAccepted = true
             };
             Context.Add(teamMember);
             await Context.SaveChangesAsync();

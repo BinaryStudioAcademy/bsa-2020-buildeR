@@ -1,7 +1,9 @@
 export interface UserLetter {
-  userName: string
-  userEmail: string,
-  subject: string,
-  description: string,
-  isRespond: boolean
+  id: number;
+  userName: string;
+  userEmail: string;
+  subject: string;
+  description: string;
+  isRespond: boolean;
+  userId: number;
 }

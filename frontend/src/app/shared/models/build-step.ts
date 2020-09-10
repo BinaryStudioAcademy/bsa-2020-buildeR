@@ -1,5 +1,6 @@
 import { PluginCommand } from './plugin-command';
 import { CommandArgument } from './command-argument';
+import { BuildStepConfig } from './build-step-config';
 
 export interface BuildStep {
   id: number;
@@ -14,4 +15,6 @@ export interface BuildStep {
   newCommandArgumentValue: string;
   isEditing: boolean;
   dockerImageVersion: string;
+  config: string;
+  configObject: BuildStepConfig;
 }

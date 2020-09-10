@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NewProjectTrigger } from '@shared/models/project/project-trigger/new-project-trigger';
 import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
 import { TriggerService } from '@core/services/trigger.service';
+import { RemoteTriggerService } from '@core/services/remote-trigger.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ActivatedRoute } from '@angular/router';
@@ -9,6 +10,7 @@ import { Branch } from '@core/models/Branch';
 import { ProjectService } from '@core/services/project.service';
 import { Project } from '@shared/models/project/project';
 import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
+import { RemoteTrigger } from '@shared/models/remote-trigger/remote-trigger';
 
 @Component({
   selector: 'app-project-triggers',
@@ -17,7 +19,7 @@ import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 })
 export class ProjectTriggersComponent implements OnInit {
   project: Project;
-  branches: Branch[];
+  branches: string[];
   selectedBranch: string;
   runOnSchedule = false;
   triggers: ProjectTriggerInfo[] = [];
@@ -25,8 +27,12 @@ export class ProjectTriggersComponent implements OnInit {
   cronConfig: CronJobsConfig = {quartz: true, option: { minute: false, year: false } };
   cronResult: string;
 
+  remoteTriggersSection: boolean;
+  remoteTriggers: RemoteTrigger[] = [];
+
   constructor(
     private triggerService: TriggerService,
+    private remoteTriggerService: RemoteTriggerService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute,
     private projectSerivce: ProjectService,
@@ -38,7 +44,11 @@ export class ProjectTriggersComponent implements OnInit {
       .subscribe(project => {
         this.project = project;
         this.syncService.getRepositoryBranches(project.id)
-            .subscribe(branches => this.branches = branches);
+            .subscribe(branches =>
+              {
+                this.branches = branches.map(b => b.name);
+                this.selectedBranch = this.branches[0];
+              });
       });
     this.getTriggers(this.route.parent.snapshot.params.projectId);
   }
@@ -46,6 +56,16 @@ export class ProjectTriggersComponent implements OnInit {
   getTriggers(projectId: number) {
     this.triggerService.getTriggersByProjectId(projectId).subscribe(
       (data) => this.triggers = data,
+      (error) => this.toastrService.showError(error.message, error.name)
+    );
+
+    this.remoteTriggerService.getProjectRemoteTriggers(projectId).subscribe(
+      (data) => {
+        this.remoteTriggers = data;
+        if (this.remoteTriggers.length !== 0) {
+          this.remoteTriggersSection = true;
+        }
+      },
       (error) => this.toastrService.showError(error.message, error.name)
     );
   }
@@ -58,11 +78,8 @@ export class ProjectTriggersComponent implements OnInit {
         branchHash: this.selectedBranch,
         cronExpression: cron
       };
-      console.log(newTrigger.cronExpression);
       this.triggerService.createTrigger(newTrigger).subscribe(
         (data) => {
-          console.log(data);
-
           this.triggers.push(data);
           this.toastrService.showSuccess('trigger created');
         },
@@ -91,6 +108,37 @@ export class ProjectTriggersComponent implements OnInit {
       },
       (error) => this.toastrService.showError(error.message, error.name)
     );
+  }
+
+  createRemoteTrigger(trigger: RemoteTrigger) {
+    trigger.projectId = this.project.id;
+
+    this.remoteTriggerService.addRemoteTrigger(trigger)
+      .subscribe(
+        (createdTrigger) => {
+          this.remoteTriggers.push(createdTrigger);
+          this.toastrService.showSuccess('Branch trigger was created');
+        },
+        (error) => this.toastrService.showError(error.message, error.name)
+      );
+  }
+
+  updateRemoteTrigger(trigger: RemoteTrigger) {
+    this.remoteTriggerService.updateRemoteTrigger(trigger)
+      .subscribe(
+        (updatedTrigger) => this.toastrService.showSuccess('Branch trigger was updated'),
+        (error) => this.toastrService.showError(error.message, error.name)
+      );
+  }
+
+  deleteRemoteTrigger(triggerId: number) {
+    this.remoteTriggers = this.remoteTriggers.filter(t => t.id !== triggerId);
+
+    this.remoteTriggerService.deleteRemoteTrigger(triggerId)
+      .subscribe(
+        () => this.toastrService.showSuccess('Branch trigger was deleted'),
+        (error) => this.toastrService.showError(error.message, error.name)
+      );
   }
 
   onToggle(change: boolean) {
