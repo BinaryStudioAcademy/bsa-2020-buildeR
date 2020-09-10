@@ -9,9 +9,9 @@ import {
 } from '@angular/core';
 import { BaseComponent } from '../../../core/components/base/base.component';
 import { ProjectLogsService } from '@core/services/projects-logs.service';
-import { Subject } from 'rxjs';
-import { Project } from '@shared/models/project/project';
 import { IProjectLog } from '@shared/models/project/project-log';
+import { BuildHistory } from '@shared/models/build-history';
+import { BuildStatus } from '@shared/models/build-status';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -27,14 +27,20 @@ interface IAction {
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
+export class LoggingTerminalComponent
+  extends BaseComponent
+  implements OnInit, OnDestroy {
   @Input() isLive: boolean;
-  @Input() project: Project;
+  @Input() set buildhistory(bh: BuildHistory) {
+    this.buildHistory = bh;
+    this.configureLogsSignalR();
+  }
   @Input() set logs(values: IProjectLog[]) {
     this.writeStaticLogs(values);
   }
 
-  private log$ = new Subject<string>();
+  private buildHistory: BuildHistory;
+
   private step = 1;
   private logRegExr = /^\[(\d+) (.+) (\w+)\](.*)/;
 
@@ -62,28 +68,24 @@ export class LoggingTerminalComponent extends BaseComponent implements OnInit, O
     this.lastScrollYPos = yPos;
   }
 
-  ngOnInit() {
-    this.logsService.buildConnection();
-    this.logsService.startConnectionAndJoinGroup(this.project.id.toString());
-    this.logsService.logsListener(this.log$);
-    this.log$.subscribe((message) => {
-      this.buildLog(this.formatLog(message));
-    });
+  ngOnInit() {}
+
+  private configureLogsSignalR() {
+    if (this.buildHistory.buildStatus == BuildStatus.InProgress) {
+      this.logsService.connect(this.buildHistory.id);
+      this.logsService.listen(this.buildHistory.id).subscribe((message) => {
+        this.buildLog(this.formatLog(message));
+      });
+    }
   }
 
   ngOnDestroy() {
-    this.logsService.stopConnection();
+    this.logsService.disconnect(this.buildHistory.id);
   }
 
   writeStaticLogs(logs: IProjectLog[]) {
     this.initLogs();
-    logs?.forEach(log => this.buildLog(this.formatExistingLog(log), false));
-  }
-
-  loggin() {
-    this.log$.subscribe((line) => {
-      this.buildLog(line);
-    });
+    logs?.forEach((log) => this.buildLog(this.formatExistingLog(log), false));
   }
 
   initLogs() {

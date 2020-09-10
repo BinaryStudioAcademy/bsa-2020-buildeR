@@ -43,9 +43,9 @@ namespace buildeR.SignalR.HostedServices
                         {
                             var cr = consumer.Consume(_cancellationTokenSource.Token);
 
-                            var groupId = JsonConvert.DeserializeObject<ProjectLog>(cr.Message.Value).ProjectId.ToString();
+                            var groupId = JsonConvert.DeserializeObject<ProjectLog>(cr.Message.Value).BuildHistoryId.ToString();
                             // Broadcast is a method that will be called on client to receive messages
-                            _logsHubContext.Clients.Group(groupId).SendAsync("Broadcast", $"{cr.Message.Value}");
+                            _logsHubContext.Clients.Group(groupId).SendAsync("Broadcast", $"{groupId}" ,$"{cr.Message.Value}");
                         }
                     }
                     catch (OperationCanceledException) { }
