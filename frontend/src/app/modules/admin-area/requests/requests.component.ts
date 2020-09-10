@@ -30,7 +30,11 @@ export class RequestsComponent extends BaseComponent implements OnInit {
   openModal(userLetter: UserLetter) {
     const activeModal = this.modalService.open(RequestsModalComponent);
     (activeModal.componentInstance as RequestsModalComponent).currentLetter = userLetter;
-    activeModal.result.then( () => this.onChange());
+    activeModal.result.then( (result) =>
+    {
+      if(result === 'Send')
+      this.onChange();
+    });
   }
 
   changeOnAll() {

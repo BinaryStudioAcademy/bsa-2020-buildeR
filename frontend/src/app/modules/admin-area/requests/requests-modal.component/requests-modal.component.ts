@@ -49,7 +49,11 @@ export class RequestsModalComponent implements OnInit {
   }
 
   closeForm() {
-    this.activeModal.close();
+    this.activeModal.close('Send');
+  }
+
+  cancelForm() {
+    this.activeModal.close('Cancel');
   }
 
 }
