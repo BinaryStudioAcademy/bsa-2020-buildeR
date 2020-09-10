@@ -75,19 +75,19 @@ export class InsightsComponent implements OnInit {
     }
     if (!(diff <= 7) && isMonth) {
       // Show month
-      const date = new Date(this.now);
+      const monthDate = new Date(this.now);
       this.countedDate = new Date(this.now);
       this.countedDate.setDate(this.countedDate.getDate() - 30);
-      date.setDate(date.getDate() - 30);
-      this.fulfillCharts(date, 30);
+      monthDate.setDate(monthDate.getDate() - 30);
+      this.fulfillCharts(monthDate, 30);
       return;
     }
     // Show week
-    const date = new Date(this.now);
+    const weekDate = new Date(this.now);
     this.countedDate = new Date(this.now);
     this.countedDate.setDate(this.countedDate.getDate() - 6);
-    date.setDate(date.getDate() - 6);
-    this.fulfillCharts(date, 6);
+    weekDate.setDate(weekDate.getDate() - 6);
+    this.fulfillCharts(weekDate, 6);
     return;
   }
 

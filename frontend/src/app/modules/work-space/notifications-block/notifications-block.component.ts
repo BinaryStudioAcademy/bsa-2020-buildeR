@@ -97,8 +97,7 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
               .then(() => {
                 this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
                 this.clearOne(notification);
-              }),
-            err => console.error(err),
+              })
           );
           break;
         }

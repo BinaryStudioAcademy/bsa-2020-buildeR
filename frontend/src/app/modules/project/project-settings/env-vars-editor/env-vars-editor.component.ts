@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { EnviromentVariable } from '@shared/models/environment-variable/enviroment-variable';
 import { VariableValue } from '@shared/models/environment-variable/variable-value';
 import { ProjectService } from '@core/services/project.service';
@@ -11,7 +11,7 @@ import { ProjectService } from '@core/services/project.service';
 })
 export class EnvVarsEditorComponent implements OnInit {
 
-  public envVarsEditForm: FormGroup;
+  envVarsEditForm: FormGroup;
   @Input() index: number;
   @Input()envVariables: EnviromentVariable[];
   @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
@@ -40,7 +40,7 @@ export class EnvVarsEditorComponent implements OnInit {
     this.isInit = true;
   }
   isNotUniqueName(): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: any} | null => {
+    return control => {
       const isNotUnique = this.cashedEnvVariables.some(x => x.data.name === control.value);
       return isNotUnique ? { isNotUniqueName: {value: control.value}} : null;
     };

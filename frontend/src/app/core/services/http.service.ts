@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../src/environments/environment';
 @Injectable({
@@ -25,7 +25,7 @@ export class HttpService {
     this.headers.delete(key);
   }
 
-  getRequest<T>(url: string, httpParams?: any) {
+  getRequest<T>(url: string, httpParams?: HttpParams) {
     return this.http.get<T>(this.buildUrl(url), {
       headers: this.getHeaders(),
       params: httpParams,
@@ -34,7 +34,7 @@ export class HttpService {
 
   getFullRequest<T>(
     url: string,
-    httpParams?: any
+    httpParams?: HttpParams
   ) {
     return this.http.get<T>(this.buildUrl(url), {
       observe: 'response',
@@ -76,7 +76,7 @@ export class HttpService {
     });
   }
 
-  deleteRequest<T>(url: string, httpParams?: any) {
+  deleteRequest<T>(url: string, httpParams?: HttpParams) {
     return this.http.delete<T>(this.buildUrl(url), {
       headers: this.getHeaders(),
       params: httpParams,
@@ -85,7 +85,7 @@ export class HttpService {
 
   deleteFullRequest<T>(
     url: string,
-    httpParams?: any
+    httpParams?: HttpParams
   ) {
     return this.http.delete<T>(this.buildUrl(url), {
       headers: this.getHeaders(),

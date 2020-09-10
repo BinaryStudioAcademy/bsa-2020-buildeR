@@ -139,7 +139,7 @@ export class ProjectService {
       envVar);
   }
 
-  public canUserRunNotOwnProject(userId: number, projectId: number) {
+  canUserRunNotOwnProject(userId: number, projectId: number) {
     return this.httpService.getRequest<boolean>(`${this.routePrefix}/canUserRunNotOwnProject?userId=${userId}&projectId=${projectId}`);
   }
 

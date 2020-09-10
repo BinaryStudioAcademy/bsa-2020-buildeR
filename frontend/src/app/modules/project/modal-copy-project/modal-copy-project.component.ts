@@ -15,7 +15,7 @@ import {User} from '@shared/models/user/user';
   styleUrls: ['./modal-copy-project.component.sass']
 })
 export class ModalCopyProjectComponent implements OnInit {
-  public copyForm: FormGroup;
+  copyForm: FormGroup;
   constructor(private projectService: ProjectService,
               private activeModal: NgbActiveModal,
               private toastrService: ToastrNotificationsService,

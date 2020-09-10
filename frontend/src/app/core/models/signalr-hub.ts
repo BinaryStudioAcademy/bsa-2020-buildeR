@@ -32,7 +32,7 @@ export class SignalRHub {
     }
   }
 
-  invoke(actionName: string, ...data: any[]): Promise<any> {
+  invoke(actionName: string, ...data: string[]) {
     return this.hubConnection.invoke(actionName, ...data);
   }
 

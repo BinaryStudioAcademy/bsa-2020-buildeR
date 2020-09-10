@@ -19,12 +19,9 @@ export class ChatHubService{
     this.hubConnection
      .start()
      .then(() => {
-       console.log('Chat connected...');
        this.hubConnection.invoke('JoinGroup', groupName);
      })
      .catch(err => {
-       console.log('Error while starting connection: ' + err);
-
        setTimeout(function() {
          this.startConnection();
        });

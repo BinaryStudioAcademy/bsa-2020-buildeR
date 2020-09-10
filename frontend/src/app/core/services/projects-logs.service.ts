@@ -28,12 +28,9 @@ export class ProjectLogsService {
     this.logsHubConnection
       .start()
       .then(() => {
-        console.log('Connection started...');
         this.logsHubConnection.invoke('JoinGroup', groupName); // Automatically join group after connecting
       })
       .catch(err => {
-        console.log('Error while starting connection: ' + err);
-
         setTimeout(function() {
           this.startConnection();
         }, 3000);

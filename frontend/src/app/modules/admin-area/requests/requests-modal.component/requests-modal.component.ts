@@ -42,7 +42,6 @@ export class RequestsModalComponent implements OnInit {
         this.isShowSpinner = false;
         this.closeForm();
       }, error => {
-      console.error(error);
       this.toastrService.showError('Your letter wasn\'t delivered!');
       this.isShowSpinner = false;
     });

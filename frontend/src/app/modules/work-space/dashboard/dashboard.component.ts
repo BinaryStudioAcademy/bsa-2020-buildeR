@@ -178,9 +178,7 @@ export class DashboardComponent
             });
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   copyProject(id: number) {
@@ -194,9 +192,7 @@ export class DashboardComponent
           this.activeProjects.push(result);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 
   openCreateProjectModal() {

@@ -22,7 +22,7 @@ export class HelpComponent extends BaseComponent
   userHelp: UserLetter = {} as UserLetter;
   isShowSpinner = false;
 
-  public helpForm: FormGroup;
+  helpForm: FormGroup;
 
   constructor(
     private authService: AuthenticationService,
@@ -89,7 +89,6 @@ export class HelpComponent extends BaseComponent
       this.isShowSpinner = false;
     },
       error => {
-        console.error(error.message);
         this.toastrService.showError(`Your letter wasn\\'t delivered!`);
         this.isShowSpinner = false;
       });

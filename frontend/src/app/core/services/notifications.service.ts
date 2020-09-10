@@ -57,9 +57,9 @@ export class NotificationsService implements OnDestroy {
         this.notificationsHub
           .invoke('JoinGroup', this.currentUser.id.toString())
           .then(null)
-          .catch((err) => console.error(err));
+          .catch((err) => {});
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {});
     this.notificationsHub.listen('getNotification').subscribe((notif) => {
       const notification: Notification = JSON.parse(notif);
       notification.date = new Date();

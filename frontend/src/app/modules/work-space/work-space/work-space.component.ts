@@ -32,7 +32,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
     this.userService.userLogoUrl.subscribe(url => {
-      console.log(url);
       this.user.avatarUrl = url;
     });
     this.groupService.userGroupsChanged
