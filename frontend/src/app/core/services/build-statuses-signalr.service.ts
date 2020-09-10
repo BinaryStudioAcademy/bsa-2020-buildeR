@@ -20,6 +20,10 @@ export class BuildStatusesSignalRService
     private signalRService: SignalRHubFactoryService,
     private authService: AuthenticationService
   ) {
+
+  }
+
+  connect() {
     this.currentUser = this.authService.getCurrentUser();
     this.configureSignalR();
   }
