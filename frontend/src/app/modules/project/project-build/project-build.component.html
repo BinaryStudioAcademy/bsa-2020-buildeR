@@ -23,7 +23,7 @@
       </a>
       <p><i class="fas fa-code"></i> Commit
         <span class="commit" *ngIf="repository?.url && buildHistory?.commitHash; else notLink;">
-          {{getCommit(buildHistory)}}
+          <a class="commit-link" target="_blank" [href]="repository?.url+'/commit/'+buildHistory?.commitHash">{{ getCommit(buildHistory) }}</a>
         </span>
         <ng-template #notLink>
           <span> — </span>
