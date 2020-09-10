@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@core/components/base/base.component';
+import { Permissions } from '@shared/models/permissions';
 
 @Component({
   selector: 'app-projects-display',
@@ -21,10 +22,7 @@ import { BaseComponent } from '@core/components/base/base.component';
 
 export class ProjectsDisplayComponent extends BaseComponent implements OnInit   {
   @Input() activeProjects: ProjectInfo[];
-  @Input() permissions = false;
-  @Input() isAdmin = false;
-  @Input() isContributor = false;
-  @Input() isBuilder = false;
+  @Input() permissions: Permissions;
   user: User = this.authService.getCurrentUser();
   loadingSelectedProjectBranches = false;
 
