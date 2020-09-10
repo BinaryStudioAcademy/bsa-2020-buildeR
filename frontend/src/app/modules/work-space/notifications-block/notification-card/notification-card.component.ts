@@ -64,7 +64,6 @@ export class NotificationCardComponent implements OnInit {
                       this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]);
                       this.clearOne(notification);
                   }),
-            err => console.error(err),
           );
           this.toggle();
           break;
