@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpService } from '../../core/services/http.service';
 import { User } from '../../shared/models/user/user';
 import { NewUser } from '../../shared/models/user/new-user';
 import { LinkProvider } from '../../shared/models/user/link-provider';
 import { ValidateUser } from '@shared/models/user/validate-user';
-import { HttpRequest } from '@angular/common/http';
 import { UserLetter } from '@shared/models/user/user-letter';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  public routePrefix = '/users';
-  private userLogoUrl$ = new Subject<string>();
-  private userLogoUserName$ = new Subject<string>();
+  private routePrefix = '/users';
+  userLogoUrl$ = new Subject<string>();
+  userLogoUserName$ = new Subject<string>();
 
   userLogoUrl = this.userLogoUrl$.asObservable();
   userLogoUserName = this.userLogoUserName$.asObservable();
@@ -57,18 +56,18 @@ export class UserService {
     this.userLogoUserName$.next(userName);
   }
 
-  validateUsername(user: ValidateUser): Observable<boolean> {
+  validateUsername(user: ValidateUser) {
     return this.httpService.postRequest<boolean>(`${this.routePrefix}/validate-username`, user);
   }
 
-  linkProvider(user: LinkProvider): Observable<User> {
+  linkProvider(user: LinkProvider) {
     return this.httpService.postRequest<User>(`${this.routePrefix}/link-provider`, user);
   }
 
-  uploadAvatar(avatar: FormData, userId: number): Observable<User> {
+  uploadAvatar(avatar: FormData, userId: number) {
     return this.httpService.postRequest<User>(`${this.routePrefix}/avatar/${userId}`, avatar);
   }
-  sendLetter(newUserLetter: UserLetter): Observable<UserLetter> {
+  sendLetter(newUserLetter: UserLetter) {
     return this.httpService.postRequest<UserLetter>(`${this.routePrefix}/letter`, newUserLetter);
   }
   getUsers() {

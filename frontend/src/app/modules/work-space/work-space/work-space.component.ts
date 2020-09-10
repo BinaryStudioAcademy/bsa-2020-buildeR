@@ -32,7 +32,6 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
     this.userService.userLogoUrl.subscribe(url => {
-      console.log(url);
       this.user.avatarUrl = url;
     });
     this.groupService.userGroupsChanged
@@ -44,7 +43,7 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
     this.getGroups();
   }
 
-  public getGroups() {
+  getGroups() {
     this.groupService.getUserGroups(this.user.id).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
         this.groups = res.filter(g => g.teamMembers.

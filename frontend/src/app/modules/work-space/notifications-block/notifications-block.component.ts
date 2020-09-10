@@ -6,7 +6,6 @@ import { NotificationsService } from '@core/services/notifications.service';
 import { takeUntil } from 'rxjs/operators';
 import { Notification } from '../../../shared/models/notification';
 import { NotificationType } from '../../../shared/models/notification-type';
-import { HttpService } from '@core/services/http.service';
 
 @Component({
   selector: 'app-notifications-block',
@@ -14,11 +13,11 @@ import { HttpService } from '@core/services/http.service';
   styleUrls: ['./notifications-block.component.sass'],
 })
 export class NotificationsBlockComponent extends BaseComponent implements OnInit, AfterViewChecked {
-  public notifications: Notification[] = [];
-  public NotificationType = NotificationType;
-  public showAllNotifications = false;
-  public isShowingRead = false;
-  public counter: number;
+  notifications: Notification[] = [];
+  NotificationType = NotificationType;
+  showAllNotifications = false;
+  isShowingRead = false;
+  counter: number;
   @ViewChild('top') private top: ElementRef;
 
   @Output() counterNotifications = new EventEmitter<number>();
@@ -105,10 +104,9 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
             bh => this.router.navigateByUrl('/', { skipLocationChange: true })
               .then(() => {
-                this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]);
+                this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
                 this.clearOne(notification);
-              }),
-            err => console.error(err),
+              })
           );
           break;
         }

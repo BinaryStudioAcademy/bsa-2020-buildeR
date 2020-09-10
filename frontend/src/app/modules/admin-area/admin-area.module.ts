@@ -5,8 +5,8 @@ import { AdminAreaComponent } from './admin-area/admin-area.component';
 import { PluginsComponent } from './plugins/plugins.component';
 import { AdminAreaRoutingModule } from './admin-area-routing.module';
 import { AdminGuard } from '@core/guards/admin.guard';
-import {RequestsComponent} from "@modules/admin-area/requests/requests.component";
-import {RequestsModalComponent} from "@modules/admin-area/requests/requests-modal.component/requests-modal.component";
+import {RequestsComponent} from '@modules/admin-area/requests/requests.component';
+import {RequestsModalComponent} from '@modules/admin-area/requests/requests-modal.component/requests-modal.component';
 
 
 

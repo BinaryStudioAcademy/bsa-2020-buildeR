@@ -3,32 +3,34 @@
     <h2 class="title">
       Triggers
     </h2>
-    <div class="switch-wr">
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="remoteTriggers" #remoteTriggersSectionDisplay="ngModel"
-        name="remoteTriggersSectionDisplay" [(ngModel)]="remoteTriggersSection"/>
-        <label class="custom-control-label" for="remoteTriggers">Remote triggers</label>
+    <div *ngIf="!project.repository.createdByLink">
+      <div class="switch-wr">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="remoteTriggers" #remoteTriggersSectionDisplay="ngModel"
+          name="remoteTriggersSectionDisplay" [(ngModel)]="remoteTriggersSection"/>
+          <label class="custom-control-label" for="remoteTriggers">Remote triggers</label>
+        </div>
       </div>
-    </div>
-    <div *ngIf="remoteTriggersSection">
-      <app-proejct-remote-trigger
-        *ngFor="let remoteTrigger of remoteTriggers"
-        [trigger]="remoteTrigger"
+      <div *ngIf="remoteTriggersSection">
+        <app-proejct-remote-trigger
+          *ngFor="let remoteTrigger of remoteTriggers"
+          [trigger]="remoteTrigger"
+          [branches]="branches"
+          [createNewTrigger]="false"
+          (triggerUpdate)='updateRemoteTrigger($event)'
+          (triggerDelete)='deleteRemoteTrigger($event)'>
+        </app-proejct-remote-trigger>
+  
+        <div class="divider"></div>
+        <p class="title">Create remote trigger</p>
+  
+        <app-proejct-remote-trigger
         [branches]="branches"
-        [createNewTrigger]="false"
-        (triggerUpdate)='updateRemoteTrigger($event)'
-        (triggerDelete)='deleteRemoteTrigger($event)'>
-      </app-proejct-remote-trigger>
-
-      <div class="divider"></div>
-      <p class="title">Create remote trigger</p>
-
-      <app-proejct-remote-trigger
-      [branches]="branches"
-      [createNewTrigger]="true"
-      (triggerCreate)="createRemoteTrigger($event)"
-      >
-      </app-proejct-remote-trigger>
+        [createNewTrigger]="true"
+        (triggerCreate)="createRemoteTrigger($event)"
+        >
+        </app-proejct-remote-trigger>
+      </div>  
     </div>
     <div class="switch-wr">
       <div class="custom-control custom-switch">

@@ -26,7 +26,7 @@ export class UserSettingsComponent implements OnInit {
   isShowSpinner = false;
 
   @Input() details: User = {} as User;
-  public settingsForm: FormGroup;
+  settingsForm: FormGroup;
   googleClick = false;
   githubClick = false;
   isOwner = false;
@@ -122,7 +122,6 @@ export class UserSettingsComponent implements OnInit {
       this.isShowSpinner = false;
       this.toastrService.showSuccess('Your profile was updated!');
     }, error => {
-      console.error(error);
       this.isShowSpinner = false;
       this.toastrService.showError('Your profile wasn\'t updated');
     });
@@ -138,11 +137,10 @@ export class UserSettingsComponent implements OnInit {
       const formData = new FormData();
       formData.append('file', file, file.name);
       this.userService.uploadAvatar(formData, this.details.id).subscribe((res) => {
-        console.log(res.avatarUrl);
         this.details.avatarUrl = res.avatarUrl;
         this.userService.changeImageUrl(res.avatarUrl);
         this.details.avatarUrl = res.avatarUrl;
-      }, (er) => console.log(er));
+      });
     }
   }
 

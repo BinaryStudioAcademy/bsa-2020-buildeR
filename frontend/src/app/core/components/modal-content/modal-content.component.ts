@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -6,13 +6,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './modal-content.component.html',
   styleUrls: ['./modal-content.component.sass']
 })
-export class ModalContentComponent implements OnInit {
+export class ModalContentComponent {
 
-  @Input() public content;
+  @Input() content;
   constructor(public activeModal: NgbActiveModal) { }
-
-  ngOnInit(): void {
-  }
 
   confirm() {
     this.activeModal.close(true);
