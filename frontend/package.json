@@ -22,6 +22,7 @@
     "@angular/platform-browser": "^10.0.9",
     "@angular/platform-browser-dynamic": "^10.0.9",
     "@angular/router": "^10.0.9",
+    "@auth0/angular-jwt": "^5.0.1",
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@microsoft/signalr": "^3.1.7",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
