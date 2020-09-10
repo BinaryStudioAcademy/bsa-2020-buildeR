@@ -17,33 +17,12 @@
       There are no notifications
     </div>
     <ng-container *ngFor="let notification of notifications">
-      <div *ngIf="notification.isRead === false || isShowingRead" class="notification" [ngClass]="{
-        'isNotRead': !notification.isRead,
-        'build-errored text-danger': notification.type == NotificationType.BuildErrored,
-        'build-failed text-danger': notification.type == NotificationType.BuildFailed,
-        'build-success text-success': notification.type == NotificationType.BuildSucceeded
-        }"
-        (click)="navigateToItem(notification, $event)">
-        <div class="notification-type">
-          <div class="notification-type-icon">
-            <i class="fas" [ngClass]="{
-            'fa-times text-danger': notification.type == NotificationType.BuildErrored,
-            'fa-info': notification.type == NotificationType.Information,
-            'fa-exclamation-triangle text-danger': notification.type == NotificationType.BuildFailed,
-            'fa-check text-success': notification.type == NotificationType.BuildSucceeded,
-            'fa-users': notification.type == NotificationType.Group
-            }">&nbsp;
-            </i></div>
-        </div>
-        <div class="notification-body">
-          <p>{{ notification.message }}</p>
-          <span class="notification-time">{{ notification.date | date: 'medium' }}</span>
-        </div>
-        <div *ngIf="!notification.isRead" title="Mark as read" class="notification-read text-secondary"
-          (click)="clearOne(notification)">
-          <i class="far fa-check-circle"></i>
-        </div>
-      </div>
+      <app-notification-card
+      *ngIf="isShowingRead === false || isShowingRead"
+      [notification]="notification"
+      [isShowingRead]="isShowingRead"
+      (clearedOne)="clearOne(notification)"
+      (toggleNotificationsBlock)="toggle()"></app-notification-card>
     </ng-container>
   </div>
   <div class="notifications-footer">
