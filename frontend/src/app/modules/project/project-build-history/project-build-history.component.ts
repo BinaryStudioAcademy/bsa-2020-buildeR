@@ -7,6 +7,8 @@ import { ToastrNotificationsService } from '@core/services/toastr-notifications.
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
 import { BuildStatus } from '@shared/models/build-status';
 import { takeUntil } from 'rxjs/operators';
+import { ProjectService } from '@core/services/project.service';
+import { Repository } from '@core/models/Repository';
 
 @Component({
   selector: 'app-project-build-history',
@@ -18,12 +20,13 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   projectId: number;
   builds: BuildHistory[] = [];
   isLoading = true;
-
+  repository: Repository;
   constructor(
     private buildHistoryService: BuildHistoryService,
     private route: ActivatedRoute,
     private toastrService: ToastrNotificationsService,
-    private buildStatusesSignalRService: BuildStatusesSignalRService
+    private buildStatusesSignalRService: BuildStatusesSignalRService,
+    private projectService: ProjectService
   ) {
     super();
   }
@@ -36,6 +39,7 @@ export class ProjectBuildHistoryComponent extends BaseComponent
       this.loadProjects();
     });
     this.buildHistoryService.getLoadBuildHistoryOfProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.loadProjects());
+    this.projectService.getRepositoryByProjectId(this.projectId).subscribe((response) => this.repository = response);
   }
 
   loadProjects() {
