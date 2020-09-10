@@ -28,6 +28,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
   isAdmin = false;
   isContributor = false;
   isBuilder = false;
+  isGuest = false;
   userProjects: ProjectInfo[];
   isLoading = true;
 
@@ -91,6 +92,9 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
     this.groupService.getMembersByGroup(groupId).pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
         const role = res.body.filter(x => x.userId === this.user.id)[0]?.memberRole;
+        if(role === 0) {
+          this.isGuest = true;
+        }
         if (role === 1) {
           this.isBuilder = true;
           this.isContributor = true;
