@@ -22,8 +22,12 @@ export class NotificationsService implements OnDestroy {
     private authService: AuthenticationService,
     private httpService: HttpService
   ) {
+
+  }
+
+  connect() {
     this.currentUser = this.authService.getCurrentUser();
-    httpService
+    this.httpService
       .getRequest<Notification[]>(
         `${this.routePrefix}/user/${this.currentUser.id}`
       )
@@ -31,12 +35,6 @@ export class NotificationsService implements OnDestroy {
         notifications.forEach((n) => this.notifications$.next(n))
       );
     this.configureSignalR();
-  }
-
-  getInitialNotifications() {
-    this.currentUser = this.authService.getCurrentUser();
-    return this.httpService.getRequest<Notification[]>(
-      `${this.routePrefix}/user/${this.currentUser.id}`);
   }
 
   markAsRead(notificationId: number) {

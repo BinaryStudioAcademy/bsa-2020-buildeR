@@ -29,22 +29,14 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
     private buildHistoryService: BuildHistoryService
   ) {
     super();
-    this.notificationService.getInitialNotifications()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((resp) => {
-        if (this.notifications.length === 0) {
-          this.notifications = resp.filter(n => !n.isRead);
-          for (const not of this.notifications) {
-            this.onChanging('adding', not);
-          }
-        }
-      });
   }
+
   ngAfterViewChecked(): void {
     this.scrollTop();
   }
 
   ngOnInit(): void {
+    this.notificationService.connect();
     this.notificationService.listen().subscribe((notification) => {
       if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
         this.notifications.push(notification);
