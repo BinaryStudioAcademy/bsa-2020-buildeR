@@ -10,10 +10,9 @@ import { NotificationSettingComponent } from './notification-setting/notificatio
 import { InsightsComponent } from './insights/insights.component';
 import { CredentialSettingsComponent } from './credential-settings/credential-settings.component';
 
-
-
 @NgModule({
-  declarations: [UserComponent,
+  declarations: [
+    UserComponent,
     UserSettingsComponent,
     PhotoCropperContentComponent,
     NotificationSettingComponent,

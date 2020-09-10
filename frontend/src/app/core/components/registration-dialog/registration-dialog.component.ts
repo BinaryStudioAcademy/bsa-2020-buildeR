@@ -15,7 +15,7 @@ import { usernameAsyncValidator } from '../../validators/custom-async-validator'
 export class RegistrationDialogComponent implements OnInit {
 
   @Input() details: NewUser = {} as NewUser;
-  public registerForm: FormGroup;
+  registerForm: FormGroup;
   constructor(
     public activeModal: NgbActiveModal,
     private authService: AuthenticationService,

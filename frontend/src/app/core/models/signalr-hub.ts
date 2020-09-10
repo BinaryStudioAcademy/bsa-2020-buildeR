@@ -11,7 +11,7 @@ export class SignalRHub {
 
   constructor(private url: string) {}
 
-  public async start(): Promise<void> {
+  async start(): Promise<void> {
     this.hubConnection = new HubConnectionBuilder().withUrl(this.url, {
       skipNegotiation: true,
       transport: signalR.HttpTransportType.WebSockets
@@ -19,7 +19,7 @@ export class SignalRHub {
     return await this.hubConnection.start();
   }
 
-  public listen(eventName: string): Subject<string> {
+  listen(eventName: string): Subject<string> {
     if (this.subscriptions$.has(eventName)) {
       return this.subscriptions$.get(eventName);
     } else {
@@ -32,11 +32,11 @@ export class SignalRHub {
     }
   }
 
-  public invoke(actionName: string, ...data: any[]): Promise<any> {
+  invoke(actionName: string, ...data: string[]) {
     return this.hubConnection.invoke(actionName, ...data);
   }
 
-  public disconnect() {
+  disconnect() {
     this.hubConnection.stop();
     this.subscriptions$.forEach((subject) => {
       subject.complete();

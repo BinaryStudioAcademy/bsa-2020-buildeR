@@ -5,6 +5,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NewGroup } from '../../../shared/models/group/new-group';
 import { Group } from '../../../shared/models/group/group';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { GroupRole } from '@shared/models/group/group-role';
+import { TeamMember } from '@shared/models/group/team-member';
+import { User } from '@shared/models/user/user';
+import { AuthenticationService } from '@core/services/authentication.service';
 
 
 @Component({
@@ -16,12 +20,15 @@ export class GroupSettingsComponent implements OnInit {
   groupId: number;
   groupForm: FormGroup;
   isShowSpinner = false;
+  currentTeamMember: TeamMember = {} as TeamMember;
+  currentUser: User = {} as User;
 
   @Input() group: Group = {} as Group;
   constructor(
     private groupService: GroupService,
     private toastrService: ToastrNotificationsService,
     public route: ActivatedRoute,
+    public authService: AuthenticationService
   ) {
   }
 
@@ -30,6 +37,9 @@ export class GroupSettingsComponent implements OnInit {
       this.groupId = data.group.id;
       this.group = data.group;
     });
+    this.currentUser = this.authService.getCurrentUser();
+    this.groupService.getMembersByGroup(this.group.id)
+      .subscribe((resp) => this.currentTeamMember = resp.body.find(t => t.userId === this.currentUser.id));
     this.groupForm = new FormGroup({
       name: new FormControl(this.group.name,
         [
@@ -64,7 +74,18 @@ export class GroupSettingsComponent implements OnInit {
   }
   reset() {
     this.groupForm.reset(this.group);
-    this.groupForm.controls['isPublic'].setValue(this.group.isPublic.toString());
+    this.groupForm.controls.isPublic.setValue(this.group.isPublic.toString());
+  }
+
+  canChangeSettings() {
+    let check = false;
+    if (this.currentTeamMember !== undefined &&
+      this.currentTeamMember.isAccepted &&
+      (this.currentTeamMember.memberRole === GroupRole.Owner ||
+        this.currentTeamMember.memberRole === GroupRole.Admin)) {
+      check = true;
+    }
+    return check;
   }
 
 }

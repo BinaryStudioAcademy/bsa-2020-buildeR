@@ -54,6 +54,12 @@ namespace buildeR.API.Controllers
             await _groupService.Delete(id);
         }
 
+        [HttpDelete]
+        public async Task DeleteGroupWithNotification([FromQuery] RemoveGroupDTO removeObject)
+        {
+            await _groupService.DeleteGroupWithNotification(removeObject);
+        }
+
         [HttpGet("getProjectsByGroupId/{groupId:int}")]
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByGroup(int groupId)
         {

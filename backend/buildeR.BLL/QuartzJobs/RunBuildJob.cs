@@ -1,4 +1,5 @@
 ﻿using buildeR.BLL.Interfaces;
+using buildeR.BLL.Services.Abstract;
 using buildeR.Common.DTO.BuildHistory;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -22,9 +23,10 @@ namespace buildeR.BLL.QuartzJobs
                 var branch = context.JobDetail.Description;
                 int projectId = Convert.ToInt32(context.JobDetail.Key.Group);
                 var buildOperationService = scope.ServiceProvider.GetRequiredService<IBuildOperationsService>();
-
-                var buildHistory = await buildOperationService.PrepareBuild(projectId, "", branch);
-                await buildOperationService.StartBuild(projectId, buildHistory.Id, branch, null);
+                var projectService = scope.ServiceProvider.GetRequiredService<IProjectService>();
+                var user = await projectService.GetUserByProjectId(projectId);
+                var buildHistory = await buildOperationService.PrepareBuild(projectId, "BuilderBot", branch);
+                await buildOperationService.StartBuild(projectId, buildHistory.Id, branch, user.Id);
             }
         }
     }

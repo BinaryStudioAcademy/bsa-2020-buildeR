@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using buildeR.Common.DTO.Group;
 using buildeR.Common.DTO.TeamMember;
 using buildeR.Common.Enums;
+using buildeR.Common.DTO.User;
 
 namespace buildeR.BLL.Services
 {
@@ -40,7 +41,14 @@ namespace buildeR.BLL.Services
         {
             return base.GetAsync(id, isNoTracking);
         }
-        
+        public async Task<UserDTO> GetUserByProjectId(int projectId)
+        {
+            var user = await Context.Projects
+                .AsNoTracking()
+                .Select(project => project.Owner)
+                .FirstOrDefaultAsync(project => project.Id == projectId);
+            return Mapper.Map<UserDTO>(user);
+        }
         public async Task<IEnumerable<ProjectInfoDTO>> GetProjectsByUser(int userId)
         {
             var projects = await Context.Projects
@@ -65,7 +73,11 @@ namespace buildeR.BLL.Services
                 .ThenInclude(p => p.BuildHistories)
                 .Where(pg => pg.Group.TeamMembers.Any(tm => tm.UserId == userId && tm.MemberRole != GroupRole.Owner))
                 .ToListAsync();
-            return notOwnGroupProjects.Select(gp => gp.Group).Distinct().GroupJoin(
+            
+                // this is comparer for group, distinct method needs it 
+                GroupComparer comparer = new GroupComparer();
+                
+                return notOwnGroupProjects.Select(gp => gp.Group).Distinct(comparer).GroupJoin(
                 notOwnGroupProjects,
                 group => group.Id,
                 pg => pg.GroupId,

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { IProjectLog } from '@shared/models/project/project-log';
@@ -8,7 +8,7 @@ import { SignalRHubFactoryService } from './signalr-hub-factory.service';
 import { SignalRHub } from '@core/models/signalr-hub';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProjectLogsService implements OnDestroy {
   private logsHub: SignalRHub;
@@ -24,12 +24,21 @@ export class ProjectLogsService implements OnDestroy {
     private signalRService: SignalRHubFactoryService
   ) {}
 
+  buildConnection() {
+    this.logsHubConnection = new HubConnectionBuilder()
+      .withUrl(`${environment.signalRUrl}/logsHub`)
+      .build();
+
   ngOnDestroy(): void {
     this.subscriptions$.forEach((subject) => {
       subject.complete();
     });
     this.subscriptions$.clear();
     this.logsHub.disconnect();
+  }
+
+  getLogsOfHistory(projectId: number, buildHisotryId: number) {
+    return this.httpService.getRequest<IProjectLog[]>(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
   }
 
   disconnect(buildHistoryId: number) {
@@ -50,7 +59,6 @@ export class ProjectLogsService implements OnDestroy {
     this.configureSignalR();
     this.connecting
       .then(() => {
-      console.log("resolved");
         this.logsHub
           .invoke('JoinGroup', buildHistoryId.toString())
           .then(() => {
@@ -64,8 +72,7 @@ export class ProjectLogsService implements OnDestroy {
             });
           })
           .catch((err) => console.error(err))
-        })
-
+      })
       .catch((err) => console.error(err));
   }
 

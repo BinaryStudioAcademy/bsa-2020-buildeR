@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { TeamMemberService } from '../../../core/services/team-member.service';
 import { RemoveTeamMember } from '@shared/models/group/remove-team-member';
+import { RemoveGroup } from '@shared/models/group/remove-group';
 
 @Component({
   selector: 'app-group-list',
@@ -79,12 +80,17 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     return this.getRole(group);
   }
   getRole(group: Group) {
-    const member = group.teamMembers.find(m => m.userId === this.currentUser.id);
+    const member = group?.teamMembers.find(m => m.userId === this.currentUser.id);
     if (!member) {
       return null;
     }
 
     return member.memberRole;
+  }
+
+  isCurrentUserOwnerOrAdmin(group: Group) {
+    return this.getCurrentUserRole(group.id) === GroupRole.Owner
+      || this.getCurrentUserRole(group.id) === GroupRole.Admin;
   }
 
   setAcceptedIfOwner(groups: Group[]) { // for already created groups
@@ -142,8 +148,13 @@ export class GroupListComponent extends BaseComponent implements OnInit {
     modalRef.result
       .then((result) => {
         if (result) {
+          const id = groupId;
+          const removeObject = {
+            initiatorUserId: this.currentUser.id,
+            groupId: id
+          } as RemoveGroup;
           this.groupService
-            .deleteGroup(groupId)
+            .deleteGroupWithNotification(removeObject)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
               this.groupService.userGroupsChanged.next();
@@ -151,8 +162,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
             });
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 }

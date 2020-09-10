@@ -3,7 +3,7 @@ import { BuildHistory } from '../build-history';
 
 export interface User {
   id: number;
-  role: string;
+  role: UserRole;
   email: string;
   username: string;
   firstName: string;
@@ -13,4 +13,9 @@ export interface User {
   createdAt: Date;
   userSocialNetworks: UserSocialNetwork[];
   buildHistories: BuildHistory[];
+}
+
+export enum UserRole {
+  User,
+  Admin
 }

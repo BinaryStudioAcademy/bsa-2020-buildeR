@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
-import { Project } from '@shared/models/project/project';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatus } from '@shared/models/build-status';
 import { BuildHistoryService } from '@core/services/build-history.service';
@@ -35,34 +33,34 @@ export class InsightsComponent implements OnInit {
   ];
 
   constructor(private buildService: BuildHistoryService, private route: ActivatedRoute) {
-   }
-  ngOnInit(): void {
+  }
+  ngOnInit() {
     this.buildsPublicity = ['public and private builds', 'public builds', 'private builds'];
-    this.route.data.subscribe(data => {
-      this.user = data.user;
+    this.route.parent.data.subscribe(({ user }) => {
+      this.user = user;
       this.countedDate = new Date(this.user.createdAt);
     });
     this.receiveBuildsInfo();
   }
   // 0 - public and private, 1 - public, 2 - private builds
-  receiveBuildsInfo(buildsPublicity: number = 0){
+  receiveBuildsInfo(buildsPublicity: number = 0) {
     this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
-      if (!buildsPublicity){
+      if (!buildsPublicity) {
         this.user.buildHistories = res.body;
       }
-      if (buildsPublicity === 1){
+      if (buildsPublicity === 1) {
         this.user.buildHistories = res.body.filter(x => x.project.isPublic === true);
       }
-      if (buildsPublicity === 2){
+      if (buildsPublicity === 2) {
         this.user.buildHistories = res.body.filter(x => x.project.isPublic === false);
       }
       this.totalBuilds = this.totalBuildsCount();
       this.totalDuration = this.user.buildHistories.length ?
-      Math.floor(this.user.buildHistories.map(this.duration).reduce(this.sum) / 6000) : 0;
+        Math.floor(this.user.buildHistories.map(this.duration).reduce(this.sum) / 6000) : 0;
       this.buildSuccessRate = this.buildSucceedCount();
       this.activeProjects = this.countActiveProjects();
       this.countActiveProjects();
-      this.getData();
+      this.getData(this.month);
     });
   }
 
@@ -70,28 +68,28 @@ export class InsightsComponent implements OnInit {
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
       this.countedDate = this.user.createdAt;
-      this.fulfillCharts(this.user.createdAt, diff + 1);
+      this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
-    if (!(diff <= 7) && isMonth){
+    if (!(diff <= 7) && isMonth) {
       // Show month
-      const date = new Date(this.now);
+      const monthDate = new Date(this.now);
       this.countedDate = new Date(this.now);
       this.countedDate.setDate(this.countedDate.getDate() - 30);
-      date.setDate(date.getDate() - 30);
-      this.fulfillCharts(date, 30);
+      monthDate.setDate(monthDate.getDate() - 30);
+      this.fulfillCharts(monthDate, 30);
       return;
     }
     // Show week
-    const date = new Date(this.now);
+    const weekDate = new Date(this.now);
     this.countedDate = new Date(this.now);
     this.countedDate.setDate(this.countedDate.getDate() - 6);
-    date.setDate(date.getDate() - 6);
-    this.fulfillCharts(date, 6);
+    weekDate.setDate(weekDate.getDate() - 6);
+    this.fulfillCharts(weekDate, 6);
     return;
   }
 
-  fulfillCharts(startDate: Date, days: number){
+  fulfillCharts(startDate: Date, days: number) {
     this.buildsData = this.formatBuildsData(startDate, days);
     this.durationData = this.formatDurationData(startDate, days);
     this.successData = this.formatSuccessData(startDate, days);
@@ -176,7 +174,7 @@ export class InsightsComponent implements OnInit {
     return [{ name: 'Succeed', series: result }];
   }
 
-  countActiveProjects(){
+  countActiveProjects() {
     return [...new Set(this.user.buildHistories.map(item => item.projectId))].length;
   }
 
@@ -239,14 +237,14 @@ export class InsightsComponent implements OnInit {
     this.month = true;
   }
 
-  changeBuilSelector(build: string){
-    if (build ===  this.buildsPublicity[0]){
+  changeBuilSelector(build: string) {
+    if (build === this.buildsPublicity[0]) {
       this.receiveBuildsInfo(0);
     }
-    if (build ===  this.buildsPublicity[1]){
+    if (build === this.buildsPublicity[1]) {
       this.receiveBuildsInfo(1);
     }
-    if (build ===  this.buildsPublicity[2]){
+    if (build === this.buildsPublicity[2]) {
       this.receiveBuildsInfo(2);
     }
   }

@@ -13,6 +13,7 @@ import { ProjectGroup } from '@shared/models/group/project-group';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { ModalService } from '@core/services/modal.service';
 import { Branch } from '@core/models/Branch';
+import { Permissions } from '@shared/models/permissions';
 
 @Component({
   selector: 'app-group-projects',
@@ -25,9 +26,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
   group: Group;
   user: User = this.authService.getCurrentUser();
   groupId: number;
-  isAdmin = false;
-  isContributor = false;
-  isBuilder = false;
+  permissions: Permissions = new Permissions();
   userProjects: ProjectInfo[];
   isLoading = true;
 
@@ -92,23 +91,23 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
       .subscribe(res => {
         const role = res.body.filter(x => x.userId === this.user.id)[0]?.memberRole;
         if (role === 1) {
-          this.isBuilder = true;
-          this.isContributor = true;
+          this.permissions.canBuild = true;
+          this.permissions.canConfig = true;
         }
         if (role === 2) {
-          this.isContributor = true;
-          this.isAdmin = true;
-          this.isBuilder = true;
+          this.permissions.canBuild = true;
+          this.permissions.canConfig = true;
+          this.permissions.canDelete = true;
           this.getUserProjects();
         }
         if (role === 3) {
-          this.isBuilder = true;
+          this.permissions.canBuild = true;
         }
       });
   }
 
   getUserProjects(userId: number = this.user.id) {
-    if (!this.isAdmin) {
+    if (!this.permissions.canDelete) {
       return;
     }
     this.projectService.getProjectsByUser(userId).pipe(takeUntil(this.unsubscribe$))

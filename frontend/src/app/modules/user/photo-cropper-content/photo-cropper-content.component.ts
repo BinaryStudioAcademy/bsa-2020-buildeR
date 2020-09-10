@@ -3,7 +3,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { log } from 'console';
-import {timer} from "rxjs";
+import {timer} from 'rxjs';
 
 @Component({
   selector: 'app-photo-cropper-content',
@@ -17,7 +17,7 @@ export class PhotoCropperContentComponent implements OnInit {
   croppedImage;
   canSave = false;
   imageName = '';
-  isShowSpinner: boolean = false;
+  isShowSpinner = false;
 
   ngOnInit(): void {
   }

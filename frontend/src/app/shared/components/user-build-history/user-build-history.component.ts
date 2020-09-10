@@ -33,15 +33,11 @@ export class UserBuildHistoryComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.configureBuildStatusesSignalR();
-    this.route.data.subscribe((data) => {
-      if (data.user) {
-        this.user = data.user;
-        if (this.user.id !== this.authService.getCurrentUser().id) {
-          this.isSameUser = false;
-          this.isPublicOnly = true;
-        }
-      } else {
-        this.user = this.authService.getCurrentUser();
+    this.route.parent.data.subscribe(({ user }) => {
+      this.user = user;
+      if (this.user.id !== this.authService.getCurrentUser().id) {
+        this.isSameUser = false;
+        this.isPublicOnly = true;
       }
     });
     this.buildHistoryService
@@ -59,12 +55,13 @@ export class UserBuildHistoryComponent implements OnInit {
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      let buildIndex = this.builds.findIndex(
-        (pi) => pi.id == statusChange.BuildHistoryId
+      const buildIndex = this.builds.findIndex(
+        (pi) => pi.id === statusChange.BuildHistoryId
       );
       if (buildIndex >= 0) {
-        if (statusChange.Status != BuildStatus.InProgress) {
+        if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
             .subscribe((bh) => {

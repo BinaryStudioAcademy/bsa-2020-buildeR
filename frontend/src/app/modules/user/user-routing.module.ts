@@ -9,81 +9,45 @@ import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserComponent } from './user.component';
 import { UserBuildHistoryComponent } from '../../shared/components/user-build-history/user-build-history.component';
 
-
-const routes: Routes = [
-  {
-    path: '',
-    component: UserComponent,
-    resolve: {
-      user: UserResolverService
-    },
-    children: [{
-      path: '',
-      component: UserSettingsComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: 'notificationsettings',
-      component: NotificationSettingComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: "history",
-      component: UserBuildHistoryComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: 'insights',
-      component: InsightsComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: 'credentialsettings',
-      component: CredentialSettingsComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    }
-    ]
+const routes: Routes = [{
+  path: '',
+  component: UserComponent,
+  resolve: {
+    user: UserResolverService
   },
-  {
-    path: ':userId',
-    component: UserComponent,
-    resolve: {
-      user: UserResolverService
-    },
-    children: [{
-      path: '',
-      component: UserSettingsComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: "history",
-      component: UserBuildHistoryComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    },
-    {
-      path: 'insights',
-      component: InsightsComponent,
-      resolve: {
-        user: UserResolverService
-      }
-    }
-    ]
-  }
-];
+  children: [{
+    path: '',
+    component: UserSettingsComponent,
+  }, {
+    path: 'notificationsettings',
+    component: NotificationSettingComponent,
+  }, {
+    path: 'history',
+    component: UserBuildHistoryComponent,
+  }, {
+    path: 'insights',
+    component: InsightsComponent,
+  }, {
+    path: 'credentialsettings',
+    component: CredentialSettingsComponent,
+  }]
+}, {
+  path: ':userId',
+  component: UserComponent,
+  resolve: {
+    user: UserResolverService
+  },
+  children: [{
+    path: '',
+    component: UserSettingsComponent,
+  }, {
+    path: 'history',
+    component: UserBuildHistoryComponent,
+  }, {
+    path: 'insights',
+    component: InsightsComponent,
+  }]
+}];
 
 @NgModule({
   imports: [CommonModule, RouterModule.forChild(routes)],

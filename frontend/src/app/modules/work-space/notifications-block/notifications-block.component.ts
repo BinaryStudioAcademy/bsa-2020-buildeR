@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
@@ -12,12 +12,13 @@ import { NotificationType } from '../../../shared/models/notification-type';
   templateUrl: './notifications-block.component.html',
   styleUrls: ['./notifications-block.component.sass'],
 })
-export class NotificationsBlockComponent extends BaseComponent implements OnInit {
-  public notifications: Notification[] = [];
-  public NotificationType = NotificationType;
-  public showAllNotifications = false;
-  public isShowingRead = false;
-  public counter: number;
+export class NotificationsBlockComponent extends BaseComponent implements OnInit, AfterViewChecked {
+  notifications: Notification[] = [];
+  NotificationType = NotificationType;
+  showAllNotifications = false;
+  isShowingRead = false;
+  counter: number;
+  @ViewChild('top') private top: ElementRef;
 
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
@@ -28,19 +29,20 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
     private buildHistoryService: BuildHistoryService
   ) {
     super();
-    this.notificationService.getInitialNotifications()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((resp) => {
-        if (this.notifications.length === 0) {
-          this.notifications = resp.filter(n => !n.isRead);
-          for (const not of this.notifications) {
-            this.onChanging('adding', not);
-          }
-        }
-      });
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollTop();
   }
 
   ngOnInit(): void {
+    this.notificationService.getNotifications()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((notifications) => {
+        this.notifications.push(...notifications);
+        this.onChanging('adding', ...notifications);
+      });
+    this.notificationService.connect();
     this.notificationService.listen().subscribe((notification) => {
       if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
         this.notifications.push(notification);
@@ -65,14 +67,17 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
     this.toggleNotifications.emit();
   }
 
-  onChanging(type: 'adding' | 'reading', notification: Notification) {
+  onChanging(type: 'adding' | 'reading', ...notifications: Notification[]) {
     if (type === 'adding') {
-      if (this.isShowingRead || !notification.isRead) {
-        this.counterNotifications.emit(1);
+      if (this.isShowingRead) {
+        this.counterNotifications.emit(notifications.length);
+      } else {
+        const unreadCount = notifications.reduce((acc, n) => acc + (n.isRead ? 0 : 1), 0);
+        this.counterNotifications.emit(unreadCount);
       }
     } else {
       if (!this.isShowingRead) {
-        this.counterNotifications.emit(-1);
+        this.counterNotifications.emit(-notifications.length);
       }
     }
   }
@@ -99,14 +104,17 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
             bh => this.router.navigateByUrl('/', { skipLocationChange: true })
               .then(() => {
-                this.router.navigate(["portal", "projects", bh.projectId, "history", notification.itemId]);
+                this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
                 this.clearOne(notification);
-              }),
-            err => console.error(err),
+              })
           );
           break;
         }
       }
     }
   }
+
+  scrollTop(el: HTMLElement = this.top.nativeElement) {
+    el.scrollIntoView();
+}
 }
