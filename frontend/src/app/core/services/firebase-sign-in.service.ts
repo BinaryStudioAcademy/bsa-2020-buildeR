@@ -31,7 +31,6 @@ export class FirebaseSignInService {
     githubProvider.addScope('repo');
     return this.authService.getAngularAuth().signInWithPopup(githubProvider).then(
       (credential) => {
-        localStorage.setItem('github-access-token', credential.credential[`accessToken`]);
         this.login(credential, redirectUrl);
       },
       (error: auth.Error) => {
@@ -115,11 +114,10 @@ export class FirebaseSignInService {
               break;
             }
           }
-        }, (reason) => console.log(reason));
+        }, (reason) => {});
         break;
       }
       case 'auth/cancelled-popup-request': break;
-      default: console.log(error);
     }
   }
 
@@ -171,7 +169,6 @@ export class FirebaseSignInService {
       return 'ok';
     }
     catch (err) {
-      console.log(err);
       switch (err.code) {
         case 'auth/credential-already-in-use': {
           return 'This account is already added to BuildeR!';
@@ -206,11 +203,9 @@ export class FirebaseSignInService {
       const result = await (await this.authService.getAngularAuth().currentUser).linkWithPopup(githubProvider);
       const credential = result.credential;
       this.authService.setFirebaseUser(result.user);
-      localStorage.setItem('github-access-token', credential[`accessToken`]);
       return 'ok';
     }
     catch (err) {
-      console.log(err);
       switch (err.code) {
         case 'auth/credential-already-in-use': {
           return 'This account is already added to BuildeR!';

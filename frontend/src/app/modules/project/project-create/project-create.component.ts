@@ -197,16 +197,16 @@ export class ProjectCreateComponent implements OnInit {
     }
 
     if (!this.newProject.repository.createdByLink) {
-      return this.projectForm.controls['_repository']?.value.name && this.projectForm.valid && !this.projectForm.pending;
+      return this.projectForm.controls._repository?.value.name && this.projectForm.valid && !this.projectForm.pending;
     }
     else {
-      return this.projectForm.controls['repositoryURL']?.value && this.projectForm.valid && !this.projectForm.pending;
+      return this.projectForm.controls.repositoryURL?.value && this.projectForm.valid && !this.projectForm.pending;
     }
   }
 
   handleRepositoryInputClick(repo: Repository) {
-    this.projectForm.controls['name'].setValue(repo.name);
-    this.projectForm.controls['description'].setValue(repo.description);
+    this.projectForm.controls.name.setValue(repo.name);
+    this.projectForm.controls.description.setValue(repo.description);
   }
 
   repoListResultFormatter = (repo: Repository) => repo.name;

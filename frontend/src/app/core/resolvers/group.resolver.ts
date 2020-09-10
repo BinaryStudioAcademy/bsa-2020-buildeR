@@ -23,7 +23,6 @@ export class GroupResolverService implements Resolve<Group>{
         return group ?? EMPTY;
       }),
       catchError(() => {
-        console.log(this.router.url);
         this.router.navigateByUrl('/portal/**', { skipLocationChange: true });
         return EMPTY;
       })

@@ -6,10 +6,10 @@ import * as moment from 'moment';
 })
 export class DateAgoPipe implements PipeTransform {
   transform(date: Date | null): string {
-    if (date && date != new Date()) {
+    if (date && date !== new Date()) {
     return moment(date).fromNow();
     } else {
-      return "—";
+      return '—';
     }
   }
 }

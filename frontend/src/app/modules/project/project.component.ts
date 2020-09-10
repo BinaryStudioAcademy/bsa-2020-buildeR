@@ -14,7 +14,7 @@ import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
 import { ProjectBuildHistoryComponent } from './project-build-history/project-build-history.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
-import {BuildHistory} from "@shared/models/build-history";
+import {BuildHistory} from '@shared/models/build-history';
 
 @Component({
   selector: 'app-project',

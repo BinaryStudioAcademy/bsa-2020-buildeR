@@ -61,8 +61,6 @@ export class ProejctRemoteTriggerComponent implements OnInit {
     );
   }
 
-  constructor() { }
-
   ngOnInit(): void {
     if (this.createNewTrigger) {
       this.trigger = {} as RemoteTrigger;

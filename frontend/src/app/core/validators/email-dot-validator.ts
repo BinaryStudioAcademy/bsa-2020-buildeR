@@ -8,7 +8,6 @@ export const emailDotValidator = () => {
       // console.log(domain);
       const index = domain?.indexOf('.');
       if (index < 1){
-          console.log(index);
           return { notValid: true };
         }
       return null;

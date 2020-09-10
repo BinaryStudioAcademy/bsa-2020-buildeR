@@ -62,13 +62,9 @@ export class UserComponent implements OnInit {
       const formData = new FormData();
       formData.append('file', file, file.name);
       this.userService.uploadAvatar(formData, this.currentUser.id).subscribe((res) => {
-        console.log(res.avatarUrl);
         this.currentUser.avatarUrl = res.avatarUrl;
         this.userService.changeImageUrl(res.avatarUrl);
       });
-    }
-    else {
-      console.log('Image didn`t change');
     }
   }
 }
