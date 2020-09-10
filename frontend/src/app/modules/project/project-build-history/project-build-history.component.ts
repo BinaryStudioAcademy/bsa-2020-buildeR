@@ -53,6 +53,7 @@ export class ProjectBuildHistoryComponent extends BaseComponent
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       const buildIndex = this.builds.findIndex(
         (pi) => pi.id === statusChange.BuildHistoryId

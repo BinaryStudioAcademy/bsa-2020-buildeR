@@ -68,6 +68,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   }
 
   private configureBuildStatusesSignalR() {
+    this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       if (statusChange.BuildHistoryId === this.buildHistory?.id) {
         if (statusChange.Status !== BuildStatus.InProgress) {
