@@ -65,4 +65,4 @@
   <router-outlet></router-outlet>
 </div>
 <app-notifications-toast aria-live="polite" aria-atomic="true"
-  (counterNotificationsToast)="counterNotifications($event)"></app-notifications-toast>
+  (counterNotificationsToast)="counterNotifications($event)" [hidden]="isShowNotifications"></app-notifications-toast>
