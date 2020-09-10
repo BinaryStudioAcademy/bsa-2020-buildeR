@@ -23,8 +23,8 @@ namespace buildeR.BLL.QuartzJobs
                 int projectId = Convert.ToInt32(context.JobDetail.Key.Group);
                 var buildOperationService = scope.ServiceProvider.GetRequiredService<IBuildOperationsService>();
 
-                var buildHistory = await buildOperationService.PrepareBuild(projectId, "", branch);
-                await buildOperationService.StartBuild(projectId, buildHistory.Id, branch, null);
+                var buildHistory = await buildOperationService.PrepareBuild(projectId, "BuilderBot", branch);
+                await buildOperationService.StartBuild(projectId, buildHistory.Id, branch, buildHistory.PerformerId);
             }
         }
     }
