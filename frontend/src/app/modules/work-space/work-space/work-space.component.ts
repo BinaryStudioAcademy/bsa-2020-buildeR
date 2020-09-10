@@ -34,7 +34,7 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
     this.userService.userLogoUrl.subscribe(url => {
       this.user.avatarUrl = url;
     });
-    this.groupService.userGroupsChanged
+    this.groupService.groupsChanged$
       .pipe(takeUntil((this.unsubscribe$)))
       .subscribe(() => this.getGroups());
     this.teamMemberService.teamMembersChanged

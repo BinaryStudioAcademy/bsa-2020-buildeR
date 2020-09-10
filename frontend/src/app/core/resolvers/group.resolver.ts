@@ -13,12 +13,7 @@ export class GroupResolverService implements Resolve<Group>{
   constructor(private router: Router, private groupService: GroupService) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let groupId: number = route.params[`groupId`];
-    const parentGroupId: number = route.parent.params[`groupId`];
-    if (groupId === undefined && parentGroupId !== undefined) {
-      groupId = parentGroupId;
-    }
-    return this.groupService.getGroupById(groupId).pipe(
+    return this.groupService.getGroupById(route.params.groupId).pipe(
       tap((group) => {
         return group ?? EMPTY;
       }),

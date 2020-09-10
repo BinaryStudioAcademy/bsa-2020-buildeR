@@ -64,5 +64,9 @@
 <div class="work-wrapper" (click)="isMenuCollapsed = true">
   <router-outlet></router-outlet>
 </div>
-<app-notifications-toast aria-live="polite" aria-atomic="true"
-  (counterNotificationsToast)="counterNotifications($event)" [hidden]="isShowNotifications"></app-notifications-toast>
+<app-notifications-toast
+  aria-live="polite"
+  aria-atomic="true"
+  (counterNotificationsToast)="counterNotifications($event)"
+  [hidden]="isShowNotifications">
+</app-notifications-toast>

@@ -49,7 +49,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     super();
   }
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
+    this.route.parent.data.subscribe(data => {
       this.groupId = data.group.id;
     });
     this.loadingUsers = true;

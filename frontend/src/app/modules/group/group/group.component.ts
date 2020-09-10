@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
-import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { TabRoute } from '@shared/models/tabs/tab-route';
 import { takeUntil } from 'rxjs/operators';
 import { GroupService } from '../../../core/services/group.service';
@@ -26,7 +25,6 @@ export class GroupComponent extends BaseComponent implements OnInit {
 
   constructor(
     private groupService: GroupService,
-    private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
   ) {
     super();
@@ -37,25 +35,11 @@ export class GroupComponent extends BaseComponent implements OnInit {
       this.group = data.group;
       this.id = this.group.id;
     });
-    this.groupService.groupName.subscribe((res) => {
-      this.group.name = res;
-    });
-    this.groupService.groupIsPublic.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
-      this.group.isPublic = res;
-    });
-    this.getGroup(this.id);
-  }
-  getGroup(groupId: number) {
-    this.isLoading = true;
-    this.groupService.getGroupById(groupId).pipe(takeUntil(this.unsubscribe$)).subscribe(
-      (data) => {
-        this.isLoading = false;
-        this.group = data;
-      },
-      (error) => {
-        this.isLoading = false;
-        this.toastrService.showError(error.message, error.name);
+
+    this.groupService.groupsChanged$.pipe(takeUntil(this.unsubscribe$)).subscribe(group => {
+      if (this.group.id === group?.id) {
+        this.group = group;
       }
-    );
+    });
   }
 }

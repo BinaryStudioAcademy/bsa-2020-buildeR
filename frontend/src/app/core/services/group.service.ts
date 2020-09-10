@@ -12,11 +12,8 @@ import { RemoveGroup } from '@shared/models/group/remove-group';
 })
 export class GroupService {
   routePrefix = '/groups';
-  groupName$ = new Subject<string>();
-  groupIsPublic$ = new Subject<boolean>();
-  groupName = this.groupName$.asObservable();
-  groupIsPublic = this.groupIsPublic$.asObservable();
-  userGroupsChanged = new Subject<boolean>();
+
+  readonly groupsChanged$ = new Subject<Group>();
   constructor(private httpService: HttpService) { }
 
   getGroupById(groupId: number) {
@@ -51,9 +48,7 @@ export class GroupService {
     return this.httpService.putRequest<Group>(`${this.routePrefix}`, group);
   }
 
-  changeGroupNameAndStatus(groupName: string, groupIsPublic: boolean) {
-    this.userGroupsChanged.next();
-    this.groupName$.next(groupName);
-    this.groupIsPublic$.next(groupIsPublic);
+  emitGroupChanges(group: Group) {
+    this.groupsChanged$.next(group);
   }
 }

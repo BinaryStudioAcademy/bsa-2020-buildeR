@@ -7,7 +7,6 @@ import { BuildStatusesSignalRService } from '@core/services/build-statuses-signa
 import { BuildStatus } from '@shared/models/build-status';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
-import { findIndex } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-build-history',
@@ -34,7 +33,7 @@ export class UserBuildHistoryComponent implements OnInit {
     this.isLoading = true;
     this.configureBuildStatusesSignalR();
     this.route.parent.data.subscribe(({ user }) => {
-      this.user = user;
+      this.user = user ?? this.authService.getCurrentUser();
       if (this.user.id !== this.authService.getCurrentUser().id) {
         this.isSameUser = false;
         this.isPublicOnly = true;

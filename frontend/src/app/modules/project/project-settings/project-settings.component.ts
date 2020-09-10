@@ -16,6 +16,8 @@ import { AuthenticationService } from '@core/services/authentication.service';
   styleUrls: ['./project-settings.component.sass']
 })
 export class ProjectSettingsComponent implements OnInit {
+  @Input() project: Project = {} as Project;
+  @Input() envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
 
   isChanged = false;
   isLoading = false;
@@ -25,11 +27,8 @@ export class ProjectSettingsComponent implements OnInit {
   branches: string [] = ['master', 'dev'];
   envVarsForm: FormGroup;
   projectForm: FormGroup;
-  @Input()envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
   envVariables: EnviromentVariable[] = [];
-
   changedProject: Project = {} as Project;
-  @Input() project: Project = {} as Project;
   currentUser: User = {} as User;
 
   constructor(
@@ -175,7 +174,6 @@ export class ProjectSettingsComponent implements OnInit {
 
     );
   }
-
   edit(envVar: EnviromentVariable){
     const index = this.envVariables.findIndex(x => x.id === envVar.id);
     let err = false;

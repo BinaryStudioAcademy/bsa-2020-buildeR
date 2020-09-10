@@ -1,13 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NewProjectTrigger } from '@shared/models/project/project-trigger/new-project-trigger';
 import { ProjectTriggerInfo } from '@shared/models/project/project-trigger/project-trigger-info';
 import { TriggerService } from '@core/services/trigger.service';
 import { RemoteTriggerService } from '@core/services/remote-trigger.service';
 import { SynchronizationService } from '@core/services/synchronization.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { ActivatedRoute } from '@angular/router';
-import { Branch } from '@core/models/Branch';
-import { ProjectService } from '@core/services/project.service';
 import { Project } from '@shared/models/project/project';
 import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 import { RemoteTrigger } from '@shared/models/remote-trigger/remote-trigger';
@@ -18,7 +15,8 @@ import { RemoteTrigger } from '@shared/models/remote-trigger/remote-trigger';
   styleUrls: ['./project-triggers.component.sass']
 })
 export class ProjectTriggersComponent implements OnInit {
-  project: Project;
+  @Input() project: Project;
+
   branches: string[];
   selectedBranch: string;
   runOnSchedule = false;
@@ -34,23 +32,16 @@ export class ProjectTriggersComponent implements OnInit {
     private triggerService: TriggerService,
     private remoteTriggerService: RemoteTriggerService,
     private toastrService: ToastrNotificationsService,
-    private route: ActivatedRoute,
-    private projectSerivce: ProjectService,
     private syncService: SynchronizationService
   ) { }
 
-  ngOnInit(): void {
-    this.projectSerivce.getProjectById(this.route.parent.snapshot.params.projectId)
-      .subscribe(project => {
-        this.project = project;
-        this.syncService.getRepositoryBranches(project.id)
-            .subscribe(branches =>
-              {
-                this.branches = branches.map(b => b.name);
-                this.selectedBranch = this.branches[0];
-              });
+  ngOnInit() {
+    this.syncService.getRepositoryBranches(this.project.id)
+      .subscribe(branches => {
+        this.branches = branches.map(b => b.name);
+        this.selectedBranch = this.branches[0];
       });
-    this.getTriggers(this.route.parent.snapshot.params.projectId);
+    this.getTriggers(this.project.id);
   }
 
   getTriggers(projectId: number) {

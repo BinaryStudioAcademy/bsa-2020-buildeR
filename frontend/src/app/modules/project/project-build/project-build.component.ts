@@ -26,7 +26,6 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   project: Project;
   isCurrent: boolean;
   isLoading = true;
-  repository: Repository;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,7 +42,6 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this.listenToRouteChanges();
     this.configureBuildStatusesSignalR();
-    this.projectService.getRepositoryByProjectId(this.project.id).subscribe((response) => this.repository = response);
   }
 
   listenToRouteChanges() {

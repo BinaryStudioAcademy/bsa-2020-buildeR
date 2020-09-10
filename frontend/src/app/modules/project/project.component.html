@@ -2,24 +2,21 @@
   <div class="project-header">
     <div class="project-title">
       <div class="project-icon">
-        <i *ngIf="project.isPublic; else elseBlock" class="fas fa-book"></i>
-        <ng-template #elseBlock><i class="fas fa-lock"></i></ng-template>
+        <i class="fas" [ngClass]="[project.isPublic ? 'fa-book' : 'fa-lock']"></i>
       </div>
       <h1 class="user-project-names">
-        <a [routerLink]="'/portal/user/' + project?.ownerId">{{ project.owner?.username }} </a>/
-        <a [routerLink]="">{{ project.name }} </a>
+        <a [routerLink]="'/portal/user/' + project.ownerId">{{ project.owner?.username }}</a> / <a [routerLink]="">{{ project.name }} </a>
       </h1>
     </div>
     <div class="repo-icon">
-      <a
-        title="{{ project.name }} on GitHub"
-        href="{{ project.repository.url }}"
-      >
+      <a title="{{ project.name }} on GitHub" target="_blank" [href]="project.repository.url">
         <i class="fab fa-github"></i>
       </a>
     </div>
     <div class="repo-badge">
-      <a title="Latest push build on default branch: " [routerLink]=" lastBuild ? ['history/' + lastBuild?.id] : ['steps']">
+      <a
+        title="Latest build status: {{lastBuild?.buildStatus | buildStatus}}"
+        [routerLink]=" lastBuild ? ['history/' + lastBuild?.id] : ['steps']">
         <svg xmlns="http://www.w3.org/2000/svg" width="98" height="20">
           <linearGradient id="a" x2="0" y2="100%">
             <stop offset="0" stop-color="#bbb" stop-opacity=".1" />
@@ -40,7 +37,7 @@
             <text x="66.5" y="15" fill="#010101" fill-opacity=".3">
             </text>
             <text *ngIf = "lastBuild;" x="66.5" y="14">{{lastBuild?.buildStatus | buildStatus}}</text>
-            <text *ngIf = "!lastBuild;" x="66.5" y="14">not build</text>
+            <text *ngIf = "!lastBuild;" x="66.5" y="14">No builds</text>
           </g>
         </svg>
       </a>
