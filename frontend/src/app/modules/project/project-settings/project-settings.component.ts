@@ -101,6 +101,7 @@ export class ProjectSettingsComponent implements OnInit {
   }
   reset() {
     this.projectForm.reset(this.project);
+    this.projectForm.controls['isPublic'].setValue(this.project.isPublic.toString());
   }
   save(project: Project) {
     this.isShowSpinner = true;

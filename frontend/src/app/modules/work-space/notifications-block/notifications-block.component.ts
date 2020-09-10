@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
 import { BuildHistoryService } from '@core/services/build-history.service';
@@ -12,12 +12,13 @@ import { NotificationType } from '../../../shared/models/notification-type';
   templateUrl: './notifications-block.component.html',
   styleUrls: ['./notifications-block.component.sass'],
 })
-export class NotificationsBlockComponent extends BaseComponent implements OnInit {
+export class NotificationsBlockComponent extends BaseComponent implements OnInit, AfterViewChecked {
   public notifications: Notification[] = [];
   public NotificationType = NotificationType;
   public showAllNotifications = false;
   public isShowingRead = false;
   public counter: number;
+  @ViewChild('top') private top: ElementRef;
 
   @Output() counterNotifications = new EventEmitter<number>();
   @Output() toggleNotifications = new EventEmitter<void>();
@@ -38,6 +39,9 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
           }
         }
       });
+  }
+  ngAfterViewChecked(): void {
+    this.scrollTop();
   }
 
   ngOnInit(): void {
@@ -109,4 +113,8 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
       }
     }
   }
+
+  scrollTop(el: HTMLElement = this.top.nativeElement) {
+    el.scrollIntoView();
+}
 }
