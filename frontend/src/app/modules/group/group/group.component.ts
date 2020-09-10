@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
-import { AuthenticationService } from '@core/services/authentication.service';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { GroupRole } from '@shared/models/group/group-role';
-import { TeamMember } from '@shared/models/group/team-member';
 import { TabRoute } from '@shared/models/tabs/tab-route';
-import { User } from '@shared/models/user/user';
 import { takeUntil } from 'rxjs/operators';
 import { GroupService } from '../../../core/services/group.service';
 import { Group } from '../../../shared/models/group/group';
@@ -20,27 +16,18 @@ export class GroupComponent extends BaseComponent implements OnInit {
   id: number;
   group: Group = {} as Group;
   isLoading = false;
-  currentTeamMember: TeamMember = {} as TeamMember;
-  currentUser: User = {} as User;
 
-  tabRoutesPremium: TabRoute[] = [
+  tabRoutes: TabRoute[] = [
     { name: 'Projects', route: 'projects' },
     { name: 'Chat', route: 'chat' },
     { name: 'Members', route: 'members' },
     { name: 'Settings', route: 'settings' },
   ];
 
-  tabRoutesDefault: TabRoute[] = [
-    { name: 'Projects', route: 'projects' },
-    { name: 'Chat', route: 'chat' },
-    { name: 'Members', route: 'members' }
-  ];
-
   constructor(
     private groupService: GroupService,
     private toastrService: ToastrNotificationsService,
-    private route: ActivatedRoute,
-    private authService: AuthenticationService
+    private route: ActivatedRoute
   ) {
     super();
   }
@@ -56,7 +43,6 @@ export class GroupComponent extends BaseComponent implements OnInit {
     this.groupService.groupIsPublic.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       this.group.isPublic = res;
     });
-    this.currentUser = this.authService.getCurrentUser();
     this.getGroup(this.id);
   }
   getGroup(groupId: number) {
@@ -65,8 +51,6 @@ export class GroupComponent extends BaseComponent implements OnInit {
       (data) => {
         this.isLoading = false;
         this.group = data;
-        this.groupService.getMembersByGroup(this.group.id)
-          .subscribe((resp) => this.currentTeamMember = resp.body.find(t => t.userId === this.currentUser.id));
       },
       (error) => {
         this.isLoading = false;
@@ -74,16 +58,4 @@ export class GroupComponent extends BaseComponent implements OnInit {
       }
     );
   }
-
-  canChangeSettings() {
-    let check = false;
-    if (this.currentTeamMember !== undefined &&
-      this.currentTeamMember.isAccepted &&
-      (this.currentTeamMember.memberRole === GroupRole.Owner ||
-        this.currentTeamMember.memberRole === GroupRole.Admin)) {
-      check = true;
-    }
-    return check;
-  }
-
 }
