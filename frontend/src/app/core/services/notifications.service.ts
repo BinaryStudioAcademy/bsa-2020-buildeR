@@ -6,6 +6,7 @@ import { Notification } from '@shared/models/notification';
 import { User } from '@shared/models/user/user';
 import { Subject } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
+import { AppNotificationsToasterService } from './app-notifications-toaster.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,8 @@ export class NotificationsService implements OnDestroy {
   constructor(
     private signalRService: SignalRHubFactoryService,
     private authService: AuthenticationService,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private appNotificationsToaster: AppNotificationsToasterService
   ) {
     this.currentUser = this.authService.getCurrentUser();
     httpService
@@ -65,6 +67,7 @@ export class NotificationsService implements OnDestroy {
       const notification: Notification = JSON.parse(notif);
       notification.date = new Date();
       this.notifications$.next(notification);
+      this.appNotificationsToaster.show(notification);
     });
   }
 
