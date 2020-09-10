@@ -3,7 +3,7 @@ import { Router, RouterStateSnapshot, ActivatedRouteSnapshot, Resolve } from '@a
 import { tap, catchError } from 'rxjs/operators/';
 import { EMPTY } from 'rxjs';
 import { UserService } from '../services/user.service';
-import {UserLetter} from "../../shared/models/user/user-letter";
+import {UserLetter} from '../../shared/models/user/user-letter';
 
 @Injectable({
   providedIn: 'root'

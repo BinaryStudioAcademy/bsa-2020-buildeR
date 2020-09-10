@@ -6,6 +6,9 @@ import { Notification } from '@shared/models/notification';
 import { User } from '@shared/models/user/user';
 import { Subject } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
+import { AppNotificationsToasterService } from './app-notifications-toaster.service';
+import { NotificationSettingService } from './notification-setting.service';
+import { NotificationSetting } from '@shared/models/notification-setting/notification-setting';
 
 @Injectable({
   providedIn: 'root',
@@ -16,25 +19,36 @@ export class NotificationsService implements OnDestroy {
   private notificationsHub: SignalRHub;
   private notifications$ = new Subject<Notification>();
   private currentUser: User;
+  private notificationSetting: NotificationSetting;
+
 
   constructor(
     private signalRService: SignalRHubFactoryService,
     private authService: AuthenticationService,
-    private httpService: HttpService
+    private notificationSettingService: NotificationSettingService,
+    private httpService: HttpService,
+    private appNotificationsToaster: AppNotificationsToasterService
   ) {
-    this.currentUser = this.authService.getCurrentUser();
-    httpService
-      .getRequest<Notification[]>(
-        `${this.routePrefix}/user/${this.currentUser.id}`
-      )
-      .subscribe((notifications) =>
-        notifications.forEach((n) => this.notifications$.next(n))
-      );
+
+  }
+
+  private getCurrentUser() {
+    if (!this.currentUser) {
+      this.currentUser = this.authService.getCurrentUser();
+      this.notificationSettingService.getNotificationSettingByUserId(this.currentUser.id)
+      .subscribe(resp => {
+        this.notificationSetting = resp;
+      });
+    }
+  }
+
+  connect() {
+    this.getCurrentUser();
     this.configureSignalR();
   }
 
-  getInitialNotifications() {
-    this.currentUser = this.authService.getCurrentUser();
+  getNotifications() {
+    this.getCurrentUser();
     return this.httpService.getRequest<Notification[]>(
       `${this.routePrefix}/user/${this.currentUser.id}`);
   }
@@ -59,13 +73,16 @@ export class NotificationsService implements OnDestroy {
         this.notificationsHub
           .invoke('JoinGroup', this.currentUser.id.toString())
           .then(null)
-          .catch((err) => console.error(err));
+          .catch((err) => {});
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {});
     this.notificationsHub.listen('getNotification').subscribe((notif) => {
       const notification: Notification = JSON.parse(notif);
       notification.date = new Date();
       this.notifications$.next(notification);
+      if (this.notificationSetting.enableApp) {
+        this.appNotificationsToaster.show(notification);
+      }
     });
   }
 
