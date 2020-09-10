@@ -1,30 +1,30 @@
 version: '3.8'
 services: 
-    # vault:
-    #     image: vault:1.5.0
-    #     container_name: vault
-    #     restart: on-failure
-    #     ports:
-    #         - 8200:8200
-    #     networks:
-    #         - back
-    #     environment: 
-    #         - VAULT_DEV_ROOT_TOKEN_ID=buildeR_DEV_TOKEN
-    #     cap_add:
-    #         - IPC_LOCK
+    vault:
+        image: vault:1.5.0
+        container_name: vault
+        restart: on-failure
+        ports:
+            - 8200:8200
+        networks:
+            - back
+        environment: 
+            - VAULT_DEV_ROOT_TOKEN_ID=buildeR_DEV_TOKEN
+        cap_add:
+            - IPC_LOCK
 
-    # rabbitmq:
-    #     image: rabbitmq:3.8.6-management
-    #     container_name: rabbitmq
-    #     restart: on-failure
-    #     ports:
-    #         - 5672:5672
-    #         - 15672:15672
-    #     networks:
-    #         - back
-    #     environment:
-    #         - "RABBITMQ_DEFAULT_USER=guest"
-    #         - "RABBITMQ_DEFAULT_PASS=guest"
+    rabbitmq:
+        image: rabbitmq:3.8.6-management
+        container_name: rabbitmq
+        restart: on-failure
+        ports:
+            - 5672:5672
+            - 15672:15672
+        networks:
+            - back
+        environment:
+            - "RABBITMQ_DEFAULT_USER=guest"
+            - "RABBITMQ_DEFAULT_PASS=guest"
 
     elasticsearch:
         image: elasticsearch:7.8.1
@@ -78,16 +78,16 @@ services:
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-    # sql_server:
-    #     image: mcr.microsoft.com/mssql/server:2017-latest
-    #     container_name: sql_server
-    #     ports:
-    #         - 1433:1433
-    #     networks:
-    #         - back
-    #     environment:
-    #         SA_PASSWORD: MySecretPassword!
-    #         ACCEPT_EULA: "Y"
+    sql_server:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        container_name: sql_server
+        ports:
+            - 1433:1433
+        networks:
+            - back
+        environment:
+            SA_PASSWORD: MySecretPassword!
+            ACCEPT_EULA: "Y"
 
 networks:
     back:

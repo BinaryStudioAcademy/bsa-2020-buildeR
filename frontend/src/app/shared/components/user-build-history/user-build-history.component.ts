@@ -33,15 +33,11 @@ export class UserBuildHistoryComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.configureBuildStatusesSignalR();
-    this.route.data.subscribe((data) => {
-      if (data.user) {
-        this.user = data.user;
-        if (this.user.id !== this.authService.getCurrentUser().id) {
-          this.isSameUser = false;
-          this.isPublicOnly = true;
-        }
-      } else {
-        this.user = this.authService.getCurrentUser();
+    this.route.parent.data.subscribe(({ user }) => {
+      this.user = user;
+      if (this.user.id !== this.authService.getCurrentUser().id) {
+        this.isSameUser = false;
+        this.isPublicOnly = true;
       }
     });
     this.buildHistoryService

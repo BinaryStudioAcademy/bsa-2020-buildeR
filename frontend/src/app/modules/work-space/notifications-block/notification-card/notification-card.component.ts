@@ -39,7 +39,7 @@ export class NotificationCardComponent implements OnInit {
     this.toggleNotificationsBlock.emit();
   }
 
-  navigateToItem(notification: Notification, event) {
+  navigateToItem(notification: Notification, event: Event) {
     if (notification.itemId) {
       event.preventDefault();
       switch (notification.type) {
@@ -59,13 +59,11 @@ export class NotificationCardComponent implements OnInit {
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
           this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => this.router.navigateByUrl('/', {skipLocationChange: true})
-                  .then(() => {
-                      this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
-                      this.clearOne(notification);
-                  }),
-          );
-          this.toggle();
+            bh => {
+              this.router.navigate(['/portal', 'projects', bh.projectId, 'history', notification.itemId]);
+              this.clearOne(notification);
+            }),
+            this.toggle();
           break;
         }
       }

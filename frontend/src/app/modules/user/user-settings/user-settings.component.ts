@@ -18,9 +18,6 @@ import { usernameAsyncValidator } from '../../../core/validators/custom-async-va
   styleUrls: ['./user-settings.component.sass']
 })
 export class UserSettingsComponent implements OnInit {
-
-  // hardcoded date for test
-
   isChanged = false;
   changedUser: User = {} as User;
   isShowSpinner = false;
@@ -41,8 +38,8 @@ export class UserSettingsComponent implements OnInit {
     private cropper: ModalCropperService) { }
 
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.details = data.user;
+    this.route.parent.data.subscribe(({ user }) => {
+      this.details = user;
       if (this.details.id === this.authService.getCurrentUser().id) {
         this.isOwner = true;
       }
