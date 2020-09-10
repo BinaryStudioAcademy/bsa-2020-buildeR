@@ -125,7 +125,6 @@ export class AuthenticationService {
   }
 
   clearAuth() {
-    localStorage.removeItem('github-access-token');
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
     this.firebaseUser = undefined;

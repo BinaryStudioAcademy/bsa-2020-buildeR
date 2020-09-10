@@ -41,9 +41,9 @@ export class BuildStatusesSignalRService
         this.buildStatusesHub
           .invoke('JoinGroup', this.currentUser.id.toString())
           .then(null)
-          .catch((err) => console.error(err));
+          .catch((err) => {});
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {});
     this.buildStatusesHub.listen('statusChange').subscribe((resp) => {
       const statusChange: StatusChange = JSON.parse(resp);
       this.buildStatusChanges$.next(statusChange);

@@ -156,8 +156,6 @@ export class GroupListComponent extends BaseComponent implements OnInit {
             });
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => { });
   }
 }
