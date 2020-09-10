@@ -70,17 +70,15 @@ span.title
 .build-status
  min-width: 62px
 
-.no-projects-container
+.button-wrapper
   display: flex
-  flex-direction: column
-  justify-items: center
-  align-items: center
-  margin-top: 10%
-  font-size: 1.5rem
+  justify-content: center
+  padding: 12px
   button
-    height: 50px
-    min-width: 150px
-    font-size: .9em
+    font-size: 1.5rem
+
+.placeholder
+  padding: 6px
 
 .project-wr
   padding-left: 30px
@@ -308,6 +306,9 @@ nav
     margin-left: -3px
   .row > p.text-center
     font-size: 1rem
+  .button-wrapper
+    button
+      font-size: 1rem
 
 @media (max-width: 767px)
   .actions

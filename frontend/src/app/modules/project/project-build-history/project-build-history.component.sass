@@ -16,6 +16,14 @@
   .builders
     height: 20rem
 
+.disabled-link
+  cursor: default
+  pointer-events: none
+  text-decoration: none
+
+.commit-link
+  display: inline-block !important
+
 .build-container
   margin: 0
   list-style: none
@@ -26,7 +34,7 @@
   padding-left: 0
 
   li
-    height: 8vh
+    height: 14vh
     border-radius: 2px
     border: 1px solid #eaeaea
     padding: 0.2rem
@@ -102,7 +110,7 @@
   ul.build-container
 
     li
-      height: 12vh
+      height: 14vh
 
 @media (max-width:500px)
   ul.build-container
