@@ -6,8 +6,8 @@
 
 <ng-template #loaded>
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
-  <div class="ml-auto" *ngIf="isAdmin" ngbDropdown>
-    <button *ngIf = "!isGuest" tabindex="0" class="btn btn-info" ngbDropdownToggle  id="Dropdown" role="button">
+  <div class="ml-auto" *ngIf="permissions.canDelete" ngbDropdown>
+    <button *ngIf = "permissions.canDelete" tabindex="0" class="btn btn-info" ngbDropdownToggle  id="Dropdown" role="button">
       <i  class="fas fa-plus"></i>
     </button>
     <div ngbDropdownMenu aria-labelledby="Dropdown" class="dropdown-menu dropdown-menu-right" >
@@ -18,8 +18,7 @@
 </div>
 
 <div class="container" *ngIf="projects?.length; else emptyProjects">
-<app-projects-display [activeProjects]="projects" [permissions]="true" [isAdmin]="isAdmin"
-[isContributor]="isContributor" [isBuilder]="isBuilder">
+<app-projects-display [activeProjects]="projects" [permissions]="permissions">
 </app-projects-display>
 </div>
   <ng-template #emptyProjects>
@@ -55,10 +54,10 @@
             </g>
           </svg>
           </div>
-          <span *ngIf = "!isGuest" class="my-3">
+          <span *ngIf = "!permissions.canBuild" class="my-3">
           It seems that this group doesn't have any project, you can add one any time!
         </span>
-          <span *ngIf = "isGuest" class="my-3">
+          <span *ngIf = "permissions.canBuild" class="my-3">
           You don't have permission to add any projects to this group!
         </span>
         </div>

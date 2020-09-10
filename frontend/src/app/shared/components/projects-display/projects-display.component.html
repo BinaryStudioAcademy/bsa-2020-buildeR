@@ -98,18 +98,18 @@
               </ng-template>
             </ng-template>
 
-            <button *ngIf="!permissions || isBuilder" class="btn btn-success dropdown-item"
+            <button *ngIf="!permissions || permissions.canBuild" class="btn btn-success dropdown-item"
               (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
               Run</button>
-              <button *ngIf="!permissions || isContributor"  class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
+              <button *ngIf="!permissions || permissions.canConfig"  class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
                   class="fas fa-cog"></i> Settings</button>
               <button  *ngIf="!permissions" class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
                 Copy</button>
               <div  class="dropdown-divider"></div>
-              <button *ngIf="!permissions || isAdmin" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+              <button *ngIf="!permissions || permissions.canDelete" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
                 <i class="far fa-trash-alt"></i> Delete</button>
             </ng-template>
-          <button *ngIf="!permissions || isBuilder"   type="button" class="btn bars" container="body" placement="top"
+          <button *ngIf="!permissions || permissions.canBuild"   type="button" class="btn bars" container="body" placement="top"
             [ngbPopover]="popContent">
               <i class="fas fa-bars"></i>
             </button>
@@ -170,18 +170,18 @@
                 </ng-template>
               </ng-template>
 
-              <button *ngIf="!permissions || isBuilder"  class="btn btn-success dropdown-item"
+              <button *ngIf="!permissions || permissions.canBuild"  class="btn btn-success dropdown-item"
                 (click)="openBranchSelectionModal(branchSelectModal, project.id)"><i class="fas fa-play-circle"></i>
                 Run</button>
-              <button *ngIf="!permissions || isContributor" class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
+              <button *ngIf="!permissions || permissions.canConfig" class="btn dropdown-item" [routerLink]="['/portal/projects', project?.id, 'settings']"><i
                   class="fas fa-cog"></i> Settings</button>
               <button  *ngIf="!permissions" class="btn dropdown-item" (click)="copyProject(project.id)"><i class="far fa-copy"></i>
                 Copy</button>
               <div class="dropdown-divider"></div>
-              <button *ngIf="!permissions || isAdmin" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
+              <button *ngIf="!permissions || permissions.canDelete" class="btn btn-danger dropdown-item" (click)="deleteProject(project.id)">
                 <i class="far fa-trash-alt"></i> Delete</button>
             </ng-template>
-            <button *ngIf="!permissions || isBuilder" type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
+            <button *ngIf="!permissions || permissions.canBuild" type="button" class="btn bars" container="body" placement="top" [ngbPopover]="popContent">
               <i class="fas fa-bars"></i>
             </button>
           </div>

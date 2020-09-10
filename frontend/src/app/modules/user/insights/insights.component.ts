@@ -70,7 +70,7 @@ export class InsightsComponent implements OnInit {
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
       this.countedDate = this.user.createdAt;
-      this.fulfillCharts(this.user.createdAt, diff + 1);
+      this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
     if (!(diff <= 7) && isMonth) {
