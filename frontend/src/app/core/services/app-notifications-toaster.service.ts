@@ -9,11 +9,11 @@ export class AppNotificationsToasterService {
 
   constructor() { }
 
-  public show(notification: Notification) {
+  show(notification: Notification) {
     this.toasts.push(notification);
   }
 
-  public remove(toast) {
-    this.toasts = this.toasts.filter(t => t != toast);
+  remove(toast) {
+    this.toasts = this.toasts.filter(t => t !== toast);
   }
 }
