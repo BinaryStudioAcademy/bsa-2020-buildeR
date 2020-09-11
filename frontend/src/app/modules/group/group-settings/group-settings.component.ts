@@ -44,7 +44,7 @@ export class GroupSettingsComponent implements OnInit {
       name: new FormControl(this.group.name,
         [
           Validators.minLength(4),
-          Validators.maxLength(32),
+          Validators.maxLength(300),
           Validators.required,
           Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ]),
