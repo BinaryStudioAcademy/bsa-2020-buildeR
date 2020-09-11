@@ -58,9 +58,10 @@ namespace buildeR.BLL.Services
         {
             var projects = await Context.Projects
                 .AsNoTracking()
-                .Include(project => project.Owner)
-                .Include(project => project.BuildHistories)
-                .Where(project => project.OwnerId == userId)
+                .Include(p => p.Owner)
+                .Include(p => p.Repository)
+                .Include(p => p.BuildHistories)
+                .Where(p => p.OwnerId == userId)
                 .ToArrayAsync();
             var projectInfos = Mapper.Map<IEnumerable<ProjectInfoDTO>>(projects);
             return projectInfos;

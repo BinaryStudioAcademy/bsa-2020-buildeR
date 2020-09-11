@@ -12,7 +12,7 @@ import { NotificationType } from '../../../shared/models/notification-type';
   templateUrl: './notifications-block.component.html',
   styleUrls: ['./notifications-block.component.sass'],
 })
-export class NotificationsBlockComponent extends BaseComponent implements OnInit, AfterViewChecked {
+export class NotificationsBlockComponent extends BaseComponent implements OnInit {
   notifications: Notification[] = [];
   NotificationType = NotificationType;
   showAllNotifications = false;
@@ -31,15 +31,11 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
     super();
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollTop();
-  }
-
   ngOnInit(): void {
     this.notificationService.getNotifications()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((notifications) => {
-        this.notifications.push(...notifications);
+        this.notifications = notifications.reverse();
         this.onChanging('adding', ...notifications);
       });
     this.notificationService.connect();
@@ -47,7 +43,7 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((notification) => {
         if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
-          this.notifications.push(notification);
+          this.notifications.unshift(notification);
           this.onChanging('adding', notification);
         }
       });
@@ -85,40 +81,32 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
   }
 
   navigateToItem(notification: Notification, event) {
-    if (notification.itemId) {
-      event.preventDefault();
-      switch (notification.type) {
-        case NotificationType.Group: {
-          if (notification.itemId === -1) {
-            this.router.navigate(['/portal/groups']);
-          }
-          else {
-            this.router.navigate(['/portal/groups/' + notification.itemId + '/projects']);
-          }
-          this.clearOne(notification);
-          this.toggle();
-          break;
-        }
-        case NotificationType.BuildCanceled:
-        case NotificationType.BuildErrored:
-        case NotificationType.BuildFailed:
-        case NotificationType.BuildSucceeded: {
-          this.buildHistoryService.getBuildHistory(notification.itemId)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(
-              bh => this.router.navigateByUrl('/', { skipLocationChange: true })
-                .then(() => {
-                  this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
-                  this.clearOne(notification);
-                })
-            );
-          break;
-        }
+    if (!notification.itemId) {
+      return;
+    }
+    event.preventDefault();
+    switch (notification.type) {
+      case NotificationType.Group: {
+        this.router.navigate(notification.itemId === -1 ? ['/portal/groups'] : ['/portal/groups/' + notification.itemId + '/projects']);
+        this.clearOne(notification);
+        this.toggle();
+        break;
+      }
+      case NotificationType.BuildCanceled:
+      case NotificationType.BuildErrored:
+      case NotificationType.BuildFailed:
+      case NotificationType.BuildSucceeded: {
+        this.buildHistoryService.getBuildHistory(notification.itemId)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(
+            bh => this.router.navigateByUrl('/', { skipLocationChange: true })
+              .then(() => {
+                this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
+                this.clearOne(notification);
+              })
+          );
+        break;
       }
     }
-  }
-
-  scrollTop(el: HTMLElement = this.top.nativeElement) {
-    el.scrollIntoView();
   }
 }

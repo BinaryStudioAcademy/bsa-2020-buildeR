@@ -1,1 +1,71 @@
 @import '../../../modules/work-space/dashboard/dashboard.component.sass'
+
+.project-list
+  display: grid
+  gap: 10px
+
+.project-wr
+  display: grid
+  grid-template-columns: 150px 1fr auto
+  gap: 10px
+  padding: 5px 10px
+
+.project-info
+  display: flex
+  flex-direction: column
+  justify-content: center
+
+.build-columns-container
+  display: flex
+  gap: 5px 20px
+  white-space: nowrap
+  justify-content: space-between
+  flex: 1
+  flex-wrap: wrap
+
+  .build-column-wrp
+    text-align: center
+    flex: 1
+
+.actions
+  position: relative
+  display: flex
+  justify-content: center
+  align-items: center
+
+.owner-wr
+  display: flex
+  justify-content: flex-start
+  align-items: center
+  margin-right: 5px
+
+  .avatar-wr
+    margin-right: 5px
+
+    .owner-avatar
+      height: 26px
+      border-radius: 50%
+
+  .owner-name
+    color: #666666
+    font-size: 18px
+
+.project-name
+  line-height: 1.3
+
+.text-overflow
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.project-btn
+  padding: 4px
+  font-size: 22px
+
+@media (max-width: 568px)
+  .project-wr
+    grid-template-columns: 1fr
+
+  .mobile-wrp
+    padding-bottom: 10px
+    border-bottom: 2px solid #f1f1f1

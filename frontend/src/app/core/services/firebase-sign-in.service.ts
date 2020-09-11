@@ -9,6 +9,8 @@ import { LinkProvider } from '@shared/models/user/link-provider';
 import { User } from '@shared/models/user/user';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 import { auth, UserInfo } from 'firebase/app';
+import { EMPTY } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { RegistrationWarningComponent } from '../components/registration-warning/registration-warning.component';
 import { AuthenticationService } from './authentication.service';
 
@@ -53,6 +55,10 @@ export class FirebaseSignInService {
 
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
+      .pipe(catchError(() => {
+        this.router.navigateByUrl('/signup');
+        return EMPTY;
+      }))
       .subscribe((resp) => {
         if (!credential.user.emailVerified) {
           credential.user.sendEmailVerification().then(() => {
