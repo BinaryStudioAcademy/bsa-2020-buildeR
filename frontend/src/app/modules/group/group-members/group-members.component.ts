@@ -54,7 +54,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
     });
     this.loadingUsers = true;
     this.getGroupMembers(this.groupId);
-    this.getUsers();
+    /*this.getUsers();*/
     this.currentUser = this.authService.getCurrentUser();
     this.memberForm = new FormGroup({
       user: new FormControl(' ', [Validators.required]),
@@ -69,6 +69,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         this.members = res.body;
         this.pendingMembers = res.body.filter((t => !t.isAccepted));
         this.loadingUsers = false;
+        this.getUsers();
       });
   }
   getUsers() {
@@ -111,7 +112,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
         this.teamMemberService.teamMembersChanged.next();
         this.getGroupMembers(this.groupId);
         this.isShowSpinner = false;
-        this.getUsers();
+        /*this.getUsers();*/
         this.toastrService.showSuccess('Member was successfully invited');
         this.memberForm.controls[`user`].setValue('');
         this.memberForm.controls[`dropdown`].setValue('Guest');
@@ -132,7 +133,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       .subscribe(() => {
         this.teamMemberService.teamMembersChanged.next();
         this.getGroupMembers(this.groupId);
-        this.getUsers();
+        /*this.getUsers();*/
         this.toastrService.showSuccess('Member was successfully deleted');
       });
   }
