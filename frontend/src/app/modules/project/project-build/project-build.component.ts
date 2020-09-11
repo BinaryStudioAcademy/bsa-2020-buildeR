@@ -13,8 +13,6 @@ import { combineLatest } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BuildStatusesSignalRService } from '@core/services/build-statuses-signalr.service';
 import { BuildStatus } from '@shared/models/build-status';
-import { Repository } from '@core/models/Repository';
-
 
 @Component({
   selector: 'app-project-build',
@@ -60,29 +58,30 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       .subscribe(history => {
         this.buildHistory = history;
         this.isLoading = false;
-      }, (res: HttpErrorResponse) =>
-        {
-          this.toastrService.showError(res.error, res.name);
-          this.isLoading = false;
-        }
+      }, (res: HttpErrorResponse) => {
+        this.toastrService.showError(res.error, res.name);
+        this.isLoading = false;
+      }
       );
   }
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.connect();
-    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      if (statusChange.BuildHistoryId === this.buildHistory?.id) {
-        this.buildHistory.buildStatus = statusChange.Status;
-        if (statusChange.Status !== BuildStatus.InProgress) {
+    this.buildStatusesSignalRService.listen()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((statusChange) => {
+        if (statusChange.BuildHistoryId === this.buildHistory?.id) {
           this.buildHistory.buildStatus = statusChange.Status;
-          this.buildHistoryService
-            .getBuildHistory(statusChange.BuildHistoryId)
-            .subscribe((bh) => {
-              this.buildHistory = bh;
-            });
+          if (statusChange.Status !== BuildStatus.InProgress) {
+            this.buildHistory.buildStatus = statusChange.Status;
+            this.buildHistoryService
+              .getBuildHistory(statusChange.BuildHistoryId)
+              .subscribe((bh) => {
+                this.buildHistory = bh;
+              });
+          }
         }
-      }
-    });
+      });
   }
 
   getCommit(bh: BuildHistory) {

@@ -60,13 +60,9 @@ export class ProjectTriggersComponent extends BaseComponent implements OnInit {
     this.remoteTriggerService.getProjectRemoteTriggers(projectId)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (data) => {
-          this.remoteTriggers = data;
-          if (this.remoteTriggers.length) {
-            this.remoteTriggersSection = true;
-          }
-        },
-        (error) => this.toastrService.showError(error.message, error.name)
+        (data) => this.remoteTriggers = data ?? [],
+        (error) => this.toastrService.showError(error.message, error.name),
+        () => this.remoteTriggersSection = true
       );
   }
 

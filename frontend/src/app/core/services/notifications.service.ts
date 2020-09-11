@@ -36,9 +36,9 @@ export class NotificationsService implements OnDestroy {
     if (!this.currentUser) {
       this.currentUser = this.authService.getCurrentUser();
       this.notificationSettingService.getNotificationSettingByUserId(this.currentUser.id)
-      .subscribe(resp => {
-        this.notificationSetting = resp;
-      });
+        .subscribe(resp => {
+          this.notificationSetting = resp;
+        });
     }
   }
 
@@ -73,9 +73,9 @@ export class NotificationsService implements OnDestroy {
         this.notificationsHub
           .invoke('JoinGroup', this.currentUser.id.toString())
           .then(null)
-          .catch((err) => {});
+          .catch((err) => { });
       })
-      .catch((err) => {});
+      .catch((err) => { });
     this.notificationsHub.listen('getNotification').subscribe((notif) => {
       const notification: Notification = JSON.parse(notif);
       notification.date = new Date();

@@ -54,9 +54,9 @@ export class BuildStatusesSignalRService implements OnDestroy {
               this.buildStatusChanges$.next(statusChange);
             })
           )
-          .catch((res) => this.toastr.showError(res.error, res.name));
+          .catch((err) => this.toastr.showError(err));
       })
-      .catch((res) => this.toastr.showError(res.error, res.name));
+      .catch((err) => this.toastr.showError(err));
   }
 
   listen() {

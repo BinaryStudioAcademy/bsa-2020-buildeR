@@ -73,9 +73,9 @@ export class ProjectLogsService implements OnDestroy {
               this.isRegistered = true;
             }
           })
-          .catch((err) => this.toastr.showError(err.error, err.name));
+          .catch((err) => this.toastr.showError(err));
       })
-      .catch((err) => this.toastr.showError(err.error, err.name));
+      .catch((err) => this.toastr.showError(err));
   }
 
   listen(buildHistoryId: number): Subject<string> {
