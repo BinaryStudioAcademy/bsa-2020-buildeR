@@ -27,7 +27,6 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
   messages = new Array<Message>();
   @ViewChild('bottom') private bottom: ElementRef;
 
-
   constructor(
     private route: ActivatedRoute,
     private chat: ChatService,
@@ -61,9 +60,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
 
   getMembersCount() {
     this.groupService.getMembersByGroup(this.groupId).pipe(takeUntil(this.unsubscribe$))
-      .subscribe((res) => {
-        this.membersCount = res.body.length;
-      });
+      .subscribe((res) => this.membersCount = res.body.filter(x => x.isAccepted).length);
 
   }
 
@@ -75,7 +72,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
   }
 
   sendMessage() {
-    if (this.textOfMessage === '') {
+    if (!this.textOfMessage) {
       return;
     }
     const message = {
@@ -83,7 +80,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
       groupId: this.groupId,
       senderId: this.user.id,
     } as Message;
-    this.chat.sendMessage(message).pipe(takeUntil(this.unsubscribe$))
+    this.chat.sendMessage(message)
       .subscribe(() => { });
     this.textOfMessage = '';
   }

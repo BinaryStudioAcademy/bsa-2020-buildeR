@@ -14,12 +14,10 @@
   background-color: rgb(245,245,245)
   border: 1px solid rgb(211,211,211)
   position: absolute
-  right: -200%
-  top: 185%
+  right: -80px
+  top: 50px
   width: 500px
   max-height: 500px
-  -webkit-box-shadow: -5px 5px 10px 0px rgba(156,156,156,0.2)
-  -moz-box-shadow: -5px 5px 10px 0px rgba(156,156,156,0.2)
   box-shadow: -5px 5px 10px 0px rgba(156,156,156,0.2)
   z-index: 1011
 
@@ -64,20 +62,18 @@
 
 .all-notifications
   display: flex
-  flex-direction: column-reverse
+  flex-direction: column
   gap: 0.5rem
   max-height: 430px
   overflow-y: auto
   overflow-x: hidden
   padding: 1rem 0.3rem
   scroll-behavior: smooth
-  margin: 0 20px
+  padding: 0 10px
 
 .no-notifications
-  padding: auto
-  margin-bottom: 0.5em
   text-align: center
-  font-size: 1em
+  padding-top: 10px
 
 .notifications-footer
   padding: 5px 0
@@ -100,11 +96,12 @@
   position: absolute
   color: #5796db
   margin-left: .37rem
+  top: 27px
 
 .top-point
   height: 1px
 
-@media (max-width: 500px)
+@media (max-width: 400px)
   .notifications-block
-    width: 265px
+    width: 300px
     min-height: 265px
