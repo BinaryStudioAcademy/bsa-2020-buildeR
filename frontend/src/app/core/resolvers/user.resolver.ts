@@ -21,7 +21,7 @@ export class UserResolverService implements Resolve<User>{
         userId = parentUserId;
       }
       else {
-        userId = this.authService.getCurrentUser().id;
+        userId = this.authService.getCurrentUser()?.id;
       }
     }
     return this.userService.getUserByIdRequest(userId).pipe(tap((resp) => {

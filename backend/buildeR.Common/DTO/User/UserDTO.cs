@@ -25,7 +25,7 @@ namespace buildeR.Common.DTO.User
 
         public NotificationSettingDTO NotificationSetting { get; set; }
         public ICollection<ProjectDTO> Projects { get; set; }
-        public ICollection<TeamMemberDTO> TeamMembers { get; set; }
+        // public ICollection<TeamMemberDTO> TeamMembers { get; set; }
         public ICollection<UserSocialNetworkDTO> UserSocialNetworks { get; set; }
     }
 }

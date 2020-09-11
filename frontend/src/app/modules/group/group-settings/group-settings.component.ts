@@ -49,7 +49,7 @@ export class GroupSettingsComponent implements OnInit {
         ]),
       description: new FormControl(this.group.description,
         [
-          Validators.maxLength(32),
+          Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
       isPublic: new FormControl(`${this.group.isPublic}`, Validators.required)

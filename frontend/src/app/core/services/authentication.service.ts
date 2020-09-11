@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { from, of } from 'rxjs';
 import { filter, tap, switchMap, map, mergeMap } from 'rxjs/operators';
 import { UserInfo } from 'firebase';
+import { Providers } from '@shared/models/providers';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
 import { UserService } from './user.service';
@@ -62,9 +63,9 @@ export class AuthenticationService {
       });
   }
 
-  logout() {
+  logout(redirectUrl?: string) {
     return this.clearAuth()
-      .then(() => this.router.navigate(['/']));
+      .then(() => this.router.navigate([redirectUrl ? redirectUrl : '/']));
   }
 
   cancelRegistration() {
@@ -125,8 +126,23 @@ export class AuthenticationService {
     return this.angularAuth.signOut();
   }
 
-  isGithubAddedInFirebase() {
-    const check = (item: UserInfo) => item.providerId === 'github.com';
-    return this.firebaseUser.providerData.some(check);
+  isProviderAddedInFirebase(provider: Providers, firebaseUser?: firebase.User) {
+    const check = (item: UserInfo) => item.providerId === this.checkProviderUrl(provider);
+    return firebaseUser ? firebaseUser.providerData.some(check) : this.firebaseUser?.providerData.some(check);
+  }
+
+  checkProviderUrl(provider: Providers) {
+    let providerUrlId: string;
+    switch (provider) {
+      case Providers.Google: {
+        providerUrlId = 'google.com';
+        break;
+      }
+      case Providers.Github: {
+        providerUrlId = 'github.com';
+        break;
+      }
+    }
+    return providerUrlId;
   }
 }
