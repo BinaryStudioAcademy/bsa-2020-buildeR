@@ -1,12 +1,8 @@
-<div class="container line-bottom ">
+<div class="container">
   <div class="date-with-options">
-    <div class="date">
-
-     <label for=""> <small> {{countedDate | date:'mediumDate'}} - {{now | date:'mediumDate'}}</small></label>
-    </div>
     <div class="week-month">
       <nav>
-        <ul class="list-group list-group-horizontal ">
+        <ul class="list-group list-group-horizontal">
           <li *ngFor="let mode of weekMonth; let i = index" class="list-group-item"[ngClass]="{ active: tab == i }">
             <a (click)="changeMode(i)">
               {{mode.name}}
@@ -15,10 +11,12 @@
         </ul>
       </nav>
     </div>
+    <div class="date">
+      <label> <small> {{countedDate | date:'mediumDate'}} - {{now | date:'mediumDate'}}</small></label>
+    </div>
     <div class="build-history-select" >
-      <label style="margin-top: 2px"> View:</label>
-      <select  class="form-control form-control-sm selecter" (change)="changeBuilSelector($event.target.value)">
-        <option *ngFor='let build of buildsPublicity' >{{build}}</option>
+      <select class="form-control form-control-sm selecter" (change)="changeBuilSelector($event.target.value)">
+        <option *ngFor='let build of buildsPublicity'>{{build}}</option>
       </select>
     </div>
   </div>
@@ -53,8 +51,10 @@
       </app-chart-small>
     </div>
   </div>
-  <div style="text-align: center;">
-    <h5>Build Statuses</h5>
+  <div>
+    <div class="container line-bottom">
+      <h5>Build statuses</h5>
+    </div>
       <app-chart-big-normalized [hidden]="!month" [results]="bigChartData">
       </app-chart-big-normalized>
       <app-chart-big-grouped  [hidden]="month" [results]="bigChartData">

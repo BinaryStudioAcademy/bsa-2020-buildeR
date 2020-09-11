@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { from, of } from 'rxjs';
+import { filter, tap, switchMap, map, mergeMap } from 'rxjs/operators';
+import { UserInfo } from 'firebase';
 import { Providers } from '@shared/models/providers';
-import { LinkProvider } from '@shared/models/user/link-provider';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
-import { UserSocialNetwork } from '@shared/models/user/user-social-network';
-import { auth, UserInfo } from 'firebase';
-import { from, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -82,13 +80,9 @@ export class AuthenticationService {
   }
 
   refreshFirebaseToken() {
-    const fireUser$ = this.angularAuth.currentUser
-      ? from(this.angularAuth.currentUser)
-      : this.angularAuth.authState;
-
-    return fireUser$.pipe(
+    return this.angularAuth.authState.pipe(
       filter(user => Boolean(user)),
-      switchMap(user => from(user.getIdToken(true))),
+      mergeMap(user => from(user.getIdToken(true))),
       tap(token => localStorage.setItem('jwt', token))
     );
   }

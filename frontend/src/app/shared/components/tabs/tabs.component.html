@@ -1,4 +1,4 @@
-<nav>
+<nav class="row">
   <ul class="list-group list-group-horizontal container">
     <li *ngFor="let tabRoute of tabRoutes; let i = index" class="list-group-item" [ngClass]="{ active: tab === i }">
       <a (click)="change(i)" [routerLink]="[tabRoute.route]">

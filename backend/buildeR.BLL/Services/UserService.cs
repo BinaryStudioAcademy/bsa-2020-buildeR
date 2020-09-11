@@ -52,15 +52,9 @@ namespace buildeR.BLL.Services
         {
             var user = await _context.Users
                 .Include(u => u.UserSocialNetworks)
-                .FirstOrDefaultAsync(u => u.UserSocialNetworks.Any(sn => sn.UId == UId));
-            if (user != null)
-            {
-                return _mapper.Map<UserDTO>(user);
-            }
-            else
-            {
-                return null;
-            }
+                .FirstAsync(u => u.UserSocialNetworks.Any(sn => sn.UId == UId));
+
+            return _mapper.Map<UserDTO>(user);
         }
 
         public async Task<ICollection<UserDTO>> GetAll()

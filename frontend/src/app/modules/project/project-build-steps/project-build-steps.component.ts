@@ -21,8 +21,7 @@ import { ModalContentComponent } from '@core/components/modal-content/modal-cont
   templateUrl: './project-build-steps.component.html',
   styleUrls: ['./project-build-steps.component.sass']
 })
-export class ProjectBuildStepsComponent extends BaseComponent implements OnInit, OnDestroy {
-  projectId: number;
+export class ProjectBuildStepsComponent extends BaseComponent implements OnInit {
   project: Project = {} as Project;
 
   emptyBuildSteps: EmptyBuildStep[];
@@ -49,36 +48,12 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     private route: ActivatedRoute
   ) {
     super();
-    route.parent.params.subscribe((params) => this.projectId = params.projectId);
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.project = this.route.snapshot.data.project as Project;
-    this.getProject(this.projectId);
-    this.getProjectBuildSteps(this.projectId);
+    this.project = this.route.parent.snapshot.data.project;
+    this.getProjectBuildSteps(this.project.id);
     this.getEmptyBuildSteps();
-  }
-
-
-  getProject(projectId: number) {
-    this.isLoading = true;
-    this.projectService
-      .getProjectById(projectId)
-      .subscribe(
-        (data) => {
-          this.isLoading = false;
-          this.project = data;
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.showError(error.message, error.name);
-        }
-      );
   }
 
   getEmptyBuildSteps() {
@@ -94,7 +69,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -111,7 +86,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     modalRef.result.then((result) => {
       if (result) {
         this.isLoading = true;
-        this.projectService.DeleteBuildStepsByProjectId(this.projectId)
+        this.projectService.DeleteBuildStepsByProjectId(this.project.id)
         .pipe(takeUntil(this.unsubscribe$))
           .subscribe(
             (resp) => {
@@ -123,7 +98,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
               const newStep = {
                 buildStepName: 'Dockerfile',
                 pluginCommand: dockerfilePlugin.pluginCommand,
-                projectId: this.projectId,
+                projectId: this.project.id,
                 pluginCommandId: dockerfilePlugin.pluginCommand.id,
                 workDirectory: ''
               } as BuildStep;
@@ -135,7 +110,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
             },
             (error) => {
               this.isLoading = false;
-              this.toastrService.showError(error);
+              this.toastrService.showError(error.error, error.name);
             }
           );
       }
@@ -192,7 +167,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -203,7 +178,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
       pluginCommand: step.pluginCommand,
       buildStepName: step.buildStepName,
       pluginCommandId: step.pluginCommand.id,
-      projectId: this.projectId,
+      projectId: this.project.id,
       index: allStepsLength,
       commandArguments: [],
       config: step.config,
@@ -258,7 +233,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           }
         );
     }
@@ -274,7 +249,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         });
   }
 
@@ -310,7 +285,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           }
         );
       });
@@ -337,11 +312,11 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe(
       (resp) => {
-        this.getProjectBuildSteps(this.projectId);
+        this.getProjectBuildSteps(this.project.id);
        },
       (error) => {
         this.isLoading = false;
-        this.toastrService.showError(error);
+        this.toastrService.showError(error.error, error.name);
       });
   }
 
@@ -367,7 +342,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit,
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
     }

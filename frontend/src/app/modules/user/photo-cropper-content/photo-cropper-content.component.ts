@@ -2,26 +2,25 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
-import { log } from 'console';
 import {timer} from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-photo-cropper-content',
   templateUrl: './photo-cropper-content.component.html',
   styleUrls: ['./photo-cropper-content.component.sass']
 })
-export class PhotoCropperContentComponent implements OnInit {
-  constructor(private activeModal: NgbActiveModal, private toastr: ToastrNotificationsService) { }
+export class PhotoCropperContentComponent extends BaseComponent {
+  constructor(private activeModal: NgbActiveModal, private toastr: ToastrNotificationsService) {
+    super();
+  }
   @Input() content;
   imageChangedEvent;
   croppedImage;
   canSave = false;
   imageName = '';
   isShowSpinner = false;
-
-  ngOnInit(): void {
-  }
-
 
   fileChangeEvent(event): void {
     this.imageChangedEvent = event;
@@ -47,7 +46,7 @@ save(){
     this.imageName = this.makeName(10) + '.png';
   }
   const file = this.base64ToFile(this.croppedImage, this.imageName);
-  timer(600).subscribe(() => {
+  timer(600).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
     this.activeModal.close(file);
     this.isShowSpinner = false;
   });

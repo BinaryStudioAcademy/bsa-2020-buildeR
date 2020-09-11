@@ -1,22 +1,17 @@
-<form #triggerForm="ngForm">
+<form #triggerForm="ngForm" class="border rounded form-wrp">
+  <div class="trigger-order">
+    <span *ngIf="order">#{{order}}</span>
+  </div>
   <div class="form-control-wr">
     <label>
       Trigger branch
     </label>
     <div class="input-wr">
-      <input
-      type="text"
-      class="form-control"
-      [editable]="false"
-      placeholder="Select from list"
-      [(ngModel)]="trigger.branch"
-      [ngbTypeahead]="search"
-      (focus)="branchInputFocus$.next($any($event).target.value)"
-      (click)="branchInputClick$.next($any($event).target.value)"
-      #branch="ngbTypeahead"
-      name="branchInput"
-      #branchInput="ngModel"
-      required />
+      <select name="branch" class="form-control branch-select" [(ngModel)]="trigger.branch" title="branch">
+        <option *ngFor="let branch of branches" [ngValue]='branch'
+          [selected]="trigger.branch === branch">{{branch}}
+        </option>
+      </select>
       <!-- <div class="error" [hidden]="!branchInput.errors?.required || branchInput.untouched">
         Branch is required
       </div> -->
@@ -43,17 +38,14 @@
   </div>
   <div class="form-control-wr-small">
     <div *ngIf="createNewTrigger" class="btn-wr">
-      <button class="btn btn-success" (click)="createTrigger()">Create</button>
+      <button class="btn btn-success" [disabled]="!trigger.branch || !selectedEvents?.length" (click)="createTrigger()">Add</button>
     </div>
-    <div *ngIf="!createNewTrigger" class="btn-wr">
-      <button *ngIf="selectedEventsChanged || triggerForm.touched"
-              class="btn btn-warning"
-              (click)="saveEditedTrigger()">
-              Update
+    <div *ngIf="!createNewTrigger" class="project-settings-actions-wrp">
+      <button [disabled]="!(selectedEventsChanged || triggerForm.touched) || !trigger.branch || !selectedEvents?.length" (click)="saveEditedTrigger()" class="btn btn-update text-dark">
+        <i class="fas fa-save"></i>
       </button>
-      <button class="btn btn-danger"
-              (click)="deleteTrigger()">
-        Delete
+      <button (click)="deleteTrigger()" class="btn btn-delete text-danger">
+        <i class="fas fa-trash-alt"></i>
       </button>
     </div>
   </div>

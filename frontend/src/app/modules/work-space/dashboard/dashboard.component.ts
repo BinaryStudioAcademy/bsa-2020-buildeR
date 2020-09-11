@@ -75,7 +75,7 @@ export class DashboardComponent
         },
         (error) => {
           this.loadingGroupsProjects = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -94,9 +94,11 @@ export class DashboardComponent
           p.lastBuildHistory.buildStatus = statusChange.Status;
         });
         if (statusChange.Status !== BuildStatus.InProgress) {
-          this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
-            projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
-          });
+          this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((bh) => {
+              projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
+            });
         }
       }
     });
@@ -119,7 +121,7 @@ export class DashboardComponent
         },
         (error) => {
           this.loadingProjects = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -128,18 +130,18 @@ export class DashboardComponent
     this.tab = 'groupsprojects';
     this.loadingGroupsProjects = true;
     this.projectService
-    .notOwnGroupsProjectsByUser(this.currentUser.id)
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe(
-      (resp) => {
-        this.loadingGroupsProjects = false;
-        this.groupsProjects = resp;
-      },
-      (error) => {
-        this.loadingGroupsProjects = false;
-        this.toastrService.showError(error);
-      }
-    );
+      .notOwnGroupsProjectsByUser(this.currentUser.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.loadingGroupsProjects = false;
+          this.groupsProjects = resp;
+        },
+        (error) => {
+          this.loadingGroupsProjects = false;
+          this.toastrService.showError(error.error, error.name);
+        }
+      );
   }
 
   changeFavoriteStateOfProject(project: ProjectInfo) {
@@ -161,7 +163,7 @@ export class DashboardComponent
             );
           }
         },
-        (error) => this.toastrService.showError(error)
+        (error) => this.toastrService.showError(error.error, error.name)
       );
   }
 
@@ -211,7 +213,7 @@ export class DashboardComponent
     const modalRef = this.modalService.open(ProjectCreateComponent);
     modalRef.result
       .then(() => this.getUserProjects(this.currentUser.id))
-      .catch(() => {});
+      .catch(() => { });
   }
 
   closeModal() {

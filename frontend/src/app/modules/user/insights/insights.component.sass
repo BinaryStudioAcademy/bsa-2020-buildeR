@@ -6,7 +6,6 @@ h5
   margin: 10px
   color: #666
 
-
 .date-with-options
   display: grid
   grid-template-columns: 20% 26% auto auto auto 25%
@@ -36,53 +35,9 @@ h5
   grid-row: 1
   justify-self: flex-start
 
-
-
-.list-group-horizontal
-  width: 100%
-  .list-group-item
-    padding: 5px 15px 0 15px
-    display: flex
-    color: #666
-    justify-content: flex-start
-    border-style: none
-    text-decoration: none
-    box-sizing: content-box
-    &:hover
-      a
-        color: #3eaaaf
-        background-color: white
-
-        &::after
-          content: ""
-          color: #3eaaaf
-          display: block
-          position: absolute
-          bottom: -2px
-          width: 100%
-          height: 2px
-          background-color: #3eaaaf
-
-    a
-      position: relative
-      display: inline-block
-      padding-bottom: 5px
-      text-decoration: none
-      color: #666
-
-.active
-  background-color: white !important
-  color: #3eaaaf !important
-  a::after
-    content: ""
-    color: #3eaaaf
-    display: block
-    position: absolute
-    bottom: -2px
-    width: 100%
-    height: 2px
-    background-color: #3eaaaf
-
+  .list-group-horizontal
+    margin: 0
+    flex-wrap: nowrap
 
 .charts
   grid-template-columns: repeat(auto-fit, minmax(245px, 1fr))
@@ -155,5 +110,5 @@ a
     grid-row-start: 3
     display: -webkit-box
     margin-left: 3px
- 
+
 

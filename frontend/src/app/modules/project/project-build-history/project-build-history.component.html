@@ -1,49 +1,15 @@
-<div *ngIf="isLoading; then loading; else loaded;"></div>
-
-<ng-template #loading>
-  <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
-</ng-template>
+<app-loading-spinner *ngIf="isLoading; else loaded;" margin="170px auto" size="20px"></app-loading-spinner>
 
 <ng-template #loaded>
-  <div *ngIf="builds?.length; else emptyBuilds">
-  <ul class="build-container">
-    <li *ngFor="let build of builds" [appBuildHistoryStatusOutline]="build.buildStatus">
-      <div class='user-commit'>
-
-        <a [ngClass]="{'disabled-link': build.performer?.username == 'BuilderBot'}" [routerLink]="'/portal/user/' + build.performer?.id">
-          <img [src]="build.performer?.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-            alt="Avatar" class="avatar" /><span>{{build.performer?.username}}</span></a>
-        <p>
-          <i class="fas fa-code"></i>
-          <span *ngIf="repository?.url && build?.commitHash; else notLink;">
-            <a class="commit-link" target="_blank" [href]="repository?.url+'/commit/'+build?.commitHash">{{ getCommit(build) }}</a>
-          </span>
-          <ng-template #notLink>
-            <span> — </span>
-          </ng-template>
-        </p>
-        <p>
-          <i class="fas fa-code-branch"></i> Branch
-          <span *ngIf="repository?.url && build?.branchHash; else noBranchLink;" class="branch">
-            <a class="commit-link" target="_blank" [href]="repository?.url+'/tree/'+build?.branchHash">{{build?.branchHash}}</a>
-          </span>
-          <ng-template #noBranchLink>
-            <span> — </span>
-          </ng-template>
-        </p>
-      </div>
-      <div class="build-info">
-        <p class="status" [ngClass]="{'status-blink': build.buildStatus == 5}"
-           [routerLink]="build.id" [appBuildHistoryStatus]="build.buildStatus"><i
-            class="fas fa-hammer"></i> #{{build.number}} {{build.buildStatus | buildStatus}}</p>
-        <p class="build-time"><i class="far fa-clock"></i> {{build.duration | timespan}}</p>
-        <p class="start-time" title="Finished {{build.buildAt | date:'medium'}}"><i class="far fa-calendar-alt"></i>
-          {{build.buildAt | dateAgo}}</p>
-      </div>
-    </li>
-  </ul>
+  <div class="build-container" *ngIf="builds?.length; else emptyBuilds">
+    <app-build-history-card
+      *ngFor="let build of builds"
+      [build]="build"
+      [repository]="repository">
+    </app-build-history-card>
   </div>
 </ng-template>
+
 <ng-template #emptyBuilds>
   <div class="container">
     <div class="no-builds-container">

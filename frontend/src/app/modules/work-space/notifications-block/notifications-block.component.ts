@@ -43,12 +43,14 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
         this.onChanging('adding', ...notifications);
       });
     this.notificationService.connect();
-    this.notificationService.listen().subscribe((notification) => {
-      if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
-        this.notifications.push(notification);
-        this.onChanging('adding', notification);
-      }
-    });
+    this.notificationService.listen()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((notification) => {
+        if (!notification.isRead && !this.notifications.some(n => n.id === notification.id)) {
+          this.notifications.push(notification);
+          this.onChanging('adding', notification);
+        }
+      });
   }
 
   clearOne(notification: Notification) {
@@ -101,13 +103,15 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
         case NotificationType.BuildErrored:
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
-          this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => this.router.navigateByUrl('/', { skipLocationChange: true })
-              .then(() => {
-                this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
-                this.clearOne(notification);
-              })
-          );
+          this.buildHistoryService.getBuildHistory(notification.itemId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(
+              bh => this.router.navigateByUrl('/', { skipLocationChange: true })
+                .then(() => {
+                  this.router.navigate(['portal', 'projects', bh.projectId, 'history', notification.itemId]);
+                  this.clearOne(notification);
+                })
+            );
           break;
         }
       }
@@ -116,5 +120,5 @@ export class NotificationsBlockComponent extends BaseComponent implements OnInit
 
   scrollTop(el: HTMLElement = this.top.nativeElement) {
     el.scrollIntoView();
-}
+  }
 }

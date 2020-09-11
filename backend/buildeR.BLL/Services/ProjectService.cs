@@ -37,9 +37,14 @@ namespace buildeR.BLL.Services
             _synchronizationHelper = synchronizationHelper;
         }
 
-        public override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
+        public async override Task<ProjectDTO> GetAsync(int id, bool isNoTracking = false)
         {
-            return base.GetAsync(id, isNoTracking);
+            var project = await Context.Projects
+                .AsNoTracking()
+                .Include(e => e.Owner)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            return Mapper.Map<ProjectDTO>(project);
         }
         public async Task<UserDTO> GetUserByProjectId(int projectId)
         {

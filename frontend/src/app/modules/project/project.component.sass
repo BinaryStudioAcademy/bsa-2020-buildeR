@@ -9,21 +9,19 @@
 
 .project-header
   display: flex
-  flex-flow: row wrap
+  flex-flow: wrap
   justify-content: flex-start
   align-items: center
 
 .project-title
-  margin-right: 1.2em
-  display: inline-block
+  display: flex
+  align-items: center
+  padding-right: 10px
 
 .project-icon
-  width: 26px
-  height: 26px
   font-size: 26px
   color: rgba(0,0,0,.4)
   margin-right: 10px
-  display: inline-block
 
 .user-project-names
   display: inline-block
@@ -40,11 +38,9 @@
       border-bottom: 2px solid #ce383800
 
 .repo-icon
-  margin-right: 1.2em
-  display: inline-block
-  vertical-align: middle
+  padding-right: 20px
   font-size: 30px
-  color: rgba(0,0,0,.4)
+
   a
     display: block
     &:link, &:visited, &:active
@@ -53,8 +49,6 @@
       color: rgba(0,0,0,.6)
 
 .repo-badge
-  display: inline-block
-  vertical-align: middle
   &:hover
     opacity: 0.8
 

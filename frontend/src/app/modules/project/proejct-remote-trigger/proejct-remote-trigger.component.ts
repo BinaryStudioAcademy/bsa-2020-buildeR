@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { RemoteTrigger } from '@shared/models/remote-trigger/remote-trigger';
 import { RemoteTriggerType } from '@shared/models/remote-trigger/remote-trigger-type';
-import { Observable, Subject, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgForm } from '@angular/forms';
@@ -17,6 +15,7 @@ export class ProejctRemoteTriggerComponent implements OnInit {
   @Input() trigger: RemoteTrigger;
   @Input() branches: string[];
   @Input() createNewTrigger: boolean;
+  @Input() order: number;
 
   @Output() triggerCreate = new EventEmitter<RemoteTrigger>();
   @Output() triggerUpdate = new EventEmitter<RemoteTrigger>();
@@ -24,9 +23,6 @@ export class ProejctRemoteTriggerComponent implements OnInit {
 
   @ViewChild('branch', { static: false }) instance: NgbTypeahead;
   @ViewChild('triggerForm') form: NgForm;
-
-  branchInputFocus$ = new Subject<string>();
-  branchInputClick$ = new Subject<string>();
 
   readonly pushEvent = 'Push';
   readonly pullRequestEvent = 'Pull request';
@@ -50,20 +46,11 @@ export class ProejctRemoteTriggerComponent implements OnInit {
     allowSearchFilter: true
   };
 
-  search = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const clicksWithClosedPopup$ = this.branchInputClick$.pipe(filter(() => !this.instance.isPopupOpen()));
-    const inputFocus$ = this.branchInputFocus$;
-
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.branches.slice(0, 5)
-        : this.branches.filter(b => b.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 5))
-    );
-  }
-
   ngOnInit(): void {
     if (this.createNewTrigger) {
-      this.trigger = {} as RemoteTrigger;
+      this.trigger = {
+        branch: this.branches?.[0]
+      } as RemoteTrigger;
     }
     else {
       if (this.trigger.type & RemoteTriggerType.Push) {

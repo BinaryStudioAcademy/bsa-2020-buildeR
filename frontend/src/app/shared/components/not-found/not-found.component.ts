@@ -11,15 +11,13 @@ import { AuthenticationService } from '@core/services/authentication.service';
 export class NotFoundComponent implements OnInit {
 
   link: string;
-  constructor(private location: Location, private router: Router, private authService: AuthenticationService) { }
+  constructor(private location: Location, private authService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.link = this.location.path();
   }
 
-  logout()
-  {
-    this.authService.logout('/signin');
+  logout() {
+    this.authService.logout();
   }
-
 }

@@ -46,7 +46,7 @@ export class GroupCreateComponent implements OnInit {
     this.newGroup.isPublic = (this.groupForm.value[`isPublic`] === 'true');
     this.newGroup.creatorId = this.authService.getCurrentUser().id;
     this.groupService.createGroup(this.newGroup).subscribe((resp) => {
-      this.groupService.userGroupsChanged.next();
+      this.groupService.groupsChanged$.next();
       this.toastrService.showSuccess('Group is created');
       this.router.navigate(['/portal/groups']);
     },

@@ -3,30 +3,35 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from 'src/app/shared/models/project/project';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {ToastrNotificationsService} from '@core/services/toastr-notifications.service';
-import {projectNameAsyncValidator} from '@modules/project/validators/project-name.async-validator';
-import {UserService} from '@core/services/user.service';
-import {AuthenticationService} from '@core/services/authentication.service';
-import {User} from '@shared/models/user/user';
+import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
+import { projectNameAsyncValidator } from '@modules/project/validators/project-name.async-validator';
+import { UserService } from '@core/services/user.service';
+import { AuthenticationService } from '@core/services/authentication.service';
+import { User } from '@shared/models/user/user';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-modal-copy-project',
   templateUrl: './modal-copy-project.component.html',
   styleUrls: ['./modal-copy-project.component.sass']
 })
-export class ModalCopyProjectComponent implements OnInit {
+export class ModalCopyProjectComponent extends BaseComponent implements OnInit {
   copyForm: FormGroup;
-  constructor(private projectService: ProjectService,
-              private activeModal: NgbActiveModal,
-              private toastrService: ToastrNotificationsService,
-              private authService: AuthenticationService) { }
+  constructor(
+    private projectService: ProjectService,
+    private activeModal: NgbActiveModal,
+    private toastrService: ToastrNotificationsService,
+    private authService: AuthenticationService) {
+    super();
+  }
   @Input() id: number;
   isShowSpinner = false;
   currentUser: User = {} as User;
   project: Project = {} as Project;
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.projectService.getProjectById(this.id).subscribe((res) => {
+    this.projectService.getProjectById(this.id).pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       this.project = res; this.copyForm = new FormGroup({
         name: new FormControl(`${this.project.name}` + `-Copy`,
           [Validators.required],

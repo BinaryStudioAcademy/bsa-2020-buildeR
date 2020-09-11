@@ -31,10 +31,10 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
-    this.userService.userLogoUrl.subscribe(url => {
+    this.userService.userLogoUrl.pipe(takeUntil(this.unsubscribe$)).subscribe(url => {
       this.user.avatarUrl = url;
     });
-    this.groupService.userGroupsChanged
+    this.groupService.groupsChanged$
       .pipe(takeUntil((this.unsubscribe$)))
       .subscribe(() => this.getGroups());
     this.teamMemberService.teamMembersChanged
@@ -44,7 +44,8 @@ export class WorkSpaceComponent extends BaseComponent implements OnInit {
   }
 
   getGroups() {
-    this.groupService.getUserGroups(this.user.id).pipe(takeUntil(this.unsubscribe$))
+    this.groupService.getUserGroups(this.user.id)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
         this.groups = res.filter(g => g.teamMembers.
           some(m => m.userId === this.user.id && m.isAccepted === true) === true);

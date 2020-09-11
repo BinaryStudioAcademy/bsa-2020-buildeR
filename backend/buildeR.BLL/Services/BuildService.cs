@@ -142,7 +142,9 @@ namespace buildeR.BLL.Services
                 .Where(bh => bh.PerformerId == id)
                 .Include(bh => bh.Performer)
                 .Include(bh => bh.Project)
-                .OrderBy(bh => bh.StartedAt).ToListAsync());
+                .ThenInclude(bh => bh.Repository)
+                .OrderBy(bh => bh.StartedAt)
+                .ToListAsync());
         }
 
         public async Task<BuildHistoryDTO> ChangeStatus(StatusChangeDto statusChange)

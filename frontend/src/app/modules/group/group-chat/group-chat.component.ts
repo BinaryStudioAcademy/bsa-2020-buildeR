@@ -28,65 +28,67 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
   @ViewChild('bottom') private bottom: ElementRef;
 
 
-  constructor(private route: ActivatedRoute,
-              private chat: ChatService,
-              private chatHub: ChatHubService,
-              private auth: AuthenticationService,
-              private groupService: GroupService) {
+  constructor(
+    private route: ActivatedRoute,
+    private chat: ChatService,
+    private chatHub: ChatHubService,
+    private auth: AuthenticationService,
+    private groupService: GroupService
+  ) {
     super();
-   }
+  }
   ngAfterViewChecked(): void {
     this.scrollBottom();
-    }
+  }
 
   ngOnInit(): void {
-    this.route.data.subscribe((data) => {
+    this.route.parent.data.pipe(takeUntil(this.unsubscribe$)).subscribe((data) => {
       this.groupId = data.group.id;
-      });
+    });
     this.user = this.auth.getCurrentUser();
     this.chatHub.buildConnection();
     this.chatHub.startConnectionAndJoinGroup(this.groupId.toString());
     this.chatHub.messageListener(this.message);
     this.message.pipe(takeUntil(this.unsubscribe$))
-    .subscribe((res) => {
-      const msg: Message = JSON.parse(res);
-      this.messages.push(msg);
-      this.scrollBottom();
-    });
+      .subscribe((res) => {
+        const msg: Message = JSON.parse(res);
+        this.messages.push(msg);
+        this.scrollBottom();
+      });
     this.getMessages();
     this.getMembersCount();
   }
 
-  getMembersCount(){
+  getMembersCount() {
     this.groupService.getMembersByGroup(this.groupId).pipe(takeUntil(this.unsubscribe$))
-    .subscribe((res) => {
-      this.membersCount = res.body.length;
-    });
+      .subscribe((res) => {
+        this.membersCount = res.body.length;
+      });
 
   }
 
-  getMessages(){
+  getMessages() {
     this.chat.getChatMessages(this.groupId).pipe(takeUntil(this.unsubscribe$))
-    .subscribe((res) => {
-      this.messages = res;
-    });
+      .subscribe((res) => {
+        this.messages = res;
+      });
   }
 
-  sendMessage(){
-    if (this.textOfMessage === ''){
+  sendMessage() {
+    if (this.textOfMessage === '') {
       return;
     }
     const message = {
-    text : this.textOfMessage,
-    groupId : this.groupId,
-    senderId : this.user.id,
-  } as Message;
+      text: this.textOfMessage,
+      groupId: this.groupId,
+      senderId: this.user.id,
+    } as Message;
     this.chat.sendMessage(message).pipe(takeUntil(this.unsubscribe$))
-    .subscribe(() => {});
+      .subscribe(() => { });
     this.textOfMessage = '';
   }
 
   scrollBottom(el: HTMLElement = this.bottom.nativeElement) {
     el.scrollIntoView();
-}
+  }
 }

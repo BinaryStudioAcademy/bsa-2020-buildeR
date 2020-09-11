@@ -39,7 +39,9 @@ export class ProjectBuildHistoryComponent extends BaseComponent
       this.loadProjects();
     });
     this.buildHistoryService.getLoadBuildHistoryOfProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.loadProjects());
-    this.projectService.getRepositoryByProjectId(this.projectId).subscribe((response) => this.repository = response);
+    this.projectService.getRepositoryByProjectId(this.projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((response) => this.repository = response);
   }
 
   loadProjects() {
@@ -58,24 +60,23 @@ export class ProjectBuildHistoryComponent extends BaseComponent
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.connect();
-    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
-      const buildIndex = this.builds.findIndex(
-        (pi) => pi.id === statusChange.BuildHistoryId
-      );
-      if (buildIndex >= 0) {
-        this.builds[buildIndex].buildStatus = statusChange.Status;
-        if (statusChange.Status !== BuildStatus.InProgress) {
-          this.buildHistoryService
-            .getBuildHistory(statusChange.BuildHistoryId)
-            .subscribe((bh) => {
-              this.builds[buildIndex] = bh;
-            });
+    this.buildStatusesSignalRService.listen()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((statusChange) => {
+        const buildIndex = this.builds.findIndex(
+          (pi) => pi.id === statusChange.BuildHistoryId
+        );
+        if (buildIndex >= 0) {
+          this.builds[buildIndex].buildStatus = statusChange.Status;
+          if (statusChange.Status !== BuildStatus.InProgress) {
+            this.buildHistoryService
+              .getBuildHistory(statusChange.BuildHistoryId)
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe((bh) => {
+                this.builds[buildIndex] = bh;
+              });
+          }
         }
-      }
-    });
-  }
-
-  getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? '—';
+      });
   }
 }

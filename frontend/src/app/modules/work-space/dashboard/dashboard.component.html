@@ -7,13 +7,11 @@
 <ng-template #loading>
   <app-loading-spinner size="20px"></app-loading-spinner>
 </ng-template>
-<ng-template #loaded>
 
- <!-- <div
-    *ngIf="this.starredProjects.length > 0 || this.activeProjects.length > 0 || hasGroupsProjects(); else emptyProjects">-->
+<ng-template #loaded>
     <div class="container starred-container">
       <span class="my-auto title starred-title">Starred projects</span>
-      <button class="btn btn-info button-create-project" title="Create new project" (click)="openCreateProjectModal()">
+      <button class="btn btn-success" title="Create new project" (click)="openCreateProjectModal()">
         <i class="fas fa-plus"></i>
       </button>
     </div>
@@ -28,7 +26,7 @@
     </ng-template>
     <ng-template #emptyStarredProjects>
       <div class="container">
-        <div class="row border rounded my-3">
+        <div class="card-wrp row border rounded my-3">
           <p class="m-auto text-center"><i class="far fa-star"></i> You can keep track of your favorite projects
             here once
             you start starring!</p>
@@ -37,7 +35,7 @@
     </ng-template>
 
     <nav>
-      <ul class="list-group list-group-horizontal container">
+      <ul class="list-group list-group-horizontal container tabs-wrp">
         <li class="list-group-item" [ngClass]="{ active: tab == 'myprojects' }">
           <a (click)="tab = 'myprojects'">
             My projects
@@ -63,7 +61,7 @@
         </div>
         <ng-template #emptyActiveProjects>
           <div class="container">
-              <div class="row border rounded my-3 placeholder">
+              <div class="card-wrp row border rounded my-3 placeholder">
                 <p class="m-auto text-center">It seems that you don't have active projects. Maybe it's time to add
                   the first one?</p>
                 <div class="col-12 button-wrapper">

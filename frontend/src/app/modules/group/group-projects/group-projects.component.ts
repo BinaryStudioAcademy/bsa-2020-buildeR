@@ -124,7 +124,7 @@ export class GroupProjectsComponent extends BaseComponent implements OnInit, OnD
       this.projectGroupService.removeProject(groupId, projectId).subscribe(() => {
         this.toastr.showSuccess('Project removed successfully');
         this.getGroupProjects();
-      }, (err) => this.toastr.showError(err));
+      }, (err) => this.toastr.showError(err.error, err.name));
     }
 
   }

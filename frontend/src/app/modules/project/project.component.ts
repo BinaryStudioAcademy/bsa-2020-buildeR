@@ -57,11 +57,11 @@ export class ProjectComponent extends BaseComponent implements OnInit {
     private buildHistoryService: BuildHistoryService
   ) {
     super();
-    this.projectService.projectName.subscribe((res) => this.project.name = res);
-    this.route.data.subscribe(({ project }) =>
+    this.projectService.projectName.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.project.name = res);
+    this.route.data.pipe(takeUntil(this.unsubscribe$)).subscribe(({ project }) =>
     {
       this.project = project;
-      this.lastBuild = this.project.buildHistories.reverse()[0];
+      this.lastBuild = this.project.buildHistories.reverse()?.[0];
     });
   }
 
@@ -88,7 +88,7 @@ export class ProjectComponent extends BaseComponent implements OnInit {
           this.router.navigateByUrl(`/portal/projects/${this.project.id}/history`);
           this.buildHistoryService.sendLoadBuildHistoryOfProject();
         },
-        (res) => this.toastrService.showError(res.error)
+        (err) => this.toastrService.showError(err.error, err.name)
       );
   }
 
@@ -98,7 +98,7 @@ export class ProjectComponent extends BaseComponent implements OnInit {
       this.projectService.canUserRunNotOwnProject(
         this.currentUser.id,
         this.project.id
-      ).subscribe(
+      ).pipe(takeUntil(this.unsubscribe$)).subscribe(
         (permission) => this.hasPermissionToTriggerBuild = permission
       );
     }
@@ -119,8 +119,11 @@ export class ProjectComponent extends BaseComponent implements OnInit {
       .getRepositoryBranches(projectId)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (resp) => (this.selectedProjectBranches = resp),
-        (resp) => this.toastrService.showError(resp.error),
+        (resp) => {
+          this.selectedProjectBranches = resp;
+          this.selectedProjectBranch = resp?.[0].name;
+        },
+        (err) => this.toastrService.showError(err.error, err.name),
         () => (this.loadingSelectedProjectBranches = false)
       );
   }

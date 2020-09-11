@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { GroupService } from '../../../core/services/group.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { NewGroup } from '../../../shared/models/group/new-group';
 import { Group } from '../../../shared/models/group/group';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { GroupRole } from '@shared/models/group/group-role';
@@ -24,16 +23,16 @@ export class GroupSettingsComponent implements OnInit {
   currentUser: User = {} as User;
 
   @Input() group: Group = {} as Group;
+
   constructor(
     private groupService: GroupService,
     private toastrService: ToastrNotificationsService,
     public route: ActivatedRoute,
     public authService: AuthenticationService
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
+    this.route.parent.data.subscribe(data => {
       this.groupId = data.group.id;
       this.group = data.group;
     });
@@ -61,15 +60,14 @@ export class GroupSettingsComponent implements OnInit {
     this.isShowSpinner = true;
     group.isPublic = group.isPublic.toString() === 'true';
     this.group = Object.assign(this.group, group);
-    this.groupService.updateGroup(this.group).subscribe(() => {
-      this.groupService.userGroupsChanged.next();
-      this.groupService.changeGroupNameAndStatus(this.group.name, this.group.isPublic);
+    this.groupService.updateGroup(this.group).subscribe(response => {
+      this.groupService.emitGroupChanges(response);
       this.isShowSpinner = false;
       this.toastrService.showSuccess('Group successfully updated');
     }, (err) => {
       this.isShowSpinner = false;
       this.toastrService.showError('Group wasn\'t updated');
-      this.toastrService.showError(err);
+      this.toastrService.showError(err.error, err.name);
     });
   }
   reset() {

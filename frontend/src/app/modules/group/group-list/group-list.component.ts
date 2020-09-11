@@ -36,12 +36,14 @@ export class GroupListComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.loadingGroups = true;
     this.currentUser = this.authService.getCurrentUser();
-    this.groupService.userGroupsChanged
+    this.groupService.groupsChanged$
       .pipe(takeUntil((this.unsubscribe$)))
       .subscribe(() => this.getGroups());
+
     this.teamMemberService.teamMembersChanged
       .pipe(takeUntil((this.unsubscribe$)))
       .subscribe(() => this.getGroups());
+
     this.getGroups();
   }
   getGroups() {
@@ -116,7 +118,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         this.getGroups(); this.toastrService.showSuccess('You became a member of this group');
       },
         (err) => {
-          this.toastrService.showError(err);
+          this.toastrService.showError(err.error, err.name);
         });
   }
   decline(group: Group) {
@@ -157,7 +159,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
             .deleteGroupWithNotification(removeObject)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
-              this.groupService.userGroupsChanged.next();
+              this.groupService.groupsChanged$.next();
               this.toastrService.showSuccess('Group is deleted');
             });
         }
