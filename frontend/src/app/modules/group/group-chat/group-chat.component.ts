@@ -78,10 +78,15 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
     if (this.textOfMessage === '') {
       return;
     }
+
+    const createTime = new Date();
+    createTime.setHours(createTime.getHours() - 3);
+
     const message = {
       text: this.textOfMessage,
       groupId: this.groupId,
       senderId: this.user.id,
+      createdAt: createTime
     } as Message;
     this.chat.sendMessage(message).pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => { });
