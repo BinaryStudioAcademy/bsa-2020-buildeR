@@ -1,5 +1,5 @@
-body
-  background: #eee
+.chat-container
+  border-bottom: 0px
 
 .card-body
     min-height: 350px
@@ -13,7 +13,7 @@ body
   li
     margin-bottom: 10px
     overflow: auto
-    color: #ffffff
+    color: black
 
   .chat-img
     float: left
@@ -30,14 +30,15 @@ body
     -webkit-border-radius: 50px
     -moz-border-radius: 50px
     border-radius: 20px
-    background: #3eaaaf
+    background: #D5E3F1
     display: inline-block
     padding: 10px 20px
     position: relative
     max-width: 350px
+    min-width: 150px
     word-wrap: break-word
-	
-	
+
+
 
     &:before
       content: ""
@@ -66,7 +67,7 @@ body
   .in .chat-message:before
     left: -12px
     border-bottom: 20px solid transparent
-    border-right: 20px solid #3eaaaf
+    border-right: 20px solid #D5E3F1
 
   .out
     .chat-img
@@ -78,14 +79,14 @@ body
       text-align: right
 
     .chat-message
-      background: #d84848
+      background: #f4f5f6
       max-width: 350px
       word-wrap: break-word
 
       &:before
         right: -12px
         border-bottom: 20px solid transparent
-        border-left: 20px solid #d84848
+        border-left: 20px solid #f4f5f6
 
 
 .btn-outline-secondary
@@ -96,13 +97,13 @@ body
     -moz-border-radius: 0.3rem 0.3rem 0 0
     border-radius: 0.3rem 0.3rem 0 0
 
-  background: #17202b
+  background: gray
   border: 0
   font-size: 1rem
   padding: .65rem 1rem
   position: relative
   font-weight: 600
-  color: #ffffff
+  color: white
 
 .chat-footer
   height: 0.1rem

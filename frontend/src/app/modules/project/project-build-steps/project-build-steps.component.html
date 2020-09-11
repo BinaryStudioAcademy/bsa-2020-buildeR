@@ -1,15 +1,10 @@
-<div *ngIf="isLoading; then loading; else loaded;"></div>
-
-<ng-template #loading>
-    <app-loading-spinner margin="170px auto" size="20px"></app-loading-spinner>
-</ng-template>
-
+<app-loading-spinner *ngIf="isLoading; else loaded;" margin="170px auto" size="20px"></app-loading-spinner>
 <ng-template #loaded>
   <div class="container px-0 mx-auto">
     <!-- Titles of steps -->
-    <h4 [hidden]='dockerfileUsed || allBuildSteps.length === 0'>Build Steps</h4>
-    <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="buildStepsDrop($event)" [hidden]='dockerfileUsed'>
-      <div class="project-build-step row" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
+    <h4 class="page-title" [hidden]='dockerfileUsed || !allBuildSteps.length'>Build Steps</h4>
+    <div cdkDropList class="project-build-step-list container row no-margin" (cdkDropListDropped)="buildStepsDrop($event)" [hidden]='dockerfileUsed'>
+      <div class="project-build-step row border rounded no-margin" *ngFor="let buildStep of allBuildSteps; let i = index" cdkDrag>
         <!-- Template for generic plugins -->
         <div class="container">
           <div class="row">
@@ -18,8 +13,8 @@
                 <i class="expand-icon" [ngClass]="(buildStep.isEditing) ? 'fa fa-angle-up':'fa fa-angle-down'"></i>
               </button>
             </div>
-            <div class="col-4 text-left m-auto" cdkDragHandle>
-              Build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
+            <div class="col-4 text-left m-auto step-title-wrp" cdkDragHandle>
+              Step #{{i+1}} &nbsp; | &nbsp; {{ buildStep.pluginCommand.plugin.pluginName }}
               <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
             </div>
             <div class="col-1 offset-6">
@@ -77,7 +72,7 @@
               <div class="row">
                 <div class="col-5 offset-1 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
                   <div class="input-group-prepend"><span class="input-group-text">Key:</span></div>
-                      <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="--verbosity" [disabled]="!arg.id">
+                      <input type="text" class="form-control" [(ngModel)]="arg.key" placeholder="verbosity" [disabled]="!arg.id">
                 </div>
                 <div class="col-5 input-group new-step-input" [ngbTooltip]="(!arg.id) ? 'Save changes to edit' : ''">
                   <div class="input-group-prepend"><span class="input-group-text">Value:</span></div>
@@ -118,7 +113,7 @@
               <div class="col-4 offset-1 text-left mt-3">
                 <button class="btn btn-success"
                   [disabled]="buildStep.newCommandArgumentValue || buildStep.newCommandArgumentKey"
-                  (click)="addCommandArgument(buildStep)">Add command argument
+                  (click)="addCommandArgument(buildStep)">Add argument
                 </button>
               </div>
             </div>
@@ -128,9 +123,9 @@
     </div>
 
     <!-- Post Actions -->
-    <div cdkDropList class="project-build-step-list container row" (cdkDropListDropped)="postBuildStepsDrop($event)" [hidden]='dockerfileUsed'>
-      <h4 [hidden]='dockerfileUsed || allPostBuildSteps.length === 0'>Post-build Actions</h4>
-      <div class="project-build-step row" *ngFor="let buildStep of allPostBuildSteps; let i = index" cdkDrag>
+    <div cdkDropList class="project-build-step-list container row no-margin" (cdkDropListDropped)="postBuildStepsDrop($event)" [hidden]='dockerfileUsed'>
+      <h4 class="page-title" [hidden]="dockerfileUsed || !allPostBuildSteps.length">Post-build Actions</h4>
+      <div class="project-build-step row border rounded no-margin" *ngFor="let buildStep of allPostBuildSteps; let i = index" cdkDrag>
         <!-- Template for generic plugins -->
         <div class="container">
           <div class="row">
@@ -140,7 +135,7 @@
               </button>
             </div>
             <div class="col-4 text-left m-auto" cdkDragHandle>
-              Post-build step #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
+              Action #{{i+1}} &nbsp; | &nbsp; <span>{{ buildStep.pluginCommand.plugin.pluginName }}</span>
               <span *ngIf="buildStep.pluginCommand.name">: {{ buildStep.pluginCommand.name }}</span>
             </div>
             <div class="col-1 offset-6">
@@ -207,15 +202,15 @@
           <button class="btn btn-success" (click)="saveNewBuildSteps(); updateAllSteps()" [disabled]="allBuildSteps.length === 0 && allPostBuildSteps.length === 0">
             Save changes
           </button>
-          <button class="btn btn-info ml-1" (click)="addDockerfile()" [hidden]="dockerfileUsed">Add Dockerfile</button>
+          <button class="btn btn-info ml-1" (click)="addDockerfile()" [hidden]="dockerfileUsed">Use Dockerfile</button>
           <button class="btn btn-info ml-1" (click)="deleteDockerFile()" [hidden]="!dockerfileUsed">Switch to steps</button>
         </div>
         <div class="col-6 text-right">
           <button class="btn save-btn mr-2 all-button" (click)="expandAll()" [disabled]="allBuildSteps.length <= 1 && allPostBuildSteps.length <= 1">
-            <i class="fas fa-angle-double-down"></i> Expand
+            <i class="fas fa-angle-double-down"></i> Expand All
           </button>
           <button class="btn save-btn all-button" (click)="collapseAll()" [disabled]="allBuildSteps.length <= 1 && allPostBuildSteps.length <= 1">
-            <i class="fas fa-angle-double-up"></i> Collapse
+            <i class="fas fa-angle-double-up"></i> Collapse All
           </button>
         </div>
     </div>

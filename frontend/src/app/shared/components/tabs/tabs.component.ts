@@ -1,11 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { TabRoute } from '../../models/tabs/tab-route';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
-  styleUrls: ['./tabs.component.sass']
+  styleUrls: ['./tabs.component.sass'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TabsComponent implements OnInit {

@@ -1,4 +1,4 @@
-<form #triggerForm="ngForm">
+<form #triggerForm="ngForm" class="border rounded">
   <div class="form-control-wr">
     <label>
       Trigger branch
@@ -43,7 +43,7 @@
   </div>
   <div class="form-control-wr-small">
     <div *ngIf="createNewTrigger" class="btn-wr">
-      <button class="btn btn-success" (click)="createTrigger()">Create</button>
+      <button class="btn btn-success" (click)="createTrigger()">Add</button>
     </div>
     <div *ngIf="!createNewTrigger" class="btn-wr">
       <button *ngIf="selectedEventsChanged || triggerForm.touched"

@@ -75,8 +75,4 @@ export class ProjectBuildHistoryComponent extends BaseComponent
       }
     });
   }
-
-  getCommit(bh: BuildHistory) {
-    return bh.commitHash?.substring(0, 6) ?? '—';
-  }
 }

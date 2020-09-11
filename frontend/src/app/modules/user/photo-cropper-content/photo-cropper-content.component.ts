@@ -10,7 +10,7 @@ import {timer} from 'rxjs';
   templateUrl: './photo-cropper-content.component.html',
   styleUrls: ['./photo-cropper-content.component.sass']
 })
-export class PhotoCropperContentComponent implements OnInit {
+export class PhotoCropperContentComponent {
   constructor(private activeModal: NgbActiveModal, private toastr: ToastrNotificationsService) { }
   @Input() content;
   imageChangedEvent;
@@ -18,10 +18,6 @@ export class PhotoCropperContentComponent implements OnInit {
   canSave = false;
   imageName = '';
   isShowSpinner = false;
-
-  ngOnInit(): void {
-  }
-
 
   fileChangeEvent(event): void {
     this.imageChangedEvent = event;

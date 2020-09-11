@@ -1,47 +1,36 @@
-<div class="trigger-wr">
+<div class="trigger-wr border-bottom">
   <div class="cl">
     <h2 class="title">
-      Triggers
+      GitHub triggers
     </h2>
-    <div *ngIf="!project?.repository?.createdByLink">
-      <div class="switch-wr">
-        <div class="custom-control custom-switch">
-          <input type="checkbox" class="custom-control-input" id="remoteTriggers" #remoteTriggersSectionDisplay="ngModel"
-          name="remoteTriggersSectionDisplay" [(ngModel)]="remoteTriggersSection"/>
-          <label class="custom-control-label" for="remoteTriggers">Remote triggers</label>
-        </div>
-      </div>
-      <div *ngIf="remoteTriggersSection">
-        <app-proejct-remote-trigger
-          *ngFor="let remoteTrigger of remoteTriggers"
-          [trigger]="remoteTrigger"
-          [branches]="branches"
-          [createNewTrigger]="false"
-          (triggerUpdate)='updateRemoteTrigger($event)'
-          (triggerDelete)='deleteRemoteTrigger($event)'>
-        </app-proejct-remote-trigger>
-
-        <div class="divider"></div>
-        <p class="title">Create remote trigger</p>
-
-        <app-proejct-remote-trigger
+    <div *ngIf="!project?.repository?.createdByLink && remoteTriggersSection" class="trigger-base-container">
+      <app-proejct-remote-trigger
+        class="remote-trigger-wrp"
         [branches]="branches"
         [createNewTrigger]="true"
-        (triggerCreate)="createRemoteTrigger($event)"
-        >
-        </app-proejct-remote-trigger>
-      </div>
+        (triggerCreate)="createRemoteTrigger($event)">
+      </app-proejct-remote-trigger>
+      <app-proejct-remote-trigger
+        class="remote-trigger-wrp"
+        *ngFor="let remoteTrigger of remoteTriggers"
+        [trigger]="remoteTrigger"
+        [branches]="branches"
+        [createNewTrigger]="false"
+        (triggerUpdate)='updateRemoteTrigger($event)'
+        (triggerDelete)='deleteRemoteTrigger($event)'>
+      </app-proejct-remote-trigger>
     </div>
-    <div class="switch-wr">
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="runOnSchedule" [(ngModel)]="runOnSchedule"
-          (change)="onToggle(runOnSchedule)">
-        <label class="custom-control-label" for="runOnSchedule">Run on schedule </label>
-      </div>
-    </div>
-    <div [hidden]='!runOnSchedule'>
+  </div>
+</div>
+
+<div class="trigger-wr schedulers-container">
+  <div class="cl">
+    <h2 class="title">
+      Schedulers
+    </h2>
+    <div>
       <!-- Add new trigger -->
-      <div class="trigger-container border rounded">
+      <div class="scheduler-trigger-wrp trigger-base-container border rounded">
         <div class="second-container">
           <select class="form-control branch-select" [(ngModel)]="selectedBranch">
             <option *ngFor="let branch of branches" [ngValue]='branch'>
@@ -56,14 +45,14 @@
           <cron-jobs class="cron-jobs" [config]="cronConfig" [(ngModel)]="cronResult"> </cron-jobs>
         </div>
         <div class="fifth-container">
-          <button (click)="createTrigger(cronResult)" class="btn btn-info"
+          <button (click)="createTrigger(cronResult)" class="btn btn-success"
             [disabled]="!cronResult || !selectedBranch">Add </button>
         </div>
       </div>
       <!-- end add new trigger -->
       <!-- edit Triggers -->
       <ng-container *ngFor="let trigger of triggers; index as i">
-        <div class="trigger-container border rounded">
+        <div class="scheduler-trigger-wrp trigger-base-container border rounded">
           <div class="first-container">
             <span>#{{i+1}} </span>
           </div>

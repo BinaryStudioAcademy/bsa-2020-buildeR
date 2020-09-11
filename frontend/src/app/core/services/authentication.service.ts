@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { from, of } from 'rxjs';
-import { filter, tap, switchMap, map } from 'rxjs/operators';
+import { filter, tap, switchMap, map, mergeMap } from 'rxjs/operators';
 import { UserInfo } from 'firebase';
 import { NewUser } from '@shared/models/user/new-user';
 import { User } from '@shared/models/user/user';
@@ -79,13 +79,9 @@ export class AuthenticationService {
   }
 
   refreshFirebaseToken() {
-    const fireUser$ = this.angularAuth.currentUser
-      ? from(this.angularAuth.currentUser)
-      : this.angularAuth.authState;
-
-    return fireUser$.pipe(
+    return this.angularAuth.authState.pipe(
       filter(user => Boolean(user)),
-      switchMap(user => from(user.getIdToken(true))),
+      mergeMap(user => from(user.getIdToken(true))),
       tap(token => localStorage.setItem('jwt', token))
     );
   }

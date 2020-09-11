@@ -9,29 +9,31 @@
     </nav>
     <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
       <div class='user-commit'>
-        <a [ngClass]="{'disabled-link': buildHistory?.performer?.username == 'BuilderBot'}" [routerLink]="'/portal/user/' + buildHistory.performer?.id">
+        <span class="build-url-wrp">
           <img
             [src]="buildHistory.performer?.avatarUrl"
             onerror="this.src='../../../../assets/images/Avatar-default.png'"
             alt="Avatar"
-            class="avatar" />Author: {{buildHistory.performer?.username}}
-        </a>
-        <p class="build-url-wrp"><i class="fas fa-code"></i> Commit
+            class="avatar icon-wrp" />Author: <a class="url" title="Open profile" [routerLink]="'/portal/user/' + buildHistory.performerId">{{buildHistory.performer?.username || 'System'}}</a>
+        </span>
+        <p class="build-url-wrp"><i class="fas fa-code icon-wrp"></i> Commit:
           <a
             class="commit-link url"
             *ngIf="project.repository?.url && buildHistory?.commitHash; else notLink;"
             target="_blank"
-            href="{{project.repository.url}}/commit/{{buildHistory.commitHash}}">{{ getCommit(buildHistory) }}</a>
+            title="View commit on GitHub"
+            href="{{project.repository.url}}/commit/{{buildHistory.commitHash}}">{{ getCommit(buildHistory) }} <i class="fas fa-external-link-alt external-icon-url"></i></a>
           <ng-template #notLink>
             <span> — </span>
           </ng-template>
         </p>
-        <p class="build-url-wrp"><i class="fas fa-code-branch"></i> Branch
+        <p class="build-url-wrp"><i class="fas fa-code-branch icon-wrp"></i> Branch:
           <a
             class="commit-link url"
             *ngIf="project.repository?.url && buildHistory?.branchHash; else noBranchLink;"
             target="_blank"
-            href="{{project.repository.url}}/tree/{{buildHistory.branchHash}}">{{buildHistory.branchHash}}</a>
+            title="View branch on GitHub"
+            href="{{project.repository.url}}/tree/{{buildHistory.branchHash}}">{{buildHistory.branchHash}} <i class="fas fa-external-link-alt external-icon-url"></i></a>
           <ng-template #noBranchLink>
             <span> — </span>
           </ng-template>
@@ -42,11 +44,11 @@
           class="status"
           [ngClass]="{'status-blink': buildHistory.buildStatus == 5}"
           [appBuildHistoryStatus]="buildHistory.buildStatus">
-          <i class="fas fa-hammer"></i> #{{buildHistory.number}} {{buildHistory.buildStatus | buildStatus}}
+          <i class="fas fa-hammer icon-wrp"></i> #{{buildHistory.number}} {{buildHistory.buildStatus | buildStatus}}
         </p>
-        <p class="build-time"><i class="far fa-clock"></i> Duration {{buildHistory.duration | timespan}}</p>
+        <p class="build-time"><i class="far fa-clock icon-wrp"></i> Duration {{buildHistory.duration | timespan}}</p>
         <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium'}}">
-          <i class="far fa-calendar-alt"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
+          <i class="far fa-calendar-alt icon-wrp"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
         <button class="btn btn-link restart-button" (click)="restartBuild()">
           <i class="fas fa-redo"></i>
           <span class="button-text"> Restart build</span></button>

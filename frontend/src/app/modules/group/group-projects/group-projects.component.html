@@ -7,11 +7,11 @@
 <ng-template #loaded>
 <div class="col-md-12 mx-12 px-0 col-sm-12 col-12 my-auto plus">
   <div class="ml-auto" *ngIf="permissions.canDelete" ngbDropdown>
-    <button *ngIf = "permissions.canDelete" tabindex="0" class="btn btn-info" ngbDropdownToggle  id="Dropdown" role="button">
+    <button *ngIf = "permissions.canDelete" tabindex="0" class="btn btn-success" ngbDropdownToggle  id="Dropdown" role="button">
       <i  class="fas fa-plus"></i>
     </button>
     <div ngbDropdownMenu aria-labelledby="Dropdown" class="dropdown-menu dropdown-menu-right" >
-      <a ngbDropdownItem class="dropdown-item"  *ngFor="let project of dropdownProjects" (click)="addProject(project)">
+      <a ngbDropdownItem class="dropdown-item" *ngFor="let project of dropdownProjects" (click)="addProject(project)">
         {{project.name}}</a>
     </div>
   </div>

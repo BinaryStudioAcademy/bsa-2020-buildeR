@@ -7,7 +7,7 @@
 </div>
   <input *ngIf="!content" type="file" (change)="fileChangeEvent($event)"/>
 
-  <image-cropper
+<image-cropper
   [imageChangedEvent]="imageChangedEvent"
   [maintainAspectRatio]="true"
   [imageURL]="content"
@@ -17,9 +17,9 @@
   (imageCropped)="imageCropped($event)"
   (imageLoaded)="imageLoaded()"
   (cropperReady)="cropperReady()"
-  (loadImageFailed)="loadImageFailed()"
-></image-cropper>
-<div *ngIf="croppedImage"  class="img-preview">
+  (loadImageFailed)="loadImageFailed()">
+</image-cropper>
+<div *ngIf="croppedImage" class="img-preview">
   <img [src]="croppedImage" />
 </div>
 <div *ngIf="canSave">

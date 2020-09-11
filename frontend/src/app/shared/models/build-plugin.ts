@@ -4,7 +4,7 @@ export interface BuildPlugin {
   id: number;
   pluginName: string;
   command: string;
-  DockerImageName: string;
+  dockerImageName: string;
   version: string;
   dockerRegistryName: string;
   isCollapsed: boolean;
