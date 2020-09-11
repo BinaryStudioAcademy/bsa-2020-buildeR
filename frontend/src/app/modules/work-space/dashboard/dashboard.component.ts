@@ -89,14 +89,13 @@ export class DashboardComponent
         ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))
       ].filter(pi => pi.lastBuildHistory?.id === statusChange.BuildHistoryId);
       if (projectsToUpdate) {
+        projectsToUpdate.forEach(p => {
+          delete p.lastBuildHistory.buildStatus;
+          p.lastBuildHistory.buildStatus = statusChange.Status;
+        });
         if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
             projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
-          });
-        } else {
-          projectsToUpdate.forEach(p => {
-            delete p.lastBuildHistory.buildStatus;
-            p.lastBuildHistory.buildStatus = statusChange.Status;
           });
         }
       }

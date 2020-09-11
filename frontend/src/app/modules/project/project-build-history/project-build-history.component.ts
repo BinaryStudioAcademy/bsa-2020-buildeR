@@ -63,14 +63,13 @@ export class ProjectBuildHistoryComponent extends BaseComponent
         (pi) => pi.id === statusChange.BuildHistoryId
       );
       if (buildIndex >= 0) {
+        this.builds[buildIndex].buildStatus = statusChange.Status;
         if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
             .subscribe((bh) => {
               this.builds[buildIndex] = bh;
             });
-        } else {
-          this.builds[buildIndex].buildStatus = statusChange.Status;
         }
       }
     });

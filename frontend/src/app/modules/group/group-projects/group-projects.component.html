@@ -54,12 +54,14 @@
             </g>
           </svg>
           </div>
-          <span *ngIf = "!permissions.canBuild" class="my-3">
+          <span *ngIf = "permissions.canDelete; else notPermission" class="my-3">
           It seems that this group doesn't have any project, you can add one any time!
         </span>
-          <span *ngIf = "permissions.canBuild" class="my-3">
-          You don't have permission to add any projects to this group!
-        </span>
+          <ng-template #notPermission>
+            <span class="my-3">
+                You don't have permission to add any projects to this group!
+            </span>
+          </ng-template>
         </div>
       </div>
   </ng-template>

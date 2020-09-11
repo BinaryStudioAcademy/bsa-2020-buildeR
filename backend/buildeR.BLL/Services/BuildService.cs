@@ -45,9 +45,7 @@ namespace buildeR.BLL.Services
                 throw new NotFoundException(nameof(BuildHistory), buildHistoryId);
             }
             
-            var logs = await _buildLogService.GetLogs(buildHistory.ProjectId, buildHistory.Id);
-            return Mapper.Map<BuildHistoryDTO>(buildHistory, opt => opt.AfterMap((src, dest) => dest.Logs = logs));
-
+            return Mapper.Map<BuildHistoryDTO>(buildHistory);
         }
 
         public async Task<IEnumerable<BuildHistoryDTO>> GetAll()
@@ -123,9 +121,8 @@ namespace buildeR.BLL.Services
             {
                 return null;
             }
-
-            var logs = await _buildLogService.GetLogs(buildHistory.ProjectId, buildHistory.Id);
-            return Mapper.Map<BuildHistoryDTO>(buildHistory, opt => opt.AfterMap((src, dest) => dest.Logs = logs));
+            
+            return Mapper.Map<BuildHistoryDTO>(buildHistory);
         }
 
 

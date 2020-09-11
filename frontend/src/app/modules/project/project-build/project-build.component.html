@@ -53,9 +53,9 @@
           <i class="fas fa-redo"></i>
           <span class="button-text"> Restart build</span></button>
       </div>
-    </div>
-    <app-logging-terminal [project]="project" [logs]="buildHistory.logs"></app-logging-terminal>
   </div>
+  <app-logging-terminal [buildhistory]="buildHistory"></app-logging-terminal>
+</div>
 </ng-template>
 <ng-template #emptyBuilds>
   <div class="container">

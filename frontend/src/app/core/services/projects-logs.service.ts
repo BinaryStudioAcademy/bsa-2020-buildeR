@@ -1,50 +1,87 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { IProjectLog } from '@shared/models/project/project-log';
+import { SignalRHubFactoryService } from './signalr-hub-factory.service';
+import { SignalRHub } from '@core/models/signalr-hub';
+import { ToastrNotificationsService } from './toastr-notifications.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ProjectLogsService {
-  private logsHubConnection: HubConnection;
-  private routePrefix = '/logs';
+export class ProjectLogsService implements OnDestroy {
+  private logsHub: SignalRHub;
 
-  constructor(private httpService: HttpService) { }
+  subscriptions$ = new Map<number, Subject<string>>();
 
-  buildConnection() {
-    this.logsHubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.signalRUrl}/logsHub`)
-      .build();
+  connecting: Promise<void>;
+
+  isRegistered = false;
+
+  constructor(
+    private httpService: HttpService,
+    private signalRService: SignalRHubFactoryService,
+    private toastr: ToastrNotificationsService
+  ) {}
+
+  ngOnDestroy(): void {
+    this.subscriptions$.forEach((subject) => {
+      subject.complete();
+    });
+    this.subscriptions$.clear();
+    this.logsHub.disconnect();
   }
 
   getLogsOfHistory(projectId: number, buildHisotryId: number) {
-    return this.httpService.getRequest<IProjectLog[]>(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
+    return this.httpService.getRequest<IProjectLog[]>(
+      `/logs/${projectId}/${buildHisotryId}`
+    );
   }
 
-  startConnectionAndJoinGroup(groupName: string) {
-    this.logsHubConnection
-      .start()
+  disconnect(buildHistoryId: number) {
+    if (this.subscriptions$.has(buildHistoryId)) {
+      this.subscriptions$.get(buildHistoryId).complete();
+      this.subscriptions$.delete(buildHistoryId);
+    }
+  }
+
+  private configureSignalR() {
+    if (!this.logsHub) {
+      this.logsHub = this.signalRService.createHub('/logsHub');
+      this.connecting = this.logsHub.start();
+    }
+  }
+
+  connect(buildHistoryId: number) {
+    this.configureSignalR();
+    this.connecting
       .then(() => {
-        this.logsHubConnection.invoke('JoinGroup', groupName); // Automatically join group after connecting
+        this.logsHub
+          .invoke('JoinGroup', buildHistoryId.toString())
+          .then(() => {
+            if (!this.isRegistered) {
+              this.logsHub.hubConnection.on('Broadcast', (groupId, log) => {
+                const group = Number(groupId);
+                if (!this.subscriptions$.has(Number(group))) {
+                  const subscription$ = new Subject<string>();
+                  this.subscriptions$.set(group, subscription$);
+                }
+                this.subscriptions$.get(group).next(log);
+              });
+              this.isRegistered = true;
+            }
+          })
+          .catch((err) => this.toastr.showError(err));
       })
-      .catch(err => {
-        setTimeout(function() {
-          this.startConnection();
-        }, 3000);
-      });
+      .catch((err) => this.toastr.showError(err));
   }
 
-  stopConnection() {
-    this.logsHubConnection
-      .stop(); // It also makes user leave his group automaticlly after disconnecting
-  }
-
-  logsListener(logSubject: Subject<string>) {
-    this.logsHubConnection.on('Broadcast', (data) => {
-      logSubject.next(data);
-    });
+  listen(buildHistoryId: number): Subject<string> {
+    if (!this.subscriptions$.has(buildHistoryId)) {
+      this.subscriptions$.set(buildHistoryId, new Subject<string>());
+    }
+    return this.subscriptions$.get(buildHistoryId);
   }
 }
