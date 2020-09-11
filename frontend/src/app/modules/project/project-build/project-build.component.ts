@@ -74,6 +74,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     this.buildStatusesSignalRService.connect();
     this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
       if (statusChange.BuildHistoryId === this.buildHistory?.id) {
+        this.buildHistory.buildStatus = statusChange.Status;
         if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistory.buildStatus = statusChange.Status;
           this.buildHistoryService
@@ -81,8 +82,6 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
             .subscribe((bh) => {
               this.buildHistory = bh;
             });
-        } else {
-          this.buildHistory.buildStatus = statusChange.Status;
         }
       }
     });
