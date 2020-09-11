@@ -21,8 +21,10 @@
         </div>
         <div class="text-dark external-build-url">
           <a target="_blank"
+            *ngIf="project.lastBuildHistory.branchHash; else noLink"
             href="{{project.repository?.url}}/tree/{{project.lastBuildHistory.branchHash}}">{{project.lastBuildHistory.branchHash}}
-            <i class="fas fa-external-link-alt external-icon-url"></i></a>
+            <i class="fas fa-external-link-alt external-icon-url"></i>
+          </a>
         </div>
       </div>
       <div class="build-column-wrp">
@@ -30,7 +32,9 @@
           <small>Last build</small>
         </div>
         <div class="font-weight-bold build-status">
-          <a class="status" [ngClass]="{'status-blink': project.lastBuildHistory.buildStatus == 5}"
+          <a
+            class="status"
+            [ngClass]="{'status-blink': project.lastBuildHistory.buildStatus == 5}"
             [routerLink]="['/portal/projects', project.id, 'history', project.lastBuildHistory.id]"
             [appBuildHistoryStatus]="project.lastBuildHistory.buildStatus">
             <i class="fas fa-hammer"></i> #{{project.lastBuildHistory.number}}
@@ -43,10 +47,12 @@
           <small>Commit</small>
         </div>
         <div class="text-dark ">
-          <div class="text-dark  external-build-url">
+          <div class="text-dark external-build-url">
             <a target="_blank"
+              *ngIf="project.lastBuildHistory.commitHash; else noLink"
               href="{{project.repository?.url}}/tree/{{project.lastBuildHistory.commitHash}}">{{getCommit(project.lastBuildHistory)}}
-              <i class="fas fa-external-link-alt external-icon-url"></i></a>
+              <i class="fas fa-external-link-alt external-icon-url"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -54,7 +60,7 @@
         <div class="text-muted">
           <small>Finished</small>
         </div>
-        <div class="">
+        <div class="text-dark external-build-url">
           {{ project.lastBuildHistory.buildAt | dateAgo }}
         </div>
       </div>
@@ -130,3 +136,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #noLink>
+  <span> — </span>
+</ng-template>
