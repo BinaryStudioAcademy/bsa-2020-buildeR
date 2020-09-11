@@ -8,26 +8,21 @@ import { SignalRHubFactoryService } from './signalr-hub-factory.service';
 import { SignalRHub } from '@core/models/signalr-hub';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectLogsService implements OnDestroy {
   private logsHub: SignalRHub;
-
-  private routePrefix = '/logsHub';
 
   subscriptions$ = new Map<number, Subject<string>>();
 
   connecting: Promise<void>;
 
+  isRegistered = false;
+
   constructor(
     private httpService: HttpService,
     private signalRService: SignalRHubFactoryService
   ) {}
-
-  buildConnection() {
-    this.logsHubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.signalRUrl}/logsHub`)
-      .build();
 
   ngOnDestroy(): void {
     this.subscriptions$.forEach((subject) => {
@@ -38,7 +33,9 @@ export class ProjectLogsService implements OnDestroy {
   }
 
   getLogsOfHistory(projectId: number, buildHisotryId: number) {
-    return this.httpService.getRequest<IProjectLog[]>(`${this.routePrefix}/${projectId}/${buildHisotryId}`);
+    return this.httpService.getRequest<IProjectLog[]>(
+      `/logs/${projectId}/${buildHisotryId}`
+    );
   }
 
   disconnect(buildHistoryId: number) {
@@ -50,7 +47,7 @@ export class ProjectLogsService implements OnDestroy {
 
   private configureSignalR() {
     if (!this.logsHub) {
-      this.logsHub = this.signalRService.createHub(this.routePrefix);
+      this.logsHub = this.signalRService.createHub("/logsHub");
       this.connecting = this.logsHub.start();
     }
   }
@@ -62,16 +59,19 @@ export class ProjectLogsService implements OnDestroy {
         this.logsHub
           .invoke('JoinGroup', buildHistoryId.toString())
           .then(() => {
-            this.logsHub.hubConnection.on('Broadcast', (groupId, log) => {
-              const group = Number(groupId);
-              if (!this.subscriptions$.has(Number(group))) {
-                const subscription$ = new Subject<string>();
-                this.subscriptions$.set(group, subscription$);
-              }
-              this.subscriptions$.get(group).next(log);
-            });
+            if (!this.isRegistered) {
+              this.logsHub.hubConnection.on('Broadcast', (groupId, log) => {
+                const group = Number(groupId);
+                if (!this.subscriptions$.has(Number(group))) {
+                  const subscription$ = new Subject<string>();
+                  this.subscriptions$.set(group, subscription$);
+                }
+                this.subscriptions$.get(group).next(log);
+              });
+              this.isRegistered = true;
+            }
           })
-          .catch((err) => console.error(err))
+          .catch((err) => console.error(err));
       })
       .catch((err) => console.error(err));
   }
@@ -81,14 +81,5 @@ export class ProjectLogsService implements OnDestroy {
       this.subscriptions$.set(buildHistoryId, new Subject<string>());
     }
     return this.subscriptions$.get(buildHistoryId);
-  }
-
-  public getLogsOfHistory(
-    projectId: number,
-    buildHistoryId: number
-  ): Observable<IProjectLog[]> {
-    return this.httpService.getRequest(
-      `${this.routePrefix}/${projectId}/${buildHistoryId}`
-    );
   }
 }

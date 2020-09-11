@@ -30,13 +30,13 @@ interface IAction {
 export class LoggingTerminalComponent
   extends BaseComponent
   implements OnInit, OnDestroy {
-  @Input() isLive: boolean;
   @Input() set buildhistory(bh: BuildHistory) {
+    const oldBuildHistory = this.buildHistory;
     this.buildHistory = bh;
+    if (oldBuildHistory?.id !== bh.id) {
+      this.writeStaticLogs();
+    }
     this.configureLogsSignalR();
-  }
-  @Input() set logs(values: IProjectLog[]) {
-    this.writeStaticLogs(values);
   }
 
   private buildHistory: BuildHistory;
@@ -57,7 +57,6 @@ export class LoggingTerminalComponent
 
   constructor(private logsService: ProjectLogsService) {
     super();
-    this.initLogs();
   }
 
   @HostListener('window:scroll', ['$event']) onScroll(_: Event) {
@@ -71,7 +70,10 @@ export class LoggingTerminalComponent
   ngOnInit() {}
 
   private configureLogsSignalR() {
-    if (this.buildHistory.buildStatus == BuildStatus.InProgress) {
+    if (
+      this.buildHistory.buildStatus == BuildStatus.InProgress ||
+      this.buildHistory.buildStatus == BuildStatus.Pending
+    ) {
       this.logsService.connect(this.buildHistory.id);
       this.logsService.listen(this.buildHistory.id).subscribe((message) => {
         this.buildLog(this.formatLog(message));
@@ -83,9 +85,15 @@ export class LoggingTerminalComponent
     this.logsService.disconnect(this.buildHistory.id);
   }
 
-  writeStaticLogs(logs: IProjectLog[]) {
+  writeStaticLogs() {
     this.initLogs();
-    logs?.forEach((log) => this.buildLog(this.formatExistingLog(log), false));
+    this.logsService
+      .getLogsOfHistory(this.buildHistory.projectId, this.buildHistory.id)
+      .subscribe((logs) => {
+        logs?.forEach((log) =>
+          this.buildLog(this.formatExistingLog(log), false)
+        );
+      });
   }
 
   initLogs() {
