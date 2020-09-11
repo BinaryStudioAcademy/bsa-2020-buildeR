@@ -33,10 +33,11 @@ export class LoggingTerminalComponent
   @Input() set buildhistory(bh: BuildHistory) {
     const oldBuildHistory = this.buildHistory;
     this.buildHistory = bh;
-    if (oldBuildHistory?.id !== bh.id) {
-      this.writeStaticLogs();
-    }
     this.configureLogsSignalR();
+    this.writeStaticLogs();
+    if (oldBuildHistory && oldBuildHistory?.id !== bh.id) {
+      this.logsService.disconnect(oldBuildHistory.id);
+    }
   }
 
   private buildHistory: BuildHistory;
