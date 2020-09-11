@@ -34,10 +34,11 @@
   padding-left: 0
 
   li
-    height: 14vh
+    height: max-content
     border-radius: 2px
     border: 1px solid #eaeaea
     padding: 0.2rem
+    padding-left: 10px
 
     .user-commit
       display: flex
@@ -49,6 +50,7 @@
       float: left
       text-align: center
       border-right: 1px dashed #999
+      overflow: hidden
 
       p
         margin: 0
@@ -56,11 +58,10 @@
       a
         text-decoration: none
         cursor: pointer
-        margin: 0
+        margin: auto
         color: #666666
         position: relative
         display: flex
-        justify-content: center
         align-items: center
         .avatar
           vertical-align: middle
@@ -82,6 +83,7 @@
       align-items: center
       justify-content: space-evenly
       gap: 0.5rem
+      margin-top: 1.5em
 
       p
         margin: 0
@@ -107,10 +109,6 @@
   .build-container
     padding: 0
 
-  ul.build-container
-
-    li
-      height: 14vh
 
 @media (max-width:500px)
   ul.build-container
@@ -133,6 +131,7 @@
         align-items: flex-start
         padding-left: 0.5rem
         width: 65%
+        margin: 0
 
         p
           width: max-content
