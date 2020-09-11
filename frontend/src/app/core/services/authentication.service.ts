@@ -65,9 +65,9 @@ export class AuthenticationService {
       });
   }
 
-  logout() {
+  logout(redirectUrl?: string) {
     return this.clearAuth()
-      .then(() => this.router.navigate(['/']));
+      .then(() => this.router.navigate([redirectUrl ? redirectUrl : '/']));
   }
 
   cancelRegistration() {
