@@ -85,6 +85,8 @@ export class FirebaseSignInService {
         else {
           this.registerDialog.signUp(credential);
         }
+      }, (error) => {
+        this.registerDialog.signUp(credential);
       });
   }
 
