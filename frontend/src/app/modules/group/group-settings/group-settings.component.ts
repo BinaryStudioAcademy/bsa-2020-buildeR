@@ -44,13 +44,13 @@ export class GroupSettingsComponent implements OnInit {
       name: new FormControl(this.group.name,
         [
           Validators.minLength(4),
-          Validators.maxLength(300),
+          Validators.maxLength(32),
           Validators.required,
           Validators.pattern(`^(?![-\\.])(?!.*--)(?!.*\\.\\.)[[A-Za-z0-9-\\._ ]+(?<![-\\.])$`)
         ]),
       description: new FormControl(this.group.description,
         [
-          Validators.maxLength(32),
+          Validators.maxLength(300),
           Validators.pattern('[^А-яа-я]*')
         ]),
       isPublic: new FormControl(`${this.group.isPublic}`, Validators.required)
