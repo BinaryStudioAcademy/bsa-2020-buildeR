@@ -12,7 +12,7 @@
               <h5 title="Open {{msg.sender?.username}} profile" *ngIf="msg.senderId != user.id" [routerLink]="'/portal/user/' + msg.senderId">{{msg.sender.username}}
               </h5>
               <p>{{msg.text}} </p>
-              <small title="Message sent at {{msg.createdAt | date:'medium':'UTC +6'}}">{{msg.createdAt | date:'shortTime':'UTC +6'}}</small>
+              <small title="Message sent at {{msg.createdAt | date:'medium'}}">{{msg.createdAt | date:'shortTime'}}</small>
             </div>
           </div>
         </li>

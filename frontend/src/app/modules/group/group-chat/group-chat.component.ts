@@ -52,6 +52,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
     this.message.pipe(takeUntil(this.unsubscribe$))
       .subscribe((res) => {
         const msg: Message = JSON.parse(res);
+        msg.createdAt.setHours(msg.createdAt.getHours() + 3);
         this.messages.push(msg);
         this.scrollBottom();
       });
