@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
-import { Project } from '@shared/models/project/project';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatus } from '@shared/models/build-status';
 import { BuildHistoryService } from '@core/services/build-history.service';
@@ -36,10 +34,10 @@ export class InsightsComponent implements OnInit {
 
   constructor(private buildService: BuildHistoryService, private route: ActivatedRoute) {
   }
-  ngOnInit(): void {
+  ngOnInit() {
     this.buildsPublicity = ['public and private builds', 'public builds', 'private builds'];
-    this.route.data.subscribe(data => {
-      this.user = data.user;
+    this.route.parent.data.subscribe(({ user }) => {
+      this.user = user;
       this.countedDate = new Date(this.user.createdAt);
     });
     this.receiveBuildsInfo();
@@ -70,7 +68,7 @@ export class InsightsComponent implements OnInit {
     const diff = this.diffDates(this.now, this.user.createdAt);
     if (diff <= 7) {
       this.countedDate = this.user.createdAt;
-      this.fulfillCharts(this.user.createdAt, diff + 1);
+      this.fulfillCharts(this.user.createdAt, diff);
       return;
     }
     if (!(diff <= 7) && isMonth) {

@@ -65,6 +65,19 @@ export class DashboardComponent
     this.projectService.getDeleteProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.deleteProject(res));
     this.projectService.getCopyProject().pipe(takeUntil(this.unsubscribe$)).subscribe((res) => this.copyProject(res));
     this.configureBuildStatusesSignalR();
+    this.projectService
+      .notOwnGroupsProjectsByUser(this.currentUser.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (resp) => {
+          this.loadingGroupsProjects = false;
+          this.groupsProjects = resp;
+        },
+        (error) => {
+          this.loadingGroupsProjects = false;
+          this.toastrService.showError(error);
+        }
+      );
   }
 
   private configureBuildStatusesSignalR() {
@@ -76,14 +89,13 @@ export class DashboardComponent
         ...([] as ProjectInfo[]).concat(...this.groupsProjects.map(gp => gp.groupProjects.projects))
       ].filter(pi => pi.lastBuildHistory?.id === statusChange.BuildHistoryId);
       if (projectsToUpdate) {
+        projectsToUpdate.forEach(p => {
+          delete p.lastBuildHistory.buildStatus;
+          p.lastBuildHistory.buildStatus = statusChange.Status;
+        });
         if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService.getBuildHistory(statusChange.BuildHistoryId).subscribe((bh) => {
             projectsToUpdate.forEach(p => p.lastBuildHistory = bh);
-          });
-        } else {
-          projectsToUpdate.forEach(p => {
-            delete p.lastBuildHistory.buildStatus;
-            p.lastBuildHistory.buildStatus = statusChange.Status;
           });
         }
       }
@@ -210,6 +222,15 @@ export class DashboardComponent
     return bh.commitHash?.substring(0, 6) ?? '—';
   }
 
+  hasBuild() {
+    return this.activeProjects.filter(p => p.lastBuildHistory)?.length
+      || this.starredProjects.filter(p => p.lastBuildHistory)?.length
+      || this.groupsProjects.filter(p => p.groupProjects.projects
+        .filter(build => build.lastBuildHistory)?.length)?.length;
+  }
+
   hasGroupsProjects() {
-    return this.groupsProjects.length > 0 || this.groupsProjects.reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0; }
+    return this.groupsProjects.length > 0 || this.groupsProjects
+      .reduce((sum, gp) => sum + gp.groupProjects.projects.length, 0) > 0;
+  }
 }

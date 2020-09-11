@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using buildeR.BLL.Exceptions;
@@ -14,7 +12,6 @@ using buildeR.DAL.Context;
 using buildeR.DAL.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SendGrid.Helpers.Mail;
 
 namespace buildeR.BLL.Services
@@ -26,6 +23,7 @@ namespace buildeR.BLL.Services
         private readonly IEmailBuilder _emailBuilder;
         private readonly IEmailService _emailService;
         private readonly IFileProvider _fileProvider;
+
         public UserService(BuilderContext context,
                            IMapper mapper,
                            IEmailService emailService,
@@ -45,7 +43,7 @@ namespace buildeR.BLL.Services
                 .FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
-                throw new NotFoundException("user", id);
+                throw new NotFoundException(nameof(User), id);
             }
             return _mapper.Map<UserDTO>(user);
         }
@@ -73,24 +71,20 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> Register(NewUserDTO creatingUser)
         {
-
-            var userSN = new NewUserSocialNetworkDTO()
+            var userSNEntity = new UserSocialNetwork()
             {
                 UId = creatingUser.UId,
                 ProviderName = creatingUser.ProviderName,
                 SocialNetworkUrl = creatingUser.ProviderUrl,
             };
 
-            var user = _mapper.Map<User>(creatingUser);
-            user.CreatedAt = DateTime.Now;
+            var user = _mapper.Map<User>(creatingUser, opt => opt.AfterMap((src, dst) =>
+            {
+                dst.CreatedAt = DateTime.Now;
+                dst.UserSocialNetworks = new List<UserSocialNetwork> { userSNEntity };
+            }));
+
             _context.Add(user);
-            await _context.SaveChangesAsync();
-
-            var userDto = _mapper.Map<UserDTO>(user);
-
-            userSN.UserId = userDto.Id;
-            var userSNEntity = _mapper.Map<UserSocialNetwork>(userSN);
-            _context.Add(userSNEntity);
             await _context.SaveChangesAsync();
 
             var emailModel = _emailBuilder.GetSignUpLetter(creatingUser.Email, creatingUser.FirstName);
@@ -104,7 +98,7 @@ namespace buildeR.BLL.Services
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (user == null)
             {
-                throw new NotFoundException("user", id);
+                throw new NotFoundException(nameof(User), id);
             }
             _context.Remove(user);
             await _context.SaveChangesAsync();
@@ -118,7 +112,7 @@ namespace buildeR.BLL.Services
                 .FirstOrDefaultAsync(x => x.Id == userDTO.Id);
             if (existing == null)
             {
-                throw new NotFoundException("user", userDTO.Id);
+                throw new NotFoundException(nameof(User), userDTO.Id);
             }
             _context.Entry(existing).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
@@ -168,7 +162,7 @@ namespace buildeR.BLL.Services
             }
             else
             {
-                throw new NotFoundException("user", userLink.UserId);
+                throw new NotFoundException(nameof(User), userLink.UserId);
             }
         }
 
@@ -234,7 +228,7 @@ namespace buildeR.BLL.Services
                 .FirstOrDefaultAsync(x => x.Id == letter.Id);
             if (existing == null)
             {
-                throw new NotFoundException("userLetter", letter.Id);
+                throw new NotFoundException(nameof(UserLetter), letter.Id);
             }
             _context.Entry(existing).CurrentValues.SetValues(letter);
             await _context.SaveChangesAsync();

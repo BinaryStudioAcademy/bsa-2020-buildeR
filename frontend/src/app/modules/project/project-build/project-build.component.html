@@ -14,15 +14,28 @@
   </nav>
   <div class="build" [appBuildHistoryStatusOutline]="buildHistory.buildStatus">
     <div class='user-commit'>
-      <a [routerLink]="'/portal/user/' + buildHistory.performer?.id">
+      <a [ngClass]="{'disabled-link': buildHistory?.performer?.username == 'BuilderBot'}" [routerLink]="'/portal/user/' + buildHistory.performer?.id">
         <img
           [src]="buildHistory.performer?.avatarUrl"
           onerror="this.src='../../../../assets/images/Avatar-default.png'"
           alt="Avatar"
           class="avatar" />Author: {{buildHistory.performer?.username}}
       </a>
-      <p><i class="fas fa-code"></i> Commit <span class="commit">{{getCommit(buildHistory)}}</span></p>
-      <p><i class="fas fa-code-branch"></i> Branch <span class="branch">{{buildHistory.branchHash}}</span></p>
+      <p><i class="fas fa-code"></i> Commit
+        <span class="commit" *ngIf="repository?.url && buildHistory?.commitHash; else notLink;">
+          <a class="commit-link" target="_blank" [href]="repository?.url+'/commit/'+buildHistory?.commitHash">{{ getCommit(buildHistory) }}</a>
+        </span>
+        <ng-template #notLink>
+          <span> — </span>
+        </ng-template>
+      </p>
+      <p><i class="fas fa-code-branch"></i> Branch
+        <span *ngIf="repository?.url && buildHistory?.branchHash; else noBranchLink;" class="branch">
+        <a class="commit-link" target="_blank" [href]="repository?.url+'/tree/'+buildHistory?.branchHash">{{buildHistory?.branchHash}}</a>
+        </span><ng-template #noBranchLink>
+          <span> — </span>
+        </ng-template>
+      </p>
     </div>
     <div class="build-info">
       <p
@@ -39,7 +52,7 @@
         <span class="button-text"> Restart build</span></button>
     </div>
   </div>
-  <app-logging-terminal [project]="project" [logs]="buildHistory.logs"></app-logging-terminal>
+  <app-logging-terminal [buildhistory]="buildHistory"></app-logging-terminal>
 </div>
 </ng-template>
 <ng-template #emptyBuilds>

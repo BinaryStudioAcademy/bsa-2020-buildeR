@@ -13,7 +13,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   constructor(private authService: AuthenticationService) { }
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (!this.authService.isAuthorized()) {
+    if (!this.authService.isAuthorized() || req.url.includes('/login')) {
       return next.handle(req);
     }
 

@@ -30,55 +30,52 @@ export class AuthenticationService {
   }
 
   configureAuthState = (user: firebase.User) => {
-    if (user) {
-      return user.getIdTokenResult().then((result) => {
-        this.populateAuth(result.token, user);
-        return this.loadCurrentUser();
-      });
+    if (!user) {
+      return this.clearAuth();
     }
 
-    this.clearAuth();
+    return user.getIdTokenResult()
+      .then((result) => this.populateAuth(result.token, user));
   }
 
   getAngularAuth() {
     return this.angularAuth;
   }
 
-  async loadCurrentUser(force?: boolean) {
+  loadCurrentUser(force?: boolean) {
     if (!this.currentUser || force) {
-      this.currentUser = await this.userService.login(this.firebaseUser.uid).toPromise();
+      return this.userService.login(this.firebaseUser.uid)
+        .pipe(tap(user => this.currentUser = user));
     }
-
-    return this.currentUser;
+    return of(this.currentUser);
   }
 
   registerUser(newUser: NewUser) {
-    this.userService.register(newUser).subscribe(
-      userResult => {
-        this.angularAuth.authState
-          .subscribe((user) => {
-            this.configureAuthState(user);
-            if (user && user.uid === userResult.userSocialNetworks[0].uId) {
-              this.currentUser = userResult;
-              this.router.navigate(['/portal']);
-              if (this.isGithubAddedInFirebase(user)
+    this.userService.register(newUser)
+      .pipe(
+        switchMap(user => this.angularAuth.authState
+          .pipe(switchMap(fireUser => from(this.configureAuthState(fireUser))
+            .pipe(map(() => ({ user, fireUser })))
+          )))
+      ).subscribe(({ user, fireUser }) => {
+        if (fireUser?.uid === user.userSocialNetworks[0].uId) {
+          this.currentUser = user;
+            this.router.navigate(['/portal']);
+            if (this.isGithubAddedInFirebase(user)
                 && !this.isProviderAdded(userResult, Providers.Github)) {
                 this.linkUserProviderInDb(userResult, Providers.Github, null, user);
-              }
             }
-          });
+        }
       });
   }
 
   logout() {
-    this.clearAuth();
-    this.router.navigate(['/']);
-    return this.angularAuth.signOut();
+    return this.clearAuth()
+      .then(() => this.router.navigate(['/']));
   }
 
-  cancelRegistration(): Promise<void> {
-    this.clearAuth();
-    return this.angularAuth.signOut();
+  cancelRegistration() {
+    return this.clearAuth();
   }
 
   getFirebaseToken() {
@@ -95,7 +92,7 @@ export class AuthenticationService {
 
     return fireUser$.pipe(
       filter(user => Boolean(user)),
-      switchMap(user => user.getIdToken(true)),
+      switchMap(user => from(user.getIdToken(true))),
       tap(token => localStorage.setItem('jwt', token))
     );
   }
@@ -136,6 +133,7 @@ export class AuthenticationService {
     localStorage.removeItem('jwt');
     this.firebaseUser = undefined;
     this.currentUser = undefined;
+    return this.angularAuth.signOut();
   }
 
   isGithubAddedInFirebase(firebaseUser?: firebase.User) {

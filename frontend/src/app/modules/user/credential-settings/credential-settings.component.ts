@@ -17,16 +17,13 @@ export class CredentialSettingsComponent implements OnInit {
   token = {} as AccessToken;
   tokenForm: FormGroup;
 
-  constructor(private syncService: SynchronizationService,
-              private authService: AuthenticationService,
-              private toastrService: ToastrNotificationsService) { }
+  constructor(
+    private syncService: SynchronizationService,
+    private authService: AuthenticationService,
+    private toastrService: ToastrNotificationsService
+  ) { }
 
   ngOnInit(): void {
-    this.syncService.getUserAccessToken(this.user.id)
-      .subscribe(accesToken => {
-        this.tokenForm.controls.token.setValue(accesToken.token);
-      });
-
     this.tokenForm = new FormGroup({
       token: new FormControl(this.token.token, [
         Validators.required
@@ -34,11 +31,16 @@ export class CredentialSettingsComponent implements OnInit {
     }, {
       asyncValidators: userCredentialsAsyncValidator(this.syncService)
     });
+
+    this.syncService.getUserAccessToken(this.user.id)
+      .subscribe(accesToken => {
+        this.tokenForm.controls.token.setValue(accesToken.token);
+      });
   }
 
   saveCredentials() {
     this.syncService.setUpUserToken(this.user.id, this.tokenForm.value as AccessToken)
       .subscribe(() => this.toastrService.showSuccess('Your token was saved!'),
-                 error => this.toastrService.showError('Something went wrong'));
+        error => this.toastrService.showError('Something went wrong'));
   }
 }
