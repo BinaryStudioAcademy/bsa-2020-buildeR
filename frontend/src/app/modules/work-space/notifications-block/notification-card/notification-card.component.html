@@ -18,7 +18,7 @@
   </div>
   <div class="notification-body">
     <p>{{ notification.message }}</p>
-    <span class="notification-time">{{ notification.date | date: 'medium' }}</span>
+    <span class="notification-time">{{ notification.date | date: 'medium':'UTC +6' }}</span>
   </div>
   <div *ngIf="!notification.isRead" title="Mark as read" class="notification-read text-secondary"
     (click)="clearOne(notification)">
