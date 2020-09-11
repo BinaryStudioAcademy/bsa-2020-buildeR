@@ -42,7 +42,7 @@ namespace buildeR.BLL.Services
         {
             return _mapper.Map<IEnumerable<NotificationDTO>>(
                 (await _context.Users.AsNoTracking().Include(u => u.Notifications)
-                    .FirstOrDefaultAsync(u => u.Id == id)).Notifications.ToList());
+                    .FirstOrDefaultAsync(u => u.Id == id))?.Notifications.ToList());
         }
 
         public async Task<NotificationDTO> Create(NewNotificationDTO notification)

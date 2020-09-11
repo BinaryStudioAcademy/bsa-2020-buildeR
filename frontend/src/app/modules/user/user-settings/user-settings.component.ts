@@ -193,6 +193,6 @@ export class UserSettingsComponent implements OnInit {
   }
 
   isGithubAddedInFirebase() {
-    return this.authService.isGithubAddedInFirebase();
+    return this.authService.isProviderAddedInFirebase(Providers.Github);
   }
 }

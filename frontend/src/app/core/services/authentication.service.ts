@@ -9,7 +9,7 @@ import { User } from '@shared/models/user/user';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
 import { auth, UserInfo } from 'firebase';
 import { from, of } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -60,11 +60,7 @@ export class AuthenticationService {
       ).subscribe(({ user, fireUser }) => {
         if (fireUser?.uid === user.userSocialNetworks[0].uId) {
           this.currentUser = user;
-            this.router.navigate(['/portal']);
-            if (this.isGithubAddedInFirebase(user)
-                && !this.isProviderAdded(userResult, Providers.Github)) {
-                this.linkUserProviderInDb(userResult, Providers.Github, null, user);
-            }
+          this.router.navigate(['/portal']);
         }
       });
   }
@@ -136,20 +132,12 @@ export class AuthenticationService {
     return this.angularAuth.signOut();
   }
 
-  isGithubAddedInFirebase(firebaseUser?: firebase.User) {
-    const check = (item: UserInfo) => item.providerId === 'github.com';
-    return firebaseUser ? firebaseUser.providerData.some(check) : this.firebaseUser.providerData.some(check);
+  isProviderAddedInFirebase(provider: Providers, firebaseUser?: firebase.User) {
+    const check = (item: UserInfo) => item.providerId === this.checkProviderUrl(provider);
+    return firebaseUser ? firebaseUser.providerData.some(check) : this.firebaseUser?.providerData.some(check);
   }
 
-  isProviderAdded(user: User, provider: Providers) {
-    if (user.userSocialNetworks === null) {
-      return true;
-    }
-    const check = (item: UserSocialNetwork) => item.providerName === provider;
-    return user.userSocialNetworks?.some(check);
-  }
-
-  linkUserProviderInDb(user: User, provider: Providers, credential?: auth.UserCredential, fireUser?: firebase.User) {
+  checkProviderUrl(provider: Providers) {
     let providerUrlId: string;
     switch (provider) {
       case Providers.Google: {
@@ -161,18 +149,6 @@ export class AuthenticationService {
         break;
       }
     }
-    const linkUser = ({
-      userId: user.id,
-      providerName: provider,
-      providerUrl: providerUrlId,
-      uId: credential !== null ? credential.user.uid : fireUser.uid
-    } as LinkProvider);
-    this.userService.linkProvider(linkUser)
-      .subscribe((response) => {
-        if (response) {
-          this.setUser(response);
-          user = response;
-        }
-      });
+    return providerUrlId;
   }
 }

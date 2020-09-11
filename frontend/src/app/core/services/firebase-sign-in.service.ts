@@ -61,11 +61,6 @@ export class FirebaseSignInService {
           return;
         }
         if (resp) {
-          if (credential.credential.providerId === 'google.com'
-            && !this.isProviderAdded(resp, Providers.Google)) {
-            this.linkUserProviderInDb(resp, Providers.Google, credential);
-          }
-
           this.authService.getAngularAuth().authState
             .subscribe((user) => {
               if (!user?.emailVerified) {
@@ -76,8 +71,12 @@ export class FirebaseSignInService {
               else {
                 this.giveAccessToUser(resp, user, redirectUrl);
 
-                if (this.isGithubAddedInFirebase(user)
-                  && !this.isProviderAdded(resp, Providers.Github)) {
+                if (this.authService.isProviderAddedInFirebase(Providers.Google, user)
+                  && !this.isProviderAddedinDb(resp, Providers.Google)) {
+                  this.linkUserProviderInDb(resp, Providers.Google, null, user);
+                }
+                if (this.authService.isProviderAddedInFirebase(Providers.Github, user)
+                  && !this.isProviderAddedinDb(resp, Providers.Github)) {
                   this.linkUserProviderInDb(resp, Providers.Github, null, user);
                 }
               }
@@ -95,11 +94,6 @@ export class FirebaseSignInService {
       this.authService.setUser(resp);
       this.router.navigate([redirectUrl ?? '/portal']);
     }
-  }
-
-  isGithubAddedInFirebase(firebaseUser: firebase.User) {
-    const check = (item: UserInfo) => item.providerId === 'github.com';
-    return firebaseUser.providerData.some(check);
   }
 
   openVerificationEmailModal(email: string) {
@@ -123,14 +117,14 @@ export class FirebaseSignInService {
               break;
             }
           }
-        }, (reason) => {});
+        }, (reason) => { });
         break;
       }
       case 'auth/cancelled-popup-request': break;
     }
   }
 
-  isProviderAdded(user: User, provider: Providers) {
+  isProviderAddedinDb(user: User, provider: Providers) {
     if (user.userSocialNetworks === null) {
       return true;
     }
