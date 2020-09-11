@@ -1,7 +1,6 @@
 import { User } from './user/user';
 import { BuildStatus } from './build-status';
 import { Project } from './project/project';
-import { IProjectLog } from './project/project-log';
 
 export interface BuildHistory {
   id: number;
@@ -16,5 +15,4 @@ export interface BuildHistory {
   branchHash: string;
   commitHash: string;
   buildStatus: BuildStatus;
-  logs?: IProjectLog[];
 }
