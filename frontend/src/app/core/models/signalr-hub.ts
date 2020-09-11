@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 
 export class SignalRHub {
-  private hubConnection: HubConnection;
+  hubConnection: HubConnection;
   private subscriptions$ = new Map<string, Subject<string>>();
 
   constructor(private url: string) {}
