@@ -1,24 +1,7 @@
-<div *ngIf="
-loadingGroups ;
-then loading;
-else loaded;
-"></div>
-<ng-template #loading>
-  <app-loading-spinner size="20px"></app-loading-spinner>
-</ng-template>
+<app-loading-spinner size="20px" *ngIf="loadingGroups; else loaded;"></app-loading-spinner>
 <ng-template #loaded>
-  <div *ngIf="
-          groupInvites?.length;
-          then existInvites;
-        ">
-
-  </div>
-  <div *ngIf="
-      groups?.length;
-      then existGroups;
-      else emptyGroups
-    ">
-  </div>
+  <div *ngIf="groupInvites?.length; then existInvites;"></div>
+  <div *ngIf="groups?.length; then existGroups; else emptyGroups"></div>
 
   <ng-template #existInvites>
     <div class="container for-span d-flex flex-row my-3">
@@ -134,7 +117,7 @@ else loaded;
   <div class="container">
     <div class="no-groups-container">
       <div class="image-container">
-        <img class="builders" [src]="'../../../../assets/images/builders.png'" />
+        <img class="builders" [src]="'assets/images/builders.png'" />
       </div>
       <span class="my-3">There are will be displayed the list of groups which you are a member of. Or you can create
         your group.</span>

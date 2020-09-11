@@ -6,7 +6,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" (click)="isMenuCollapsed = true" [routerLink]="['dashboard']">
-      <img class="logo" src="../../../../assets/images/logo.png" />
+      <img class="logo" src="assets/images/logo.png" />
     </a>
     <div class="d-flex order-lg-1 ml-auto pr-2" (click)="isMenuCollapsed = true">
       <div class="nav-item">
@@ -29,7 +29,7 @@
       </div>
       <div class="nav-item" ngbDropdown>
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown2" role="button">
-          <img [src]="user.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar"
+          <img [src]="user.avatarUrl | defaultLogo" alt="Avatar"
             class="avatar" />
         </a>
         <div ngbDropdownMenu aria-labelledby="navbarDropdown2" class="dropdown-menu dropdown-menu-right">

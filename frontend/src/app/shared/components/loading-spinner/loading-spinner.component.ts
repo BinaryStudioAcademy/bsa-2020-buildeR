@@ -1,12 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-loading-spinner',
-  templateUrl: './loading-spinner.component.html',
-  styleUrls: ['./loading-spinner.component.sass']
+  templateUrl: './loading-spinner.component.html'
 })
 export class LoadingSpinnerComponent implements OnInit {
-
+  @Input() overlay: boolean;
   @Input() size = '20px';
   @Input() top = '30%';
   @Input() left = '49%';

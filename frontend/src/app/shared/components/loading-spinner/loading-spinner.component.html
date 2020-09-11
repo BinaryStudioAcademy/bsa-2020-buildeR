@@ -1,2 +1,3 @@
-<div [ngStyle]="{'font-size': size, 'margin': margin, 'top': top, 'left': left, 'position': position}" class="loader">
-    Loading...</div>
+<div [ngClass]="{'loader-overlay': overlay}">
+  <div [ngStyle]="{'font-size': size, 'margin': margin, 'top': top, 'left': left, 'position': position}" class="loader"></div>
+</div>

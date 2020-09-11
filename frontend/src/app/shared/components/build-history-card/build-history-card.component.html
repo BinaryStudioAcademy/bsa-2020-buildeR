@@ -1,7 +1,7 @@
 <div class="card-wrp" [appBuildHistoryStatusOutline]="build.buildStatus">
   <div class='user-commit'>
     <a [ngClass]="{'disabled-link': build.performer?.username === 'BuilderBot'}" [routerLink]="'/portal/user/' + build.performer?.id">
-      <img [src]="build.performer?.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="avatar" />
+      <img [src]="build.performer?.avatarUrl | defaultLogo" alt="Avatar" class="avatar" />
       <span>{{build.performer?.username || 'System'}}</span>
     </a>
     <p>
@@ -10,15 +10,15 @@
       </a>
     </p>
     <p>
-      <span *ngIf="repository?.url && build?.commitHash; else noValue;" class="build-url-wrp">
+      <span class="build-url-wrp">
         <i class="fas fa-code"></i> Commit:
-        <a class="commit-link" target="_blank" href="{{repository.url}}/commit/{{build.commitHash}}">{{ getCommit(build) }} <i class="fas fa-external-link-alt external-icon-url"></i></a>
+        <a *ngIf="repository?.url && build?.commitHash; else noValue;" class="commit-link" target="_blank" href="{{repository.url}}/commit/{{build.commitHash}}">{{ getCommit(build) }} <i class="fas fa-external-link-alt external-icon-url"></i></a>
       </span>
     </p>
     <p>
-      <span *ngIf="repository?.url && build?.branchHash; else noValue;" class="build-url-wrp">
+      <span class="build-url-wrp">
         <i class="fas fa-code-branch"></i> Branch:
-        <a class="commit-link" target="_blank" href="{{repository.url}}/tree/{{build.branchHash}}">{{build.branchHash}} <i class="fas fa-external-link-alt external-icon-url"></i></a>
+        <a *ngIf="repository?.url && build?.branchHash; else noValue;" class="commit-link" target="_blank" href="{{repository.url}}/tree/{{build.branchHash}}">{{build.branchHash}} <i class="fas fa-external-link-alt external-icon-url"></i></a>
       </span>
     </p>
   </div>

@@ -46,6 +46,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
     combineLatest([this.route.params, this.route.parent.data])
       .pipe(
         tap(([params, routeData]) => {
+          this.isLoading = true;
           this.isCurrent = !params.buildId;
           this.project = routeData.project;
         }),
@@ -61,8 +62,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
       }, (res: HttpErrorResponse) => {
         this.toastrService.showError(res.error, res.name);
         this.isLoading = false;
-      }
-      );
+      });
   }
 
   private configureBuildStatusesSignalR() {

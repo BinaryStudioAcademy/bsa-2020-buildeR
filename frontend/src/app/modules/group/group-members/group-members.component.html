@@ -16,8 +16,7 @@ else loaded;
           <ng-template #rt let-r="result" let-t="term">
             <div class="row my-3">
               <div class="item area">
-                <img [src]="r.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'"
-                     class="avatar" />
+                <img [src]="r.avatarUrl | defaultLogo" class="avatar" />
               </div>
               <div class="user">
                 <div class="row-top">
@@ -59,8 +58,7 @@ else loaded;
   <div class="container">
     <div class="row my-3 border rounded member-wr" *ngFor="let member of members">
       <div class="item-avatar area">
-        <img [src]="member.user.avatarUrl" [routerLink]="'/portal/user/' + member.user.id"
-             onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="avatar" />
+        <img [src]="member.user.avatarUrl | defaultLogo" [routerLink]="'/portal/user/' + member.user.id" alt="Avatar" class="avatar" />
       </div>
       <div class="user">
         <div class="row-top">
