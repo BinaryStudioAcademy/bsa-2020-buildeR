@@ -153,14 +153,16 @@ export class UserSettingsComponent implements OnInit {
   }
 
   linkWithGithub() {
-    if (!this.isGithubAddedInFirebase() && !this.isProviderAdded(Providers.Github)) {
+    const isGithubAddedInFirebase = this.isGithubAddedInFirebase();
+    const isGithubAddedDb = this.isProviderAdded(Providers.Github);
+    if (!isGithubAddedInFirebase && !isGithubAddedDb) {
       this.fbr.linkWithProvider(Providers.Github).then((result) => {
         if (result === 'ok') {
           this.githubClick = true;
         }
         this.showLinkMessage(result, 'Github');
       });
-    } else if (!this.isGithubAddedInFirebase() && this.isProviderAdded(Providers.Github)) {
+    } else if (!isGithubAddedInFirebase && isGithubAddedDb) {
       this.fbr.linkGithubOnlyInFirebase().then((result) => {
         this.showLinkMessage(result, 'Github');
       });
@@ -191,6 +193,6 @@ export class UserSettingsComponent implements OnInit {
   }
 
   isGithubAddedInFirebase() {
-    return this.authService.isGithubAddedInFirebase();
+    return this.authService.isProviderAddedInFirebase(Providers.Github);
   }
 }
