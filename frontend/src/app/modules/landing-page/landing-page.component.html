@@ -15,25 +15,25 @@
     </div>
     <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isMenuCollapsed">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
+        <li class="nav-item" (click)="isMenuCollapsed = true">
           <a class="nav-link" href="#">Home</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" (click)="isMenuCollapsed = true">
           <a class="nav-link" href="#features">Features</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" (click)="isMenuCollapsed = true">
           <a class="nav-link" href="#flow">Flow</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" (click)="isMenuCollapsed = true">
           <a class="nav-link" [routerLink]="['about']">About us</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" (click)="isMenuCollapsed = true">
           <a class="nav-link" [routerLink]="['help']">Help</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
-<div>
+<div (click)="isMenuCollapsed = true">
   <router-outlet></router-outlet>
 </div>
