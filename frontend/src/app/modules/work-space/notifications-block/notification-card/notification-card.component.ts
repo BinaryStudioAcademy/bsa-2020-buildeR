@@ -24,7 +24,9 @@ export class NotificationCardComponent extends BaseComponent implements OnInit {
     private router: Router,
     private buildHistoryService: BuildHistoryService,
     private notificationService: NotificationsService
-  ) { }
+  ) {
+    super();
+  }
 
 
   ngOnInit(): void {

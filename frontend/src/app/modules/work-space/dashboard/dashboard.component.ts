@@ -163,7 +163,7 @@ export class DashboardComponent
             );
           }
         },
-        (error) => this.toastrService.showError(error.error, or err.name)
+        (error) => this.toastrService.showError(error.error, error.name)
       );
   }
 

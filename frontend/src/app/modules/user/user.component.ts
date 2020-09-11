@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { TabRoute } from '@shared/models/tabs/tab-route';
+import { takeUntil } from 'rxjs/operators';
 import { ModalCropperService } from '../../core/services/modal-cropper.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../shared/models/user/user';
