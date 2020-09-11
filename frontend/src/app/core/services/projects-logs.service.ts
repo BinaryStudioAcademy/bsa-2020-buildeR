@@ -6,6 +6,7 @@ import { HttpService } from './http.service';
 import { IProjectLog } from '@shared/models/project/project-log';
 import { SignalRHubFactoryService } from './signalr-hub-factory.service';
 import { SignalRHub } from '@core/models/signalr-hub';
+import { ToastrNotificationsService } from './toastr-notifications.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class ProjectLogsService implements OnDestroy {
 
   constructor(
     private httpService: HttpService,
-    private signalRService: SignalRHubFactoryService
+    private signalRService: SignalRHubFactoryService,
+    private toastr: ToastrNotificationsService
   ) {}
 
   ngOnDestroy(): void {
@@ -47,7 +49,7 @@ export class ProjectLogsService implements OnDestroy {
 
   private configureSignalR() {
     if (!this.logsHub) {
-      this.logsHub = this.signalRService.createHub("/logsHub");
+      this.logsHub = this.signalRService.createHub('/logsHub');
       this.connecting = this.logsHub.start();
     }
   }
@@ -71,9 +73,9 @@ export class ProjectLogsService implements OnDestroy {
               this.isRegistered = true;
             }
           })
-          .catch((err) => console.error(err));
+          .catch((err) => this.toastr.showError(err));
       })
-      .catch((err) => console.error(err));
+      .catch((err) => this.toastr.showError(err));
   }
 
   listen(buildHistoryId: number): Subject<string> {

@@ -72,8 +72,8 @@ export class LoggingTerminalComponent
 
   private configureLogsSignalR() {
     if (
-      this.buildHistory.buildStatus == BuildStatus.InProgress ||
-      this.buildHistory.buildStatus == BuildStatus.Pending
+      this.buildHistory.buildStatus === BuildStatus.InProgress ||
+      this.buildHistory.buildStatus === BuildStatus.Pending
     ) {
       this.logsService.connect(this.buildHistory.id);
       this.logsService.listen(this.buildHistory.id).subscribe((message) => {

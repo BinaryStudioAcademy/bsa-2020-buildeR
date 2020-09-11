@@ -5,6 +5,7 @@ import { StatusChange } from '@shared/models/status-change';
 import { Subject } from 'rxjs';
 import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { ToastrNotificationsService } from './toastr-notifications.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class BuildStatusesSignalRService implements OnDestroy {
 
   constructor(
     private signalRService: SignalRHubFactoryService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private toastr: ToastrNotificationsService
   ) {}
 
   connect() {
@@ -52,9 +54,9 @@ export class BuildStatusesSignalRService implements OnDestroy {
               this.buildStatusChanges$.next(statusChange);
             })
           )
-          .catch((err) => {});
+          .catch((err) => this.toastr.showError(err));
       })
-      .catch((err) => console.error(err));
+      .catch((err) => this.toastr.showError(err));
   }
 
   listen() {
