@@ -4,12 +4,14 @@ import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatus } from '@shared/models/build-status';
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   templateUrl: './insights.component.html',
   styleUrls: ['./insights.component.sass']
 })
-export class InsightsComponent implements OnInit {
+export class InsightsComponent extends BaseComponent implements OnInit {
   user: User = {} as User;
   now: Date = new Date(Date.now());
   buildsPublicity = [];
@@ -33,6 +35,7 @@ export class InsightsComponent implements OnInit {
   ];
 
   constructor(private buildService: BuildHistoryService, private route: ActivatedRoute) {
+    super();
   }
   ngOnInit() {
     this.buildsPublicity = ['public and private builds', 'public builds', 'private builds'];
@@ -44,7 +47,9 @@ export class InsightsComponent implements OnInit {
   }
   // 0 - public and private, 1 - public, 2 - private builds
   receiveBuildsInfo(buildsPublicity: number = 0) {
-    this.buildService.getBuildHistoriesOfUser(this.user.id).subscribe((res) => {
+    this.buildService.getBuildHistoriesOfUser(this.user.id)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((res) => {
       if (!buildsPublicity) {
         this.user.buildHistories = res.body;
       }

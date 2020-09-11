@@ -69,7 +69,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -110,7 +110,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
             },
             (error) => {
               this.isLoading = false;
-              this.toastrService.showError(error);
+              this.toastrService.showError(error.error, error.name);
             }
           );
       }
@@ -167,7 +167,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
   }
@@ -233,7 +233,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           }
         );
     }
@@ -249,7 +249,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         });
   }
 
@@ -285,7 +285,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           }
         );
       });
@@ -316,7 +316,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
        },
       (error) => {
         this.isLoading = false;
-        this.toastrService.showError(error);
+        this.toastrService.showError(error.error, error.name);
       });
   }
 
@@ -342,7 +342,7 @@ export class ProjectBuildStepsComponent extends BaseComponent implements OnInit 
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error);
+          this.toastrService.showError(error.error, error.name);
         }
       );
     }

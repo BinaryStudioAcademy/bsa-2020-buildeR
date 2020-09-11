@@ -12,6 +12,7 @@ import { ProjectLogsService } from '@core/services/projects-logs.service';
 import { IProjectLog } from '@shared/models/project/project-log';
 import { BuildHistory } from '@shared/models/build-history';
 import { BuildStatus } from '@shared/models/build-status';
+import { takeUntil } from 'rxjs/operators';
 
 export type LogLevel = 'WRN' | 'ERR' | 'FTL' | 'INF' | 'DBG' | 'VRB';
 
@@ -76,7 +77,7 @@ export class LoggingTerminalComponent
       this.buildHistory.buildStatus === BuildStatus.Pending
     ) {
       this.logsService.connect(this.buildHistory.id);
-      this.logsService.listen(this.buildHistory.id).subscribe((message) => {
+      this.logsService.listen(this.buildHistory.id).pipe(takeUntil(this.unsubscribe$)).subscribe((message) => {
         this.buildLog(this.formatLog(message));
       });
     }

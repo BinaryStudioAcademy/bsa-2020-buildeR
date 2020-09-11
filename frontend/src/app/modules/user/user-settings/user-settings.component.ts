@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BaseComponent } from '@core/components/base/base.component';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { FirebaseSignInService } from '@core/services/firebase-sign-in.service';
 import { ModalCropperService } from '@core/services/modal-cropper.service';
@@ -8,6 +9,7 @@ import { emailDotValidator } from '@core/validators/email-dot-validator';
 import { Providers } from '@shared/models/providers';
 import { User } from '@shared/models/user/user';
 import { UserSocialNetwork } from '@shared/models/user/user-social-network';
+import { takeUntil } from 'rxjs/operators';
 import { ToastrNotificationsService } from '../../../core/services/toastr-notifications.service';
 import { UserService } from '../../../core/services/user.service';
 import { usernameAsyncValidator } from '../../../core/validators/custom-async-validator';
@@ -17,7 +19,7 @@ import { usernameAsyncValidator } from '../../../core/validators/custom-async-va
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.sass']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent extends BaseComponent implements OnInit {
   isChanged = false;
   changedUser: User = {} as User;
   isShowSpinner = false;
@@ -35,10 +37,12 @@ export class UserSettingsComponent implements OnInit {
     private route: ActivatedRoute,
     private fbr: FirebaseSignInService,
     private authService: AuthenticationService,
-    private cropper: ModalCropperService) { }
+    private cropper: ModalCropperService) {
+      super();
+    }
 
   ngOnInit(): void {
-    this.route.parent.data.subscribe(({ user }) => {
+    this.route.parent.data.pipe(takeUntil(this.unsubscribe$)).subscribe(({ user }) => {
       this.details = user;
       if (this.details.id === this.authService.getCurrentUser().id) {
         this.isOwner = true;
@@ -83,7 +87,7 @@ export class UserSettingsComponent implements OnInit {
         ])
     });
 
-    this.settingsForm.valueChanges.subscribe(changesSettigsForm => {
+    this.settingsForm.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(changesSettigsForm => {
       this.isChanged = false;
       this.changedUser = (changesSettigsForm as User);
       if (this.details.lastName === this.changedUser.lastName &&
@@ -96,7 +100,7 @@ export class UserSettingsComponent implements OnInit {
       }
     });
 
-    this.userService.userLogoUrl.subscribe(url => {
+    this.userService.userLogoUrl.pipe(takeUntil(this.unsubscribe$)).subscribe(url => {
       this.details.avatarUrl = url;
     });
   }
@@ -112,7 +116,7 @@ export class UserSettingsComponent implements OnInit {
     if (!user.lastName) {
       user.lastName = null;
     }
-    this.userService.updateUser(user).subscribe(updateUser => {
+    this.userService.updateUser(user).pipe(takeUntil(this.unsubscribe$)).subscribe(updateUser => {
       this.details = updateUser;
       this.isChanged = true;
       this.userService.changeUserName(this.settingsForm.controls.username.value);

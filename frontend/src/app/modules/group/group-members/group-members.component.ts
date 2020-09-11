@@ -91,7 +91,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       this.toastrService.showSuccess('Member role successfully changed');
     },
       (err) => {
-        this.toastrService.showError(err);
+        this.toastrService.showError(err.error, err.name);
       }
     );
   }
@@ -119,7 +119,7 @@ export class GroupMembersComponent extends BaseComponent implements OnInit {
       },
         (err) => {
           this.isShowSpinner = false;
-          this.toastrService.showError(err);
+          this.toastrService.showError(err.error, err.name);
         });
   }
 

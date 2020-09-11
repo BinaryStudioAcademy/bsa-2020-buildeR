@@ -8,6 +8,7 @@ import { emailDotValidator } from '@core/validators/email-dot-validator';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { UserService } from '@core/services/user.service';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -34,7 +35,9 @@ export class HelpComponent extends BaseComponent
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe(data => this.currentUser = data.user);
+    this.route.data
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(data => this.currentUser = data.user);
     if (this.currentUser) {
       this.userHelp.userEmail = this.currentUser.email;
     }

@@ -42,7 +42,7 @@ export class GroupChatComponent extends BaseComponent implements OnInit, AfterVi
   }
 
   ngOnInit(): void {
-    this.route.parent.data.subscribe((data) => {
+    this.route.parent.data.pipe(takeUntil(this.unsubscribe$)).subscribe((data) => {
       this.groupId = data.group.id;
     });
     this.user = this.auth.getCurrentUser();

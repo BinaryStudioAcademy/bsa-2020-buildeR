@@ -4,13 +4,15 @@ import { NotificationType } from '@shared/models/notification-type';
 import { BuildHistoryService } from '@core/services/build-history.service';
 import { Router } from '@angular/router';
 import { NotificationsService } from '@core/services/notifications.service';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-notification-card',
   templateUrl: './notification-card.component.html',
   styleUrls: ['./notification-card.component.sass']
 })
-export class NotificationCardComponent implements OnInit {
+export class NotificationCardComponent extends BaseComponent implements OnInit {
   NotificationType = NotificationType;
   @Input() notification: Notification;
   @Input() isShowingRead: boolean;
@@ -58,11 +60,13 @@ export class NotificationCardComponent implements OnInit {
         case NotificationType.BuildErrored:
         case NotificationType.BuildFailed:
         case NotificationType.BuildSucceeded: {
-          this.buildHistoryService.getBuildHistory(notification.itemId).subscribe(
-            bh => {
-              this.router.navigate(['/portal', 'projects', bh.projectId, 'history', notification.itemId]);
-              this.clearOne(notification);
-            }),
+          this.buildHistoryService.getBuildHistory(notification.itemId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(
+              bh => {
+                this.router.navigate(['/portal', 'projects', bh.projectId, 'history', notification.itemId]);
+                this.clearOne(notification);
+              }),
             this.toggle();
           break;
         }

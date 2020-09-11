@@ -30,14 +30,6 @@ select
 .switch-wr
   margin: 20px 0
 
-.btn-update,
-.btn-delete
-  font-size: 20px
-  padding: 2px 8px
-  max-width: 32px
-  &:hover
-    background-color: rgba(9,30,66,.08)
-
 .branch-select
   max-width: 130px
 
@@ -52,7 +44,7 @@ select
 
 .scheduler-trigger-wrp
   grid-template-columns: 30px 103px 42px 1fr 72px
-  padding: 5px
+  padding: 10px 5px
   align-items: center
   background-color: rgba(9,30,66,.04)
 
@@ -84,8 +76,9 @@ select
   justify-items: flex-start
 
 @media screen and (max-width: 991px)
-  .trigger-container
+  .scheduler-trigger-wrp
     grid-template-columns: 1fr
+  .trigger-container
     justify-items: start
     grid-gap: 6px
   .first-container,
@@ -104,11 +97,11 @@ select
     grid-column: 1
     justify-self: start
 
-.divider
-  min-height: 3px
-  width: 60%
-  margin: 10px 0px 10px 0
-  background-color: var(--light)
+  .divider
+    min-height: 3px
+    width: 60%
+    margin: 10px 0px 10px 0
+    background-color: var(--light)
 
 @media screen and (max-width: 675px)
   .divider

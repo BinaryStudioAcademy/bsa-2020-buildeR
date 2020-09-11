@@ -62,7 +62,7 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
         this.isLoading = false;
       }, (res: HttpErrorResponse) =>
         {
-          this.toastrService.showError(res.error);
+          this.toastrService.showError(res.error, res.name);
           this.isLoading = false;
         }
       );
@@ -101,12 +101,13 @@ export class ProjectBuildComponent extends BaseComponent implements OnInit {
 
     this.projectService
       .startProjectBuild(history)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (newHistory) => {
           this.toastrService.showSuccess(msg);
           this.openHistory(newHistory);
         },
-        (error) => this.toastrService.showError(error)
+        (error) => this.toastrService.showError(error.error, error.name)
       );
   }
 

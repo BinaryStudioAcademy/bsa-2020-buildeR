@@ -32,7 +32,7 @@ else loaded;
             </div>
           </ng-template>
           <label for="typeahead-basic">Search user:</label>
-          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"
+          <input id="typeahead-basic" type="text" class="form-control" [editable]="false" [(ngModel)]="model" [ngbTypeahead]="search"
                  [resultFormatter]="formatter" [inputFormatter]="inputFormatter" formControlName="user"
                  placeholder="Username or email" [resultTemplate]="rt" />
         </div>
@@ -50,7 +50,7 @@ else loaded;
         </div>
       </div>
       <div class="form-actions">
-        <button type="submit" class="btn btn-success" [disabled]="memberForm.invalid">Invite
+        <button type="submit" class="btn btn-success" [disabled]="memberForm.invalid || !model">Invite
           <span *ngIf="isShowSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         </button>
       </div>

@@ -66,7 +66,7 @@ export class ProjectsDisplayComponent extends BaseComponent implements OnInit   
         (buildHistory) => {
           project.lastBuildHistory = buildHistory;
         },
-        (error) => this.toastr.showError(error)
+        (error) => this.toastr.showError(error.error, error.name)
       );
   }
 
@@ -87,13 +87,14 @@ export class ProjectsDisplayComponent extends BaseComponent implements OnInit   
     this.loadingSelectedProjectBranches = true;
     this.syncService
       .getRepositoryBranches(projectId)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (resp) => {
           this.selectedProjectBranches = resp;
           this.loadingSelectedProjectBranches = false;
         },
-        (error) => {
-          this.toastr.showError(error);
+        (err) => {
+          this.toastr.showError(err.erroror, err.nameor);
           this.loadingSelectedProjectBranches = false;
         }
       );

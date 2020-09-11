@@ -118,7 +118,7 @@ export class GroupListComponent extends BaseComponent implements OnInit {
         this.getGroups(); this.toastrService.showSuccess('You became a member of this group');
       },
         (err) => {
-          this.toastrService.showError(err);
+          this.toastrService.showError(err.error, err.name);
         });
   }
   decline(group: Group) {

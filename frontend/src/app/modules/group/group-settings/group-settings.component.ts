@@ -67,7 +67,7 @@ export class GroupSettingsComponent implements OnInit {
     }, (err) => {
       this.isShowSpinner = false;
       this.toastrService.showError('Group wasn\'t updated');
-      this.toastrService.showError(err);
+      this.toastrService.showError(err.error, err.name);
     });
   }
   reset() {

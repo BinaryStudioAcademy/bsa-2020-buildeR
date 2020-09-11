@@ -5,13 +5,15 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrNotificationsService } from '@core/services/toastr-notifications.service';
 import { AccessToken } from '@core/models/AccessToken';
 import { userCredentialsAsyncValidator } from '@core/validators/user-credentials.async-validator';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-credential-settings',
   templateUrl: './credential-settings.component.html',
   styleUrls: ['./credential-settings.component.sass']
 })
-export class CredentialSettingsComponent implements OnInit {
+export class CredentialSettingsComponent extends BaseComponent implements OnInit {
 
   user = this.authService.getCurrentUser();
   token = {} as AccessToken;
@@ -21,7 +23,9 @@ export class CredentialSettingsComponent implements OnInit {
     private syncService: SynchronizationService,
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.tokenForm = new FormGroup({
@@ -33,6 +37,7 @@ export class CredentialSettingsComponent implements OnInit {
     });
 
     this.syncService.getUserAccessToken(this.user.id)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(accesToken => {
         this.tokenForm.controls.token.setValue(accesToken.token);
       });
@@ -41,6 +46,6 @@ export class CredentialSettingsComponent implements OnInit {
   saveCredentials() {
     this.syncService.setUpUserToken(this.user.id, this.tokenForm.value as AccessToken)
       .subscribe(() => this.toastrService.showSuccess('Your token was saved!'),
-        error => this.toastrService.showError('Something went wrong'));
+        err => this.toastrService.showError(err.error, err.name));
   }
 }

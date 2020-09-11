@@ -9,13 +9,15 @@ import { VariableValue } from '@shared/models/environment-variable/variable-valu
 import { projectNameAsyncValidator } from '@modules/project/validators/project-name.async-validator';
 import { User } from '@shared/models/user/user';
 import { AuthenticationService } from '@core/services/authentication.service';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-project-settings',
   templateUrl: './project-settings.component.html',
   styleUrls: ['./project-settings.component.sass']
 })
-export class ProjectSettingsComponent implements OnInit {
+export class ProjectSettingsComponent extends BaseComponent implements OnInit {
   @Input() project: Project = {} as Project;
   @Input() envVar: EnviromentVariable = { data: {} as VariableValue} as EnviromentVariable;
 
@@ -36,7 +38,9 @@ export class ProjectSettingsComponent implements OnInit {
     private authService: AuthenticationService,
     private toastrService: ToastrNotificationsService,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
@@ -59,10 +63,10 @@ export class ProjectSettingsComponent implements OnInit {
         ]),
         isSecret: new FormControl(this.envVar.data.isSecret)
     });
-    this.projectService.envVariable.subscribe((res) => {
+    this.projectService.envVariable.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       this.edit(res);
     });
-    this.projectService.deleteEnvVariable.subscribe((res) => {
+    this.projectService.deleteEnvVariable.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       this.delete(res);
     });
   }
@@ -115,13 +119,13 @@ export class ProjectSettingsComponent implements OnInit {
     }, (err) => {
       this.isShowSpinner = false;
       this.toastrService.showSuccess('Project wasn\'t updated');
-      this.toastrService.showError(err);
+      this.toastrService.showError(err.error, err.name);
     });
     this.isChanged = true;
   }
 
   loadEnvVars() {
-    this.projectService.getEnvironmentVariables(this.project.id).subscribe(
+    this.projectService.getEnvironmentVariables(this.project.id).pipe(takeUntil(this.unsubscribe$)).subscribe(
       (res) => {
         this.envVariables = res;
         this.isLoadedEnvVar = true;

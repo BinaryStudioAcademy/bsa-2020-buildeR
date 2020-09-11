@@ -31,7 +31,7 @@ export class GroupComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
+    this.route.data.pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
       this.group = data.group;
       this.id = this.group.id;
     });

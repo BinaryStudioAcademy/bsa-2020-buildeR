@@ -7,13 +7,15 @@ import { BuildStatusesSignalRService } from '@core/services/build-statuses-signa
 import { BuildStatus } from '@shared/models/build-status';
 import { AuthenticationService } from '@core/services/authentication.service';
 import { User } from '@shared/models/user/user';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@core/components/base/base.component';
 
 @Component({
   selector: 'app-user-build-history',
   templateUrl: './user-build-history.component.html',
   styleUrls: ['./user-build-history.component.sass'],
 })
-export class UserBuildHistoryComponent implements OnInit {
+export class UserBuildHistoryComponent extends BaseComponent implements OnInit {
   builds: BuildHistory[] = [];
   isLoading = true;
   user: User;
@@ -27,12 +29,16 @@ export class UserBuildHistoryComponent implements OnInit {
     private toastrService: ToastrNotificationsService,
     private buildStatusesSignalRService: BuildStatusesSignalRService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
     this.configureBuildStatusesSignalR();
-    this.route.parent.data.subscribe(({ user }) => {
+    this.route.parent.data
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(({ user }) => {
       this.user = user ?? this.authService.getCurrentUser();
       if (this.user.id !== this.authService.getCurrentUser().id) {
         this.isSameUser = false;
@@ -41,6 +47,7 @@ export class UserBuildHistoryComponent implements OnInit {
     });
     this.buildHistoryService
       .getSortedByStartDateHistoryByUserId(this.user.id)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (response) => {
           this.builds = response.body;
@@ -55,7 +62,9 @@ export class UserBuildHistoryComponent implements OnInit {
 
   private configureBuildStatusesSignalR() {
     this.buildStatusesSignalRService.connect();
-    this.buildStatusesSignalRService.listen().subscribe((statusChange) => {
+    this.buildStatusesSignalRService.listen()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((statusChange) => {
       const buildIndex = this.builds.findIndex(
         (pi) => pi.id === statusChange.BuildHistoryId
       );
@@ -63,6 +72,7 @@ export class UserBuildHistoryComponent implements OnInit {
         if (statusChange.Status !== BuildStatus.InProgress) {
           this.buildHistoryService
             .getBuildHistory(statusChange.BuildHistoryId)
+            .pipe(takeUntil(this.unsubscribe$))
             .subscribe((bh) => {
               this.builds[buildIndex] = bh;
             });

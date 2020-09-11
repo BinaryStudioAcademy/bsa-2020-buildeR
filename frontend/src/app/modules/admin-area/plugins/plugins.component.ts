@@ -45,9 +45,9 @@ export class PluginsComponent extends BaseComponent implements OnInit {
             plugin.newCommand = '';
           });
         },
-        (error) => {
+        (err) => {
           this.isLoading = false;
-          this.toastrService.showError(error.message, error.name);
+          this.toastrService.showError(err.error, err.name);
         });
   }
 
@@ -63,7 +63,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           });
     }
     else {
@@ -81,7 +81,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
             plugin.pluginCommands = plugin.pluginCommands.filter(c => c.id !== command.id);
           },
           (error) => {
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           });
     }
     else {
@@ -101,7 +101,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
             },
             (error) => {
               this.isLoading = false;
-              this.toastrService.showError(error);
+              this.toastrService.showError(error.error, error.name);
             });
       }
       else {
@@ -113,7 +113,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
           },
           (error) => {
             this.isLoading = false;
-            this.toastrService.showError(error);
+            this.toastrService.showError(error.error, error.name);
           });
       }
     });
@@ -146,7 +146,7 @@ export class PluginsComponent extends BaseComponent implements OnInit {
         },
         (error) => {
           this.isLoading = false;
-          this.toastrService.showError(error.message, error.name);
+          this.toastrService.showError(error.error, error.name);
         });
   }
 

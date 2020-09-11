@@ -104,24 +104,25 @@
         Environment  Variables
       </h2>
       <!-- Adding env vars -->
-      <app-loading-spinner position="relative" margin="0" top="-25px" left="280px" size="8px"
-        *ngIf="!isLoadedEnvVar">
-      </app-loading-spinner>
+      <app-loading-spinner [position]="'initial'" [margin]="'40px auto'" [size]="'10px'" *ngIf="!isLoadedEnvVar"></app-loading-spinner>
       <ng-container *ngIf="isLoadedEnvVar">
-      <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
+        <form (ngSubmit)="addEnvVar(envVarsForm.value)" [formGroup]="envVarsForm">
+        <p class="my-2">
+          Customize your build using environment variables. <br>
+          Variables defined in repository settings are the same for all builds, and when you restart an old build, it uses the latest values
+        </p>
         <div class="add-env-container border rounded">
-          <p class="first-container my-2">Customize your build using environment variables. </p>
+          <div class="first-container my-2"></div>
           <div class="second-container">
-            <input type="text" class="form-control form-control form-control-ev-var" formControlName="name"
-              placeholder="Name">
+            <input type="text" class="form-control form-control form-control-ev-var" formControlName="name" placeholder="Key">
             <div *ngIf="envVarsForm.controls['name'].errors" class="err-block">
               <div class="error"
                 *ngIf="envVarsForm.controls['name'].errors.required && envVarsForm.controls['name'].touched">
-                Name is required
+                Key is required
               </div>
               <div class="error"
                 *ngIf="envVarsForm.controls['name'].hasError('isNotUniqueName')" >
-                Name must be unique
+                Key must be unique
               </div>
             </div>
           </div>
@@ -146,9 +147,8 @@
             <button class="btn btn-success m-0" type="submit" [disabled]="envVarsForm.invalid || !isLoadedEnvVar || isNotUniqueCheckChanges(envVarsForm.controls['name'].value)">Add</button>
           </div>
         </div>
-      </form>
-    </ng-container>
-    </div>
+        </form>
+      </ng-container>
       <!-- Show Env Vars  -->
       <ng-container *ngFor="let varibable of envVariables; index as i">
         <app-env-vars-editor [envVariables]="envVariables" [envVar]="varibable" [index]="i+1"></app-env-vars-editor>

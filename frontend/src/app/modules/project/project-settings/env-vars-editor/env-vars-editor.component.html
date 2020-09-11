@@ -1,11 +1,9 @@
 <form [formGroup]="envVarsEditForm" class="edit-env-container border rounded" >
-  <p class="first-container my-4">Environment Variable #{{index}} </p>
+  <p class="first-container my-4">#{{index}} </p>
   <div class="second-container">
-      <input type="text" class="form-control form-control-ev"
-      formControlName="name">
-      <div class="error"
-      *ngIf="envVarsEditForm.controls['name'].hasError('isNotUniqueName')" >
-      Name must be unique
+      <input type="text" class="form-control form-control-ev" placeholder="Key" formControlName="name">
+      <div class="error" *ngIf="envVarsEditForm.controls['name'].hasError('isNotUniqueName')" >
+      Key must be unique
     </div>
   </div>
   <div class="third-container">
