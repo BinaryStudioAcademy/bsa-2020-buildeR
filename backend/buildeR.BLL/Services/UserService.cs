@@ -50,11 +50,18 @@ namespace buildeR.BLL.Services
 
         public async Task<UserDTO> Login(string UId)
         {
-            var user = await _context.Users
-                .Include(u => u.UserSocialNetworks)
-                .FirstAsync(u => u.UserSocialNetworks.Any(sn => sn.UId == UId));
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.UserSocialNetworks)
+                    .FirstAsync(u => u.UserSocialNetworks.Any(sn => sn.UId == UId));
 
-            return _mapper.Map<UserDTO>(user);
+                return _mapper.Map<UserDTO>(user);
+            } 
+            catch(Exception)
+            {
+                throw new NotFoundException("User");
+            }
         }
 
         public async Task<ICollection<UserDTO>> GetAll()

@@ -54,12 +54,6 @@ export class FirebaseSignInService {
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
       .subscribe((resp) => {
-        if (!credential.user.emailVerified) {
-          credential.user.sendEmailVerification().then(() => {
-            this.openVerificationEmailModal(credential.user.email);
-          });
-          return;
-        }
         if (resp) {
           this.authService.getAngularAuth().authState
             .subscribe((user) => {
@@ -85,6 +79,14 @@ export class FirebaseSignInService {
         else {
           this.registerDialog.signUp(credential);
         }
+      }, (error) => {
+        if (!credential.user.emailVerified) {
+          credential.user.sendEmailVerification().then(() => {
+            this.openVerificationEmailModal(credential.user.email);
+          });
+          return;
+        }
+        this.registerDialog.signUp(credential);
       });
   }
 
