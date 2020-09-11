@@ -47,7 +47,7 @@
           <i class="fas fa-hammer icon-wrp"></i> #{{buildHistory.number}} {{buildHistory.buildStatus | buildStatus}}
         </p>
         <p class="build-time"><i class="far fa-clock icon-wrp"></i> Duration {{buildHistory.duration | timespan}}</p>
-        <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium':'LOCALE_ID'}}">
+        <p class="start-time" title="Finished {{buildHistory.buildAt | date:'medium':'+0300'}}">
           <i class="far fa-calendar-alt icon-wrp"></i> Finished {{buildHistory.buildAt | dateAgo}}</p>
         <button class="btn btn-link restart-button" (click)="restartBuild()">
           <i class="fas fa-redo"></i>
