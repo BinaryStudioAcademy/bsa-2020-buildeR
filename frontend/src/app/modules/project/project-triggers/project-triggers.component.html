@@ -3,12 +3,12 @@
     <h2 class="title">
       Webhooks
     </h2>
-    <app-loading-spinner [position]="'initial'" [margin]="'40px auto'" [size]="'10px'" *ngIf="!remoteTriggers; else webhookContent"></app-loading-spinner>
+    <app-loading-spinner [position]="'initial'" [margin]="'40px auto'" [size]="'10px'" *ngIf="!remoteTriggersSection; else webhookContent"></app-loading-spinner>
     <ng-template #webhookContent>
       <p class="my-2">
         Webhooks allow you to build the project on some external event. <br> When one of those events is triggered, we'll run the build with the particular branch changes.
       </p>
-      <div *ngIf="!project?.repository?.createdByLink && remoteTriggersSection" class="trigger-base-container">
+      <div *ngIf="!project?.repository?.createdByLink" class="trigger-base-container">
         <app-proejct-remote-trigger
           class="remote-trigger-wrp"
           [branches]="branches"

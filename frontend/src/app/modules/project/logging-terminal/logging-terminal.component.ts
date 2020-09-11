@@ -28,9 +28,7 @@ interface IAction {
   templateUrl: './logging-terminal.component.html',
   styleUrls: ['./logging-terminal.component.sass'],
 })
-export class LoggingTerminalComponent
-  extends BaseComponent
-  implements OnInit, OnDestroy {
+export class LoggingTerminalComponent extends BaseComponent implements OnInit, OnDestroy {
   @Input() set buildhistory(bh: BuildHistory) {
     const oldBuildHistory = this.buildHistory;
     this.buildHistory = bh;
