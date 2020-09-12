@@ -55,10 +55,6 @@ export class FirebaseSignInService {
 
   login(credential: auth.UserCredential, redirectUrl?: string): void {
     this.userService.login(credential.user.uid)
-      .pipe(catchError(() => {
-        this.router.navigateByUrl('/signup');
-        return EMPTY;
-      }))
       .subscribe((resp) => {
         if (resp) {
           this.authService.getAngularAuth().authState
