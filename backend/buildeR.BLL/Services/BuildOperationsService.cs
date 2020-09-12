@@ -33,18 +33,20 @@ namespace buildeR.BLL.Services
         {
             throw new NotImplementedException();
         }
+
         public async Task<BuildHistory> PrepareBuild(int projectId, string buildAuthorUsername, string triggeredBranch)
         {
             var user = await GetUserByUsername(buildAuthorUsername);
 
-            var build = new BuildHistory();
-
-            build.ProjectId = projectId;
-            build.PerformerId = user?.Id;
-            build.BuildStatus = BuildStatus.Pending;
-            build.StartedAt = DateTime.Now;
-            build.BranchHash = triggeredBranch;
-            build.Number = _context.BuildHistories.Count(b => b.ProjectId == projectId) + 1;
+            var build = new BuildHistory
+            {
+                ProjectId = projectId,
+                PerformerId = user?.Id,
+                BuildStatus = BuildStatus.Pending,
+                StartedAt = DateTime.Now,
+                BranchHash = triggeredBranch,
+                Number = _context.BuildHistories.Count(b => b.ProjectId == projectId) + 1
+            };
 
             var lastCommit = await _synchronizationService.GetLastProjectCommit(projectId, triggeredBranch);
             build.CommitHash = lastCommit.Hash;

@@ -7,8 +7,7 @@ import { DatePipe } from '@angular/common';
 export class TimespanPipe implements PipeTransform {
   // value - timespan in seconds
   transform(value: number): string {
-    value /= 1000;
-    if (value === 0) {
+    if (!value) {
       return '—';
     }
     if (value < 1) {
