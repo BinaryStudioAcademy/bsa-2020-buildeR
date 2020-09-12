@@ -11,8 +11,7 @@
       <div class='user-commit'>
         <span class="build-url-wrp">
           <img
-            [src]="buildHistory.performer?.avatarUrl"
-            onerror="this.src='../../../../assets/images/Avatar-default.png'"
+            [src]="buildHistory.performer?.avatarUrl | defaultLogo"
             alt="Avatar"
             class="avatar icon-wrp" />Author: <a class="url" title="Open profile" [routerLink]="'/portal/user/' + buildHistory.performerId">{{buildHistory.performer?.username || 'System'}}</a>
         </span>
@@ -61,7 +60,7 @@
   <div class="container">
     <div class="no-builds-container">
       <div class="image-container">
-        <img class="builders" [src]="'../../../../assets/images/Play.png'" />
+        <img class="builders" [src]="'assets/images/Play.png'" />
       </div>
       <span class="my-3">
         It seems that you do not yet have builds for this project, you can run it at any time!

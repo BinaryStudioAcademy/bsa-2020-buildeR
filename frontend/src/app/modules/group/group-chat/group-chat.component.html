@@ -5,7 +5,7 @@
       <ul *ngFor="let msg of messages" class="chat-list">
         <li [ngClass]="{ 'in': msg.senderId != user.id, 'out': msg.senderId == user.id }">
           <div class="chat-img">
-            <img alt="Avtar" title="Open {{msg.sender?.username}} profile" [src]="msg.sender.avatarUrl" [routerLink]="'/portal/user/' + msg.senderId">
+            <img alt="Avtar" title="Open {{msg.sender?.username}} profile" [src]="msg.sender.avatarUrl | defaultLogo" [routerLink]="'/portal/user/' + msg.senderId">
           </div>
           <div class="chat-body">
             <div class="chat-message">

@@ -4,7 +4,7 @@
       <h5 class="text-overflow project-name"><a class="text-dark" [routerLink]="['/portal/projects', project?.id, 'current']">{{project.name}}</a></h5>
       <div class="owner-wr">
         <a class="avatar-wr" [routerLink]="'/portal/user'">
-          <img [src]="project.owner.avatarUrl" onerror="this.src='../../../../assets/images/Avatar-default.png'" alt="Avatar" class="owner-avatar">
+          <img [src]="project.owner.avatarUrl | defaultLogo" alt="Avatar" class="owner-avatar">
         </a>
         <a class="owner-name text-overflow" [routerLink]="'/portal/user'">{{project?.owner.username}}</a>
       </div>

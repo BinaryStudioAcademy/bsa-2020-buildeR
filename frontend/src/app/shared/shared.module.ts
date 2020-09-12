@@ -21,6 +21,7 @@ import { TimespanPipe } from './pipes/timespan.pipe';
 import { ProjectsDisplayComponent } from './components/projects-display/projects-display.component';
 import { UserBuildHistoryComponent } from './components/user-build-history/user-build-history.component';
 import { BuildHistoryCardComponent } from './components/build-history-card/build-history-card.component';
+import { DefaultLogoPipe } from './pipes/default-logo.pipe';
 
 // Please, add all components, pipes, directives, other modules which should be shared accross all modules
 // Do not forget to put them in 'exports' in order to use them outside of this module
@@ -43,6 +44,7 @@ import { BuildHistoryCardComponent } from './components/build-history-card/build
     UserBuildHistoryComponent,
     BuildHistoryCardComponent,
     BuildHistoryCardComponent,
+    DefaultLogoPipe,
   ],
   imports: [
     CommonModule,
@@ -78,6 +80,7 @@ import { BuildHistoryCardComponent } from './components/build-history-card/build
     ProjectsDisplayComponent,
     UserBuildHistoryComponent,
     BuildHistoryCardComponent,
+    DefaultLogoPipe,
   ],
 })
 export class SharedModule { }

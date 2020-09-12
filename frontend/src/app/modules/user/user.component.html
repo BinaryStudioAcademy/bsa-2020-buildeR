@@ -4,8 +4,7 @@
       <div class="avatar-container container">
         <div class="avatar-wrapper" (click)="open()">
           <input hidden class="file-hide" #file accept="image/*" type="file" >
-          <img class="avatar avatar-style" src="{{currentUser.avatarUrl}}"
-               onerror="this.src='../../../../assets/images/Avatar-default.png'">
+          <img class="avatar avatar-style" [src]="currentUser.avatarUrl | defaultLogo">
           <div class="img-text" *ngIf="isOwner">
             Change
           </div>
