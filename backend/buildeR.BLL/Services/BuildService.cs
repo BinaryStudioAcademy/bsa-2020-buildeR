@@ -174,6 +174,26 @@ namespace buildeR.BLL.Services
                         Date = DateTime.Now,
                         ItemId = statusChange.BuildHistoryId
                     });
+                    
+                    var teamMembers = await Context.ProjectGroups.AsNoTracking()
+                        .Where(pg => pg.ProjectId == buildHistory.ProjectId)
+                        .Include(pg => pg.Group)
+                        .ThenInclude(g => g.TeamMembers)
+                        .ThenInclude(tm => tm.User).AsNoTracking()
+                        .SelectMany(pg => pg.Group.TeamMembers)
+                        .ToListAsync();
+                    
+                    foreach (var member in teamMembers.Where(tm => tm.IsAccepted && tm.UserId != buildHistory.PerformerId))
+                    {
+                        await _notificationsService.Create(new NewNotificationDTO
+                        {
+                            UserId = member.UserId,
+                            Message = $"{StatusToNotificationMessage(buildHistory, statusChange)}",
+                            Type = StatusToNotificationType(statusChange),
+                            Date = DateTime.Now,
+                            ItemId = statusChange.BuildHistoryId
+                        });
+                    }
                 }
             }
 
