@@ -6,6 +6,8 @@
 
 Binary Studio Academy | 2020 | .NET buildeR is an analog of Jenkins which purpose is to build and deploy user projects.
 
+[DEMO](https://imgur.com/a/5qD8VCp)
+
 ## Production:
 - [bsa-builder.xyz](https://bsa-builder.xyz)
 - [Docker Images](https://hub.docker.com/u/bsa2020builder)
